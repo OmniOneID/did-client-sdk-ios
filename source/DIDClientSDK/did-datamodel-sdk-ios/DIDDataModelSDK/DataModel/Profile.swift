@@ -140,6 +140,8 @@ public struct VerifyProfile : Jsonable, ProofContainer
                 public var type : CredentialSchemaType
                 /// VC schema
                 public var value : String?
+                /// Require to present all claims. Default(false)
+                public var presentAll : Bool?
                 /// Display claims
                 public var displayClaims : [String]?
                 /// Required claims

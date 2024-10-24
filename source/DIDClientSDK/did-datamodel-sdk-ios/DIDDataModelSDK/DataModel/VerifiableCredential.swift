@@ -45,8 +45,6 @@ public struct VerifiableCredential : Jsonable, Identifiable
         public var id        : String
         /// Issuer's name
         public var name      : String?
-        /// URL for certificate of membership
-        public var certVcRef : String?
     }
     
     /// Evidence Enumerator for Multitype array
@@ -84,6 +82,8 @@ public struct VerifiableCredential : Jsonable, Identifiable
         public var subjectPresence  : Presence
         /// Document presence type
         public var documentPresence : Presence
+        /// Document attribute
+        public var attribute : [String: String]?
     }
     
     /// Credential schema

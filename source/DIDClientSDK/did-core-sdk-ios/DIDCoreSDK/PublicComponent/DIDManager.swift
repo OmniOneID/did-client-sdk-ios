@@ -201,6 +201,32 @@ public struct DIDManager {
         }
         
         didDoc!.verificationMethod.remove(at: index)
+        
+        if let assertionMethod = didDoc!.assertionMethod {
+            let keyIds = assertionMethod.filter({ $0 != keyId })
+            didDoc!.assertionMethod = keyIds.isEmpty ? nil : keyIds
+        }
+        
+        if let authentication = didDoc!.authentication {
+            let keyIds = authentication.filter({ $0 != keyId })
+            didDoc!.authentication = keyIds.isEmpty ? nil : keyIds
+        }
+        
+        if let keyAgreement = didDoc!.keyAgreement {
+            let keyIds = keyAgreement.filter({ $0 != keyId })
+            didDoc!.keyAgreement = keyIds.isEmpty ? nil : keyIds
+        }
+        
+        if let capabilityDelegation = didDoc!.capabilityDelegation {
+            let keyIds = capabilityDelegation.filter({ $0 != keyId })
+            didDoc!.capabilityDelegation = keyIds.isEmpty ? nil : keyIds
+        }
+        
+        if let capabilityInvocation = didDoc!.capabilityInvocation {
+            let keyIds = capabilityInvocation.filter({ $0 != keyId })
+            didDoc!.capabilityInvocation = keyIds.isEmpty ? nil : keyIds
+        }
+        
         modifyUpdatedWithNowTime(didDoc: &didDoc!)
     }
     

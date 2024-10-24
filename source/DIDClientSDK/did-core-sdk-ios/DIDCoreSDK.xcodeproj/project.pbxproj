@@ -26,12 +26,6 @@
 		38749F192C2BFF25002C4BB1 /* StorageManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38749F182C2BFF25002C4BB1 /* StorageManagerError.swift */; };
 		38749F1B2C2BFFD7002C4BB1 /* StorageManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38749F1A2C2BFFD7002C4BB1 /* StorageManagerTests.swift */; };
 		38822FDE2C4E02BD003D1281 /* WalletCoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38822FDD2C4E02BD003D1281 /* WalletCoreError.swift */; };
-		7C93D5AA2CA69A8900C79695 /* DIDDataModelSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C93D5A92CA69A8900C79695 /* DIDDataModelSDK.xcframework */; };
-		7C93D5AE2CA69A9000C79695 /* DIDUtilitySDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C93D5AD2CA69A9000C79695 /* DIDUtilitySDK.xcframework */; };
-		7C93D5B12CA69AD900C79695 /* DIDUtilitySDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C93D5AD2CA69A9000C79695 /* DIDUtilitySDK.xcframework */; };
-		7C93D5B22CA69AD900C79695 /* DIDUtilitySDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7C93D5AD2CA69A9000C79695 /* DIDUtilitySDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		7C93D5B42CA69ADD00C79695 /* DIDDataModelSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C93D5A92CA69A8900C79695 /* DIDDataModelSDK.xcframework */; };
-		7C93D5B52CA69ADD00C79695 /* DIDDataModelSDK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7C93D5A92CA69A8900C79695 /* DIDDataModelSDK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C9130B3B2C5389E400E378E2 /* PrivateKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9130B3A2C5389E400E378E2 /* PrivateKey+Extension.swift */; };
 		C914E9782C3CCD12007B1F19 /* SignableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914E9772C3CCD12007B1F19 /* SignableError.swift */; };
 		C914E97A2C3CD81C007B1F19 /* SecureEnclaveError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C914E9792C3CD81C007B1F19 /* SecureEnclaveError.swift */; };
@@ -44,6 +38,8 @@
 		C96859922C2BDD4D008308AB /* SecureEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96859912C2BDD4D008308AB /* SecureEncryptorTests.swift */; };
 		C96859942C2BEB68008308AB /* KeyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96859932C2BEB68008308AB /* KeyManagerTests.swift */; };
 		C970E2072C3BA4B2008909A1 /* KeyManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C970E2062C3BA4B2008909A1 /* KeyManagerError.swift */; };
+		C9712A4D2C9183BF00DE37D1 /* DIDDataModelSDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A4C2C9183BF00DE37D1 /* DIDDataModelSDK.xcframework */; };
+		C9712A512C9183CF00DE37D1 /* DIDUtilitySDK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A502C9183CF00DE37D1 /* DIDUtilitySDK.xcframework */; };
 		C9B11F552C86EC7E004399D5 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D202142C290467001B5173 /* openssl.xcframework */; };
 		C9C35E172C293E880038EA51 /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C35E162C293E880038EA51 /* Data+Extension.swift */; };
 		C9C35E192C2942E40038EA51 /* SecKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C35E182C2942E40038EA51 /* SecKey+Extension.swift */; };
@@ -77,21 +73,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		7C93D5B32CA69AD900C79695 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				7C93D5B52CA69ADD00C79695 /* DIDDataModelSDK.xcframework in Embed Frameworks */,
-				7C93D5B22CA69AD900C79695 /* DIDUtilitySDK.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		38601D232C2D70D500C6DB27 /* DIDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDManager.swift; sourceTree = "<group>"; };
 		38601D252C2D70F100C6DB27 /* DIDManagerDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDManagerDataModel.swift; sourceTree = "<group>"; };
@@ -113,8 +94,6 @@
 		38749F182C2BFF25002C4BB1 /* StorageManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManagerError.swift; sourceTree = "<group>"; };
 		38749F1A2C2BFFD7002C4BB1 /* StorageManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManagerTests.swift; sourceTree = "<group>"; };
 		38822FDD2C4E02BD003D1281 /* WalletCoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCoreError.swift; sourceTree = "<group>"; };
-		7C93D5A92CA69A8900C79695 /* DIDDataModelSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DIDDataModelSDK.xcframework; path = "../release/did-datamodel-sdk-ios-1.0.0/DIDDataModelSDK.xcframework"; sourceTree = "<group>"; };
-		7C93D5AD2CA69A9000C79695 /* DIDUtilitySDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DIDUtilitySDK.xcframework; path = "../release/did-utility-sdk-ios-1.0.0/DIDUtilitySDK.xcframework"; sourceTree = "<group>"; };
 		C9130B3A2C5389E400E378E2 /* PrivateKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrivateKey+Extension.swift"; sourceTree = "<group>"; };
 		C914E9772C3CCD12007B1F19 /* SignableError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignableError.swift; sourceTree = "<group>"; };
 		C914E9792C3CD81C007B1F19 /* SecureEnclaveError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEnclaveError.swift; sourceTree = "<group>"; };
@@ -128,8 +107,8 @@
 		C96859912C2BDD4D008308AB /* SecureEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEncryptorTests.swift; sourceTree = "<group>"; };
 		C96859932C2BEB68008308AB /* KeyManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagerTests.swift; sourceTree = "<group>"; };
 		C970E2062C3BA4B2008909A1 /* KeyManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagerError.swift; sourceTree = "<group>"; };
-		C9803A1B2C86E98C00E1BCE9 /* DIDUtilitySDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = DIDUtilitySDK.xcframework; sourceTree = "<group>"; };
-		C9803A1C2C86E98C00E1BCE9 /* DIDDataModelSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = DIDDataModelSDK.xcframework; sourceTree = "<group>"; };
+		C9712A4C2C9183BF00DE37D1 /* DIDDataModelSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DIDDataModelSDK.xcframework; path = "../release/did-datamodel-sdk-ios-1.0.0/DIDDataModelSDK.xcframework"; sourceTree = "<group>"; };
+		C9712A502C9183CF00DE37D1 /* DIDUtilitySDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DIDUtilitySDK.xcframework; path = "../release/did-utility-sdk-ios-1.0.0/DIDUtilitySDK.xcframework"; sourceTree = "<group>"; };
 		C9C35E162C293E880038EA51 /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		C9C35E182C2942E40038EA51 /* SecKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SecKey+Extension.swift"; sourceTree = "<group>"; };
 		C9C465242C2A53B400E88A3F /* Secp256R1ManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256R1ManagerTests.swift; sourceTree = "<group>"; };
@@ -152,8 +131,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7C93D5AA2CA69A8900C79695 /* DIDDataModelSDK.xcframework in Frameworks */,
-				7C93D5AE2CA69A9000C79695 /* DIDUtilitySDK.xcframework in Frameworks */,
+				C9712A4D2C9183BF00DE37D1 /* DIDDataModelSDK.xcframework in Frameworks */,
+				C9712A512C9183CF00DE37D1 /* DIDUtilitySDK.xcframework in Frameworks */,
 				C9B11F552C86EC7E004399D5 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -163,8 +142,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				386A15BC2C226F9D00CD5CD2 /* DIDCoreSDK.framework in Frameworks */,
-				7C93D5B12CA69AD900C79695 /* DIDUtilitySDK.xcframework in Frameworks */,
-				7C93D5B42CA69ADD00C79695 /* DIDDataModelSDK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,8 +300,6 @@
 			isa = PBXGroup;
 			children = (
 				C9D202142C290467001B5173 /* openssl.xcframework */,
-				C9803A1C2C86E98C00E1BCE9 /* DIDDataModelSDK.xcframework */,
-				C9803A1B2C86E98C00E1BCE9 /* DIDUtilitySDK.xcframework */,
 			);
 			path = Framework;
 			sourceTree = "<group>";
@@ -332,8 +307,8 @@
 		C9D202112C290445001B5173 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				7C93D5AD2CA69A9000C79695 /* DIDUtilitySDK.xcframework */,
-				7C93D5A92CA69A8900C79695 /* DIDDataModelSDK.xcframework */,
+				C9712A502C9183CF00DE37D1 /* DIDUtilitySDK.xcframework */,
+				C9712A4C2C9183BF00DE37D1 /* DIDDataModelSDK.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -396,7 +371,6 @@
 				386A15B72C226F9D00CD5CD2 /* Sources */,
 				386A15B82C226F9D00CD5CD2 /* Frameworks */,
 				386A15B92C226F9D00CD5CD2 /* Resources */,
-				7C93D5B32CA69AD900C79695 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -703,7 +677,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -743,7 +717,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1.0.0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -789,8 +763,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.omnione.did.sdk.core.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -811,8 +783,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.omnione.did.sdk.core.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

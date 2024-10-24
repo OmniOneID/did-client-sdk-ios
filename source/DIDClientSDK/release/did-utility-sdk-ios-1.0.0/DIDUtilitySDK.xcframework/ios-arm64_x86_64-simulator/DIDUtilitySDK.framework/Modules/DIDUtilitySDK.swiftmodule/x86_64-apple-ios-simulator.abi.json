@@ -3214,364 +3214,364 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 186,
       "length": 11,
       "value": "\"Secp256r1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 219,
       "length": 11,
       "value": "\"Secp256k1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 186,
       "length": 11,
       "value": "\"Secp256r1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 219,
       "length": 11,
       "value": "\"Secp256k1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 330,
       "length": 5,
       "value": "\"AES\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 330,
       "length": 5,
       "value": "\"AES\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 445,
       "length": 5,
       "value": "\"CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 466,
       "length": 5,
       "value": "\"ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 445,
       "length": 5,
       "value": "\"CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 466,
       "length": 5,
       "value": "\"ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "IntegerLiteral",
       "offset": 555,
       "length": 3,
       "value": "128"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "IntegerLiteral",
       "offset": 578,
       "length": 3,
       "value": "256"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "IntegerLiteral",
       "offset": 555,
       "length": 3,
       "value": "128"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "IntegerLiteral",
       "offset": 578,
       "length": 3,
       "value": "256"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "IntegerLiteral",
       "offset": 555,
       "length": 3,
       "value": "128"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "IntegerLiteral",
       "offset": 578,
       "length": 3,
       "value": "256"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 848,
       "length": 13,
       "value": "\"AES-128-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 883,
       "length": 13,
       "value": "\"AES-128-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 918,
       "length": 13,
       "value": "\"AES-256-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 953,
       "length": 13,
       "value": "\"AES-256-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 848,
       "length": 13,
       "value": "\"AES-128-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 883,
       "length": 13,
       "value": "\"AES-128-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 918,
       "length": 13,
       "value": "\"AES-256-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 953,
       "length": 13,
       "value": "\"AES-256-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1073,
       "length": 7,
       "value": "\"NOPAD\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1098,
       "length": 7,
       "value": "\"PKCS5\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1073,
       "length": 7,
       "value": "\"NOPAD\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1098,
       "length": 7,
       "value": "\"PKCS5\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1226,
       "length": 3,
       "value": "\"f\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1256,
       "length": 3,
       "value": "\"F\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1286,
       "length": 3,
       "value": "\"z\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1316,
       "length": 3,
       "value": "\"m\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1346,
       "length": 3,
       "value": "\"u\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1226,
       "length": 3,
       "value": "\"f\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1256,
       "length": 3,
       "value": "\"F\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1286,
       "length": 3,
       "value": "\"z\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1316,
       "length": 3,
       "value": "\"m\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1346,
       "length": 3,
       "value": "\"u\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1452,
       "length": 8,
       "value": "\"sha256\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1479,
       "length": 8,
       "value": "\"sha384\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1506,
       "length": 8,
       "value": "\"sha512\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1452,
       "length": 8,
       "value": "\"sha256\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1479,
       "length": 8,
       "value": "\"sha384\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Common\/Enums.swift",
       "kind": "StringLiteral",
       "offset": 1506,
       "length": 8,
       "value": "\"sha512\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 184,
       "length": 4,
       "value": "\"00\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 219,
       "length": 4,
       "value": "\"01\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 254,
       "length": 4,
       "value": "\"02\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 184,
       "length": 4,
       "value": "\"00\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 219,
       "length": 4,
       "value": "\"01\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Errors\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 254,
       "length": 4,
       "value": "\"02\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Encodings\/Base58BTC.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Encodings\/Base58BTC.swift",
       "kind": "Array",
       "offset": 262,
       "length": 269,
       "value": "[\"1\", \"2\", \"3\", \"4\", \"5\", \"6\", \"7\", \"8\", \"9\", \"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"J\", \"K\", \"L\", \"M\", \"N\", \"P\", \"Q\", \"R\", \"S\", \"T\", \"U\", \"V\", \"W\", \"X\", \"Y\", \"Z\", \"a\", \"b\", \"c\", \"d\", \"e\", \"f\", \"g\", \"h\", \"i\", \"j\", \"k\", \"m\", \"n\", \"o\", \"p\", \"q\", \"r\", \"s\", \"t\", \"u\", \"v\", \"w\", \"x\", \"y\", \"z\"]"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Encodings\/Base58BTC.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-utility-sdk-ios\/DIDUtilitySDK\/Encodings\/Base58BTC.swift",
       "kind": "StringLiteral",
       "offset": 568,
       "length": 23,

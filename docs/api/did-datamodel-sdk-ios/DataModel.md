@@ -32,20 +32,20 @@ iOS DataModel
 
 
 # Contents
-- [Models](#models)
+- [WalletCore](#walletcore)
     - [1. DIDDocument](#1-diddocument)
         - [1.1. VerificationMethod](#11-verificationmethod)
-        - [1.2 Service](#12-service)
+        - [1.2. Service](#12-service)
     - [2. VerifiableCredential](#2-verifiablecredential)
-        - [2.1 Issuer](#21-issuer)
-        - [2.2 DocumentVerificationEvidence](#22-documentverificationevidence)
-        - [2.3 CredentialSchema](#23-credentialschema)
-        - [2.4 CredentialSubject](#24-credentialsubject)
-        - [2.5 Claim](#25-claim)
-        - [2.6 Internationalization](#26-internationalization)
+        - [2.1. Issuer](#21-issuer)
+        - [2.2. DocumentVerificationEvidence](#22-documentverificationevidence)
+        - [2.3. CredentialSchema](#23-credentialschema)
+        - [2.4. CredentialSubject](#24-credentialsubject)
+        - [2.5. Claim](#25-claim)
+        - [2.6. Internationalization](#26-internationalization)
     - [3. VerifiablePresentation](#3-verifiablepresentation)
     - [4. Proof](#4-proof)
-        - [4.1 VCProof](#41-vcproof)
+        - [4.1. VCProof](#41-vcproof)
     - [5. Profile](#5-profile)
         - [5.1. IssuerProfile](#51-issuerprofile)
             - [5.1.1. Profle](#511-profile)
@@ -65,6 +65,48 @@ iOS DataModel
             - [6.2.1. Claim](#621-claim)
                 - [6.2.1.1. Namespace](#6211-namespace)
                 - [6.2.1.2. ClaimDef](#6212-claimdef)
+
+- [WalletService](#walletservice)
+    - [1. Protocol](#protocol)
+        - [1.1. M132](#1-m132-reg-user)
+        - [1.2. M210](#2-m210-issue-vc)
+        - [1.3. M310 (VP제출)](#3-m310-submit-vp)
+        - [1.4. M220 (VC폐기)](#4-m220-revoke-vc)
+        - [1.5. M142 (DID복구)](#5-m142-restore-DID)
+  
+    - [2. Token](#2-token)
+        - [2.1. ServerTokenSeed](#21-servertokenseed)
+        - [2.1.1. AttestedAppInfo](#211-attestedappinfo)
+        - [2.1.1.1. Provider](#2111-provider)
+        - [2.1.2. SignedWalletInfo](#212-signedwalletinfo)
+        - [2.1.2.1. Wallet](#2121-wallet)
+        - [2.2. ServerTokenData](#22-servertokendata)
+        - [2.3. WalletTokenSeed](#23-wallettokenseed)
+        - [2.4. WalletTokenData](#24-wallettokendata)
+  
+    - [3. SecurityChannel](#3-securitychannel)
+        - [3.1. ReqEcdh](#31-reqecdh)
+        - [3.2. AccEcdh](#32-accecdh)
+        - [3.3. AccE2e](#33-acce2e)
+        - [3.4. E2e](#34-e2e)
+        - [3.5. DIDAuth](#35-didauth)
+
+    - [4. DidDoc](#4-diddoc)
+        - [4.1. DIDDocVO](#41-diddocvo)
+        - [4.2. AttestedDIDDoc](#42-attesteddiddoc)
+        - [4.3. SignedDidDoc](#43-signeddiddoc)
+
+    - [5. Offer](#5-offer)
+        - [5.1. IssueOfferPayload](#51-issueofferpayload)
+        - [5.2. VerifyOfferPayload](#52-verifyofferpayload)
+
+    - [6. VC](#6-vc)
+        - [6.1. ReqVC](#61-reqvc)
+        - [6.1.1. ReqVcProfile](#611-reqvcprofile)
+        - [6.2. VCPlanList](#62-vcplanlist)
+        - [6.2.1. VCPlan](#621-vcplan)
+        - [6.2.1.1. Option](#6211-option)
+
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
 - [Enumerators](#enumerators)
@@ -86,6 +128,9 @@ iOS DataModel
     - [16. AlgorithmType](#16-algorithmtype)
     - [17. CredentialSchemaType](#17-credentialschematype)
     - [18. EllipticCurveType](#18-ellipticcurvetype)
+    - [19. ROLE_TYPE](#19-role_type)
+    - [20. SERVER_TOKEN_PURPOSE](#20-server_token_purpose)
+    - [21. WALLET_TOKEN_PURPOSE](#21-wallet_token_purpose)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
@@ -98,7 +143,7 @@ iOS DataModel
     - [1. @UTCDatetime](#1-utcdatetime)
     - [2. @DIDVersionId](#2-didversionid)
 
-# Models
+# WalletCore
 
 ## 1. DIDDocument
 
@@ -278,7 +323,6 @@ public struct Issuer : Jsonable
 {
     public var id        : String
     public var name      : String?
-    public var certVcRef : String?
 }
 ```
 
@@ -288,7 +332,6 @@ public struct Issuer : Jsonable
 |-----------|--------|-----------------------------------|---------|--------------------------|
 | id        | String | Issuer's DID                      |    M    |                          |
 | name      | String | Issuer's name                     |    O    |                          |
-| certVcRef | String | URL for certificate of membership |    O    |                          |
 
 <br>
 
@@ -311,19 +354,21 @@ public struct DocumentVerificationEvidence : Jsonable
     public var evidenceDocument : String
     public var subjectPresence  : Presence
     public var documentPresence : Presence
+    public var attribute : [String: String]?
 }
 ```
 
 ## Property
 
-| Name             | Type         | Description                      | **M/O** | **Note**                 |
-|------------------|--------------|----------------------------------|---------|--------------------------|
-| id               | String       | URL for the evidence information |    O    |                          |
-| type             | EvidenceType | Evidence type                    |    M    | [EvidenceType](#8-evidencetype) |
-| verifier         | String       | Evidence verifier                |    M    |                          |
-| evidenceDocument | String       | Name of Evidence document        |    M    |                          |
-| subjectPresence  | Presence     | Subject presence type            |    M    | [Presence](#7-presence)        |
-| documentPresence | Presence     | Document presence type           |    M    | [Presence](#7-presence)   |
+| Name             | Type            | Description                      | **M/O** | **Note**                       |
+|------------------|-----------------|----------------------------------|---------|--------------------------------|
+| id               | String          | URL for the evidence information |    O    |                                |
+| type             | EvidenceType    | Evidence type                    |    M    | [EvidenceType](#8-evidencetype)|
+| verifier         | String          | Evidence verifier                |    M    |                                |
+| evidenceDocument | String          | Name of Evidence document        |    M    |                                |
+| subjectPresence  | Presence        | Subject presence type            |    M    | [Presence](#7-presence)        |
+| documentPresence | Presence        | Document presence type           |    M    | [Presence](#7-presence)        |
+| attribute        | [String:String] | Document attribute               |    O    |                                |
 
 <br>
 
@@ -790,6 +835,7 @@ public struct CredentialSchema : Jsonable
     public var id : String
     public var type : CredentialSchemaType
     public var value : String?
+    public var presentAll : Bool?
     public var displayClaims : [String]?
     public var requiredClaims : [String]?
     public var allowedIssuers : [String]?
@@ -798,14 +844,15 @@ public struct CredentialSchema : Jsonable
 
 ### Property
 
-| Name           | Type                 | Description           | **M/O** | **Note**                 |
-|----------------|----------------------|-----------------------|---------|--------------------------|
-| id             | String               | URL for VC schema     |    M    |                          |
-| type           | CredentialSchemaType | VC schema format type |    M    | [CredentialSchemaType](#17-credentialschematype)    |
-| value          | String               | VC schema             |    O    | Encoded by Multibase     |
-| displayClaims  | [String]             | Display claims        |    O    |                          |
-| requiredClaims | [String]             | Required claims       |    O    |                          |
-| allowedIssuers | [String]             | List of allowed issuers' DID  |    O    |                          |
+| Name           | Type                 | Description                                   | **M/O** | **Note**                                              |
+|----------------|----------------------|-----------------------------------------------|---------|-------------------------------------------------------|
+| id             | String               | URL for VC schema                             |    M    |                                                       |
+| type           | CredentialSchemaType | VC schema format type                         |    M    | [CredentialSchemaType](#17-credentialschematype)      |
+| value          | String               | VC schema                                     |    O    | Encoded by Multibase                                  |
+| presentAll     | Bool                 | Require to present all claims. Default(false) |    O    | Ignore display and required claims when if it is true |
+| displayClaims  | [String]             | Display claims                                |    O    | Literally display values on device screen             |
+| requiredClaims | [String]             | Required claims                               |    O    | Required values to present VP                         |
+| allowedIssuers | [String]             | List of allowed issuers' DID                  |    O    |                                                       |
 
 <br>
 
@@ -1116,6 +1163,1472 @@ public struct ClaimDef : Jsonable
 | i18n        | [String:String] | Internationalization |    O    |                          |
 
 <br>
+
+# WalletService
+## Protocol
+
+### 1. M132 (reg user)
+
+#### 1.1 ProposeRegisterUser/ _ProposeRegisterUser
+
+#### Description
+`User Reg`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProposeRegisterUser: Jsonable {
+    public var id: String
+    public init(id: String) {
+        self.id = id
+    }
+}
+
+public struct _ProposeRegisterUser: Jsonable {
+    public var txId: String
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+
+| Name    | Type   | Description                    | **M/O** | **Note** |
+|---------|--------|--------------------------------|---------|----------|
+| id      | String | message ID                     |    M    |          |
+| txId    | String | transaction ID                 |    M    |          |
+
+<br>
+
+#### 1.2 RequestEcdh/ _RequestEcdh
+
+#### Description
+`session encryption`
+
+#### Declaration
+```swift
+// Declaration in Swift
+public struct RequestEcdh: Jsonable {
+    public var id: String
+    public var txId: String
+    public var reqEcdh: ReqEcdh
+    public init(id: String, txId: String, reqEcdh: ReqEcdh) {
+        self.id = id
+        self.txId = txId
+        self.reqEcdh = reqEcdh
+    }
+}
+
+public struct _RequestEcdh: Jsonable {
+    public var txId: String
+    public var accEcdh: AccEcdh
+    public init(id: String, txId: String, accEcdh: AccEcdh) {
+        self.txId = txId
+        self.accEcdh = accEcdh
+    }
+}
+```
+#### Property
+| Name    | Type    | Description                    | **M/O** | **Note** |
+|---------|---------|--------------------------------|---------|----------|
+| id      | String  | message ID                     |    M    |          |
+| txId    | String  | transaction ID                 |    M    |          |
+| reqEcdh | ReqEcdh |                                |    M    |          |
+| accEcdh | AccEcdh |                                |    M    |          |
+<br>
+
+#### 1.3 AttestedAppInfo
+
+#### Description
+`attested app info`
+
+#### Declaration
+```swift
+// Declaration in Swift
+public struct RequestAttestedAppInfo: Jsonable {
+    public var appId: String
+    public init(appId: String) {
+        self.appId = appId
+    }
+}
+```
+### Property
+| Name    | Type    | Description                    | **M/O** | **Note** |
+|---------|---------|--------------------------------|---------|----------|
+| appId   | String  | application id                 |    M    |          |
+
+<br>
+
+#### 1.4 WalletTokenData
+
+#### Description
+
+`wallet token data`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct WalletTokenData: Jsonable, ProofContainer {
+    public var seed: WalletTokenSeed
+    public var sha256_pii: String
+    public var provider: Provider
+    public var nonce: String   // multibase
+    public var proof: OpenDID_DataModel.Proof?
+    public init(seed: WalletTokenSeed, sha256_pii: String, provider: Provider, nonce: String, proof: OpenDID_DataModel.Proof?) {
+        self.seed = seed
+        self.sha256_pii = sha256_pii
+        self.provider = provider
+        self.nonce = nonce
+        self.proof = proof
+    }
+}
+```
+#### Property
+| Name       | Type             | Description                    | **M/O** | **Note** |
+|------------|------------------|--------------------------------|---------|----------|
+| seed       | WalletTokenSeed  | wallet token seed              |    M    |          |
+| sha256_pii | String           | hashed(sha256)                 |    M    |          |
+| provider   | Provider         | provier                        |    M    |          |
+| nonce      | String           | nonce                          |    M    |          |
+| proof      | Proof            | proof                          |    M    |          |
+
+<br>
+
+#### 1.5 RequestCreateToken/ _RequestCreateToken
+
+#### Description
+
+`request create token`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestCreateToken: Jsonable {
+    public var id: String
+    public var txId: String
+    public var seed: ServerTokenSeed
+    public init(id: String, txId: String, seed: ServerTokenSeed) {
+        self.id = id
+        self.txId = txId
+        self.seed = seed
+    }
+}
+
+public struct _RequestCreateToken: Jsonable {
+    public var txId: String
+    public var iv: String
+    public var encStd: String
+    public init(txId: String, iv: String, encStd: String) {
+        self.txId = txId
+        self.iv = iv
+        self.encStd = encStd
+    }
+}
+```
+#### Property
+| Name    | Type             | Description                    | **M/O** | **Note** |
+|---------|------------------|--------------------------------|---------|----------|
+| id      | String           | message ID                     |    M    |          |
+| txId    | String           | transaction ID                 |    M    |          |
+| seed    | ServerTokenSeed  | server token seed              |    M    |          |
+| encStd  | String           | encrypt server token data      |    M    |          |
+
+<br>
+
+
+#### 1.6 RetieveKyc/ _RetieveKyc
+
+#### Description
+
+`retrieve kyc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RetrieveKyc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var kycTxId: String
+    public init(id: String, txId: String, serverToken: String, kycTxId: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.kycTxId = kycTxId
+    }
+}
+
+public struct _RetrieveKyc: Jsonable {
+    public var txId: String    
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+
+```
+#### Property
+| Name        | Type             | Description                    | **M/O** | **Note** |
+|-------------|------------------|--------------------------------|---------|----------|
+| id          | String           | message ID                     |    M    |          |
+| txId        | String           | transaction ID                 |    M    |          |
+| serverToken | ServerTokenSeed  | server token                   |    M    |          |
+| kycTxId     | String           | kyc transaction ID             |    M    |          |
+<br>
+
+
+#### 1.7 RequestRegisterUser/ _RequestRegisterUser
+
+#### Description
+
+`request register user`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestRegisterUser: Jsonable {
+    public var id: String
+    public var txId: String
+    public var signedDidDoc: SignedDidDoc
+    public var serverToken: String
+    public init(id: String, txId: String, signedDidDoc: SignedDidDoc, serverToken: String) {
+        self.id = id
+        self.txId = txId
+        self.signedDidDoc = signedDidDoc
+        self.serverToken = serverToken
+    }
+}
+
+public struct _RequestRegisterUser: Jsonable {
+    public var txId: String
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| signedDidDoc | SignedDidDoc     | signed DID doc                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+<br>
+
+
+#### 1.8 ConfirmRegisterUser/ _ConfirmRegisterUser
+
+#### Description
+
+`confirm register user`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ConfirmRegisterUser: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public init(id: String, txId: String, serverToken: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+    }
+}
+
+public struct _ConfirmRegisterUser: Jsonable {
+    public var txId: String
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+<br>
+
+
+### 2. M210 (issue vc)
+#### 2.1 ProposeIssueVc/ _ProposeIssueVc
+
+#### Description
+
+`propose issue vc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProposeIssueVc: Jsonable {
+    public var id: String
+    public var vcPlanId: String
+    public var issuer: String
+    public var offerId: String?
+    public init(id: String, vcPlanId: String, issuer: String, offerId: String? = nil) {
+        self.id = id
+        self.vcPlanId = vcPlanId
+        self.issuer = issuer
+        self.offerId = offerId
+    }
+}
+
+public struct _ProposeIssueVc: Jsonable {
+    public var txId: String
+    public var refId: String
+    public init(txId: String, refId: String) {
+        self.txId = txId
+        self.refId = refId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| vcPlanId     | String           | vc plan ID                     |    M    |          |
+| issuer       | String           | issuer                         |    M    |          |
+| offerId      | String           | offer ID                       |    O    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| refId        | String           | reference ID                   |    M    |          |
+<br>
+
+
+#### 2.2 RequestEcdh/ _RequestEcdh
+[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
+<br>
+
+#### 2.3 AttestedAppInfo
+[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
+<br>
+
+#### 2.4 WalletTokenData
+[1.4 WalletTokenData 참조](#14-WalletTokenData)
+<br>
+
+#### 2.5 RequestCreateToken/ _RequestCreateToken
+[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
+<br>
+
+
+#### 2.6 RequestIssueProfile/ _RequestIssueProfile
+
+#### Description
+
+`request issue profile`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestIssueProfile: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public init(id: String, txId: String, serverToken: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+    }
+}
+
+public struct _RequestIssueProfile: Jsonable {
+    public var txId: String
+    public var authNonce: String
+    public var profile: IssueProfile
+    public init(txId: String, authNonce: String, profile: IssueProfile) {
+        self.txId = txId
+        self.authNonce = authNonce
+        self.profile = profile
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+| authNonce    | String           | auth nonce                     |    M    |          |
+| profile      | IssuerProfile    | issuer profile                 |    M    |          |
+<br>
+
+#### 2.7 RequestIssueVc/ _RequestIssueVc
+
+#### Description
+
+`request issue vc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestIssueVc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var didAuth: DIDAuth
+    public var accE2e: AccE2e
+    public var encReqVc: String
+    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.didAuth = didAuth
+        self.accE2e = accE2e
+        self.encReqVc = encReqVc
+    }
+}
+
+public struct _RequestIssueVc: Jsonable {
+    public var txId: String
+    public var e2e: E2E
+    public init(txId: String, e2e: E2E) {
+        self.txId = txId
+        self.e2e = e2e
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+| didAuth      | DIDAuth          | DID auth                       |    M    |          |
+| accE2e       | AccE2e           | access E2e                     |    M    |          |
+| encReqVc     | String           | encrypt Request vc             |    M    |          |
+| e2e          | E2E              | e2e                            |    M    |          |
+<br>
+
+#### 2.8 ConfirmIssueVc/ _ConfirmIssueVc
+
+#### Description
+
+`confirm issue vc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ConfirmIssueVc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var vcId: String
+    public init(id: String, txId: String, serverToken: String, vcId: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.vcId = vcId
+    }
+}
+
+public struct _ConfirmIssueVc: Jsonable {
+    public var txId: String
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+| vcId         | String           | vc ID                          |    M    |          |
+<br>
+
+### 3. M310 (submit vp)
+#### 3.1 RequestProfile/ _RequestProfile
+
+#### Description
+
+`request verifiy profile`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestProfile: Jsonable {
+    public var id: String
+    public var txId: String?
+    public var offerId: String
+    public init(id: String, txId: String? = nil, offerId: String) {
+        self.id = id
+        self.txId = txId
+        self.offerId = offerId
+    }
+}
+
+public struct _RequestProfile: Jsonable {
+    public var txId: String
+    public var profile: VerifyProfile
+    public init(txId: String, profile: VerifyProfile) {
+        self.txId = txId
+        self.profile = profile
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    O    |          |
+| offerId      | String           | offer ID                       |    M    |          |
+| profile      | VerifyProfile    | vc ID                          |    M    |          |
+<br>
+
+#### 3.2 WalletTokenData
+
+<br>
+
+#### 3.3 RequestVerify/ _RequestVerify
+#### Description
+
+`request verifiy profile`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestVerify: Jsonable {
+    public var id: String
+    public var txId: String
+    public var accE2e: AccE2e
+    public var encVp: String
+    
+    public init(id: String, txId: String, accE2e: AccE2e, encVp: String) {
+        self.id = id
+        self.txId = txId
+        self.accE2e = accE2e
+        self.encVp = encVp
+    }
+}
+
+public struct _RequestVerify: Jsonable {
+    public var txId: String
+    
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| accE2e       | AccE2e           | access E2e                     |    M    |          |
+| encVp        | String           | encrypt vp                     |    M    |          |
+
+<br>
+
+
+### 4. M220 (revoke vc)
+#### 4.1 ProposeRevokeVc/ _ProposeRevokeVc
+
+#### Description
+`propose revoke vc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProposeRevokeVc: Jsonable {
+    public var id: String
+    public var vcId: String
+    
+    public init(id: String, vcId: String) {
+        self.id = id
+        self.vcId = vcId
+    }
+}
+
+public struct _ProposeRevokeVc: Jsonable {
+    public var txId: String
+    public var issuerNonce: String
+    public var authType: VerifyAuthType
+    
+    public init(txId: String, issuerNonce: String, authType: VerifyAuthType) {
+        self.txId = txId
+        self.issuerNonce = issuerNonce
+        self.authType = authType
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| vcId         | String           | vc ID                          |    M    |          |
+| issuerNonce  | String           |                                |    M    |          |
+| authType     | VerifyAuthType   |                                |    M    |          |
+<br>
+
+
+#### 4.2 RequestEcdh/ _RequestEcdh
+[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
+<br>
+
+#### 4.3 AttestedAppInfo
+[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
+<br>
+
+#### 4.4 WalletTokenData
+[1.4 WalletTokenData 참조](#14-WalletTokenData)
+<br>
+
+#### 4.5 RequestCreateToken/ _RequestCreateToken
+[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
+<br>
+
+
+#### 4.6 RequestRevokeVc/ _RequestRevokeVc
+
+#### Description
+
+`request revoke vc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestRevokeVc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var request: ReqRevokeVc
+    
+    public init(id: String, txId: String, serverToken: String, request: ReqRevokeVc) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.request = request
+    }
+}
+
+public struct _RequestRevokeVc: Jsonable {
+    public var txId: String
+    
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+| request      | ReqRevokeVc      |                                |    M    |          |
+<br>
+
+
+
+#### 4.7 ConfirmRevokeVc/ _ConfirmRevokeVc
+
+#### Description
+
+`confirm revoke vc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ConfirmRevokeVc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+
+    public init(id: String, txId: String, serverToken: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+    }
+}
+
+public struct _ConfirmRevokeVc: Jsonable {
+    public var txId: String
+    
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+<br>
+
+### 5. M142 (restore DID)
+#### 5.1 ProposeRestoreDidDoc/ _ProposeRestoreDidDoc
+
+#### Description
+
+`propose restore diddoc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProposeRestoreDidDoc: Jsonable {
+    public var id: String
+    public var offerId: String
+    public var did: String
+    
+    public init(id: String, offerId: String, did: String) {
+        self.id = id
+        self.offerId = offerId
+        self.did = did
+    }
+}
+
+public struct _ProposeRestoreDidDoc: Jsonable {
+    public var txId: String
+    public var authNonce: String
+    
+    public init(txId: String, authNonce: String) {
+        self.txId = txId
+        self.authNonce = authNonce
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| offerId      | String           | offer ID                       |    M    |          |
+| did          | String           | did                            |    M    |          |
+<br>
+
+#### 5.2 RequestEcdh/ _RequestEcdh
+[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
+<br>
+
+#### 5.3 AttestedAppInfo
+[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
+<br>
+
+#### 5.4 WalletTokenData
+[1.4 WalletTokenData 참조](#14-WalletTokenData)
+<br>
+
+#### 5.5 RequestCreateToken/ _RequestCreateToken
+[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
+<br>
+
+
+#### 5.6 RequestRestoreDIDDoc/ _RequestRestoreDIDDoc
+
+#### Description
+
+`request restore diddoc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestRestoreDidDoc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var didAuth: DIDAuth
+    
+    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.didAuth = didAuth
+    }
+}
+
+public struct _RequestRestoreDidDoc: Jsonable {
+    public var txId: String
+    
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transcation ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+| didAuth      | DIDAuth          | did auth                       |    M    |          |
+<br>
+
+#### 5.7 ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc
+
+#### Description
+
+`confirm restore diddoc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ConfirmRestoreDidDoc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    
+    public init(id: String, txId: String, serverToken: String) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+    }
+}
+
+public struct _ConfirmRestoreDidDoc: Jsonable {
+    public var txId: String
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transcation ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+<br>
+
+## 2. Token
+## 2.1. ServerTokenSeed
+
+### Description
+
+`Server token seed`
+
+### Declaration
+
+```swift
+public struct ServerTokenSeed: Jsonable {
+    public var purpose: WalletTokenPurposeEnum
+    public var walletInfo: SignedWalletInfo
+    public var caAppInfo: AttestedAppInfo
+}
+```
+
+### Property
+
+| Name        | Type                       | Description                | **M/O** | **Note** |
+|-------------|---------------------------------------------------------|-------------------------------|---------|----------|
+| purpose     | WalletTokenPurposeEnum     | server token purpose       |    M    | [WalletTokenPurposeEnum](#24-servertokenpurpose) |
+| walletInfo  | SignedWalletInfo           | Signed wallet information  |    M    | [SignedWalletInfo](#27-signedwalletinfo) |
+| caAppInfo   | AttestedAppInfo            | Attested app information   |    M    | [AttestedAppInfo](#6-attestedappinfo) |
+
+<br>
+
+## 2.1.1. AttestedAppInfo
+
+### Description
+
+`Attested app information`
+
+
+### Declaration
+
+```swift
+public struct AttestedAppInfo: Jsonable, ProofContainer {
+    public var appId: String
+    public var provider: Provider
+    public var nonce: String
+    public var proof: Proof?
+}
+```
+
+### Property
+
+| Name     | Type     | Description                   | **M/O** | **Note**                  |
+|----------|----------|-------------------------------|---------|---------------------------|
+| appId    | String   | Certificated app id           |    M    |                            |
+| provider | Provider | Provider information          |    M    | [Provider](#provider)      |
+| nonce    | String   | Nonce for attestation         |    M    |                            |
+| proof    | Proof    | Assertion proof               |    O    | [Proof](#4-proof)         
+
+<br>
+
+## 2.1.1.1. Provider
+
+### Description
+
+`Provider information`
+
+### Declaration
+
+```swift
+public struct Provider: Jsonable {
+    public var did: String
+    public var certVcRef: String
+}
+```
+
+### Property
+
+| Name       | Type   | Description             | **M/O** | **Note** |
+|------------|--------|-------------------------|---------|----------|
+| did        | String | Provider DID            |    M    |          |
+| certVcRef  | String | Certificate VC URL      |    M    |          |
+
+<br>
+
+## 2.1.2. SignedWalletInfo
+
+### Description
+
+`Signed wallet information`
+
+### Declaration
+
+```swift
+public struct SignedWalletInfo: Jsonable, ProofContainer {
+    public var wallet: Wallet
+    public var nonce: String
+    public var proof: Proof?
+}
+```
+
+### Property
+
+| Name       | Type           | Description                | **M/O** | **Note** |
+|------------|----------------|----------------------------|---------|----------|
+| wallet     | Wallet          | Wallet information        |    M    | [Wallet](#28-wallet) |
+| nonce      | String          | Nonce                     |    M    |          |
+| proof      | Proof           | Proof                     |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 2.1.2.1. Wallet
+
+### Description
+
+`Wallet details`
+
+### Declaration
+
+```swift
+public struct Wallet: Jsonable {
+    private var id: String
+    private var did: String
+}
+```
+### Property
+
+| Name       | Type           | Description              | **M/O** | **Note** |
+|------------|----------------|--------------------------|---------|----------|
+| id         | String          | Wallet ID               |    M    |          |
+| did        | String          | Wallet provider DID     |    M    |          |
+
+<br>
+
+## 2.2. ServerTokenData
+
+### Description
+
+`server token data`
+
+### Declaration
+
+```swift
+public struct ServerTokenData: Jsonable, ProofContainer {
+    public var purpose: ServerTokenPurposeEnum
+    public var walletId: String
+    public var appId: String
+    public var validUntil: String
+    public var provider: Provider
+    public var nonce: String
+    public var Proof?
+}
+```
+
+### Property
+
+| Name       | Type                                | Description                          | **M/O** | **Note** |
+|------------|-------------------------------------|--------------------------------------|---------|----------|
+| purpose    | ServerTokenPurposeEnum              | Server token purpose                 |    M    | [ServerTokenPurpose](#24-servertokenpurpose) |
+| walletId   | String                              | Wallet ID                            |    M    |          |
+| appId      | String                              | Certificate app ID                   |    M    |          |
+| validUntil | String                              | Expiration date of the server token  |    M    |          |
+| provider   | Provider                            | Provider information                 |    M    | [Provider](#18-provider) |
+| nonce      | String                              | Nonce                                |    M    |          |
+| proof      | Proof                               | Proof                                |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 2.3. WalletTokenSeed
+
+### Description
+`Seed object for wallet token seed`
+
+### Declaration
+```swift
+public struct WalletTokenSeed: Jsonable {
+    public var purpose: WalletTokenPurposeEnum
+    public var pkgName: String
+    public var nonce: String
+    public var validUntil: String
+    public var userId: String?
+}
+```
+
+### Property
+| Name       | Type                            | Description                       | **M/O** | **Note** |
+|------------|---------------------------------|-----------------------------------|---------|----------|
+| purpose    | ServerTokenPurposeEnum          | Wallet token purpose              |    M    | [WalletTokenPurpose](#33-wallettokenpurpose) |
+| pkgName    | String                          | CA package name                   |    M    |          |
+| nonce      | String                          | Nonce                             |    M    |          |
+| validUntil | String                          | Expiration date of the token      |    M    |          |
+| userId     | String                          | User ID                           |    O    |          |
+<br>
+
+
+## 2.4. WalletTokenData
+
+### Description
+
+`Data associated with a wallet token`
+
+### Declaration
+
+```swift
+public struct WalletTokenData: Jsonable, ProofContainer {
+    public var seed: WalletTokenSeed
+    public var sha256_pii: String
+    public var provider: Provider
+    public var nonce: String
+    public var proof: Proof?
+}
+```
+
+### Property
+
+| Name       | Type              | Description                   | **M/O** | **Note** |
+|------------|-------------------|-------------------------------|---------|----------|
+| seed       | WalletTokenSeed   | Wallet token seed             |    M    | [WalletTokenSeed](#33-wallettokenseed) |
+| sha256_pii | String            | SHA-256 hash of PII           |    M    |          |
+| provider   | Provider          | Provider information          |    M    | [Provider](#18-provider) |
+| nonce      | String            | Nonce                         |    M    |          |
+| proof      | Proof             | Proof                         |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 3. SecurityChannel
+
+## 3.1. ReqEcdh
+
+### Description
+
+`ECDH request data`
+
+### Declaration
+
+```swift
+public struct ReqEcdh: Jsonable, ProofContainer {
+    var client: String
+    var clientNonce: String
+    var publicKey: String
+    var curve: EllipticCurveType
+    var candidate: [SymmetricCipherType]?
+    public var proof: Proof?
+}
+```
+
+### Property
+| Name        | Type                             | Description                    | **M/O** | **Note** |
+|-------------|----------------------------------|--------------------------------|---------|----------|
+| client      | String                           | Client DID                     |    M    |          |
+| clientNonce | String                           | Client Nonce                   |    M    |          |
+| curve       | EllipticCurveType.ELLIPTIC_CURVE_TYPE | Curve type for ECDH       |    M    |          |
+| publicKey   | String                           | Public key for ECDH            |    M    |          |
+| candidate   | ReqEcdh.Ciphers                  | Candidate ciphers              |    O    |          |
+| proof       | Proof                            | Proof                          |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 3.2. AccEcdh
+
+### Description
+`ECDH acceptance data`
+
+### Declaration
+```swift
+public struct AccEcdh: Jsonable, ProofContainer {
+    public var server: String
+    public var serverNonce: String
+    public var publicKey: String
+    public var cipher: String
+    public var padding: String
+    public var proof: Proof?
+}
+```
+
+### Property
+| Name        | Type                           | Description                        | **M/O** | **Note** |
+|-------------|--------------------------------|------------------------------------|---------|----------|
+| server      | String                         | Server ID                          |    M    |          |
+| serverNonce | String                         | Server Nonce                       |    M    |          |
+| publicKey   | String                         | Public Key for key agreement       |    M    |          |
+| cipher      | String                         | Cipher type for encryption         |    M    |          |
+| padding     | String                         | Padding type for encryption        |    M    |          |
+| proof       | Proof                          | Key agreement proof                |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 3.3. AccE2e
+
+### Description
+`E2E acceptance data`
+
+### Declaration
+```swift
+public struct AccE2e: Jsonable, ProofContainer {
+    public var publicKey: String
+    public var iv: String
+    public var proof: Proof?
+```
+
+### Property
+| Name       | Type               | Description                 | **M/O** | **Note**           |
+|------------|--------------------|-----------------------------|---------|--------------------|
+| publicKey  | String              | Public Key for encryption  |    M    |                    |
+| iv         | String              | Initialize Vector          |    M    |                    |
+| proof      | Proof               | Key agreement proof        |    O    | [Proof](#4-proof)  |
+
+<br>
+
+## 3.4. E2e
+
+### Description
+
+`E2E encryption information`
+
+### Declaration
+
+```swift
+public struct E2E: Jsonable {
+    public var iv: String
+    public var encVc: String
+}
+```
+
+### Property
+
+| Name  | Type   | Description                      | **M/O** | **Note** |
+|-------|--------|----------------------------------|---------|----------|
+| iv    | String | Initialize vector                |    M    |          |
+| encVc | String | Encrypted Verifiable Credential  |    M    |          |
+
+<br>
+
+## 3.5. DIDAuth
+
+### Description
+`DID Authentication data `
+
+### Declaration
+```swift
+public struct DIDAuth: Jsonable, ProofContainer {
+    public var did: String
+    public var authNonce: String
+    public var proof: Proof?
+}
+```
+
+### Property
+| Name       | Type       | Description                   | **M/O** | **Note**                  |
+|------------|------------|-------------------------------|---------|---------------------------|
+| did        | String     | DID                           |    M    |                            |
+| authNonce  | String     | Auth nonce                    |    M    |                            |
+| proof      | Proof      | Authentication proof          |    O    | [Proof](#4-proof)          |
+
+<br>
+
+## 4. DidDoc
+## 4.1. DIDDocVO
+
+### Description
+`Encoded DID document`
+
+### Declaration
+```swift
+public struct DIDDocVO: Jsonable {
+    public var didDoc: String
+}
+```
+
+### Property
+| Name   | Type   | Description            | **M/O** | **Note** |
+|--------|--------|------------------------|---------|----------|
+| didDoc | String | Encoded DID document   |    M    |          |
+
+<br>
+
+## 4.2. AttestedDIDDoc
+
+### Description
+`Attested DID information`
+
+### Declaration
+```swift
+public struct AttestedDIDDoc: Jsonable, ProofContainer {
+    public var walletId: String
+    public var ownerDidDoc: String
+    public var provider: Provider
+    public var nonce: String
+    public var proof: Proof?
+}
+```
+
+### Property
+| Name       | Type     | Description              | **M/O** | **Note**                  |
+|------------|----------|--------------------------|---------|---------------------------|
+| walletId   | String   | Wallet ID                |    M    |                            |
+| ownerDidDoc| String   | Owner's DID document     |    M    |                            |
+| provider   | Provider | Provider information     |    M    | [Provider](#provider)      |
+| nonce      | String   | Nonce                    |    M    |                            |
+| proof      | Proof    | Attestation proof        |    O    | [Proof](#4-proof)          |
+
+<br>
+
+## 4.3. SignedDidDoc
+
+### Description
+`Signed DID Document`
+
+### Declaration
+```swift
+public struct SignedDIDDoc: Jsonable, ProofContainer {
+    public var ownerDIDDoc: String
+    public var wallet: Wallet
+    public var nonce: String
+    public var proof: Proof?
+}
+```
+
+### Property
+| Name       | Type           | Description                | **M/O** | **Note** |
+|------------|----------------|----------------------------|---------|----------|
+| ownerDidDoc| String          | Owner's DID document      |    M    |          |
+| wallet     | Wallet          | Wallet information        |    M    | [Wallet](#28-wallet) |
+| nonce      | String          | Nonce                     |    M    |          |
+| proof      | Proof           | Proof                     |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 5. Offer
+## 5.1. IssueOfferPayload
+
+### Description
+`Payload for issuing an offer`
+
+### Declaration
+```swift
+public struct IssueOfferPayload: Jsonable {
+    public var offerId: String?
+    public var type: OfferTypeEnum
+    public var vcPlanId: String
+    public var issuer: String
+    public var validUntil: String?
+```
+
+### Property
+| Name      | Type          | Description                            | **M/O** | **Note** |
+|-----------|---------------|----------------------------------------|---------|----------|
+| offerId   | String        | Offer ID                               |    O    |          |
+| type      | OfferTypeEnum | OfferType (issuerOffer or VerifyOffer) |    M    |          |
+| vcPlanId  | String        | Verifiable Credential Plan ID          |    M    |          |
+| issuer    | String        | Issuer DID                             |    M    |          |
+| validUntil| String        | Expiration date                        |    O    |          |
+
+<br>
+
+## 5.2. VerifyOfferPayload
+
+### Description
+`Payload for verifying an offer`
+
+### Declaration
+```swift
+public struct VerifyOfferPayload: Jsonable {
+    public var offerId: String
+    public var type: OfferTypeEnum
+    public var mode: PresentModeEnum
+    public var device: String
+    public var service: String
+    public var endpoints: [String]
+    public var validUntil: String
+    public var locked: Bool = false
+}
+```
+
+### Property
+| Name       | Type                | Description                       | **M/O** | **Note** |
+|------------|---------------------|-----------------------------------|---------|----------|
+| offerId    | String              | Offer ID                          |    M    |          |
+| type       | OfferTypeEnum       | Offer type                        |    M    |          |
+| mode       | PresentModeEnum     | Presentation mode                 |    M    |          |
+| device     | String              | 응대장치 식별자                       |    O    |          |
+| service    | String              | 서비스 식별자                        |    O    |          |
+| endpoints  | String[]            | profile 요청 API endpoint 목록      |    O    |          |
+| validUntil | String              | end date of the offer             |    M    |          |
+| locked     | Bool                | offer 잠김 여부                     |    O    |          |
+
+<br>
+
+## 6. VC
+## 6.1. ReqVC
+
+### Description
+`Request object for Verifiable Credential (VC)`
+
+### Declaration
+```swift
+public struct ReqVC: Jsonable {
+    public var refId: String
+    public var profile: ReqVcProfile
+}
+```
+
+### Property
+| Name         | Type            | Description                | **M/O** | **Note** |
+|--------------|-----------------|----------------------------|---------|----------|
+| refId        | String          | Reference ID               |    M    |          |
+| profile      | ReqVcProfile    | Request issue profile      |    M    |          |
+
+<br>
+
+## 6.1.1. ReqVcProfile
+
+### Description
+`Request issue profile`
+
+### Declaration
+```swift
+public struct ReqVcProfile: Jsonable {
+    public var id: String
+    public var issuerNonce: String
+}
+```
+
+### Property
+| Name         | Type            | Description               | **M/O** | **Note** |
+|--------------|-----------------|---------------------------|---------|----------|
+| id           | String          | Issuer DID                |    M    |          |
+| issuerNonce | String           | Issuer nonce              |    M    |          |
+<br>
+
+
+## 6.2. VCPlanList
+
+### Description
+
+`List of Verifiable Credential(VC) plan`
+
+### Declaration
+
+```swift
+public struct VCPlanList: Jsonable {
+    public var count: Int
+    public var items: [VcPlan]
+}
+```
+
+### Property
+
+| Name   | Type             | Description                      | **M/O** | **Note** |
+|--------|------------------|----------------------------------|---------|----------|
+| count  | int              | Number of VC plan list           |    M    |          |
+| items  | array[VCPlan]    | List of VC plan                  |    M    | [VCPlan](#28-vcplan) |
+
+<br>
+
+## 6.2.1. VCPlan
+
+### Description
+`Details of a Verifiable Credential (VC) plan`
+
+### Declaration
+```swift
+public struct VCPlan: Jsonable {
+    public var vcPlanId: String
+    public var name: String
+    public var description: String
+    public var url: String?
+    public var logo: LogoImage?
+    public var validFrom: String?
+    public var validUntil: String?
+    public var tags: [String]?
+    public var credentialSchema: IssueProfile.Profile.CredentialSchema
+    public var option: Option
+    public var delegate: String?
+    public var allowedIssuers: [String]?
+    public var manager: String
+}
+```
+
+### Property
+| Name           | Type               | Description                          | **M/O** | **Note** |
+|----------------|--------------------|--------------------------------------|---------|----------|
+| vcPlanId       | String             | VC plan ID                           |    M    |          |
+| name           | String             | VC plan name                         |    M    |          |
+| description    | String             | VC plan description                  |    M    |          |
+| url            | String             | issuer url                           |    O    |          |
+| logo           | LogoImage          | Logo image                           |    O    | [LogoImage](#29-logoimage) |
+| validFrom      | String             | Validity start date                  |    O    |          |
+| validUntil     | String             | Validity end date                    |    O    |          |
+| tags           | array[String]     | tags                                  |    O    |          |
+| credentialSchema| CredentialSchema  | Credential schema                    |    M    |          |
+| option         | VCPlan.Option      | Plan options                         |    M    |          |
+| delegate       | String             | delegate                             |    O    |          |
+| allowedIssuers | array[String]      | VC plan 사용이 허용된 발급 사업자 DID 목록  |    O    |          |
+| manager        | String             | VC plan 관리 권한을 가진 엔티티            |    M    |          |
+
+<br>
+
+## 6.2.1.1. Option
+
+### Description
+`(VC) plan Option`
+
+### Declaration
+```swift
+public struct Option: Jsonable {
+    public var allowUserInit: Bool
+    public var allowIssuerInit: Bool
+    public var delegatedIssuance: Bool
+}
+```
+
+### Property
+| Name              | Type        | Description                         | **M/O** | **Note** |
+|-------------------|-------------|-------------------------------------|---------|----------|
+| allowUserInit     | Bool        | 사용자에 의한 발급 개시 허용 여부           |    M    |          |
+| allowIssuerInit   | Bool        | 이슈어에 의한 발급 개시 허용 여부           |    M    |          |
+| delegatedIssuance | Bool        | 대표 발급자에 의한 위임발급 여부            |    M    |          |
+
+<br>
+
+
+
 
 # OptionSet
 ## 1. VerifyAuthType
@@ -1517,6 +3030,85 @@ public enum EllipticCurveType: String, Codable, ConvertibleToAlgorithmType
 
 <br>
 
+## 19. RoleTypeEnum
+
+### Description
+
+`Enumeration for various role types`
+
+### Declaration
+
+```swift
+public enum RoleTypeEnum: String, Jsonable {
+    case Tas = "Tas"
+    case Wallet = "Wallet"
+    case Issuer = "Issuer"
+    case Verifier = "Verifier"
+    case WalletProvider = "WalletProvider"
+    case CAS_SERVICE = "AppProvider"
+    case ListProvider = "ListProvider"
+    case OpProvider = "OpProvider"
+    case KycProvider = "KycProvider"
+    case NotificationProvider = "NotificationProvider"
+    case LogProvider = "LogProvider"
+    case PortalProvider = "PortalProvider"
+    case DelegationProvider = "DelegationProvider"
+    case StorageProvider = "StorageProvider"
+    case BackupProvider = "BackupProvider"
+    case Etc = "Etc"
+}
+```
+<br>
+
+## 20. ServerTokenPurposeEnum
+
+### Description
+`Enumeration for various server token purposes`
+
+### Declaration
+```swift
+public enum ServerTokenPurposeEnum: Int, Jsonable {
+    case CREATE_DID = 5
+    case UPDATE_DID = 6
+    case RESTORE_DID = 7
+    case ISSUE_VC = 8
+    case REMOVE_VC = 9
+    case PRESENT_VP = 10
+    case LIST_VC
+    case DETAIL_VC
+    case CREATE_DID_AND_ISSUE_VC
+}
+```
+
+<br>
+
+## 21. WalletTokenPurposeEnum
+
+### Description
+`Enumeration for various wallet token purposes`
+
+### Declaration
+```swift
+public enum WalletTokenPurposeEnum: Int, Jsonable {
+    case PERSONALIZED               = 1
+    case DEPERSONALIZED             = 2
+    case PERSONALIZE_AND_CONFIGLOCK = 3
+    case CONFIGLOCK                 = 4
+    case CREATE_DID                 = 5
+    case UPDATE_DID                 = 6
+    case RESTORE_DID                = 7
+    case ISSUE_VC                   = 8
+    case REMOVE_VC                  = 9
+    case PRESENT_VP                 = 10
+    case LIST_VC                    = 11
+    case DETAIL_VC                  = 12
+    case CREATE_DID_AND_ISSUE_VC    = 13
+    case LIST_VC_AND_PRESENT_VP     = 14
+}
+```
+<br>
+
+
 # Protocols
 
 ## 1. Jsonable
@@ -1690,3 +3282,11 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 // Declaration in Swift
 @DIDVersionId
 ```
+
+
+<br>
+
+
+    
+
+

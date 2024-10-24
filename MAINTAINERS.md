@@ -27,6 +27,7 @@ For ordinary questions, we suggest you contact [active contributors](../../graph
 |---------------------------|-------------------------|--------------------------------------------|
 | JooHyun Park              | JoshuaLeeshock          | jhpark0512@raoncorp.com                    |
 | Woosang Kim               | woosang-raon            | wskim@raoncorp.com                         |
+| Dongjun Park              | djpark0402              | djpark0402@raoncorp.com                    |
 
 
 ## Emeritus Maintainers

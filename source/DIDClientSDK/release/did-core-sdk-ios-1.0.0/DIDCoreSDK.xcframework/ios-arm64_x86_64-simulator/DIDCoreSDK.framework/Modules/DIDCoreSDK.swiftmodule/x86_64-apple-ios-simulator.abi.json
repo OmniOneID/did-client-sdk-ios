@@ -5906,483 +5906,483 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/StorageManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/StorageManager.swift",
       "kind": "IntegerLiteral",
       "offset": 1434,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/KeyManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/KeyManager.swift",
       "kind": "StringLiteral",
       "offset": 277,
       "length": 12,
       "value": "\"KeyManager\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/KeyManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/KeyManager.swift",
       "kind": "IntegerLiteral",
       "offset": 320,
       "length": 4,
       "value": "2048"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/KeyManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/KeyManager.swift",
       "kind": "IntegerLiteral",
       "offset": 359,
       "length": 2,
       "value": "48"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/SecureEncryptor.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/SecureEncryptor.swift",
       "kind": "StringLiteral",
       "offset": 184,
       "length": 17,
       "value": "\"SecureEncryptor\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/SecureEncryptor.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PublicComponent\/SecureEncryptor.swift",
       "kind": "StringLiteral",
       "offset": 239,
       "length": 12,
       "value": "\"encryptKey\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
       "kind": "IntegerLiteral",
       "offset": 310,
       "length": 2,
       "value": "32"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
       "kind": "IntegerLiteral",
       "offset": 353,
       "length": 2,
       "value": "33"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
       "kind": "IntegerLiteral",
       "offset": 383,
       "length": 2,
       "value": "32"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
       "kind": "IntegerLiteral",
       "offset": 416,
       "length": 2,
       "value": "65"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/Secp256R1Manager.swift",
       "kind": "IntegerLiteral",
       "offset": 4322,
       "length": 2,
       "value": "32"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 317,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 341,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 365,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 317,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 341,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 365,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 317,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 341,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 365,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 464,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 492,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 464,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 492,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 464,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 492,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 611,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 635,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 672,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 709,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 746,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 611,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 635,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 672,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 709,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 746,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 611,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 635,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 672,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 709,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Enumerator\/Enumerator.swift",
       "kind": "IntegerLiteral",
       "offset": 746,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 188,
       "length": 4,
       "value": "\"00\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 224,
       "length": 4,
       "value": "\"01\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 260,
       "length": 4,
       "value": "\"02\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 296,
       "length": 4,
       "value": "\"03\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 333,
       "length": 4,
       "value": "\"10\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 369,
       "length": 4,
       "value": "\"11\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 405,
       "length": 4,
       "value": "\"12\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 188,
       "length": 4,
       "value": "\"00\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 224,
       "length": 4,
       "value": "\"01\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 260,
       "length": 4,
       "value": "\"02\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 296,
       "length": 4,
       "value": "\"03\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 333,
       "length": 4,
       "value": "\"10\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 369,
       "length": 4,
       "value": "\"11\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/Error\/CommonError.swift",
       "kind": "StringLiteral",
       "offset": 405,
       "length": 4,
       "value": "\"12\""
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1430,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1435,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1508,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1513,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1586,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1591,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1664,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1669,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1742,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/DataModel\/DIDManagerDataModel.swift",
       "kind": "IntegerLiteral",
       "offset": 1747,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
       "kind": "IntegerLiteral",
       "offset": 317,
       "length": 2,
       "value": "33"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
       "kind": "IntegerLiteral",
       "offset": 354,
       "length": 2,
       "value": "32"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
       "kind": "IntegerLiteral",
       "offset": 394,
       "length": 2,
       "value": "65"
     },
     {
-      "filePath": "\/Users\/joshualeeshock\/Documents\/GitLab\/OPENDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
+      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-core-sdk-ios\/DIDCoreSDK\/PrivateComponent\/SecureEnclaveManager.swift",
       "kind": "BooleanLiteral",
       "offset": 10883,
       "length": 5,
