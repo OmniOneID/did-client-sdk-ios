@@ -23,6 +23,7 @@ jobs:
       run: |
         cd source/DIDClientSDK
         xcodebuild test -scheme DIDUtilitySDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+    
     - name: DataModel Build
       run: |
         cd source/DIDClientSDK
@@ -31,6 +32,7 @@ jobs:
       run: |
         cd source/DIDClientSDK
         xcodebuild test -scheme DIDDataModelSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+    
     - name: Core Build
       run: |
         cd source/DIDClientSDK
@@ -39,3 +41,21 @@ jobs:
       run: |
         cd source/DIDClientSDK
         xcodebuild test -scheme DIDCoreSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+        
+    - name: Communication Build
+      run: |
+        cd source/DIDClientSDK
+        xcodebuild build -scheme DIDCommunicationSDK -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+    - name: Communication Test
+      run: |
+        cd source/DIDClientSDK
+        xcodebuild test -scheme DIDCommunicationSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+
+    - name: Wallet Build
+      run: |
+        cd source/DIDClientSDK
+        xcodebuild build -scheme DIDWalletSDK -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+    - name: Wallet Test
+      run: |
+        cd source/DIDClientSDK
+        xcodebuild test -scheme DIDWalletSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
