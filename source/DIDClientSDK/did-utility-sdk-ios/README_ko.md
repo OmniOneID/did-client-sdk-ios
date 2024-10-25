@@ -32,10 +32,10 @@ $ ./build_xcframework.sh
 ## API 규격서
 | 구분 | API 문서 Link |
 |------|----------------------------|
-| CryptoUtils   | [Utility SDK API](docs/api/did-utility-sdk-ios/Utility_ko.md) |
+| CryptoUtils   | [Utility SDK API](../../../docs/api/did-utility-sdk-ios/Utility_ko.md) |
 | MultibaseUtils| 〃 |
 | DigestUtils   | 〃 |
-| ErrorCode      | [Error Code](docs/api/did-utility-sdk-ios/UtilityError.md)   |
+| ErrorCode      | [Error Code](../../../docs/api/did-utility-sdk-ios/UtilityError.md)   |
 
 ### CryptoUtils
 CryptoUtils는 데이터의 AES 암호화 및 복호화, PBKDF, ECDH를 위한 Shared Secret 생성 기능을 제공한다. <br> 주요 기능은 다음과 같다.
