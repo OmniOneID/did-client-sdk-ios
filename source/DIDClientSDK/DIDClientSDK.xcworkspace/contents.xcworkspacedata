@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:did-wallet-sdk-ios/DIDWalletSDK.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:did-communication-sdk-ios/DIDCommunicationSDK.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:did-core-sdk-ios/DIDCoreSDK.xcodeproj">
    </FileRef>
    <FileRef

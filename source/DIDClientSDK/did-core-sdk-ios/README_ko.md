@@ -38,11 +38,11 @@ $ ./build_xcframework.sh
 ## API 규격서
 | 구분             | API 문서 Link                                                                              |
 |-----------------|-------------------------------------------------------------------------------------------|
-| KeyManager      | [Wallet Core SDK - KeyManager API](docs/api/did-core-sdk-ios/KeyManager_ko.md)            |
-| DIDManager      | [Wallet Core SDK - DIDManager API](docs/api/did-core-sdk-ios/DIDManager_ko.md)            |
-| VCManager       | [Wallet Core SDK - VCManager API](docs/api/did-core-sdk-ios/VCManager_ko.md)              |
-| SecureEncryptor | [Wallet Core SDK - SecureEncryptor API](docs/api/did-core-sdk-ios/SecureEncryptor_ko.md)  |
-| ErrorCode       | [Error Code](docs/api/did-core-sdk-ios/WalletCoreError.md)                                |
+| KeyManager      | [Wallet Core SDK - KeyManager API](../../../docs/api/did-core-sdk-ios/KeyManager_ko.md)            |
+| DIDManager      | [Wallet Core SDK - DIDManager API](../../../docs/api/did-core-sdk-ios/DIDManager_ko.md)            |
+| VCManager       | [Wallet Core SDK - VCManager API](../../../docs/api/did-core-sdk-ios/VCManager_ko.md)              |
+| SecureEncryptor | [Wallet Core SDK - SecureEncryptor API](../../../docs/api/did-core-sdk-ios/SecureEncryptor_ko.md)  |
+| ErrorCode       | [Error Code](../../../docs/api/did-core-sdk-ios/WalletCoreError.md)                                |
 
 ### KeyManager
 KeyManager는 서명용 키쌍을 생성하고 관리하며, 이를 안전하게 저장하는 기능을 제공한다.<br>주요 기능은 다음과 같다.

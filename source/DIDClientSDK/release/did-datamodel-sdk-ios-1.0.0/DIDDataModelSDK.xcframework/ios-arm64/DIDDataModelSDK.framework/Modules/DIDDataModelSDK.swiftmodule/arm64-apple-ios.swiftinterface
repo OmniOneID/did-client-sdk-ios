@@ -7,6 +7,70 @@ import Swift
 import _Concurrency
 import _StringProcessing
 import _SwiftConcurrencyShims
+public enum WalletTokenPurposeEnum : Swift.Int, DIDDataModelSDK.Jsonable {
+  case PERSONALIZED
+  case DEPERSONALIZED
+  case PERSONALIZE_AND_CONFIGLOCK
+  case CONFIGLOCK
+  case CREATE_DID
+  case UPDATE_DID
+  case RESTORE_DID
+  case ISSUE_VC
+  case REMOVE_VC
+  case PRESENT_VP
+  case LIST_VC
+  case DETAIL_VC
+  case CREATE_DID_AND_ISSUE_VC
+  case LIST_VC_AND_PRESENT_VP
+  public var value: Swift.String {
+    get
+  }
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public class WalletTokenPurpose {
+  public var purposeCode: DIDDataModelSDK.WalletTokenPurposeEnum
+  public var description: Swift.String?
+  public init(purpose: DIDDataModelSDK.WalletTokenPurposeEnum)
+  public init(purpose: DIDDataModelSDK.WalletTokenPurposeEnum, description: Swift.String? = nil)
+  @objc deinit
+}
+public struct AccEcdh : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var server: Swift.String
+  public var serverNonce: Swift.String
+  public var publicKey: Swift.String
+  public var cipher: Swift.String
+  public var padding: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(server: Swift.String, serverNonce: Swift.String, publicKey: Swift.String, cipher: Swift.String, padding: Swift.String, proof: DIDDataModelSDK.Proof? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestProfile : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String?
+  public var offerId: Swift.String
+  public init(id: Swift.String, txId: Swift.String? = nil, offerId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestProfile : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var profile: DIDDataModelSDK.VerifyProfile
+  public init(txId: Swift.String, profile: DIDDataModelSDK.VerifyProfile)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Provider : DIDDataModelSDK.Jsonable {
+  public var did: Swift.String
+  public var certVcRef: Swift.String
+  public init(did: Swift.String, certVcRef: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
 public struct VerifiablePresentation : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofsContainer, Swift.Identifiable {
   public var context: [Swift.String]
   public var id: Swift.String
@@ -32,6 +96,170 @@ extension DIDDataModelSDK.VerifiablePresentation {
   public init(holder: Swift.String, @DIDDataModelSDK.UTCDatetime validFrom: Swift.String, @DIDDataModelSDK.UTCDatetime validUntil: Swift.String, verifierNonce: Swift.String, verifiableCredential: [DIDDataModelSDK.VerifiableCredential])
 }
 extension DIDDataModelSDK.VerifiablePresentation : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AccE2e : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var publicKey: Swift.String
+  public var iv: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(publicKey: Swift.String, iv: Swift.String, proof: DIDDataModelSDK.Proof? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum VCStatusEnum : Swift.String, DIDDataModelSDK.Jsonable {
+  case Active
+  case Inactive
+  case Revoked
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ProposeRegisterUser : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public init(id: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ProposeRegisterUser : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum ServerTokenPurposeEnum : Swift.Int, DIDDataModelSDK.Jsonable {
+  case CREATE_DID
+  case UPDATE_DID
+  case RESTORE_DID
+  case ISSUE_VC
+  case REMOVE_VC
+  case PRESENT_VP
+  case LIST_VC
+  case DETAIL_VC
+  case CREATE_DID_AND_ISSUE_VC
+  case LIST_VC_AND_PRESENT_VP
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public struct RetrieveKyc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public var kycTxId: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String, kycTxId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RetrieveKyc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestCreateToken : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var seed: DIDDataModelSDK.ServerTokenSeed
+  public init(id: Swift.String, txId: Swift.String, seed: DIDDataModelSDK.ServerTokenSeed)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestCreateToken : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var iv: Swift.String
+  public var encStd: Swift.String
+  public init(txId: Swift.String, iv: Swift.String, encStd: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct DataPayload : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String?
+  public var payloadType: Swift.String
+  public var payload: Swift.String
+  public init(txId: Swift.String? = nil, payloadType: Swift.String, payload: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ConfirmUpdateDidDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ConfirmUpdateDidDoc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SignedDIDDoc : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var ownerDidDoc: Swift.String
+  public var wallet: DIDDataModelSDK.Wallet
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(ownerDidDoc: Swift.String, wallet: DIDDataModelSDK.Wallet, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestOfferPayload : DIDDataModelSDK.Jsonable {
+  public var mode: Swift.String
+  public var device: Swift.String
+  public var service: Swift.String
+  public var validSeconds: Swift.Int
+  public init(mode: Swift.String, device: Swift.String, service: Swift.String, validSeconds: Swift.Int)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ConfirmRevokeVc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ConfirmRevokeVc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ProposeRestoreDidDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var offerId: Swift.String
+  public var did: Swift.String
+  public init(id: Swift.String, offerId: Swift.String, did: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ProposeRestoreDidDoc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var authNonce: Swift.String
+  public init(txId: Swift.String, authNonce: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AttestedDIDDoc : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var walletId: Swift.String
+  public var ownerDidDoc: Swift.String
+  public var provider: DIDDataModelSDK.Provider
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(walletId: Swift.String, ownerDidDoc: Swift.String, provider: DIDDataModelSDK.Provider, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestAttestedDIDDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var attestedDidDoc: DIDDataModelSDK.AttestedDIDDoc
+  public init(id: Swift.String, attestedDIDDoc: DIDDataModelSDK.AttestedDIDDoc)
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -121,6 +349,7 @@ public struct VerifyProfile : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofCon
         public var id: Swift.String
         public var type: DIDDataModelSDK.CredentialSchemaType
         public var value: Swift.String?
+        public var presentAll: Swift.Bool?
         public var displayClaims: [Swift.String]?
         public var requiredClaims: [Swift.String]?
         public var allowedIssuers: [Swift.String]?
@@ -154,6 +383,85 @@ public struct VerifyProfile : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofCon
   public var language: Swift.String
   public var profile: DIDDataModelSDK.VerifyProfile.Profile
   public var proof: DIDDataModelSDK.Proof?
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct DIDDocVO : DIDDataModelSDK.Jsonable {
+  public var didDoc: Swift.String
+  public init(didDoc: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Option : DIDDataModelSDK.Jsonable {
+  public var allowUserInit: Swift.Bool
+  public var allowIssuerInit: Swift.Bool
+  public var delegatedIssuance: Swift.Bool
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct VCPlan : DIDDataModelSDK.Jsonable {
+  public var vcPlanId: Swift.String
+  public var name: Swift.String
+  public var description: Swift.String
+  public var url: Swift.String?
+  public var logo: DIDDataModelSDK.LogoImage?
+  public var validFrom: Swift.String?
+  public var validUntil: Swift.String?
+  public var tags: [Swift.String]?
+  public var credentialSchema: DIDDataModelSDK.IssueProfile.Profile.CredentialSchema
+  public var option: DIDDataModelSDK.Option
+  public var delegate: Swift.String?
+  public var allowedIssuers: [Swift.String]?
+  public var manager: Swift.String
+  public init(vcPlanId: Swift.String, name: Swift.String, description: Swift.String, url: Swift.String? = nil, logo: DIDDataModelSDK.LogoImage? = nil, validFrom: Swift.String? = nil, validUntil: Swift.String? = nil, tags: [Swift.String]? = nil, credentialSchema: DIDDataModelSDK.IssueProfile.Profile.CredentialSchema, option: DIDDataModelSDK.Option, delegate: Swift.String? = nil, allowedIssuers: [Swift.String]? = nil, manager: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct VCMeta : DIDDataModelSDK.Jsonable {
+  public var vcId: Swift.String
+  public var issuer: DIDDataModelSDK.Provider
+  public var did: Swift.String
+  public var credentialSchema: DIDDataModelSDK.VCSchema
+  public var status: DIDDataModelSDK.VCStatusEnum
+  public var issuanceDate: Swift.String
+  public var validFrom: Swift.String
+  public var validUntil: Swift.String
+  public var formatVersion: Swift.String
+  public var language: Swift.String
+  public init(vcId: Swift.String, issuer: DIDDataModelSDK.Provider, did: Swift.String, credentialSchema: DIDDataModelSDK.VCSchema, status: DIDDataModelSDK.VCStatusEnum, issuanceDate: Swift.String, validFrom: Swift.String, validUntil: Swift.String, formatVersion: Swift.String, language: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public class ReqEcdhBuilder {
+  public init()
+  public func setClient(_ client: Swift.String) -> DIDDataModelSDK.ReqEcdhBuilder
+  public func setClientNonce(_ clientNonce: Swift.String) -> DIDDataModelSDK.ReqEcdhBuilder
+  public func setPublicKey(_ publicKey: Swift.String) -> DIDDataModelSDK.ReqEcdhBuilder
+  public func setCurve(_ curve: DIDDataModelSDK.EllipticCurveType) -> DIDDataModelSDK.ReqEcdhBuilder
+  public func setCandidate(_ candidate: [DIDDataModelSDK.SymmetricCipherType]) -> DIDDataModelSDK.ReqEcdhBuilder
+  public func setProof(_ proof: DIDDataModelSDK.Proof?) -> DIDDataModelSDK.ReqEcdhBuilder
+  public func build() -> DIDDataModelSDK.ReqEcdh
+  @objc deinit
+}
+public struct ReqEcdh : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var proof: DIDDataModelSDK.Proof?
+  public init(client: Swift.String, clientNonce: Swift.String, publicKey: Swift.String, curve: DIDDataModelSDK.EllipticCurveType, candidate: [DIDDataModelSDK.SymmetricCipherType]? = nil, proof: DIDDataModelSDK.Proof? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ProposeIssueVc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var vcPlanId: Swift.String
+  public var issuer: Swift.String
+  public var offerId: Swift.String?
+  public init(id: Swift.String, vcPlanId: Swift.String, issuer: Swift.String, offerId: Swift.String? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ProposeIssueVc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var refId: Swift.String
+  public init(txId: Swift.String, refId: Swift.String)
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -231,6 +539,55 @@ extension DIDDataModelSDK.DIDDocument {
   public init(id: Swift.String, controller: Swift.String? = nil, @DIDDataModelSDK.UTCDatetime created: Swift.String)
 }
 extension DIDDataModelSDK.DIDDocument : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestRestoreDidDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public var didAuth: DIDDataModelSDK.DIDAuth
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String, didAuth: DIDDataModelSDK.DIDAuth)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestRestoreDidDoc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct WalletTokenSeed : DIDDataModelSDK.Jsonable {
+  public var purpose: DIDDataModelSDK.WalletTokenPurposeEnum
+  public var pkgName: Swift.String
+  public var nonce: Swift.String
+  public var validUntil: Swift.String
+  public var userId: Swift.String?
+  public init(purpose: DIDDataModelSDK.WalletTokenPurposeEnum, pkgName: Swift.String, nonce: Swift.String, validUntil: Swift.String, userId: Swift.String? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestVerify : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var accE2e: DIDDataModelSDK.AccE2e
+  public var encVp: Swift.String
+  public init(id: Swift.String, txId: Swift.String, accE2e: DIDDataModelSDK.AccE2e, encVp: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestVerify : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct InvokedDidDoc : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var didDoc: Swift.String
+  public var controller: DIDDataModelSDK.Provider
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(didDoc: Swift.String, controller: DIDDataModelSDK.Provider, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -424,6 +781,42 @@ extension DIDDataModelSDK.VCSchema : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
+public struct VpOfferWrapper : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String?
+  public var payload: DIDDataModelSDK.VerifyOfferPayload
+  public init(txId: Swift.String? = nil, payload: DIDDataModelSDK.VerifyOfferPayload)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct VerifyOfferPayload : DIDDataModelSDK.Jsonable {
+  public var offerId: Swift.String
+  public var type: DIDDataModelSDK.OfferTypeEnum
+  public var mode: DIDDataModelSDK.PresentModeEnum
+  public var device: Swift.String
+  public var service: Swift.String
+  public var endpoints: [Swift.String]
+  public var validUntil: Swift.String
+  public var locked: Swift.Bool
+  public init(offerId: Swift.String, type: DIDDataModelSDK.OfferTypeEnum, mode: DIDDataModelSDK.PresentModeEnum, device: Swift.String, service: Swift.String, endpoints: [Swift.String], validUntil: Swift.String, locked: Swift.Bool)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestIssueProfile : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestIssueProfile : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var authNonce: Swift.String
+  public var profile: DIDDataModelSDK.IssueProfile
+  public init(txId: Swift.String, authNonce: Swift.String, profile: DIDDataModelSDK.IssueProfile)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
 public struct VerifiableCredential : DIDDataModelSDK.Jsonable, Swift.Identifiable {
   public var context: [Swift.String]
   public var id: Swift.String
@@ -450,7 +843,6 @@ public struct VerifiableCredential : DIDDataModelSDK.Jsonable, Swift.Identifiabl
   public struct Issuer : DIDDataModelSDK.Jsonable {
     public var id: Swift.String
     public var name: Swift.String?
-    public var certVcRef: Swift.String?
     public func encode(to encoder: any Swift.Encoder) throws
     public init(from decoder: any Swift.Decoder) throws
   }
@@ -481,6 +873,7 @@ public struct VerifiableCredential : DIDDataModelSDK.Jsonable, Swift.Identifiabl
     public var evidenceDocument: Swift.String
     public var subjectPresence: DIDDataModelSDK.VerifiableCredential.Presence
     public var documentPresence: DIDDataModelSDK.VerifiableCredential.Presence
+    public var attribute: [Swift.String : Swift.String]?
     public func encode(to encoder: any Swift.Encoder) throws
     public init(from decoder: any Swift.Decoder) throws
   }
@@ -526,6 +919,21 @@ extension DIDDataModelSDK.VerifiableCredential.Evidence : Swift.Codable {
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
+public struct RequestRevokeVc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public var request: DIDDataModelSDK.ReqRevokeVc
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String, request: DIDDataModelSDK.ReqRevokeVc)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestRevokeVc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
 public struct Proof : DIDDataModelSDK.ProofProtocol {
   @DIDDataModelSDK.UTCDatetime public var created: Swift.String {
     get
@@ -556,6 +964,40 @@ extension DIDDataModelSDK.Proof : Swift.Codable {
   public init(from decoder: any Swift.Decoder) throws
 }
 extension DIDDataModelSDK.VCProof : Swift.Codable {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct IssueOfferPayload : DIDDataModelSDK.Jsonable {
+  public var offerId: Swift.String?
+  public var type: DIDDataModelSDK.OfferTypeEnum
+  public var vcPlanId: Swift.String
+  public var issuer: Swift.String
+  public var validUntil: Swift.String?
+  public init(offerId: Swift.String? = nil, type: DIDDataModelSDK.OfferTypeEnum, vcPlanId: Swift.String, issuer: Swift.String, validUntil: Swift.String? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum OfferTypeEnum : Swift.String, DIDDataModelSDK.Jsonable {
+  case IssueOffer
+  case VerifyOffer
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ReqRevokeVc : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var vcId: Swift.String
+  public var issuerNonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public var proofs: [DIDDataModelSDK.Proof]?
+  public init(vcId: Swift.String, issuerNonce: Swift.String, proof: DIDDataModelSDK.Proof? = nil, proofs: [DIDDataModelSDK.Proof]? = nil)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestAttestedAppInfo : DIDDataModelSDK.Jsonable {
+  public var appId: Swift.String
+  public init(appId: Swift.String)
   public func encode(to encoder: any Swift.Encoder) throws
   public init(from decoder: any Swift.Decoder) throws
 }
@@ -600,6 +1042,129 @@ extension DIDDataModelSDK.ConvertibleToAlgorithmType {
 extension DIDDataModelSDK.ConvertibleFromAlgorithmType {
   public static func convertFrom(algorithmType: DIDDataModelSDK.AlgorithmType) -> Self
 }
+public enum RoleTypeEnum : Swift.String, DIDDataModelSDK.Jsonable {
+  case Tas
+  case Wallet
+  case Issuer
+  case Verifier
+  case WalletProvider
+  case CAS_SERVICE
+  case ListProvider
+  case OpProvider
+  case KycProvider
+  case NotificationProvider
+  case LogProvider
+  case PortalProvider
+  case DelegationProvider
+  case StorageProvider
+  case BackupProvider
+  case Etc
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ReqVcProfile : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var issuerNonce: Swift.String
+  public init(id: Swift.String, issuerNonce: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ReqVC : DIDDataModelSDK.Jsonable {
+  public var refId: Swift.String
+  public var profile: DIDDataModelSDK.ReqVcProfile
+  public init(refId: Swift.String, profile: DIDDataModelSDK.ReqVcProfile)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ConfirmRegisterUser : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ConfirmRegisterUser : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct WalletTokenData : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var seed: DIDDataModelSDK.WalletTokenSeed
+  public var sha256_pii: Swift.String
+  public var provider: DIDDataModelSDK.Provider
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(seed: DIDDataModelSDK.WalletTokenSeed, sha256_pii: Swift.String, provider: DIDDataModelSDK.Provider, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct Wallet : DIDDataModelSDK.Jsonable {
+  public init(id: Swift.String, did: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AllowCAList : DIDDataModelSDK.Jsonable {
+  public var count: Swift.Int
+  public var items: [Swift.String]
+  public init(count: Swift.Int, items: [Swift.String])
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ServerTokenData : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var purpose: DIDDataModelSDK.ServerTokenPurposeEnum
+  public var walletId: Swift.String
+  public var appId: Swift.String
+  public var validUntil: Swift.String
+  public var provider: DIDDataModelSDK.Provider
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(purpose: DIDDataModelSDK.ServerTokenPurposeEnum, walletId: Swift.String, appId: Swift.String, validUntil: Swift.String, provider: DIDDataModelSDK.Provider, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestRegisterUser : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var signedDidDoc: DIDDataModelSDK.SignedDIDDoc
+  public var serverToken: Swift.String
+  public init(id: Swift.String, txId: Swift.String, signedDidDoc: DIDDataModelSDK.SignedDIDDoc, serverToken: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestRegisterUser : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ProposeUpdateDidDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var did: Swift.String
+  public init(id: Swift.String, did: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ProposeUpdateDidDoc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var authNonce: Swift.String
+  public init(txId: Swift.String, authNonce: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum DidDocumentType : Swift.Int, DIDDataModelSDK.Jsonable {
+  case DeviceDidDocument
+  case HolderDidDocumnet
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
 @propertyWrapper public struct UTCDatetime {
   public var wrappedValue: Swift.String {
     get
@@ -614,6 +1179,164 @@ extension DIDDataModelSDK.ConvertibleFromAlgorithmType {
   }
   public init(wrappedValue: Swift.String)
 }
+public struct ConfirmRestoreDidDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ConfirmRestoreDidDoc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestEcdh : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var reqEcdh: DIDDataModelSDK.ReqEcdh
+  public init(id: Swift.String, txId: Swift.String, reqEcdh: DIDDataModelSDK.ReqEcdh)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestEcdh : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var accEcdh: DIDDataModelSDK.AccEcdh
+  public init(id: Swift.String, txId: Swift.String, accEcdh: DIDDataModelSDK.AccEcdh)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AttestedAppInfo : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var appId: Swift.String
+  public var provider: DIDDataModelSDK.Provider
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(appId: Swift.String, provider: DIDDataModelSDK.Provider, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ServerTokenSeed : DIDDataModelSDK.Jsonable {
+  public var purpose: DIDDataModelSDK.WalletTokenPurposeEnum
+  public var walletInfo: DIDDataModelSDK.SignedWalletInfo
+  public var caAppInfo: DIDDataModelSDK.AttestedAppInfo
+  public init(purpose: DIDDataModelSDK.WalletTokenPurposeEnum, walletInfo: DIDDataModelSDK.SignedWalletInfo, attestedAppInfo: DIDDataModelSDK.AttestedAppInfo)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public enum PresentModeEnum : Swift.String, DIDDataModelSDK.Jsonable {
+  case Direct
+  case Indirect
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ProposeRevokeVc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var vcId: Swift.String
+  public init(id: Swift.String, vcId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ProposeRevokeVc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var issuerNonce: Swift.String
+  public var authType: DIDDataModelSDK.VerifyAuthType
+  public init(txId: Swift.String, issuerNonce: Swift.String, authType: DIDDataModelSDK.VerifyAuthType)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct VCPlanList : DIDDataModelSDK.Jsonable {
+  public var count: Swift.Int
+  public var items: [DIDDataModelSDK.VCPlan]
+  public init(count: Swift.Int, items: [DIDDataModelSDK.VCPlan])
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct DIDAuth : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var did: Swift.String
+  public var authNonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(did: Swift.String, authNonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestUpdateDidDoc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public var didAuth: DIDDataModelSDK.DIDAuth
+  public var signedDidDoc: DIDDataModelSDK.SignedDIDDoc
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String, didAuth: DIDDataModelSDK.DIDAuth, signedDidDoc: DIDDataModelSDK.SignedDIDDoc)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestUpdateDidDoc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct RequestIssueVc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public var didAuth: DIDDataModelSDK.DIDAuth
+  public var accE2e: DIDDataModelSDK.AccE2e
+  public var encReqVc: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String, didAuth: DIDDataModelSDK.DIDAuth, accE2e: DIDDataModelSDK.AccE2e, encReqVc: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct E2E : DIDDataModelSDK.Jsonable {
+  public var iv: Swift.String
+  public var encVc: Swift.String
+  public init(iv: Swift.String, encVc: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _RequestIssueVc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public var e2e: DIDDataModelSDK.E2E
+  public init(txId: Swift.String, e2e: DIDDataModelSDK.E2E)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ConfirmIssueVc : DIDDataModelSDK.Jsonable {
+  public var id: Swift.String
+  public var txId: Swift.String
+  public var serverToken: Swift.String
+  public var vcId: Swift.String
+  public init(id: Swift.String, txId: Swift.String, serverToken: Swift.String, vcId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct _ConfirmIssueVc : DIDDataModelSDK.Jsonable {
+  public var txId: Swift.String
+  public init(txId: Swift.String)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct SignedWalletInfo : DIDDataModelSDK.Jsonable, DIDDataModelSDK.ProofContainer {
+  public var wallet: DIDDataModelSDK.Wallet
+  public var nonce: Swift.String
+  public var proof: DIDDataModelSDK.Proof?
+  public init(wallet: DIDDataModelSDK.Wallet, nonce: Swift.String, proof: DIDDataModelSDK.Proof?)
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension DIDDataModelSDK.WalletTokenPurposeEnum : Swift.Equatable {}
+extension DIDDataModelSDK.WalletTokenPurposeEnum : Swift.Hashable {}
+extension DIDDataModelSDK.WalletTokenPurposeEnum : Swift.RawRepresentable {}
+extension DIDDataModelSDK.VCStatusEnum : Swift.Equatable {}
+extension DIDDataModelSDK.VCStatusEnum : Swift.Hashable {}
+extension DIDDataModelSDK.VCStatusEnum : Swift.RawRepresentable {}
+extension DIDDataModelSDK.ServerTokenPurposeEnum : Swift.Equatable {}
+extension DIDDataModelSDK.ServerTokenPurposeEnum : Swift.Hashable {}
+extension DIDDataModelSDK.ServerTokenPurposeEnum : Swift.RawRepresentable {}
 extension DIDDataModelSDK.ProfileType : Swift.Equatable {}
 extension DIDDataModelSDK.ProfileType : Swift.Hashable {}
 extension DIDDataModelSDK.ProfileType : Swift.RawRepresentable {}
@@ -662,3 +1385,15 @@ extension DIDDataModelSDK.VerifiableCredential.Presence : Swift.RawRepresentable
 extension DIDDataModelSDK.VerifiableCredential.EvidenceType : Swift.Equatable {}
 extension DIDDataModelSDK.VerifiableCredential.EvidenceType : Swift.Hashable {}
 extension DIDDataModelSDK.VerifiableCredential.EvidenceType : Swift.RawRepresentable {}
+extension DIDDataModelSDK.OfferTypeEnum : Swift.Equatable {}
+extension DIDDataModelSDK.OfferTypeEnum : Swift.Hashable {}
+extension DIDDataModelSDK.OfferTypeEnum : Swift.RawRepresentable {}
+extension DIDDataModelSDK.RoleTypeEnum : Swift.Equatable {}
+extension DIDDataModelSDK.RoleTypeEnum : Swift.Hashable {}
+extension DIDDataModelSDK.RoleTypeEnum : Swift.RawRepresentable {}
+extension DIDDataModelSDK.DidDocumentType : Swift.Equatable {}
+extension DIDDataModelSDK.DidDocumentType : Swift.Hashable {}
+extension DIDDataModelSDK.DidDocumentType : Swift.RawRepresentable {}
+extension DIDDataModelSDK.PresentModeEnum : Swift.Equatable {}
+extension DIDDataModelSDK.PresentModeEnum : Swift.Hashable {}
+extension DIDDataModelSDK.PresentModeEnum : Swift.RawRepresentable {}

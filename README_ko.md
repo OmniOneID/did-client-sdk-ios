@@ -1,3 +1,6 @@
+![Platform](https://img.shields.io/cocoapods/p/SquishButton.svg?style=flat)
+[![Swift](https://img.shields.io/badge/Swift-5-orange.svg?style=flat)](https://developer.apple.com/swift)
+
 # iOS Client SDK
 
 iOS Client SDK Repository에 오신 것을 환영합니다. <br> 
@@ -10,70 +13,88 @@ did-client-sdk-ios
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── MAINTAINERS.md
-├── README_ko.md
 ├── README.md
+├── README_ko.md
 ├── RELEASE-PROCESS.md
 ├── docs
-│   ├── api
-│   │   ├── did-core-sdk-ios
-│   │   │   ├── DIDManager_ko.md
-│   │   │   ├── DIDManager.md
-│   │   │   ├── KeyManager_ko.md
-│   │   │   ├── KeyManager.md
-│   │   │   ├── SecureEncryptor_ko.md
-│   │   │   ├── SecureEncryptor.md
-│   │   │   ├── VCManager_ko.md
-│   │   │   ├── VCManager.md
-│   │   │   └── WalletCoreError.md
-│   │   ├── did-datamodel-sdk-ios
-│   │   │   └── DataModel.md
-│   │   └── did-utility-sdk-ios
-│   │       ├── Utility_ko.md
-│   │       ├── Utility.md
-│   │       └── UtilityError.md
-│   └── design
-├── sample
+│   └── api
+│       ├── did-communication-sdk-ios
+│       │   ├── Communication.md
+│       │   ├── CommunicationError.md
+│       │   └── Communication_ko.md
+│       ├── did-core-sdk-ios
+│       │   ├── DIDManager.md
+│       │   ├── DIDManager_ko.md
+│       │   ├── KeyManager.md
+│       │   ├── KeyManager_ko.md
+│       │   ├── SecureEncryptor.md
+│       │   ├── SecureEncryptor_ko.md
+│       │   ├── VCManager.md
+│       │   ├── VCManager_ko.md
+│       │   └── WalletCoreError.md
+│       ├── did-datamodel-sdk-ios
+│       │   └── DataModel.md
+│       ├── did-utility-sdk-ios
+│       │   ├── Utility.md
+│       │   ├── UtilityError.md
+│       │   └── Utility_ko.md
+│       └── did-wallet-sdk-ios
+│           ├── Wallet.md
+│           ├── WalletError.md
+│           └── Wallet_ko.md
 └── source
     └── DIDClientSDK
-        ├── DIDClientSDK.xcworkspace
+        ├── did-communication-sdk-ios
+        │   ├── CHANGELOG.md
+        │   ├── DIDCommunicationSDK.xcodeproj
+        │   ├── LICENSE-dependencies.md
+        │   ├── LICENSE.txt
+        │   ├── README_ko.md
+        │   ├── build_xcframework.sh
+        │   └── source
         ├── did-core-sdk-ios
-        │   ├── build_xcframework.sh
-        │   ├── CHANGELOG.md
-        │   ├── DIDCoreSDK.xcodeproj
-        │   ├── LICENSE-dependencies.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   ├── DIDCoreSDK
-        │   ├── DIDCoreSDKTests
-        │   └── HostApp
+        │   ├── CHANGELOG.md
+        │   ├── DIDCoreSDK.xcodeproj
+        │   ├── LICENSE-dependencies.md
+        │   ├── README.md
+        │   ├── README_ko.md
+        │   ├── SECURITY.md
+        │   └── build_xcframework.sh
         ├── did-datamodel-sdk-ios
-        │   ├── build_xcframework.sh
-        │   ├── CHANGELOG.md
-        │   ├── DIDDataModelSDK.xcodeproj
-        │   ├── LICENSE-dependencies.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   ├── DIDDataModelSDK
-        │   └── DIDDataModelSDKTests
+        │   ├── CHANGELOG.md
+        │   ├── DIDDataModelSDK.xcodeproj
+        │   ├── LICENSE-dependencies.md
+        │   ├── README.md
+        │   ├── README_ko.md
+        │   ├── SECURITY.md
+        │   └── build_xcframework.sh
         ├── did-utility-sdk-ios
-        │   ├── build_xcframework.sh
-        │   ├── CHANGELOG.md
-        │   ├── DIDUtilitySDK.xcodeproj        
-        │   ├── LICENSE-dependencies.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   ├── DIDUtilitySDK
-        │   └── DIDUtilitySDKTests
+        │   ├── CHANGELOG.md
+        │   ├── DIDUtilitySDK.xcodeproj
+        │   ├── LICENSE-dependencies.md
+        │   ├── README.md
+        │   ├── README_ko.md
+        │   ├── SECURITY.md
+        │   └── build_xcframework.sh
+        ├── did-wallet-sdk-ios
+        │   ├── CHANGELOG.mdt
+        │   ├── DIDWalletSDK.xcodeproj
+        │   ├── LICENSE-dependencies.md
+        │   ├── LICENSE.md
+        │   ├── README.md
+        │   ├── SECURITY.md
+        │   └── build_xcframework.sh
         └── release
+            ├── did-communication-sdk-ios-1.0.0
+            │   └── DIDCommunicationSDK.xcframework
             ├── did-core-sdk-ios-1.0.0
-            │   └── DIDCoreSDK.xcframework
+            │   └── DIDCoreSDK.xcframework
             ├── did-datamodel-sdk-ios-1.0.0
-            │   └── DIDDataModelSDK.xcframework
-            └── did-utility-sdk-ios-1.0.0
-                └── DIDUtilitySDK.xcframework
+            │   └── DIDDataModelSDK.xcframework
+            ├── did-utility-sdk-ios-1.0.0
+            │   └── DIDUtilitySDK.xcframework
+            └── did-wallet-sdk-ios-1.0.0
+                └── DIDWalletSDK.xcframework
 ```
 
 |  이름                    |         역할                          |
@@ -115,6 +136,18 @@ did-client-sdk-ios
 2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
 3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
 
+### Communication SDK
+
+1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDCommunicationSDK.xcframework` 파일을 복사합니다.
+2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
+3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
+
+### Wallet SDK
+
+1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDWalletSDK.xcframework` 파일을 복사합니다.
+2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
+3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
+
 ## API 참조
 
 API 참조는 아래에서 확인할 수 있습니다.
@@ -122,6 +155,8 @@ API 참조는 아래에서 확인할 수 있습니다.
 - [Core SDK](source/DIDClientSDK/did-core-sdk-ios/README.md)  
 - [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/README.md)  
 - [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/README.md) 
+- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/README.md)  
+- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/README.md) 
 
 ## 수정내역
 
@@ -130,6 +165,8 @@ API 참조는 아래에서 확인할 수 있습니다.
 - [Core SDK](source/DIDClientSDK/did-core-sdk-ios/CHANGELOG.md)  
 - [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/CHANGELOG.md)
 - [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/CHANGELOG.md)  
+- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/CHANGELOG.md)  
+- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/CHANGELOG.md)  
 
 ## 기여
 

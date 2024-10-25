@@ -33,7 +33,7 @@ $ ./build_xcframework.sh
 ## 구조체 규격서
 | 구분           | 구조체 문서 Link                                                |
 |---------------|--------------------------------------------------------------|
-| DataModel     | [DataModel SDK](docs/api/did-datamodel-sdk-ios/DataModel.md) |
+| DataModel     | [DataModel SDK](../../../docs/api/did-datamodel-sdk-ios/DataModel.md) |
 
 <br>
 
