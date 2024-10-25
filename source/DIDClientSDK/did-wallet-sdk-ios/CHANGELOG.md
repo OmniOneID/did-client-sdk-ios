@@ -1,6 +1,8 @@
 # Changelog
 
-1.0.0 - 2024.09.04
----
+## v1.0.0 (2024-10-25)
 
-- initialize proj
+### 🚀 New Features
+ - Token management to access wallet
+ - Wallet lock/unlock management
+ - Provides core and service functions
