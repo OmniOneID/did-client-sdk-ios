@@ -40,6 +40,6 @@ $ ./build_xcframework.sh
 ## API 규격서
 | 구분           | API 문서 Link                                                                              |
 |---------------|-------------------------------------------------------------------------------------------|
-| Wallet        | [Wallet SDK - Wallet API](docs/api/did-wallet-sdk-ios/Wallet_ko.md)            |
-| WalletError   | [Wallet Error](docs/api/did-wallet-sdk-ios/WalletError.md)                                |
+| Wallet        | [Wallet SDK - Wallet API](../../../docs/api/did-wallet-sdk-ios/Wallet_ko.md)            |
+| WalletError   | [Wallet Error](../../../docs/api/did-wallet-sdk-ios/WalletError.md)                                |
 
