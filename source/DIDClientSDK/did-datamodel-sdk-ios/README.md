@@ -32,7 +32,7 @@ $ ./build_xcframework.sh
 ## Structure Specification
 | Category      | Structure Document Link                                      |
 |---------------|--------------------------------------------------------------|
-| DataModel     | [DataModel SDK](docs/api/did-datamodel-sdk-ios/DataModel.md) |
+| DataModel     | [DataModel SDK](../../../docs/api/did-datamodel-sdk-ios/DataModel.md) |
 
 <br>
 
