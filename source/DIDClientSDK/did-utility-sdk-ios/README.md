@@ -32,10 +32,10 @@ $ ./build_xcframework.sh
 ## API Specification
 | Category | API Document Link |
 |------|----------------------------|
-| CryptoUtils    | [Utility SDK API](docs/api/did-utility-sdk-ios/Utility.md) |
+| CryptoUtils    | [Utility SDK API](../../../docs/api/did-utility-sdk-ios/Utility.md) |
 | MultibaseUtils | 〃                             |
 | DigestUtils    | 〃                             |
-| ErrorCode      | [Error Code](docs/api/did-utility-sdk-ios/UtilityError.md)        |
+| ErrorCode      | [Error Code](../../../docs/api/did-utility-sdk-ios/UtilityError.md)        |
 
 ### CryptoUtils
 
