@@ -37,11 +37,11 @@ $ ./build_xcframework.sh
 ## API Specification
 | Category        | API Document Link                                                                      |
 |-----------------|----------------------------------------------------------------------------------------|
-| KeyManager      | [Wallet Core SDK - KeyManager API](https://github.com/OmniOneID/did-client-sdk-ios/blob/main/docs/api/did-core-sdk-ios/KeyManager.md)            |
-| DIDManager      | [Wallet Core SDK - DIDManager API](https://github.com/OmniOneID/did-client-sdk-ios/blob/main/docs/api/did-core-sdk-ios/DIDManager.md)            |
-| VCManager       | [Wallet Core SDK - VCManager API](https://github.com/OmniOneID/did-client-sdk-ios/blob/main/docs/api/did-core-sdk-ios/VCManager.md)              |
-| SecureEncryptor | [Wallet Core SDK - SecureEncryptor API](https://github.com/OmniOneID/did-client-sdk-ios/blob/main/docs/api/did-core-sdk-ios/SecureEncryptor.md)  |
-| ErrorCode       | [Error Code](https://github.com/OmniOneID/did-client-sdk-ios/blob/main/docs/api/did-core-sdk-ios/WalletCoreError.md)                             |
+| KeyManager      | [Wallet Core SDK - KeyManager API](../../../docs/api/did-core-sdk-ios/KeyManager.md)            |
+| DIDManager      | [Wallet Core SDK - DIDManager API](../../../docs/api/did-core-sdk-ios/DIDManager.md)            |
+| VCManager       | [Wallet Core SDK - VCManager API](../../../docs/api/did-core-sdk-ios/VCManager.md)              |
+| SecureEncryptor | [Wallet Core SDK - SecureEncryptor API](../../../docs/api/did-core-sdk-ios/SecureEncryptor.md)  |
+| ErrorCode       | [Error Code](../../../docs/api/did-core-sdk-ios/WalletCoreError.md)                             |
 
 ### KeyManager
 KeyManager provides the functionality to generate and manage key pairs for signing and store them securely.<br>The main features are as follows:
