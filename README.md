@@ -41,6 +41,7 @@ did-client-sdk-ios
 │           └── Wallet_ko.md
 └── source
     └── DIDClientSDK
+        ├── DIDClientSDK.xcworkspace    
         ├── did-communication-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDCommunicationSDK.xcodeproj

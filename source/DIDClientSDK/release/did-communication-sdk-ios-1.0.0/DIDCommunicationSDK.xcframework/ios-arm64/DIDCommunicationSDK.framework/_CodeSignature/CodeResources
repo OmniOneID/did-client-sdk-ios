@@ -14,7 +14,7 @@
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios.abi.json</key>
 		<data>
-		Oi+520x//BuSW91zXwSHs53lYq4=
+		ECpXRrCYvhJXVCrpJc6v7AYJEQY=
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		4kJ+oM+j70C5wXC/GPd8shPQ6WA=
+		Kaw81OfgI9/Qlp9AvMHqNHLrryU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -50,7 +50,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+53eObXaLCfI9UHSipHlJjva+/OKJEFfIRqXkx5zL90=
+			dfp1TYb94kKFh34gyoXnV0+ZPq6uAH0RvnYqITIf4jw=
 			</data>
 		</dict>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios.private.swiftinterface</key>
@@ -78,7 +78,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			aCEumoiJpLQKjXh6jfJSLARGbSA9kBQJ2muFS3YZlVw=
+			TvPP/m0u4PE467wGkDFyV9mzDe2BsoILj6RAXExqlaY=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

@@ -1,9 +1,9 @@
 # iOS Communication SDK Guide
-본 문서는 DID Communication SDK 사용을 위한 가이드로, 다양한 암호화 및 인코딩, 해싱 기능을 제공한다.
+This document is a guide for using the DID Communication SDK, which provides various encryption, encoding, and hashing functions.
 
 
-## S/W 사양
-| 구분           | 내용                       |
+## S/W Specifications
+| category      | detail                    |
 |---------------|---------------------------|
 | OS            | iOS                       |
 | Language      | Swift 5.8                 |
@@ -12,25 +12,25 @@
 
 <br>
 
-## 빌드 방법
-: 터미널을 열고 XCFramework를 생성하기 위해 스크립트 `build_xcframework.sh`을 실행합니다.
-1. 터미널 앱을 실행하고 다음 사항을 작성합니다. 
+## How to build
+: Open a terminal and run the script `build_xcframework.sh` to build XCFramework.
+1. Launch the Terminal app and type the following:
 ```bash
 $ ./build_xcframework.sh
 ```
-2. 아카이브가 완료되면, `output/` 폴더에 `DIDCommunicationSDK.xcframework` 파일이 생성됩니다.
+2. Once the archive is complete, a `DIDCommunicationSDK.xcframework` file will be created in the `output/` folder.
 <br>
 
 
-## SDK 적용 방법
-1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDCommunicationSDK.xcframework`파일을 복사합니다.
-2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
+## How to apply SDK
+1. Copy the `DIDCommunicationSDK.xcframework` file to the framework directory of your app project.
+2. Add the framework to your app project dependencies.
+3. Set the framework to `Embeded & Sign`.
 
 <br>
 
-## API 규격서
-| 구분                    | API 문서 Link                                                                    |
+## API Specification
+| category               | API Documentation Link                                                                    |
 |------------------------|---------------------------------------------------------------------------------|
 | CommnunicationClient   | [Communication SDK API](docs/api/did-communication-sdk-ios/Communication_ko.md) |
 | CommunicationAPIError  | [Error Code](docs/api/did-communication-sdk-ios/CommunicationError.md)          |

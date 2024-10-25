@@ -60005,1512 +60005,1512 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 703,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 743,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 783,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 823,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 863,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 903,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 943,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 983,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1023,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1104,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1145,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1186,
       "length": 2,
       "value": "13"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1227,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 703,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 743,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 783,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 823,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 863,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 903,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 943,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 983,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1023,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1104,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1145,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1186,
       "length": 2,
       "value": "13"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1227,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 703,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 743,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 783,
       "length": 1,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 823,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 863,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 903,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 943,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 983,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1023,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1063,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1104,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1145,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1186,
       "length": 2,
       "value": "13"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/WalletTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1227,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiablePresentation.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiablePresentation.swift",
       "kind": "StringLiteral",
-      "offset": 1743,
+      "offset": 2264,
       "length": 10,
       "value": "\"@context\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiablePresentation.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiablePresentation.swift",
       "kind": "StringLiteral",
-      "offset": 1743,
+      "offset": 2264,
       "length": 10,
       "value": "\"@context\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
       "kind": "StringLiteral",
       "offset": 676,
       "length": 8,
       "value": "\"ACTIVE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
       "kind": "StringLiteral",
       "offset": 705,
       "length": 10,
       "value": "\"DEACTIVE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
       "kind": "StringLiteral",
       "offset": 735,
       "length": 9,
       "value": "\"REVOKED\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
       "kind": "StringLiteral",
       "offset": 676,
       "length": 8,
       "value": "\"ACTIVE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
       "kind": "StringLiteral",
       "offset": 705,
       "length": 10,
       "value": "\"DEACTIVE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/VCStatusEnum.swift",
       "kind": "StringLiteral",
       "offset": 735,
       "length": 9,
       "value": "\"REVOKED\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 700,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 737,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 774,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 811,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 848,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 885,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 923,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 961,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 999,
       "length": 2,
       "value": "13"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1037,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 700,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 737,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 774,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 811,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 848,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 885,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 923,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 961,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 999,
       "length": 2,
       "value": "13"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1037,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 700,
       "length": 1,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 737,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 774,
       "length": 1,
       "value": "7"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 811,
       "length": 1,
       "value": "8"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 848,
       "length": 1,
       "value": "9"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 885,
       "length": 2,
       "value": "10"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 923,
       "length": 2,
       "value": "11"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 961,
       "length": 2,
       "value": "12"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 999,
       "length": 2,
       "value": "13"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/ServerTokenPurposeEnum.swift",
       "kind": "IntegerLiteral",
       "offset": 1037,
       "length": 2,
       "value": "14"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/EcdhReqData.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/EcdhReqData.swift",
       "kind": "StringLiteral",
       "offset": 676,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/EcdhReqData.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/EcdhReqData.swift",
       "kind": "StringLiteral",
       "offset": 717,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/EcdhReqData.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/EcdhReqData.swift",
       "kind": "StringLiteral",
       "offset": 756,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3236,
+      "offset": 3768,
       "length": 24,
       "value": "\"RsaVerificationKey2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3306,
+      "offset": 3838,
       "length": 30,
       "value": "\"Secp256k1VerificationKey2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3382,
+      "offset": 3914,
       "length": 30,
       "value": "\"Secp256r1VerificationKey2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3236,
+      "offset": 3768,
       "length": 24,
       "value": "\"RsaVerificationKey2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3306,
+      "offset": 3838,
       "length": 30,
       "value": "\"Secp256k1VerificationKey2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3382,
+      "offset": 3914,
       "length": 30,
       "value": "\"Secp256r1VerificationKey2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3539,
+      "offset": 4071,
       "length": 15,
       "value": "\"LinkedDomains\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3589,
+      "offset": 4121,
       "length": 20,
       "value": "\"CredentialRegistry\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3539,
+      "offset": 4071,
       "length": 15,
       "value": "\"LinkedDomains\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 3589,
+      "offset": 4121,
       "length": 20,
       "value": "\"CredentialRegistry\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 4188,
+      "offset": 4720,
       "length": 10,
       "value": "\"@context\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/DIDDocument.swift",
       "kind": "StringLiteral",
-      "offset": 4188,
+      "offset": 4720,
       "length": 10,
       "value": "\"@context\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 629,
+      "offset": 1161,
       "length": 17,
       "value": "\"assertionMethod\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 679,
+      "offset": 1211,
       "length": 16,
       "value": "\"authentication\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 728,
+      "offset": 1260,
       "length": 14,
       "value": "\"keyAgreement\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 775,
+      "offset": 1307,
       "length": 22,
       "value": "\"capabilityInvocation\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 830,
+      "offset": 1362,
       "length": 22,
       "value": "\"capabilityDelegation\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 629,
+      "offset": 1161,
       "length": 17,
       "value": "\"assertionMethod\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 679,
+      "offset": 1211,
       "length": 16,
       "value": "\"authentication\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 728,
+      "offset": 1260,
       "length": 14,
       "value": "\"keyAgreement\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 775,
+      "offset": 1307,
       "length": 22,
       "value": "\"capabilityInvocation\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 830,
+      "offset": 1362,
       "length": 22,
       "value": "\"capabilityDelegation\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1057,
+      "offset": 1589,
       "length": 18,
       "value": "\"RsaSignature2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1110,
+      "offset": 1642,
       "length": 24,
       "value": "\"Secp256k1Signature2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1169,
+      "offset": 1701,
       "length": 24,
       "value": "\"Secp256r1Signature2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1057,
+      "offset": 1589,
       "length": 18,
       "value": "\"RsaSignature2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1110,
+      "offset": 1642,
       "length": 24,
       "value": "\"Secp256k1Signature2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1169,
+      "offset": 1701,
       "length": 24,
       "value": "\"Secp256r1Signature2018\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1283,
+      "offset": 1815,
       "length": 5,
       "value": "\"Rsa\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1310,
+      "offset": 1842,
       "length": 11,
       "value": "\"Secp256k1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1343,
+      "offset": 1875,
       "length": 11,
       "value": "\"Secp256r1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1283,
+      "offset": 1815,
       "length": 5,
       "value": "\"Rsa\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1310,
+      "offset": 1842,
       "length": 11,
       "value": "\"Secp256k1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1343,
+      "offset": 1875,
       "length": 11,
       "value": "\"Secp256r1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1469,
+      "offset": 2001,
       "length": 21,
       "value": "\"OsdSchemaCredential\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1469,
+      "offset": 2001,
       "length": 21,
       "value": "\"OsdSchemaCredential\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1696,
+      "offset": 2228,
       "length": 11,
       "value": "\"Secp256k1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1729,
+      "offset": 2261,
       "length": 11,
       "value": "\"Secp256r1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1696,
+      "offset": 2228,
       "length": 11,
       "value": "\"Secp256k1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1729,
+      "offset": 2261,
       "length": 11,
       "value": "\"Secp256r1\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1843,
+      "offset": 2375,
       "length": 13,
       "value": "\"AES-128-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1878,
+      "offset": 2410,
       "length": 13,
       "value": "\"AES-128-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1913,
+      "offset": 2445,
       "length": 13,
       "value": "\"AES-256-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1948,
+      "offset": 2480,
       "length": 13,
       "value": "\"AES-256-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1843,
+      "offset": 2375,
       "length": 13,
       "value": "\"AES-128-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1878,
+      "offset": 2410,
       "length": 13,
       "value": "\"AES-128-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1913,
+      "offset": 2445,
       "length": 13,
       "value": "\"AES-256-CBC\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 1948,
+      "offset": 2480,
       "length": 13,
       "value": "\"AES-256-ECB\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 2063,
+      "offset": 2595,
       "length": 7,
       "value": "\"NOPAD\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 2088,
+      "offset": 2620,
       "length": 7,
       "value": "\"PKCS5\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 2063,
+      "offset": 2595,
       "length": 7,
       "value": "\"NOPAD\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "StringLiteral",
-      "offset": 2088,
+      "offset": 2620,
       "length": 7,
       "value": "\"PKCS5\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2188,
+      "offset": 2720,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2206,
+      "offset": 2738,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2224,
+      "offset": 2756,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2188,
+      "offset": 2720,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2206,
+      "offset": 2738,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2224,
+      "offset": 2756,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2188,
+      "offset": 2720,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2206,
+      "offset": 2738,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2224,
+      "offset": 2756,
       "length": 1,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2479,
+      "offset": 3011,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2484,
+      "offset": 3016,
       "length": 1,
       "value": "0"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2541,
+      "offset": 3073,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2546,
+      "offset": 3078,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2603,
+      "offset": 3135,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2608,
+      "offset": 3140,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2670,
+      "offset": 3202,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 2675,
+      "offset": 3207,
       "length": 2,
       "value": "15"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Enum\/Enumerator.swift",
       "kind": "IntegerLiteral",
-      "offset": 3245,
+      "offset": 3777,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
       "kind": "StringLiteral",
-      "offset": 2602,
+      "offset": 3137,
       "length": 5,
       "value": "\"@id\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
       "kind": "StringLiteral",
-      "offset": 2630,
+      "offset": 3165,
       "length": 9,
       "value": "\"@schema\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
       "kind": "StringLiteral",
-      "offset": 2602,
+      "offset": 3137,
       "length": 5,
       "value": "\"@id\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VCSchema.swift",
       "kind": "StringLiteral",
-      "offset": 2630,
+      "offset": 3165,
       "length": 9,
       "value": "\"@schema\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/VerifyOfferPayload.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/VO\/VerifyOfferPayload.swift",
       "kind": "BooleanLiteral",
       "offset": 1172,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 1673,
+      "offset": 2196,
       "length": 10,
       "value": "\"Physical\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 1708,
+      "offset": 2231,
       "length": 9,
       "value": "\"Digital\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 1673,
+      "offset": 2196,
       "length": 10,
       "value": "\"Physical\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 1708,
+      "offset": 2231,
       "length": 9,
       "value": "\"Digital\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 1840,
+      "offset": 2363,
       "length": 22,
       "value": "\"DocumentVerification\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 1840,
+      "offset": 2363,
       "length": 22,
       "value": "\"DocumentVerification\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 4093,
+      "offset": 4616,
       "length": 10,
       "value": "\"@context\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/DataModel\/VerifiableCredential.swift",
       "kind": "StringLiteral",
-      "offset": 4093,
+      "offset": 4616,
       "length": 10,
       "value": "\"@context\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 681,
       "length": 12,
       "value": "\"IssueOffer\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 717,
       "length": 13,
       "value": "\"VerifyOffer\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 681,
       "length": 12,
       "value": "\"IssueOffer\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/OfferTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 717,
       "length": 13,
       "value": "\"VerifyOffer\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Protocol\/Protocol.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Protocol\/Protocol.swift",
       "kind": "BooleanLiteral",
-      "offset": 764,
+      "offset": 1299,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Protocol\/Protocol.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Protocol\/Protocol.swift",
       "kind": "BooleanLiteral",
-      "offset": 1288,
+      "offset": 1823,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Protocol\/Protocol.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/Protocol\/Protocol.swift",
       "kind": "StringLiteral",
-      "offset": 3318,
+      "offset": 3853,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 673,
       "length": 5,
       "value": "\"Tas\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 697,
       "length": 8,
       "value": "\"Wallet\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 724,
       "length": 8,
       "value": "\"Issuer\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 753,
       "length": 10,
       "value": "\"Verifier\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 790,
       "length": 16,
       "value": "\"WalletProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 830,
       "length": 13,
       "value": "\"AppProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 868,
       "length": 14,
       "value": "\"ListProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 905,
       "length": 12,
       "value": "\"OpProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 941,
       "length": 13,
       "value": "\"KycProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 987,
       "length": 22,
       "value": "\"NotificationProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1033,
       "length": 13,
       "value": "\"LogProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1073,
       "length": 16,
       "value": "\"PortalProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1120,
       "length": 20,
       "value": "\"DelegationProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1168,
       "length": 17,
       "value": "\"StorageProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1212,
       "length": 16,
       "value": "\"BackupProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1244,
       "length": 5,
       "value": "\"Etc\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 673,
       "length": 5,
       "value": "\"Tas\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 697,
       "length": 8,
       "value": "\"Wallet\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 724,
       "length": 8,
       "value": "\"Issuer\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 753,
       "length": 10,
       "value": "\"Verifier\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 790,
       "length": 16,
       "value": "\"WalletProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 830,
       "length": 13,
       "value": "\"AppProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 868,
       "length": 14,
       "value": "\"ListProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 905,
       "length": 12,
       "value": "\"OpProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 941,
       "length": 13,
       "value": "\"KycProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 987,
       "length": 22,
       "value": "\"NotificationProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1033,
       "length": 13,
       "value": "\"LogProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1073,
       "length": 16,
       "value": "\"PortalProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1120,
       "length": 20,
       "value": "\"DelegationProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1168,
       "length": 17,
       "value": "\"StorageProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1212,
       "length": 16,
       "value": "\"BackupProvider\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/RoleTypeEnum.swift",
       "kind": "StringLiteral",
       "offset": 1244,
       "length": 5,
       "value": "\"Etc\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
       "kind": "IntegerLiteral",
       "offset": 687,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
       "kind": "IntegerLiteral",
       "offset": 718,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
       "kind": "IntegerLiteral",
       "offset": 687,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
       "kind": "IntegerLiteral",
       "offset": 718,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
       "kind": "IntegerLiteral",
       "offset": 687,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/DidDocumentType.swift",
       "kind": "IntegerLiteral",
       "offset": 718,
       "length": 1,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/PropertyWrapper\/PropertyWrapper.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/PropertyWrapper\/PropertyWrapper.swift",
       "kind": "StringLiteral",
-      "offset": 577,
+      "offset": 1105,
       "length": 8,
       "value": "\"[0-9]+\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
       "kind": "StringLiteral",
       "offset": 679,
       "length": 8,
       "value": "\"Direct\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
       "kind": "StringLiteral",
       "offset": 708,
       "length": 10,
       "value": "\"Indirect\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
       "kind": "StringLiteral",
       "offset": 679,
       "length": 8,
       "value": "\"Direct\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-datamodel-sdk-ios\/DIDDataModelSDK\/ServiceDataModel\/Enum\/PresentModeEnum.swift",
       "kind": "StringLiteral",
       "offset": 708,
       "length": 10,

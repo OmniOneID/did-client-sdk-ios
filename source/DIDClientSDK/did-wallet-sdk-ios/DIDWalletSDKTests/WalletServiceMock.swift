@@ -21,13 +21,16 @@ import DIDCommunicationSDK
 import DIDCoreSDK
 
 class WalletServiceMock : WalletServiceImpl {
-   
     private let walletCore: WalletCoreImpl
     
     public init(_ walletCore: WalletCoreImpl) {
         self.walletCore = walletCore
     }
-    
+    // TODO
+    func requestUpdateUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDDataModelSDK.DIDAuth?, signedDIDDoc: DIDDataModelSDK.SignedDIDDoc?) async throws -> DIDDataModelSDK._RequestUpdateDidDoc {
+        return _RequestUpdateDidDoc(txId: "txid")
+    }
+    // TODO
     func deleteWallet() throws -> Bool {
         return true
     }
@@ -101,7 +104,7 @@ class WalletServiceMock : WalletServiceImpl {
 
         return (accE2e, encVp)
     }
-    
+    // TODO
     func fatchCaInfo() async throws {
         
     }
@@ -182,7 +185,7 @@ class WalletServiceMock : WalletServiceImpl {
         
 
     }
-    
+    // TODO
     func createProofs(ownerDidDoc: DIDDataModelSDK.DIDDocument?, proofPurpose: String) throws -> Data {
         return Data()
     }
@@ -219,7 +222,7 @@ class WalletServiceMock : WalletServiceImpl {
         WalletLogger.shared.debug("fianl didDoc Str: \(try didDoc.toJson())")
         return didDoc
     }
-    
+    // TODO
     func requestRegisterWallet(tasURL: String, walletURL: String, ownerDidDoc: DIDDataModelSDK.DIDDocument?) async throws -> Bool {
         return false
     }
@@ -237,11 +240,11 @@ class WalletServiceMock : WalletServiceImpl {
             throw WalletAPIError.selectQueryFail.getError()
         }
     }
-    
+    // TODO
     func unbindUser() throws -> Bool {
         return true
     }
-    
+    // TODO
     func requestRegisterUser(tasURL: String, txId: String, serverToken: String, signedDIDDoc: DIDDataModelSDK.SignedDIDDoc?) async throws -> DIDDataModelSDK._RequestRegisterUser {
         return _RequestRegisterUser(txId: "txId")
     }
@@ -368,15 +371,15 @@ class WalletServiceMock : WalletServiceImpl {
         // 이슈어 서명 검증 통신 (블록체인)
         return (vc.id, decodedResponse)
     }
-    
+    // TODO
     func requestRevokeVc(tasURL: String, authType: DIDDataModelSDK.VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String?) async throws -> DIDDataModelSDK._RequestRevokeVc {
         return try _RequestRevokeVc(from: Data())
     }
-    
+    // TODO
     func requestRestoreUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDDataModelSDK.DIDAuth?) async throws -> DIDDataModelSDK._RequestRestoreDidDoc {
         return try _RequestRestoreDidDoc(txId: "txId")
     }
-    
+    // TODO
     func getSignedWalletInfo() throws -> DIDDataModelSDK.SignedWalletInfo {
         return try SignedWalletInfo(from: Data())
     }

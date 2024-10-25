@@ -21,23 +21,15 @@ import DIDCoreSDK
 
 class WalletTokenMock : WalletTokenImpl {
     
-    
-    
     func verifyWalletToken(hWalletToken: String, purposes: [DIDDataModelSDK.WalletTokenPurposeEnum]) throws {
-        
-        print("WalletTokenMock!!")
-        
+    
         var isPurpose = false
         
         guard let token = MockData.shared.getTokenMock() else {
-            print("db verify 실패")
             throw WalletAPIError.selectQueryFail.getError()
         }
         
         if hWalletToken != token.hWalletToken {
-            print("hWalletToken 실패")
-            print("input hWalletToken: \(hWalletToken)")
-            print("saved hWalletToken: \(token.hWalletToken)")
             throw WalletAPIError.verifyTokenFail.getError()
         }
         
@@ -58,7 +50,6 @@ class WalletTokenMock : WalletTokenImpl {
         }
         
         if isPurpose == false {
-            print("verify 실패")
             throw WalletAPIError.verifyTokenFail.getError()
         }
     }
@@ -74,18 +65,15 @@ class WalletTokenMock : WalletTokenImpl {
     
     func createNonceForWalletToken(walletTokenData: DIDDataModelSDK.WalletTokenData?, APIGatewayURL: String) async throws -> String {
         
-        
         let resultNonce = "F9909CA2B700D1EC658098ECE03A97343"
         // Hex
         let hWalletToken = MockData.shared.hWalletToken(purpose: walletTokenData!.seed.purpose)
         
-        // certVcRef 검증
+        // verify certVcRef
         let purpose = WalletTokenPurpose(purpose: walletTokenData!.seed.purpose)
         
         // insert DB
         MockData.shared.setTokenMock(token: TokenMock(idx: "id", walletId: "walletId", hWalletToken: hWalletToken, validUntil: "2050-08-23T12:10:02Z", purpose: purpose.purposeCode.value, nonce: walletTokenData!.seed.nonce, pkgName: walletTokenData!.seed.pkgName, pii: walletTokenData!.sha256_pii, createDate: "2024-08-23T11:40:03.566877Z"))
-        
-        
         
         return resultNonce
     }

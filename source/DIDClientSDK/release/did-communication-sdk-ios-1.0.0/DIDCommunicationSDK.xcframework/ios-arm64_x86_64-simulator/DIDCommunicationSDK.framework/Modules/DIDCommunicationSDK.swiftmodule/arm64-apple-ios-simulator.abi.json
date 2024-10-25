@@ -1029,77 +1029,77 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 676,
       "length": 9,
       "value": "\"VERBOSE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 703,
       "length": 7,
       "value": "\"DEBUG\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 727,
       "length": 6,
       "value": "\"INFO\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 753,
       "length": 9,
       "value": "\"WARNING\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 780,
       "length": 7,
       "value": "\"ERROR\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 676,
       "length": 9,
       "value": "\"VERBOSE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 703,
       "length": 7,
       "value": "\"DEBUG\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 727,
       "length": 6,
       "value": "\"INFO\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 753,
       "length": 9,
       "value": "\"WARNING\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "StringLiteral",
       "offset": 780,
       "length": 7,
       "value": "\"ERROR\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-communication-sdk-ios\/DIDCommunicationSDK\/CommunicationLogger.swift",
       "kind": "BooleanLiteral",
       "offset": 976,
       "length": 5,

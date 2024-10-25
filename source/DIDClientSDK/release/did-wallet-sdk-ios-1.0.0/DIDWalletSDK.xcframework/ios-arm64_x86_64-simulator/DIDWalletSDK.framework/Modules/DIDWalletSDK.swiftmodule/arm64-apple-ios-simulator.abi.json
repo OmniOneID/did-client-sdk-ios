@@ -8858,140 +8858,140 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 669,
       "length": 9,
       "value": "\"VERBOSE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 696,
       "length": 7,
       "value": "\"DEBUG\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 720,
       "length": 6,
       "value": "\"INFO\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 746,
       "length": 9,
       "value": "\"WARNING\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 773,
       "length": 7,
       "value": "\"ERROR\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 669,
       "length": 9,
       "value": "\"VERBOSE\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 696,
       "length": 7,
       "value": "\"DEBUG\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 720,
       "length": 6,
       "value": "\"INFO\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 746,
       "length": 9,
       "value": "\"WARNING\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "StringLiteral",
       "offset": 773,
       "length": 7,
       "value": "\"ERROR\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLogger.swift",
       "kind": "BooleanLiteral",
       "offset": 948,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
       "kind": "StringLiteral",
       "offset": 737,
       "length": 28,
       "value": "\"org.omnione.did.sdk.wallet\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
       "kind": "StringLiteral",
       "offset": 796,
       "length": 13,
       "value": "\"WalletModel\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
       "kind": "StringLiteral",
       "offset": 1036,
       "length": 6,
       "value": "\"momd\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
       "kind": "StringLiteral",
       "offset": 1365,
       "length": 32,
       "value": "\"Loading of store failed:\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
       "kind": "StringLiteral",
       "offset": 1396,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/CoreData\/CoreDataManager.swift",
       "kind": "StringLiteral",
       "offset": 1451,
       "length": 9,
       "value": "\"succeed\""
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLockManager.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/WalletLockManager.swift",
       "kind": "BooleanLiteral",
       "offset": 748,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/Utils\/Extension.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/Utils\/Extension.swift",
       "kind": "BooleanLiteral",
       "offset": 4118,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/dongjunpark\/openDID\/did-client-sdk-ios\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/Utils\/Extension.swift",
+      "filePath": "\/Users\/dongjunpark\/github\/did-client-sdk-ios-fork\/source\/DIDClientSDK\/did-wallet-sdk-ios\/DIDWalletSDK\/Utils\/Extension.swift",
       "kind": "BooleanLiteral",
       "offset": 4728,
       "length": 5,

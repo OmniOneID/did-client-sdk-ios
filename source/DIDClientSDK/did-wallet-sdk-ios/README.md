@@ -2,13 +2,13 @@
 This document is a guide for using the OpenDID Wallet SDK, and provides functions for creating, storing, and managing the WalletToken, Lock/Unlock, Key, DID Document (DID Document), and Verifiable Credential (hereinafter referred to as VC) information required for Open DID.
 
 
-## S/W 사양
-| 구분           | 내용                         |
+## S/W Specification
+| Category      | Details                     |
 |---------------|-----------------------------|
 | OS            | iOS 15.x                    |
 | Language      | swift 5.x                   | 
-| IDE           | xCode 14.x|
-| Build System  | Xcode Basic build system          |
+| IDE           | xCode 14.x                  |   
+| Build System  | Xcode Basic build system    |
 | Compatibility | minSDK 15 or iOS 15 higher  |
 
 

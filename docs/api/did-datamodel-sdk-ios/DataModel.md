@@ -70,9 +70,9 @@ iOS DataModel
     - [1. Protocol](#protocol)
         - [1.1. M132](#1-m132-reg-user)
         - [1.2. M210](#2-m210-issue-vc)
-        - [1.3. M310 (VP제출)](#3-m310-submit-vp)
-        - [1.4. M220 (VC폐기)](#4-m220-revoke-vc)
-        - [1.5. M142 (DID복구)](#5-m142-restore-DID)
+        - [1.3. M310 (VP sumbit)](#3-m310-submit-vp)
+        - [1.4. M220 (VC revoke)](#4-m220-revoke-vc)
+        - [1.5. M142 (DID restore)](#5-m142-restore-DID)
   
     - [2. Token](#2-token)
         - [2.1. ServerTokenSeed](#21-servertokenseed)
@@ -1504,19 +1504,19 @@ public struct _ProposeIssueVc: Jsonable {
 
 
 #### 2.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
+[1.2 RequestEcdh/ _RequestEcdh reference](#12-requestecdh-_requestecdh)
 <br>
 
 #### 2.3 AttestedAppInfo
-[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
+[1.3 AttestedAppInfo reference](#13-AttestedAppInfo)
 <br>
 
 #### 2.4 WalletTokenData
-[1.4 WalletTokenData 참조](#14-WalletTokenData)
+[1.4 WalletTokenData reference](#14-WalletTokenData)
 <br>
 
 #### 2.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
+[1.5 RequestCreateToken reference](#15-RequestCreateToken-_RequestCreateToken)
 <br>
 
 
@@ -1778,19 +1778,19 @@ public struct _ProposeRevokeVc: Jsonable {
 
 
 #### 4.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
+[1.2 RequestEcdh/ _RequestEcdh reference](#12-requestecdh-_requestecdh)
 <br>
 
 #### 4.3 AttestedAppInfo
-[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
+[1.3 AttestedAppInfo reference](#13-AttestedAppInfo)
 <br>
 
 #### 4.4 WalletTokenData
-[1.4 WalletTokenData 참조](#14-WalletTokenData)
+[1.4 WalletTokenData reference](#14-WalletTokenData)
 <br>
 
 #### 4.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
+[1.5 RequestCreateToken reference](#15-RequestCreateToken-_RequestCreateToken)
 <br>
 
 
@@ -1917,19 +1917,19 @@ public struct _ProposeRestoreDidDoc: Jsonable {
 <br>
 
 #### 5.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
+[1.2 RequestEcdh/ _RequestEcdh reference](#12-requestecdh-_requestecdh)
 <br>
 
 #### 5.3 AttestedAppInfo
-[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
+[1.3 AttestedAppInfo reference](#13-AttestedAppInfo)
 <br>
 
 #### 5.4 WalletTokenData
-[1.4 WalletTokenData 참조](#14-WalletTokenData)
+[1.4 WalletTokenData reference](#14-WalletTokenData)
 <br>
 
 #### 5.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
+[1.5 RequestCreateToken reference](#15-RequestCreateToken-_RequestCreateToken)
 <br>
 
 

@@ -14,7 +14,7 @@
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
-		Oi+520x//BuSW91zXwSHs53lYq4=
+		ECpXRrCYvhJXVCrpJc6v7AYJEQY=
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
@@ -30,11 +30,11 @@
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		Gj1aejfLeL19Loy3Uh9g0Ld3Sy8=
+		eLUwrEfrO7rWCzwCF+TORkB0ZjU=
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		Oi+520x//BuSW91zXwSHs53lYq4=
+		ECpXRrCYvhJXVCrpJc6v7AYJEQY=
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
@@ -50,7 +50,7 @@
 		</data>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		5KDMHaWIDuf03ycD73YAnOMW3os=
+		5ysDm42RRrkFkwsa1v4arOTxgYQ=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -70,7 +70,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+53eObXaLCfI9UHSipHlJjva+/OKJEFfIRqXkx5zL90=
+			dfp1TYb94kKFh34gyoXnV0+ZPq6uAH0RvnYqITIf4jw=
 			</data>
 		</dict>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
@@ -98,14 +98,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			6bWBwKW2GRr49JF3MavIuE8jhao6BAw8ORfdebAxK8Q=
+			WBKolQZCvUWBf5brXZR954g20Mg/FYd06Z1CNmP8LPQ=
 			</data>
 		</dict>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			+53eObXaLCfI9UHSipHlJjva+/OKJEFfIRqXkx5zL90=
+			dfp1TYb94kKFh34gyoXnV0+ZPq6uAH0RvnYqITIf4jw=
 			</data>
 		</dict>
 		<key>Modules/DIDCommunicationSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
@@ -133,7 +133,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			744ayroZpuSJA0bgCcZ2jfnHsEVSBDm1YEh8CjqrcC0=
+			8zfudnUKIPCSbSeyBPCfBWWU5XdxY4PeIsyWOiuBnCg=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
