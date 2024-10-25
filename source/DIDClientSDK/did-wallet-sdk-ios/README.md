@@ -39,6 +39,6 @@ $ ./build_xcframework.sh
 ## API Specification
 | Category           | API Document Link    Link                                                                              |
 |---------------|-------------------------------------------------------------------------------------------|
-| Wallet        | [Wallet SDK - Wallet API](docs/api/did-wallet-sdk-ios/Wallet.md)            |
-| WalletError   | [Wallet Error](docs/api/did-wallet-sdk-ios/WalletError.md)                                |
+| Wallet        | [Wallet SDK - Wallet API](../../../docs/api/did-wallet-sdk-ios/Wallet.md)            |
+| WalletError   | [Wallet Error](../../../docs/api/did-wallet-sdk-ios/WalletError.md)                                |
 
