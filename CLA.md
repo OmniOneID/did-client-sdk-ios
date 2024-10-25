@@ -47,4 +47,4 @@ If You violate this obligation by submitting a third party's work without proper
 
 **8.	Agreements.**
 You agree to notify the Project of any facts or circumstances of which you become aware that would make these representations inaccurate in any respect.
-"To sign this CLA, please follow the automated procedure on GitHub or download the PDF, sign it, and submit it to opendid@raonsecure.com." 
+"To sign this CLA, please follow the automated procedure on GitHub or download the PDF, sign it, and submit it to technology@omnione.net." 
