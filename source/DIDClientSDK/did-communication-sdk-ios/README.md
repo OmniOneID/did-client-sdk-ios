@@ -32,8 +32,8 @@ $ ./build_xcframework.sh
 ## API Specification
 | category               | API Documentation Link                                                                    |
 |------------------------|---------------------------------------------------------------------------------|
-| CommnunicationClient   | [Communication SDK API](docs/api/did-communication-sdk-ios/Communication_ko.md) |
-| CommunicationAPIError  | [Error Code](docs/api/did-communication-sdk-ios/CommunicationError.md)          |
+| CommnunicationClient   | [Communication SDK API](https://github.com/djpark0402/did-client-sdk-ios/blob/develop/docs/api/did-communication-sdk-ios/Communication.md) |
+| CommunicationAPIError  | [Error Code](https://github.com/djpark0402/did-client-sdk-ios/blob/develop/docs/api/did-communication-sdk-ios/CommunicationError.md)          |
 
 
 
