@@ -31,7 +31,7 @@ iOS Wallet SDK API
 <div style="page-break-after: always;"></div>
 
 # 목차
-- [APIs](#api-목록)
+- [APIs](#api-list)
     - [0. constructor](#0-constructor)
     - [1. isExistWallet](#1-isexistwallet)
     - [2. createWallet](#2-createwallet)
@@ -68,7 +68,7 @@ iOS Wallet SDK API
     - [4. SignedDIDDoc](#4-signeddiddoc)
     - [5. SignedWalletInfo](#5-signedwalletinfo)
     - [6. DIDAuth](#6-didauth)
-# API 목록
+# API List
 ## 0. constructor
 
 ### Description
@@ -297,7 +297,7 @@ let success = try WalletAPI.shared.bindUser(hWalletToken: hWalletToken);
 public unbindUser(hWalletToken: String) throws -> Bool
 ```
 
-### Parameters
+### Parametersx
 
 | Name          | Type   | Description                       | **M/O** | **Note** |
 |---------------|--------|----------------------------|---------|----------|
@@ -458,7 +458,7 @@ func getDIDDocument(type: Int) throws -> DIDDocument
 
 | Name          | Type   | Description                       | **M/O** | **Note** |
 |---------------|--------|----------------------------|---------|----------|
-| type  | Int | 1 : deviceKey DID Document, 2: holder DID document                  | M       |  DIDDataModel 참조     |
+| type  | Int | 1 : deviceKey DID Document, 2: holder DID document                  | M       |  DIDDataModel reference     |
 
 ### Returns
 
@@ -683,7 +683,7 @@ func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issu
 ## 19. requestRevokeVc
 
 ### Description
-`VC 폐기을 요청한다.`
+`Request for VC revocation.`
 
 ### Declaration
 
@@ -698,8 +698,8 @@ func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: Verify
 | hWalletToken | String              | Wallet Token                | M       |          |
 | tasURL       | String              | TAS URL               | M       |          |
 | authType     | String              | authType            | M       |          |
-| didAuth      | DIDAuth             | didAUth                | M       | 데이터모델 참조    |
-| vcId         | _RequestIssueProfile| issue profile 정보     | M       | 데이터모델 참조  |
+| didAuth      | DIDAuth             | didAUth                | M       | DIDDataModel reference    |
+| vcId         | _RequestIssueProfile| issue profile 정보     | M       | DIDDataModel reference  |
 | issuerNonce  | String              | 참조번호                | M       |          |
 | txId         | String              |                       | M       |           |
 | serverToken  | String              |                       | M       |  |
@@ -836,7 +836,7 @@ func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierP
 |--------------|-------------------|----------------------------------------|---------|-----------------|
 | hWalletToken | String            | 월렛토큰                                 | M       |                 |
 | claimCode    | array[ClaimInfo]  | Claim Code to Submit                   | M       |                 |
-| reqE2e       | ReqE2e            | E2E encryption/decryption information  | M       | 데이터모델 참조 |
+| reqE2e       | ReqE2e            | E2E encryption/decryption information  | M       | DIDDataModel reference |
 | passcode     |String             | PIN for signing                        | M       |                 |
 | nonce        |String             | nonce                                  | M       |                 |
 

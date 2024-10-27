@@ -32,8 +32,8 @@ $ ./build_xcframework.sh
 ## API 규격서
 | 구분                    | API 문서 Link                                                                    |
 |------------------------|---------------------------------------------------------------------------------|
-| CommnunicationClient   | [Communication SDK API](docs/api/did-communication-sdk-ios/Communication_ko.md) |
-| CommunicationAPIError  | [Error Code](docs/api/did-communication-sdk-ios/CommunicationError.md)          |
+| CommnunicationClient   | [Communication SDK API](../../../docs/api/did-communication-sdk-ios/Communication_ko.md) |
+| CommunicationAPIError  | [Error Code](../../../docs/api/did-communication-sdk-ios/CommunicationError.md)          |
 
 
 
