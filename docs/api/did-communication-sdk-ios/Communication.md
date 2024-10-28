@@ -20,12 +20,12 @@ Android Communication SDK API
 
 - Subject: Communication SDK
 - Author: Dongjun Park
-- Date: 2024-09-04
+- Date: 2024-10-18
 - Version: v1.0.0
 
 | Version | Date       | Changes                  |
 | ------- | ---------- | ------------------------ |
-| v1.0.0  | 2024-09-04 | Initial version          |
+| v1.0.0  | 2024-10-18 | Initial version          |
 
 
 <div style="page-break-after: always;"></div>

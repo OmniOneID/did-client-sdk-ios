@@ -461,7 +461,7 @@ public struct Claim : Jsonable
 | hideValue | Bool                         | 값 숨김                   |    O    | Default(false)           |
 | location  | Location                     | 값 위치               |    O    | Default(inline) <br> [Location](#13-location) |
 | digestSRI | String                       | Digest Subresource Integrity |    O    |                          |
-| i18n      |[String:Internationalization] | 국제화         |    O    | Hash value of the value <br> [Internationalization](#26-internationalization) |
+| i18n      |[String:Internationalization] | 국제화         |    O    | [Internationalization](#26-internationalization) |
 
 <br>
 
