@@ -20,12 +20,12 @@ Android Communication SDK API
 
 - 주제: Communication SDK
 - 작성: Dongjun Park
-- 일자: 2024-09-04
+- 일자: 2024-10-18
 - 버전: v1.0.0
 
 | 버전   | 일자       | 변경 내용                 |
 | ------ | ---------- | -------------------------|
-| v1.0.0 | 2024-09-04 | 초기 작성                 |
+| v1.0.0 | 2024-10-18 | 초기 작성                 |
 
 
 <div style="page-break-after: always;"></div>

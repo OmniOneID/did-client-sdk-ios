@@ -49,10 +49,8 @@ did-client-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDCommunicationSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── LICENSE.txt
         │   ├── README_ko.md
-        │   ├── build_xcframework.sh
-        │   └── source
+        │   └── build_xcframework.sh
         ├── did-core-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDCoreSDK.xcodeproj
@@ -81,8 +79,8 @@ did-client-sdk-ios
         │   ├── CHANGELOG.mdt
         │   ├── DIDWalletSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── LICENSE.md
         │   ├── README.md
+        │   ├── README_ko.md
         │   ├── SECURITY.md
         │   └── build_xcframework.sh
         └── release

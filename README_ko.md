@@ -48,39 +48,38 @@ did-client-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDCommunicationSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── LICENSE.txt
         │   ├── README_ko.md
-        │   ├── build_xcframework.sh
-        │   └── source
+        │   ├── README.md
+        │   └── build_xcframework.sh
         ├── did-core-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDCoreSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── README.md
         │   ├── README_ko.md
+        │   ├── README.md
         │   ├── SECURITY.md
         │   └── build_xcframework.sh
         ├── did-datamodel-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDDataModelSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── README.md
         │   ├── README_ko.md
+        │   ├── README.md
         │   ├── SECURITY.md
         │   └── build_xcframework.sh
         ├── did-utility-sdk-ios
         │   ├── CHANGELOG.md
         │   ├── DIDUtilitySDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── README.md
         │   ├── README_ko.md
+        │   ├── README.md
         │   ├── SECURITY.md
         │   └── build_xcframework.sh
         ├── did-wallet-sdk-ios
         │   ├── CHANGELOG.mdt
         │   ├── DIDWalletSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
-        │   ├── LICENSE.md
+        │   ├── README_ko.md
         │   ├── README.md
         │   ├── SECURITY.md
         │   └── build_xcframework.sh
@@ -152,11 +151,11 @@ did-client-sdk-ios
 
 API 참조는 아래에서 확인할 수 있습니다.
 <br>
-- [Core SDK](source/DIDClientSDK/did-core-sdk-ios/README.md)  
-- [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/README.md)  
-- [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/README.md) 
-- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/README.md)  
-- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/README.md) 
+- [Core SDK](source/DIDClientSDK/did-core-sdk-ios/README_ko.md)  
+- [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/README_ko.md)  
+- [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/README_ko.md) 
+- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/README_ko.md)  
+- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/README_ko.md) 
 
 ## 수정내역
 

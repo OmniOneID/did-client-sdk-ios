@@ -20,17 +20,17 @@ iOS Wallet SDK API
 
 - Subject: WalletAPI
 - Writer: Dongjun Park
-- Date: 2024-08-19
+- Date: 2024-10-18
 - Version: v1.0.0
 
 | Version | Date       | History                 |
 | ------- | ---------- | ------------------------|
-| v1.0.0  | 2024-08-19 | Initial                 |
+| v1.0.0  | 2024-10-18 | Initial                 |
 
 
 <div style="page-break-after: always;"></div>
 
-# 목차
+# Table of Contents
 - [APIs](#api-list)
     - [0. constructor](#0-constructor)
     - [1. isExistWallet](#1-isexistwallet)

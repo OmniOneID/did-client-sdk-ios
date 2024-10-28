@@ -20,19 +20,24 @@ iOS WalletAPIError
 
 - Topic: WalletAPIError
 - Author: Dongjun Park
-- Date: 2024-08-23
-- Version: v1.0.0 (1.0.0.0)
+- Date: 2024-10-18
+- Version: v1.0.0
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
-| v1.0.0(1.0.0.0)  | 2024-08-23 | Initial version          |
+| v1.0.0  | 2024-10-18 | Initial version          |
 
 <div style="page-break-after: always;"></div>
 
 # Table of Contents
 
 
-- [WalletAPIError](#walletcoreerror)
+- [iOS WalletAPIError](#ios-walletapierror)
+- [Table of Contents](#table-of-contents)
+  - [WalletAPIError](#walletapierror)
+    - [Description](#description)
+    - [Declaration](#declaration)
+    - [Property](#property)
 - [Error Code](#error-code)
   - [1. Common](#1-common)
   - [2. Token](#2-token)

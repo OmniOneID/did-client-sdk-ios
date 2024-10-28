@@ -182,7 +182,7 @@ public struct DIDDocument : Jsonable, ProofsContainer
 |----------------------|----------------------|----------------------------------------|---------|-----------------------------|
 | context              | [String]             | JSON-LD context                        |    M    |   | 
 | id                   | String               | DID 소유자의 did                        |    M    |   | 
-| controller           | String               | DID controller did                   |    M    |   | 
+| controller           | String               | DID controller의 did                   |    M    |   | 
 | verificationMethod   | [VerificationMethod] | 공개키가 포함된 DID 키 목록  |    M    | [VerificationMethod](#11-verificationmethod) | 
 | assertionMethod      | [String]             | Assertion 키 이름 목록             |    O    |   | 
 | authentication       | [String]             | Authentication 키 이름 목록        |    O    |   | 
