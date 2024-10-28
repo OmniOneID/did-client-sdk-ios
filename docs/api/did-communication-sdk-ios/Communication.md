@@ -15,7 +15,7 @@ puppeteer:
         fullPage: false
 ---
 
-Android Communication SDK API
+iOS Communication SDK API
 ==
 
 - Subject: Communication SDK

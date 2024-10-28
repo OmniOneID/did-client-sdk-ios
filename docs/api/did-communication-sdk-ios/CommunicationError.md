@@ -15,7 +15,7 @@ puppeteer:
         fullPage: false
 ---
 
-Android CommunicationError
+iOS CommunicationError
 ==
 
 - Topic: CommunicationError

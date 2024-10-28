@@ -50,6 +50,8 @@ did-client-sdk-ios
         │   ├── DIDCommunicationSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
         │   ├── README_ko.md
+        │   ├── README.md
+        │   ├── SECURITY.md
         │   └── build_xcframework.sh
         ├── did-core-sdk-ios
         │   ├── CHANGELOG.md
@@ -76,7 +78,7 @@ did-client-sdk-ios
         │   ├── SECURITY.md
         │   └── build_xcframework.sh
         ├── did-wallet-sdk-ios
-        │   ├── CHANGELOG.mdt
+        │   ├── CHANGELOG.md
         │   ├── DIDWalletSDK.xcodeproj
         │   ├── LICENSE-dependencies.md
         │   ├── README.md
