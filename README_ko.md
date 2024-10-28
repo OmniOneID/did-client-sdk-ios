@@ -173,5 +173,5 @@ API 참조는 아래에서 확인할 수 있습니다.
 Contributing 및 pull request 제출 절차에 대한 자세한 내용은 [CONTRIBUTING.md](CONTRIBUTING.md)와 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) 를 참조하세요.
 
 ## 라이선스
-Copyright 2024 Raonsecure
+[Apache 2.0](LICENSE)
 

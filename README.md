@@ -175,4 +175,4 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_
 
 
 ## License
-Copyright 2024 Raonsecure
+[Apache 2.0](LICENSE)
