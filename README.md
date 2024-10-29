@@ -159,6 +159,7 @@ API Reference can be found :
 - [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/README.md)  
 - [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/README.md)  
 
+
 ## Change Log
 
 ChangeLog can be found : 
@@ -169,10 +170,19 @@ ChangeLog can be found :
 - [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/CHANGELOG.md)  
 - [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/CHANGELOG.md)  
 
+
+## OpenDID Demonstration Videos <br>
+To watch our demonstration videos of the OpenDID system in action, please visit our [Demo Repository](https://github.com/OmniOneID/did-demo-server). <br>
+
+These videos showcase key features including user registration, VC issuance, and VP submission processes.
+
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
 
 
+
 ## License
 [Apache 2.0](LICENSE)
+
