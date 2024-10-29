@@ -169,7 +169,7 @@ API 참조는 아래에서 확인할 수 있습니다.
 - [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/CHANGELOG.md)  
 
 ## 데모 영상 <br>
-OpenDID 시스템의 실제 동작을 보여주는 데모 영상은 [Demo Repository](https://github.com/OmniOneID/did-demo-server). 에서 확인하실 수 있습니다. <br>
+OpenDID 시스템의 실제 동작을 보여주는 데모 영상은 [Demo Repository](https://github.com/OmniOneID/did-demo-server) 에서 확인하실 수 있습니다. <br>
 사용자 등록, VC 발급, VP 제출 등 주요 기능들을 영상으로 확인하실 수 있습니다.
 
 
