@@ -34,7 +34,7 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         var signature: String?
     }
     
-    private struct StorableInnerWalletItem: Codable {
+    struct StorableInnerWalletItem: Codable {
         var meta: M
         var item: String
     }
@@ -43,7 +43,11 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         var meta: M
         var item: T
     }
-        
+    
+    static var version: UInt {
+        return 1
+    }
+    
     //MARK: - Private properties
     
     private static var rootDirName: String {
@@ -73,7 +77,6 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         return "signatureKey"
     }
     
-    private var version: UInt = 1
     private var fileName: String
     private var fileExtension: FileExtension
     private var isEncrypted: Bool
@@ -309,7 +312,7 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
             externalWallet = try readExternalWallet()
             externalWallet.signature = nil
         } else {
-            externalWallet = .init(isEncrypted: isEncrypted, data: "", version: version, signature: nil)
+            externalWallet = .init(isEncrypted: isEncrypted, data: "", version: Self.version, signature: nil)
         }
         
         let data: Data

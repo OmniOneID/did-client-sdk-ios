@@ -14,6 +14,8 @@
 		38601D2D2C2D723D00C6DB27 /* DIDManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38601D2C2C2D723D00C6DB27 /* DIDManagerError.swift */; };
 		38601D2F2C2D724600C6DB27 /* VCManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38601D2E2C2D724600C6DB27 /* VCManagerError.swift */; };
 		38601D312C2D82E400C6DB27 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38601D302C2D82E400C6DB27 /* Date+Extension.swift */; };
+		38612B742CEB1F3E00A75AEA /* Encodable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38612B732CEB1F3E00A75AEA /* Encodable+Extension.swift */; };
+		38612B762CEB1FF100A75AEA /* Data+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38612B752CEB1FF100A75AEA /* Data+Extension.swift */; };
 		386A15BC2C226F9D00CD5CD2 /* DIDCoreSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 386A15B32C226F9D00CD5CD2 /* DIDCoreSDK.framework */; };
 		386A15C12C226F9D00CD5CD2 /* DIDCoreSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 386A15C02C226F9D00CD5CD2 /* DIDCoreSDKTests.swift */; };
 		386A15C22C226F9D00CD5CD2 /* DIDCoreSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 386A15B62C226F9D00CD5CD2 /* DIDCoreSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -81,6 +83,8 @@
 		38601D2C2C2D723D00C6DB27 /* DIDManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDManagerError.swift; sourceTree = "<group>"; };
 		38601D2E2C2D724600C6DB27 /* VCManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCManagerError.swift; sourceTree = "<group>"; };
 		38601D302C2D82E400C6DB27 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
+		38612B732CEB1F3E00A75AEA /* Encodable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Extension.swift"; sourceTree = "<group>"; };
+		38612B752CEB1FF100A75AEA /* Data+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extension.swift"; sourceTree = "<group>"; };
 		386A15B32C226F9D00CD5CD2 /* DIDCoreSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIDCoreSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		386A15B62C226F9D00CD5CD2 /* DIDCoreSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DIDCoreSDK.h; sourceTree = "<group>"; };
 		386A15BB2C226F9D00CD5CD2 /* DIDCoreSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIDCoreSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -155,6 +159,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		38612B722CEB1F3300A75AEA /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				38612B732CEB1F3E00A75AEA /* Encodable+Extension.swift */,
+				38612B752CEB1FF100A75AEA /* Data+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		386A15A92C226F9D00CD5CD2 = {
 			isa = PBXGroup;
 			children = (
@@ -195,6 +208,7 @@
 		386A15BF2C226F9D00CD5CD2 /* DIDCoreSDKTests */ = {
 			isa = PBXGroup;
 			children = (
+				38612B722CEB1F3300A75AEA /* Extensions */,
 				386A15C02C226F9D00CD5CD2 /* DIDCoreSDKTests.swift */,
 				C9C465242C2A53B400E88A3F /* Secp256R1ManagerTests.swift */,
 				C968597B2C2BB3B5008308AB /* SecureEnclaveManagerTests.swift */,
@@ -511,11 +525,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				386D3EEC2C2EAF1C00F3B626 /* DIDManagerTests.swift in Sources */,
+				38612B742CEB1F3E00A75AEA /* Encodable+Extension.swift in Sources */,
 				386A15C12C226F9D00CD5CD2 /* DIDCoreSDKTests.swift in Sources */,
 				C96859922C2BDD4D008308AB /* SecureEncryptorTests.swift in Sources */,
 				C968597C2C2BB3B5008308AB /* SecureEnclaveManagerTests.swift in Sources */,
 				38749F1B2C2BFFD7002C4BB1 /* StorageManagerTests.swift in Sources */,
 				C96859942C2BEB68008308AB /* KeyManagerTests.swift in Sources */,
+				38612B762CEB1FF100A75AEA /* Data+Extension.swift in Sources */,
 				386D3EEE2C2EAF3800F3B626 /* VCManagerTests.swift in Sources */,
 				C9C465252C2A53B400E88A3F /* Secp256R1ManagerTests.swift in Sources */,
 			);
