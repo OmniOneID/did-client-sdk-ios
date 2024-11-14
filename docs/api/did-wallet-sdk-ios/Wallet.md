@@ -307,8 +307,8 @@ public unbindUser(hWalletToken: String) throws -> Bool
 
 ### Returns
 
-| Type    | Description                | **M/O** | **Note** |
-|---------|---------------------|---------|----------|
+| Type    | Description                                       | **M/O** | **Note** |
+| ------- | ------------------------------------------------- | ------- | -------- |
 | boolean | Returns whether depersonalization was successful. | M       |          |
 
 ### Usage
@@ -340,8 +340,8 @@ func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -
 
 ### Returns
 
-| Type    | Description                | **M/O** | **Note** |
-|---------|---------------------|---------|----------|
+| Type | Description                                    | **M/O** | **Note** |
+| ---- | ---------------------------------------------- | ------- | -------- |
 | Bool | Returns whether the lock setup was successful. | M       |          |
 
 ### Usage
@@ -365,10 +365,10 @@ func authenticateLock(hWalletToken: String, passcode: String) throws -> Data?
 
 ### Parameters
 
-| Name         | Type   | Description                        | **M/O** | **Note** |
-|--------------|--------|-----------------------------|---------|----------|
-| hWalletToken | String | Wallet Token                   | M       |          |
-| passcode     | String | Unlock PIN               | M       | PIN set when registerLock          | 
+| Name         | Type   | Description  | **M/O** | **Note**                  |
+| ------------ | ------ | ------------ | ------- | ------------------------- |
+| hWalletToken | String | Wallet Token | M       |                           |
+| passcode     | String | Unlock PIN   | M       | PIN set when registerLock |
 
 ### Returns
 
@@ -662,7 +662,7 @@ func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issu
 | tasURL        | String               | TAS URL                                   | M       |                        |
 | hWalletToken  | String               | Wallet Token                              | M       |                        |
 | didAuth       | DIDAuth              | DIDAuth                                   | M       | [DIDAuth](#6-didauth)  |
-| issueProfile  | _RequestIssueProfile | issuer profile 정보                       | M       |                        |
+| issueProfile  | _RequestIssueProfile | issuer profile infomation                       | M       |                        |
 | refId         | String               | reference ID                              | M       |                        |
 | serverToken   | String               | Server token for accessing the TAS server | M       | reference DIDDataModel |
 | APIGatewayURL | String               | APIGateWay URL                            | M       |                        |
@@ -695,17 +695,17 @@ func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: Verify
 
 ### Parameters
 
-| Name         | Type                | Description           | **M/O** | **Note** |
-|--------------|---------------------|-----------------------|---------|----------|
-| hWalletToken | String              | Wallet Token                | M       |          |
-| tasURL       | String              | TAS URL               | M       |          |
-| authType     | String              | authType            | M       |          |
-| didAuth      | DIDAuth             | didAUth                | M       | DIDDataModel reference    |
-| vcId         | _RequestIssueProfile| issue profile 정보     | M       | DIDDataModel reference  |
-| issuerNonce  | String              | 참조번호                | M       |          |
-| txId         | String              |                       | M       |           |
-| serverToken  | String              |                       | M       |  |
-| passcode     | String              |                       | M       |  |
+| Name         | Type                 | Description              | **M/O** | **Note**               |
+| ------------ | -------------------- | ------------------------ | ------- | ---------------------- |
+| hWalletToken | String               | Wallet Token             | M       |                        |
+| tasURL       | String               | TAS URL                  | M       |                        |
+| authType     | String               | authType                 | M       |                        |
+| didAuth      | DIDAuth              | didAUth                  | M       | DIDDataModel reference |
+| vcId         | _RequestIssueProfile | issue profile infomation | M       | DIDDataModel reference |
+| issuerNonce  | String               | reference ID             | M       |                        |
+| txId         | String               |                          | M       |                        |
+| serverToken  | String               |                          | M       |                        |
+| passcode     | String               |                          | M       |                        |
 
 ### Returns
 
