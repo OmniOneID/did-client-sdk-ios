@@ -50,6 +50,7 @@ public protocol WalletCoreImpl {
     func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo]
     func getKeyInfos(ids: [String]) throws -> [KeyInfo]
     func isAnyKeysSaved() throws -> Bool
+    func changePin(id: String, oldPIN: String, newPIN: String) throws 
 }
 
 public protocol WalletServiceImpl {

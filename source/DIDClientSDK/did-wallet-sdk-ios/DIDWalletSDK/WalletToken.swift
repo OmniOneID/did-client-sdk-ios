@@ -42,12 +42,12 @@ class WalletToken: WalletTokenImpl {
         var isPurpose = false
         
         guard let token = try CoreDataManager.shared.selectToken() else {
-            WalletLogger.shared.debug("db verify 실패")
+            WalletLogger.shared.debug("db verify fail")
             throw WalletAPIError.selectQueryFail.getError()
         }
         
         if hWalletToken != token.hWalletToken {
-            WalletLogger.shared.debug("hWalletToken 실패")
+            WalletLogger.shared.debug("hWalletToken fail")
             WalletLogger.shared.debug("input hWalletToken: \(hWalletToken)")
             WalletLogger.shared.debug("saved hWalletToken: \(token.hWalletToken)")
             throw WalletAPIError.verifyTokenFail.getError()

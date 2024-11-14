@@ -34,14 +34,14 @@ class WalletTokenMock : WalletTokenImpl {
         }
         
         if try !DateUtil.checkDate(targetDateStr: token.validUntil) {
-            print("isValidUntil 실패")
+            print("isValidUntil fail")
             throw WalletAPIError.verifyTokenFail.getError()
         }
         
         for purpose in purposes {
             
             if purpose.value == token.purpose {
-                print("verify 성공")
+                print("verify success")
                 isPurpose = true
             } else {
 //                print("input purpose: \(purpose.value)")

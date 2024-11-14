@@ -684,10 +684,11 @@ final class DIDWalletSDKTests: XCTestCase {
         let data = "test".data(using: .utf8)!
         let sha256 = DigestUtils.getDigest(source: data, digestEnum: DigestEnum.sha256)
         print("sha256: \(sha256)")
-//        assert(<#T##condition: Bool##Bool#>)
     }
     
-    
+    func testChangePin() throws {
+        
+    }
     
 //    func testPerformanceExample() throws {
 //        // This is an example of a performance test case.

@@ -193,7 +193,6 @@ public class WalletAPI {
         return try walletService.createSignedDIDDoc(passcode: passcode)
     }
     
-    
     /// Requests to register a user with the given parameters and returns a `_M132_RequestRegisterUser` object.
     /// - Parameters:
     ///   - tasURL: The URL to which the registration request will be sent.
@@ -442,5 +441,15 @@ extension WalletAPI {
     /// - Returns: A Boolean value indicating whether any keys are saved.
     public func isAnyKeysSaved() throws -> Bool {
         return try walletCore.isAnyKeysSaved()
+    }
+    
+    /// Changes the PIN for a specified wallet.
+    /// - Parameters:
+    ///   - id: The identifier for the wallet whose PIN is being changed.
+    ///   - oldPIN: The current PIN that needs to be replaced.
+    ///   - newPIN: The new PIN that will be set.
+    /// - Throws: An error if the PIN change fails, such as if the old PIN is incorrect.
+    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
+        try walletCore.changePin(id: id, oldPIN: oldPIN, newPIN: newPIN)
     }
 }

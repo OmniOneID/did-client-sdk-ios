@@ -285,11 +285,11 @@ class WalletService: WalletServiceImpl {
     public func bindUser() throws -> Bool {
         
         if let token = try CoreDataManager.shared.selectToken() {
-            WalletLogger.shared.debug("bindUser verifyWalletToken 등록 성공")
+            WalletLogger.shared.debug("bindUser verifyWalletToken reg success")
             try CoreDataManager.shared.insertUser(finalEncKey: "", pii: token.pii)
             return true
         } else {
-            WalletLogger.shared.debug("bindUser selectToken 실패")
+            WalletLogger.shared.debug("bindUser selectToken fail")
             throw WalletAPIError.selectQueryFail.getError()
         }
     }

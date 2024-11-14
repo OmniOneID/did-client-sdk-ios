@@ -231,12 +231,12 @@ class WalletServiceMock : WalletServiceImpl {
         
         
         if let token = MockData.shared.getTokenMock() {
-            WalletLogger.shared.debug("bindUser verifyWalletToken 등록 성공")
+            WalletLogger.shared.debug("bindUser verifyWalletToken reg success")
             // 최초 유저 등록 시 finalEncKey값 존재하지 않음 (PIN 입력 후 매핑 됨)
             MockData.shared.setUserMock(user: UserMock(idx: "id", pii: token.pii, finalEncKey: "", createDate: "2024-08-23T11:40:03.566877Z", updateDate: "2050-08-23T12:10:02Z"))
             return true
         } else {
-            WalletLogger.shared.debug("bindUser selectToken 실패")
+            WalletLogger.shared.debug("bindUser selectToken fail")
             throw WalletAPIError.selectQueryFail.getError()
         }
     }

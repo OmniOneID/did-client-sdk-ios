@@ -281,4 +281,23 @@ class WalletCoreMock: WalletCoreImpl {
         }
         return try holderKeyManager.getKeyInfos(ids: ids)
     }
+    
+    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
+        
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        guard !id.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("id").getError()
+        }
+        guard !oldPIN.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("oldPIN").getError()
+        }
+        guard !newPIN.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("newPIN").getError()
+        }
+        
+        try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
+    }
 }
