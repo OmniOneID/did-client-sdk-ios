@@ -836,7 +836,7 @@ func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierP
 
 | Name         | Type             | Description                           | **M/O** | **Note**               |
 | ------------ | ---------------- | ------------------------------------- | ------- | ---------------------- |
-| hWalletToken | String           | 월렛토큰                              | M       |                        |
+| hWalletToken | String           | Wallet Token                          | M       |                        |
 | claimCode    | array[ClaimInfo] | Claim Code to Submit                  | M       |                        |
 | reqE2e       | ReqE2e           | E2E encryption/decryption information | M       | DIDDataModel reference |
 | passcode     | String           | PIN for signing                       | M       |                        |
