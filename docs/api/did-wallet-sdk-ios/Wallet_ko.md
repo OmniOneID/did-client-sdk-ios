@@ -58,6 +58,8 @@ iOS Wallet SDK API
     - [23. createEncVp](#23-createencvp)
     - [24. getKeyInfos](#24-getkeyinfos)
     - [25. getKeyInfos](#25-getkeyinfos)
+    - [26. isAnyKeysSaved](#26-isanykeyssaved)
+    - [27. changePIN](#27-changepin)
     
 - [Enumerators](#enumerators)
     - [1. WALLET_TOKEN_PURPOSE](#1-wallet_token_purpose)
@@ -688,17 +690,17 @@ func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: Verify
 
 ### Parameters
 
-| Name         | Type                | Description           | **M/O** | **Note** |
-|--------------|---------------------|-----------------------|---------|----------|
-| hWalletToken | String              | 월렛토큰                | M       |          |
-| tasURL       | String              | TAS URL               | M       |          |
-| authType     | String              | message ID            | M       |          |
-| didAuth      | DIDAuth             | 거래코드                | M       |          |
-| vcId         | _RequestIssueProfile| issue profile 정보     | M       |          |
-| issuerNonce  | String              | 참조번호                | M       |          |
-| txId         | String              |                       | M       | 데이터모델 참조          |
-| serverToken  | String              |                       | M       | [DIDAuth](#6-didauth) |
-| passcode     | String              |                       | M       | [DIDAuth](#6-didauth) |
+| Name         | Type                 | Description        | **M/O** | **Note**              |
+| ------------ | -------------------- | ------------------ | ------- | --------------------- |
+| hWalletToken | String               | 월렛토큰           | M       |                       |
+| tasURL       | String               | TAS URL            | M       |                       |
+| authType     | String               | message ID         | M       |                       |
+| didAuth      | DIDAuth              | 거래코드           | M       |                       |
+| vcId         | _RequestIssueProfile | issue profile 정보 | M       |                       |
+| issuerNonce  | String               | 참조번호           | M       |                       |
+| txId         | String               |                    | M       | 데이터모델 참조       |
+| serverToken  | String               |                    | M       | [DIDAuth](#6-didauth) |
+| passcode     | String               |                    | M       | [DIDAuth](#6-didauth) |
 
 ### Returns
 
@@ -826,21 +828,21 @@ func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierP
 
 ### Parameters
 
-| Name        | Type           | Description                        | **M/O** | **Note** |
-|-------------|----------------|-----------------------------|---------|----------|
-| hWalletToken | String         | 월렛토큰                   | M       |          |
-| vcId     | String       | VC ID               | M       |          |
-| claimCode     | List&lt;String&gt;       | 제출할 클레임 코드                | M       |          |
-| reqE2e     | ReqE2e       | E2E 암복호화 정보                | M       |데이터모델 참조        |
-|passcode|String | 서명용 PIN   | M       |          |
-| nonce|String | nonce   | M       |       |
+| Name         | Type               | Description        | **M/O** | **Note**        |
+| ------------ | ------------------ | ------------------ | ------- | --------------- |
+| hWalletToken | String             | 월렛토큰           | M       |                 |
+| vcId         | String             | VC ID              | M       |                 |
+| claimCode    | List&lt;String&gt; | 제출할 클레임 코드 | M       |                 |
+| reqE2e       | ReqE2e             | E2E 암복호화 정보  | M       | 데이터모델 참조 |
+| passcode     | String             | 서명용 PIN         | M       |                 |
+| nonce        | String             | nonce              | M       |                 |
 
 ### Returns
 
-| Type   | Description              | **M/O** | **Note** |
-|--------|-------------------|---------|----------|
-| AccE2e  | 암호화 객체| M       |acce2e, encVp...      |
-| EncVP  | 암호화 VP 객체| M       |acce2e, encVp...      |
+| Type   | Description    | **M/O** | **Note**         |
+| ------ | -------------- | ------- | ---------------- |
+| AccE2e | 암호화 객체    | M       | acce2e, encVp... |
+| EncVP  | 암호화 VP 객체 | M       | acce2e, encVp... |
 
 ### Usage
 
@@ -869,9 +871,9 @@ func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo]
 
 ### Returns
 
-| Type   | Description              | **M/O** | **Note** |
-|--------|-------------------|---------|----------|
-| KeyInfo  | array[KeyInfo]  | M       |     |
+| Type    | Description    | **M/O** | **Note** |
+| ------- | -------------- | ------- | -------- |
+| KeyInfo | array[KeyInfo] | M       |          |
 
 ### Usage
 
@@ -908,6 +910,61 @@ public func getKeyInfos(ids: [String]) throws -> [KeyInfo]
 
 ```swift
 let keyInfos = try holderKey.getKeyInfos(ids: ["free", "pin"])
+```
+
+<br>
+
+## 26. isAnyKeysSaved
+
+### Description
+`저장된 키 유무를 반환한다.`
+
+### Declaration
+
+```swift
+public func isAnyKeysSaved() throws -> Bool
+```
+
+### Parameters
+
+
+### Returns
+Bool
+
+### Usage
+
+```swift
+let isAnyKey = try! WalletAPI.shared.isAnyKeysSaved()
+```
+
+<br>
+
+## 27. changePIN
+
+### Description
+`서명용 PIN을 변경한다.`
+
+### Declaration
+
+```swift
+public func changePIN(id: String, oldPIN: String, newPIN: String) throws
+```
+
+### Parameters
+
+| Name   | Type   | Description   | **M/O** | **Note** |
+| ------ | ------ | ------------- | ------- | -------- |
+| id     | String | 서명용 key ID | M       |          |
+| oldPIN | String | 기존 PIN      | M       |          |
+| newPIN | String | 새로운 PIN    | M       |          |
+
+### Returns
+
+
+### Usage
+
+```swift
+try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
 ```
 
 <br>
@@ -964,13 +1021,13 @@ public struct WalletTokenSeed {
 
 ### Property
 
-| Name          | Type            | Description                | **M/O** | **Note**               |
-|---------------|-----------------|----------------------------|---------|------------------------|
-| purpose | WalletTokenPurposeEnum   | token 사용 목적     |    M    |[WalletTokenPurposeEnum](#1-wallet_token_purpose)|
-| pkgName   | String | 인가앱 Package Name                       | M       |          |
-| nonce    | String | wallet nonce                        | M       |          |
-| validUntil    | String | token 만료일시                        | M       |          |
-| userId    | String | 사용자 ID                        | M       |          |
+| Name       | Type                   | Description         | **M/O** | **Note**                                          |
+| ---------- | ---------------------- | ------------------- | ------- | ------------------------------------------------- |
+| purpose    | WalletTokenPurposeEnum | token 사용 목적     | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| pkgName    | String                 | 인가앱 Package Name | M       |                                                   |
+| nonce      | String                 | wallet nonce        | M       |                                                   |
+| validUntil | String                 | token 만료일시      | M       |                                                   |
+| userId     | String                 | 사용자 ID           | M       |                                                   |
 <br>
 
 ## 2. WalletTokenData
@@ -993,13 +1050,13 @@ public struct WalletTokenData: Jsonable {
 
 ### Property
 
-| Name          | Type            | Description                | **M/O** | **Note**               |
-|---------------|-----------------|----------------------------|---------|------------------------|
-| seed | WalletTokenSeed   | WalletToken Seed     |    M    |[WalletTokenSeed](#1-wallettokenseed)|
-| sha256_pii   | String | 사용자 PII의 해시값                 | M       |          |
-| provider    | Provider | wallet 사업자 정보                        | M       | [Provider](#3-provider)         |
-| nonce    | String | provider nonce                      | M       |          |
-| proof    | Proof | provider proof                        | M       |          |
+| Name       | Type            | Description         | **M/O** | **Note**                              |
+| ---------- | --------------- | ------------------- | ------- | ------------------------------------- |
+| seed       | WalletTokenSeed | WalletToken Seed    | M       | [WalletTokenSeed](#1-wallettokenseed) |
+| sha256_pii | String          | 사용자 PII의 해시값 | M       |                                       |
+| provider   | Provider        | wallet 사업자 정보  | M       | [Provider](#3-provider)               |
+| nonce      | String          | provider nonce      | M       |                                       |
+| proof      | Proof           | provider proof      | M       |                                       |
 <br>
 
 ## 3. Provider
@@ -1019,10 +1076,10 @@ public struct Provider: Jsonable {
 
 ### Property
 
-| Name          | Type            | Description                | **M/O** | **Note**               |
-|---------------|-----------------|----------------------------|---------|------------------------|
-| did    | String | provider DID                      | M       |          |
-| certVcRef    | String | provider 가입증명서 VC URL                        | M       |          |
+| Name      | Type   | Description                | **M/O** | **Note** |
+| --------- | ------ | -------------------------- | ------- | -------- |
+| did       | String | provider DID               | M       |          |
+| certVcRef | String | provider 가입증명서 VC URL | M       |          |
 <br>
 
 ## 4. SignedDIDDoc
@@ -1044,12 +1101,12 @@ public struct SignedDidDoc: Jsonable {
 
 ### Property
 
-| Name          | Type            | Description                | **M/O** | **Note**               |
-|---------------|-----------------|----------------------------|---------|------------------------|
-| ownerDidDoc    | String | ownerDidDoc의 multibase 인코딩 값                      | M       |          |
-| wallet    | Wallet | wallet의 id와 wallet의 DID로 구성된 객체                        | M       |          |
-| nonce    | String | wallet nonce                        | M       |          |
-| proof    | Proof | wallet proof                        | M       |          |
+| Name        | Type   | Description                              | **M/O** | **Note** |
+| ----------- | ------ | ---------------------------------------- | ------- | -------- |
+| ownerDidDoc | String | ownerDidDoc의 multibase 인코딩 값        | M       |          |
+| wallet      | Wallet | wallet의 id와 wallet의 DID로 구성된 객체 | M       |          |
+| nonce       | String | wallet nonce                             | M       |          |
+| proof       | Proof  | wallet proof                             | M       |          |
 <br>
 
 ## 5. SignedWalletInfo
@@ -1095,9 +1152,9 @@ public struct DIDAuth: Jsonable {
 
 ### Property
 
-| Name          | Type            | Description                | **M/O** | **Note**               |
-|---------------|-----------------|----------------------------|---------|------------------------|
-| did    | String | 인증 대상자의 DID                        | M       |          |
-| authNonce    | String | DID Auth 용 nonce                        | M       |          |
-| proof    | Proof | authentication proof                        | M       |          |
+| Name      | Type   | Description          | **M/O** | **Note** |
+| --------- | ------ | -------------------- | ------- | -------- |
+| did       | String | 인증 대상자의 DID    | M       |          |
+| authNonce | String | DID Auth 용 nonce    | M       |          |
+| proof     | Proof  | authentication proof | M       |          |
 <br>

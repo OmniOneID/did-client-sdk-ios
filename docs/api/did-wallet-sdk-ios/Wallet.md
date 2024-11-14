@@ -58,6 +58,8 @@ iOS Wallet SDK API
     - [23. createEncVp](#23-createencvp)
     - [24. getKeyInfos](#24-getkeyinfos)
     - [25. getKeyInfos](#25-getkeyinfos)
+    - [26. isAnyKeysSaved](#26-isanykeyssaved)
+    - [27. changePIN](#27-changepin)
     
 - [Enumerators](#enumerators)
     - [1. WALLET_TOKEN_PURPOSE](#1-wallet_token_purpose)fgetSignedWalletInfo
@@ -585,14 +587,14 @@ func String requestRegisterUser(TasURL: String, id: String, txId: String, hWalle
 
 ### Parameters
 
-| Name         | Type           | Description                        | **M/O** | **Note** |
-|--------------|----------------|-----------------------------|---------|----------|
-| TasURL | String         | TAS URL                   | M       |          |
-| id | String         | message id                   | M       |          |
-| txId     | String       | Transaction Code               | M       |          |
-| hWalletToken | String         | Wallet Token                   | M       |          |
-| serverToken     | String       | Server Token                | M       |          |
-| signedDIDDoc|SignedDidDoc | Signed DID Document Object   | M       |[SignedDIDDoc](#4-signeddiddoc)          |
+| Name         | Type         | Description                | **M/O** | **Note**                        |
+| ------------ | ------------ | -------------------------- | ------- | ------------------------------- |
+| TasURL       | String       | TAS URL                    | M       |                                 |
+| id           | String       | message id                 | M       |                                 |
+| txId         | String       | Transaction Code           | M       |                                 |
+| hWalletToken | String       | Wallet Token               | M       |                                 |
+| serverToken  | String       | Server Token               | M       |                                 |
+| signedDIDDoc | SignedDidDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
 
 ### Returns
 
@@ -621,12 +623,12 @@ func getSignedDIDAuth(hWalletToken: String, authNonce: String, didType: DidDocum
 
 ### Parameters
 
-| Name          | Type   | Description                       | **M/O** | **Note** |
-|---------------|--------|----------------------------|---------|----------|
-| hWalletToken  | String | Wallet Token                  | M       |          |
-| authNonce  | String | profile auth nonce                  | M       |          |
-| didType  | DIDDocumentType | did type                  | M       |          |
-| passcode  | String | user passcode                  | M       |          |
+| Name         | Type            | Description        | **M/O** | **Note** |
+| ------------ | --------------- | ------------------ | ------- | -------- |
+| hWalletToken | String          | Wallet Token       | M       |          |
+| authNonce    | String          | profile auth nonce | M       |          |
+| didType      | DIDDocumentType | did type           | M       |          |
+| passcode     | String          | user passcode      | M       |          |
 
 ### Returns
 
@@ -655,22 +657,22 @@ func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issu
 
 ### Parameters
 
-| Name        | Type           | Description                        | **M/O** | **Note** |
-|-------------|----------------|-----------------------------|---------|----------|
-| tasURL | String         | TAS URL                   | M       |          |
-| hWalletToken | String         | Wallet Token                   | M       |          |
-| didAuth     | DIDAuth       | DIDAuth               | M       |   [DIDAuth](#6-didauth)       |
-| issueProfile     | _RequestIssueProfile       | issuer profile 정보                | M       |          |
-| refId     | String       | reference ID                | M       |          |
-| serverToken |String | Server token for accessing the TAS server | M       | reference DIDDataModel          |
-| APIGatewayURL|String | APIGateWay URL | M       |         |
+| Name          | Type                 | Description                               | **M/O** | **Note**               |
+| ------------- | -------------------- | ----------------------------------------- | ------- | ---------------------- |
+| tasURL        | String               | TAS URL                                   | M       |                        |
+| hWalletToken  | String               | Wallet Token                              | M       |                        |
+| didAuth       | DIDAuth              | DIDAuth                                   | M       | [DIDAuth](#6-didauth)  |
+| issueProfile  | _RequestIssueProfile | issuer profile 정보                       | M       |                        |
+| refId         | String               | reference ID                              | M       |                        |
+| serverToken   | String               | Server token for accessing the TAS server | M       | reference DIDDataModel |
+| APIGatewayURL | String               | APIGateWay URL                            | M       |                        |
 
 ### Returns
 
-| Type            | Description         | **M/O** | **Note**                                   |
-|-----------------|---------------------|---------|--------------------------------------------|
-| String          | VC ID               | M       |Returns the ID of the VC issued on success  |
-| _requestIssueVc | VC                  | M       |Returns the VC issued on success            |
+| Type            | Description | **M/O** | **Note**                                   |
+| --------------- | ----------- | ------- | ------------------------------------------ |
+| String          | VC ID       | M       | Returns the ID of the VC issued on success |
+| _requestIssueVc | VC          | M       | Returns the VC issued on success           |
 
 ### Usage
 
@@ -771,10 +773,10 @@ func getCredentials(hWalletToken: String, ids: [String]) throws -> [VerifiableCr
 
 ### Parameters
 
-| Name           | Type   | Description                       | **M/O** | **Note** |
-|----------------|--------|----------------------------|---------|----------|
-| hWalletToken   | String | Wallet Token                  | M       |          |
-| ids   | [String]   | List of VC IDs to be searched               | M       |          |
+| Name         | Type     | Description                   | **M/O** | **Note** |
+| ------------ | -------- | ----------------------------- | ------- | -------- |
+| hWalletToken | String   | Wallet Token                  | M       |          |
+| ids          | [String] | List of VC IDs to be searched | M       |          |
 
 ### Returns
 
@@ -832,13 +834,13 @@ func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierP
 
 ### Parameters
 
-| Name         | Type              | Description                            | **M/O** | **Note**        |
-|--------------|-------------------|----------------------------------------|---------|-----------------|
-| hWalletToken | String            | 월렛토큰                                 | M       |                 |
-| claimCode    | array[ClaimInfo]  | Claim Code to Submit                   | M       |                 |
-| reqE2e       | ReqE2e            | E2E encryption/decryption information  | M       | DIDDataModel reference |
-| passcode     |String             | PIN for signing                        | M       |                 |
-| nonce        |String             | nonce                                  | M       |                 |
+| Name         | Type             | Description                           | **M/O** | **Note**               |
+| ------------ | ---------------- | ------------------------------------- | ------- | ---------------------- |
+| hWalletToken | String           | 월렛토큰                              | M       |                        |
+| claimCode    | array[ClaimInfo] | Claim Code to Submit                  | M       |                        |
+| reqE2e       | ReqE2e           | E2E encryption/decryption information | M       | DIDDataModel reference |
+| passcode     | String           | PIN for signing                       | M       |                        |
+| nonce        | String           | nonce                                 | M       |                        |
 
 ### Returns
 
@@ -915,4 +917,249 @@ public func getKeyInfos(ids: [String]) throws -> [KeyInfo]
 let keyInfos = try holderKey.getKeyInfos(ids: ["free", "pin"])
 ```
 
+<br>
+
+## 26. isAnyKeysSaved
+
+### Description
+`Returns whether a key is stored.`
+
+### Declaration
+
+```swift
+public func isAnyKeysSaved() throws -> Bool
+```
+
+### Parameters
+
+
+### Returns
+Bool
+
+### Usage
+
+```swift
+let isAnyKey = try! WalletAPI.shared.isAnyKeysSaved()
+```
+
+<br>
+
+## 27. changePIN
+
+### Description
+`Change PIN for signing`
+
+### Declaration
+
+```swift
+public func changePIN(id: String, oldPIN: String, newPIN: String) throws
+```
+
+### Parameters
+
+| Name   | Type   | Description   | **M/O** | **Note** |
+| ------ | ------ | ------------- | ------- | -------- |
+| id     | String | key ID for signing | M       |          |
+| oldPIN | String | old PIN      | M       |          |
+| newPIN | String | new PIN    | M       |          |
+
+### Returns
+
+
+### Usage
+
+```swift
+try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
+```
+
+<br>
+
+
+# Enumerators
+## 1. WALLET_TOKEN_PURPOSE
+
+### Description
+
+`WalletToken purpose`
+
+### Declaration
+
+```swift
+public enum WalletTokenPurposeEnum: Int, Jsonable {
+    case PERSONALIZED               = 1
+    case DEPERSONALIZED             = 2
+    case PERSONALIZE_AND_CONFIGLOCK = 3
+    case CONFIGLOCK                 = 4
+    case CREATE_DID                 = 5
+    case UPDATE_DID                 = 6
+    case RESTORE_DID                = 7
+    case ISSUE_VC                   = 8
+    case REMOVE_VC                  = 9
+    case PRESENT_VP                 = 10
+    case LIST_VC                    = 11
+    case DETAIL_VC                  = 12
+    case CREATE_DID_AND_ISSUE_VC    = 13
+    case LIST_VC_AND_PRESENT_VP     = 14
+}
+```
+<br>
+
+# Value Object
+
+## 1. WalletTokenSeed
+
+### Description
+
+`Data transmitted by the authorization app when requesting wallet token creation to the wallet`
+
+### Declaration
+
+```swift
+public struct WalletTokenSeed {
+    var purpose: WalletTokenPurposeEnum
+    var pkgName: String
+    var nonce: String
+    var validUntil: String
+    var userId: String?
+}
+```
+
+### Property
+
+| Name       | Type                   | Description        | **M/O** | **Note**                                          |
+| ---------- | ---------------------- | ------------------ | ------- | ------------------------------------------------- |
+| purpose    | WalletTokenPurposeEnum | token purpose    | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| pkgName    | String                 | ca Package Name    | M       |                                                   |
+| nonce      | String                 | wallet nonce       | M       |                                                   |
+| validUntil | String                 | token expried date | M       |                                                   |
+| userId     | String                 | user ID            | M       |                                                   |
+<br>
+
+## 2. WalletTokenData
+
+### Description
+
+`Data generated by the wallet and transmitted to the authorization app when the authorization app requests the wallet to create a wallet token.`
+
+### Declaration
+
+```swift
+public struct WalletTokenData: Jsonable {
+    var seed: WalletTokenSeed
+    var sha256_pii: String
+    var provider: Provider
+    var nonce: String
+    var proof: Proof
+}
+```
+
+### Property
+
+| Name       | Type            | Description                 | **M/O** | **Note**                              |
+| ---------- | --------------- | --------------------------- | ------- | ------------------------------------- |
+| seed       | WalletTokenSeed | WalletToken Seed            | M       | [WalletTokenSeed](#1-wallettokenseed) |
+| sha256_pii | String          | Hash value of user PII      | M       |                                       |
+| provider   | Provider        | Wallet business information | M       | [Provider](#3-provider)               |
+| nonce      | String          | provider nonce              | M       |                                       |
+| proof      | Proof           | provider proof              | M       |                                       |
+<br>
+
+## 3. Provider
+
+### Description
+
+`Provider Information`
+
+### Declaration
+
+```swift
+public struct Provider: Jsonable {
+    var did: String
+    var certVcRef: String
+}
+```
+
+### Property
+
+| Name      | Type   | Description                | **M/O** | **Note** |
+| --------- | ------ | -------------------------- | ------- | -------- |
+| did       | String | provider DID               | M       |          |
+| certVcRef | String | Membership Certificate VC URL | M       |          |
+<br>
+
+## 4. SignedDIDDoc
+
+### Description
+
+`Data of the document for the wallet to sign the holder's DID Document and request the controller to register it.`
+
+### Declaration
+
+```swift
+public struct SignedDidDoc: Jsonable {
+    var ownerDidDoc: String
+    var wallet: Wallet
+    var nonce: String
+    var proof: Proof
+}
+```
+
+### Property
+
+| Name        | Type   | Description                                                   | **M/O** | **Note** |
+| ----------- | ------ | ------------------------------------------------------------- | ------- | -------- |
+| ownerDidDoc | String | Multibase encoded value of ownerDidDoc                        | M       |          |
+| wallet      | Wallet | An object consisting of the wallet's ID and the wallet's DID. | M       |          |
+| nonce       | String | wallet nonce                                                  | M       |          |
+| proof       | Proof  | wallet proof                                                  | M       |          |
+<br>
+
+## 5. SignedWalletInfo
+
+### Description
+
+`Signed walletinfo data`
+
+### Declaration
+
+```swift
+public struct SignedWalletInfo: Jsonable {
+    var wallet: Wallet
+    var nonce: String
+    var proof: Proof
+}
+```
+
+### Property
+
+| Name   | Type   | Description                                                   | **M/O** | **Note** |
+| ------ | ------ | ------------------------------------------------------------- | ------- | -------- |
+| wallet | Wallet | An object consisting of the wallet's ID and the wallet's DID. | M       |          |
+| nonce  | String | wallet nonce                                                  | M       |          |
+| proof  | Proof  | wallet proof                                                  | M       |          |
+<br>
+
+## 6. DIDAuth
+
+### Description
+
+`DID Auth Data`
+
+### Declaration
+
+```swift
+public struct DIDAuth: Jsonable {
+    var did: String
+    var authNonce: String
+    var proof: Proof
+}
+```
+
+### Property
+
+| Name      | Type   | Description                           | **M/O** | **Note** |
+| --------- | ------ | ------------------------------------- | ------- | -------- |
+| did       | String | DID of the person being authenticated | M       |          |
+| authNonce | String | Nonce for DID Auth                    | M       |          |
+| proof     | Proof  | authentication proof                  | M       |          |
 <br>
