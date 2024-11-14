@@ -153,7 +153,7 @@ final class DIDWalletSDKTests: XCTestCase {
     }
     
     // 유저 등록
-    func testRegisterUser() async throws {
+//    func testRegisterUser() async throws {
 //        print("################### testRegisterUser")
 //        do {
 //            let walletTokenDataJson = """
@@ -182,7 +182,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //        } catch let error as WalletAPIError {
 //            print("testRegisterUser error: \(error)")
 //        }
-    }
+//    }
     
     // vc발급
     func testIssueCredential() async throws {
