@@ -262,7 +262,7 @@ final class DIDWalletSDKTests: XCTestCase {
     }
     
 //     vp 제출
-    func testSubmitCredential() async throws {
+//    func testSubmitCredential() async throws {
         
 //        try await testIssueCredential()
 //        
@@ -307,7 +307,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //        }
 //        
 //        sleep(10)
-    }
+//    }
     
     func testExample() throws {
         // This is an example of a functional test case.
@@ -626,7 +626,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //        }
     }
     
-    func testRestoreDID() throws {
+//    func testRestoreDID() throws {
 //        Task {
 //            do {
 //                try await RestoreUserProtocol.shared.preProcess(offerId: "aae54cdf-0412-4878-bd32-b9745dd60482", did: "did:omn:gagws6YDE6qAGac2MsjPkAQah3t")
@@ -669,7 +669,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //                print("error: \(error)")
 //            }
 //        }
-    }
+//    }
 
     func testMultibase() throws {
         
@@ -686,9 +686,9 @@ final class DIDWalletSDKTests: XCTestCase {
         print("sha256: \(sha256)")
     }
     
-    func testChangePin() throws {
-        
-    }
+//    func testChangePin() throws {
+//        
+//    }
     
 //    func testPerformanceExample() throws {
 //        // This is an example of a performance test case.
