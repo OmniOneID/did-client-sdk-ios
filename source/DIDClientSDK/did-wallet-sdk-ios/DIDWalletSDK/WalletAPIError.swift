@@ -85,7 +85,7 @@ enum WalletAPIError: WalletAPIErrorProtocol {
         case .unknown:
             return ("05000", "Unknown error")
         case .generalFail:
-            return ("05001", "General failture")
+            return ("05001", "General failure")
         case .verifyParameterFail(let message):
             return ("05002", "Failed to verify parameter: \(String(describing: message))")
         case .serialzaitionFail:
