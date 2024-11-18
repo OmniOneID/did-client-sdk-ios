@@ -123,8 +123,8 @@ public struct WalletSDKError: Error {
 | Error Code   | Error Message                        | Description                       | Action Required                   |
 |--------------|--------------------------------------|-----------------------------------|-----------------------------------|
 | MSDKWLT05040 | Failed to create wallet              | Wallet creation failed            | Check wallet creation steps       |
-| MSDKWLT05041 | Personalization failed               | Personalization failed            | Review personalization process    |
-| MSDKWLT05042 | Depersonalization failed             | Depersonalization failed          | Review depersonalization process  |
+| MSDKWLT05041 | Failed to Personalization            | Personalization failed            | Review personalization process    |
+| MSDKWLT05042 | Failed to Depersonalization          | Depersonalization failed          | Review depersonalization process  |
 | MSDKWLT05043 | Failed to save keychain              | Keychain saving failed            | Ensure proper keychain saving process |
 | MSDKWLT05044 | Incorrect passcode                   | Passcode entered is incorrect     | Verify and re-enter the correct passcode |
 | MSDKWLT05045 | Wallet ID not found                  | Specified wallet ID not found     | Check wallet ID                  |
@@ -152,4 +152,4 @@ public struct WalletSDKError: Error {
 ## 8. VP
 | Error Code   | Error Message                        | Description                       | Action Required                   |
 |--------------|--------------------------------------|-----------------------------------|-----------------------------------|
-| MSDKWLS05070 | submitCredentialFail                 | submit credential fail            | Check credential submit process   |
+| MSDKWLS05070 | Failed to submit credential                 | submit credential fail            | Check credential submit process   |

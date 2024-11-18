@@ -85,13 +85,13 @@ enum WalletAPIError: WalletAPIErrorProtocol {
         case .unknown:
             return ("05000", "Unknown error")
         case .generalFail:
-            return ("05001", "General fail")
+            return ("05001", "General failture")
         case .verifyParameterFail(let message):
             return ("05002", "Failed to verify parameter: \(String(describing: message))")
         case .serialzaitionFail:
-            return ("05003", "Failed to serialzation")
+            return ("05003", "Failed to serialize")
         case .deserialzaitionFail:
-            return ("05004", "Failed to Deserialzation")
+            return ("05004", "Failed to deserialize")
         case .createProofFail:
             return ("05005", "Failed to create proof")
         case .roleMatchFail:
@@ -101,7 +101,7 @@ enum WalletAPIError: WalletAPIErrorProtocol {
             
             //Token
         case .verifyTokenFail:
-            return ("05010", "Failed to token verification")
+            return ("05010", "Failed to verify token")
         case .createTokenFail:
             return ("05011", "Failed to create wallet token")
             
@@ -121,9 +121,9 @@ enum WalletAPIError: WalletAPIErrorProtocol {
         case .createWalletFail:
             return ("05040", "Failed to create wallet")
         case .personalizationFail:
-            return ("05041", "Failed to personalization")
+            return ("05041", "Failed to personalize")
         case .depersonalizationFail:
-            return ("05042", "Failed to depersonalization")
+            return ("05042", "Failed to depersonalize")
         case .saveKeychainFail:
             return ("05043", "Failed to save keychain")
         case .incorrectPasscode:
