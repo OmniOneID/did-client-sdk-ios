@@ -16,6 +16,7 @@
 
 import Foundation
 
+/// It manage the wallet file
 struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
     
     typealias C = CommonError
@@ -104,6 +105,11 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
     
     //MARK: - Methods
     
+    /// Create an instance of StorageManager that manage the wallet file
+    /// - Parameters:
+    ///   - fileName: The name of wallet file
+    ///   - fileExtension: The extension of wallet file
+    ///   - isEncrypted: The flag whether wallet file is encrypted
     init(fileName: String, fileExtension: FileExtension, isEncrypted: Bool) throws {
         if fileName.isEmpty {
             throw C.invalidParameter(code: .storageMaanger, name: "fileName").getError()
@@ -117,10 +123,14 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         jsonEncoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
     }
     
+    /// Returns whether the saved wallet file exist
+    /// - Returns: Whether the saved wallet file exist
     func isSaved() -> Bool {
         return (try? Data(contentsOf: filePathURL)) != nil
     }
     
+    /// Add wallet item data at wallet file
+    /// - Parameter walletItem: The wallet item to add at wallet file
     func addItem(walletItem: UsableInnerWalletItem) throws {
         var savedItems: [StorableInnerWalletItem]
         
@@ -142,6 +152,8 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         try saveItems(walletItems: savedItems)
     }
     
+    /// Update wallet item data at wallet file
+    /// - Parameter walletItem: The wallet item to update at wallet file
     func updateItem(walletItem: UsableInnerWalletItem) throws {
         var savedItems = try getAllInnerWalletItems()
         
@@ -157,6 +169,9 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         try saveItems(walletItems: savedItems)
     }
     
+    /// Remove wallet item data from wallet file
+    /// If the wallet file not exist, throw some error
+    /// - Parameter identifiers: The wallet item identifiers to update from wallet file
     func removeItems(by identifiers: [String]) throws {
         if identifiers.count == 0 {
             throw C.invalidParameter(code: .storageMaanger, name: "identifiers").getError()
@@ -181,6 +196,8 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         }
     }
     
+    /// Removes all of wallet item data from wallet file
+    /// If the wallet file not exist, throw some error
     func removeAllItems() throws {
         guard isSaved() else {
             throw E.noItemsSaved.getError()
@@ -193,6 +210,9 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         }
     }
     
+    /// Get wallet item meta data from wallet file
+    /// - Parameter identifiers: The wallet item identifiers to get metas from wallet file
+    /// - Returns: The array of wallet item meta
     func getMetas(by identifiers: [String]) throws -> [M] {
         if identifiers.count == 0 {
             throw C.invalidParameter(code: .storageMaanger, name: "identifiers").getError()
@@ -219,6 +239,8 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         return filteredMetas
     }
     
+    /// Get all of wallet item meta data from wallet file
+    /// - Returns: The array of wallet item meta object
     func getAllMetas() throws -> [M] {
         guard isSaved() else {
             throw E.noItemsSaved.getError()
@@ -227,6 +249,9 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         return (try getAllInnerWalletItems()).map { $0.meta }
     }
     
+    /// Get wallet item data from wallet file
+    /// - Parameter identifiers: The wallet item identifiers to get items from wallet file
+    /// - Returns: The array of wallet item
     func getItems(by identifiers: [String]) throws -> [UsableInnerWalletItem] {
         if identifiers.count == 0 {
             throw C.invalidParameter(code: .storageMaanger, name: "identifiers").getError()
@@ -253,6 +278,8 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         return filteredWalletItems
     }
     
+    /// Get all of wallet item data from wallet file
+    /// - Returns: The array of wallet item
     func getAllItems() throws -> [UsableInnerWalletItem] {
         return try getAllInnerWalletItems()
             .map { try convertToUsableInnerWalletItem(walletItem: $0) }
