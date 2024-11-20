@@ -22,7 +22,7 @@ jobs:
     - name: Utility Test
       run: |
         cd source/DIDClientSDK
-        xcodebuild test -scheme DIDUtilitySDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+        xcodebuild test -scheme DIDUtilitySDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
     
     - name: DataModel Build
       run: |
@@ -31,7 +31,7 @@ jobs:
     - name: DataModel Test
       run: |
         cd source/DIDClientSDK
-        xcodebuild test -scheme DIDDataModelSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+        xcodebuild test -scheme DIDDataModelSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
     
     - name: Core Build
       run: |
@@ -40,7 +40,7 @@ jobs:
     - name: Core Test
       run: |
         cd source/DIDClientSDK
-        xcodebuild test -scheme DIDCoreSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+        xcodebuild test -scheme DIDCoreSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
         
     - name: Communication Build
       run: |
@@ -49,7 +49,7 @@ jobs:
     - name: Communication Test
       run: |
         cd source/DIDClientSDK
-        xcodebuild test -scheme DIDCommunicationSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+        xcodebuild test -scheme DIDCommunicationSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
 
     - name: Wallet Build
       run: |
@@ -58,4 +58,4 @@ jobs:
     - name: Wallet Test
       run: |
         cd source/DIDClientSDK
-        xcodebuild test -scheme DIDWalletSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+        xcodebuild test -scheme DIDWalletSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
