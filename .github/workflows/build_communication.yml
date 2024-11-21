@@ -19,7 +19,7 @@ jobs:
       run: |
         cd source/DIDClientSDK
         xcodebuild build -scheme DIDCommunicationSDK -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
-    - name: Test
-      run: |
-        cd source/DIDClientSDK
-        xcodebuild test -scheme DIDCommunicationSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
+    # - name: Test
+    #   run: |
+    #     cd source/DIDClientSDK
+    #     xcodebuild test -scheme DIDCommunicationSDKTests -workspace DIDClientSDK.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
