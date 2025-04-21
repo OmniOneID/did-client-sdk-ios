@@ -2,12 +2,15 @@
 
 ### This project uses the following third-party libraries, each under its own license:
 
-### [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/dependencies-license.md)  
+<br>
 
-### [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/dependencies-license.md) 
+**OpenSSL**  
+`OpenSSL(v1.1.1n)`  
+(https://github.com/openssl/openssl)
 
-### [Core SDK](source/DIDClientSDK/did-core-sdk-ios/dependencies-license.md)  
+<br>
 
-### [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/dependencies-license.md)  
+**OpenSSL-for-iPhone**  
+`OpenSSL-for-iPhone`  
+(https://github.com/x2on/OpenSSL-for-iPhone)
 
-### [Data Model](source/DIDClientSDK/did-datamodel-sdk-ios/dependencies-license.md)
