@@ -7,6 +7,7 @@ import CoreData
 import CryptoKit
 import Foundation
 import LocalAuthentication
+import OrderedCollections
 import Security
 import Swift
 import _Concurrency
@@ -138,6 +139,776 @@ public class CommnunicationClient : DIDWalletSDK.CommnunicationProtocol {
   public func doPost(url: Foundation.URL, requestJsonData: Foundation.Data) async throws -> Foundation.Data
   @objc deinit
 }
+extension DIDWalletSDK.BigUInt {
+  public subscript(bitAt index: Swift.Int) -> Swift.Bool {
+    get
+    set
+  }
+}
+extension DIDWalletSDK.BigUInt {
+  public var bitWidth: Swift.Int {
+    get
+  }
+  public var leadingZeroBitCount: Swift.Int {
+    get
+  }
+  public var trailingZeroBitCount: Swift.Int {
+    get
+  }
+}
+extension DIDWalletSDK.BigInt {
+  public var bitWidth: Swift.Int {
+    get
+  }
+  public var trailingZeroBitCount: Swift.Int {
+    get
+  }
+}
+extension DIDWalletSDK.BigUInt {
+  public struct Words : Swift.RandomAccessCollection {
+    public var startIndex: Swift.Int {
+      get
+    }
+    public var endIndex: Swift.Int {
+      get
+    }
+    public subscript(index: Swift.Int) -> DIDWalletSDK.BigUInt.Word {
+      get
+    }
+    public typealias Element = DIDWalletSDK.BigUInt.Word
+    public typealias Index = Swift.Int
+    public typealias Indices = Swift.Range<Swift.Int>
+    public typealias Iterator = Swift.IndexingIterator<DIDWalletSDK.BigUInt.Words>
+    public typealias SubSequence = Swift.Slice<DIDWalletSDK.BigUInt.Words>
+  }
+  public var words: DIDWalletSDK.BigUInt.Words {
+    get
+  }
+  public init<Words>(words: Words) where Words : Swift.Sequence, Words.Element == Swift.UInt
+}
+extension DIDWalletSDK.BigInt {
+  public struct Words : Swift.RandomAccessCollection {
+    public typealias Indices = Swift.CountableRange<Swift.Int>
+    public var count: Swift.Int {
+      get
+    }
+    public var indices: DIDWalletSDK.BigInt.Words.Indices {
+      get
+    }
+    public var startIndex: Swift.Int {
+      get
+    }
+    public var endIndex: Swift.Int {
+      get
+    }
+    public subscript(index: Swift.Int) -> Swift.UInt {
+      get
+    }
+    public typealias Element = Swift.UInt
+    public typealias Index = Swift.Int
+    public typealias Iterator = Swift.IndexingIterator<DIDWalletSDK.BigInt.Words>
+    public typealias SubSequence = Swift.Slice<DIDWalletSDK.BigInt.Words>
+  }
+  public var words: DIDWalletSDK.BigInt.Words {
+    get
+  }
+  public init<S>(words: S) where S : Swift.Sequence, S.Element == Swift.UInt
+}
+public struct AttributeValue : DIDWalletSDK.Jsonable {
+  public let encoded: DIDWalletSDK.BigIntString
+  public var raw: Swift.String {
+    get
+  }
+  public init(raw: Swift.String)
+}
+extension DIDWalletSDK.AttributeValue {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+extension DIDWalletSDK.BigInt : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension DIDWalletSDK.BigUInt : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension DIDWalletSDK.BigUInt {
+  public func squareRoot() -> DIDWalletSDK.BigUInt
+}
+extension DIDWalletSDK.BigInt {
+  public func squareRoot() -> DIDWalletSDK.BigInt
+}
+public struct ZKPCredential : DIDWalletSDK.Jsonable {
+  public let credentialId: Swift.String
+  public let schemaId: Swift.String
+  public let credDefId: Swift.String
+  public let values: [Swift.String : DIDWalletSDK.AttributeValue]
+  public var signature: DIDWalletSDK.ZKPCredential.CredentialSignature
+  public let signatureCorrectnessProof: DIDWalletSDK.ZKPCredential.SignatureCorrectnessProof
+  public struct CredentialSignature : DIDWalletSDK.Jsonable {
+    public var pCredential: DIDWalletSDK.ZKPCredential.CredentialSignature.PrimaryCredentialSignature
+    public struct PrimaryCredentialSignature : DIDWalletSDK.Jsonable {
+      public let a: DIDWalletSDK.BigIntString
+      public let e: DIDWalletSDK.BigIntString
+      public let m2: DIDWalletSDK.BigIntString
+      public let q: DIDWalletSDK.BigIntString
+      public var v: DIDWalletSDK.BigIntString
+      public func encode(to encoder: any Swift.Encoder) throws
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct SignatureCorrectnessProof : DIDWalletSDK.Jsonable {
+    public let se: DIDWalletSDK.BigIntString
+    public let c: DIDWalletSDK.BigIntString
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public class JSONParser {
+  public init()
+  public func parse(data: Foundation.Data) throws -> DIDWalletSDK.JSON
+  @objc deinit
+}
+open class RNJSONEncoder {
+  public struct OutputFormatting : Swift.OptionSet {
+    public let rawValue: Swift.UInt
+    public init(rawValue: Swift.UInt)
+    public static let prettyPrinted: DIDWalletSDK.RNJSONEncoder.OutputFormatting
+    public static let sortedKeys: DIDWalletSDK.RNJSONEncoder.OutputFormatting
+    public static let withoutEscapingSlashes: DIDWalletSDK.RNJSONEncoder.OutputFormatting
+    public typealias ArrayLiteralElement = DIDWalletSDK.RNJSONEncoder.OutputFormatting
+    public typealias Element = DIDWalletSDK.RNJSONEncoder.OutputFormatting
+    public typealias RawValue = Swift.UInt
+  }
+  public enum DateEncodingStrategy {
+    case deferredToDate
+    case secondsSince1970
+    case millisecondsSince1970
+    @available(macOS 10.12, iOS 10.0, watchOS 3.0, tvOS 10.0, *)
+    case iso8601
+    case formatted(Foundation.DateFormatter)
+    case custom((Foundation.Date, any Swift.Encoder) throws -> Swift.Void)
+  }
+  public enum DataEncodingStrategy {
+    case deferredToData
+    case base64
+    case custom((Foundation.Data, any Swift.Encoder) throws -> Swift.Void)
+  }
+  public enum NonConformingFloatEncodingStrategy {
+    case `throw`
+    case convertToString(positiveInfinity: Swift.String, negativeInfinity: Swift.String, nan: Swift.String)
+  }
+  public enum KeyEncodingStrategy {
+    case useDefaultKeys
+    case convertToSnakeCase
+    case custom((_ codingPath: [any Swift.CodingKey]) -> any Swift.CodingKey)
+  }
+  open var outputFormatting: DIDWalletSDK.RNJSONEncoder.OutputFormatting
+  open var dateEncodingStrategy: DIDWalletSDK.RNJSONEncoder.DateEncodingStrategy
+  open var dataEncodingStrategy: DIDWalletSDK.RNJSONEncoder.DataEncodingStrategy
+  open var nonConformingFloatEncodingStrategy: DIDWalletSDK.RNJSONEncoder.NonConformingFloatEncodingStrategy
+  open var keyEncodingStrategy: DIDWalletSDK.RNJSONEncoder.KeyEncodingStrategy
+  open var userInfo: [Swift.CodingUserInfoKey : Any]
+  public init()
+  open func encode<T>(_ value: T) throws -> Foundation.Data where T : Swift.Encodable
+  @objc deinit
+}
+open class RNJSONDecoder {
+  public enum DateDecodingStrategy {
+    case deferredToDate
+    case secondsSince1970
+    case millisecondsSince1970
+    case iso8601
+    case formatted(Foundation.DateFormatter)
+    case custom((_ decoder: any Swift.Decoder) throws -> Foundation.Date)
+  }
+  public enum DataDecodingStrategy {
+    case deferredToData
+    case base64
+    case custom((_ decoder: any Swift.Decoder) throws -> Foundation.Data)
+  }
+  public enum NonConformingFloatDecodingStrategy {
+    case `throw`
+    case convertFromString(positiveInfinity: Swift.String, negativeInfinity: Swift.String, nan: Swift.String)
+  }
+  public enum KeyDecodingStrategy {
+    case useDefaultKeys
+    case convertFromSnakeCase
+    case custom((_ codingPath: [any Swift.CodingKey]) -> any Swift.CodingKey)
+  }
+  open var dateDecodingStrategy: DIDWalletSDK.RNJSONDecoder.DateDecodingStrategy
+  open var dataDecodingStrategy: DIDWalletSDK.RNJSONDecoder.DataDecodingStrategy
+  open var nonConformingFloatDecodingStrategy: DIDWalletSDK.RNJSONDecoder.NonConformingFloatDecodingStrategy
+  open var keyDecodingStrategy: DIDWalletSDK.RNJSONDecoder.KeyDecodingStrategy
+  open var userInfo: [Swift.CodingUserInfoKey : Any]
+  public init()
+  open func decode<T>(_ type: T.Type, from data: Foundation.Data) throws -> T where T : Swift.Decodable
+  open func decode<T>(_ type: T.Type, from topLevel: DIDWalletSDK.JSON) throws -> T where T : Swift.Decodable
+  @objc deinit
+}
+extension DIDWalletSDK.BigUInt {
+  public static func >>= <Other>(lhs: inout DIDWalletSDK.BigUInt, rhs: Other) where Other : Swift.BinaryInteger
+  public static func <<= <Other>(lhs: inout DIDWalletSDK.BigUInt, rhs: Other) where Other : Swift.BinaryInteger
+  public static func >> <Other>(lhs: DIDWalletSDK.BigUInt, rhs: Other) -> DIDWalletSDK.BigUInt where Other : Swift.BinaryInteger
+  public static func << <Other>(lhs: DIDWalletSDK.BigUInt, rhs: Other) -> DIDWalletSDK.BigUInt where Other : Swift.BinaryInteger
+}
+extension DIDWalletSDK.BigInt {
+  public static func &<< (left: DIDWalletSDK.BigInt, right: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func &<<= (left: inout DIDWalletSDK.BigInt, right: DIDWalletSDK.BigInt)
+  public static func &>> (left: DIDWalletSDK.BigInt, right: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func &>>= (left: inout DIDWalletSDK.BigInt, right: DIDWalletSDK.BigInt)
+  public static func << <Other>(lhs: DIDWalletSDK.BigInt, rhs: Other) -> DIDWalletSDK.BigInt where Other : Swift.BinaryInteger
+  public static func <<= <Other>(lhs: inout DIDWalletSDK.BigInt, rhs: Other) where Other : Swift.BinaryInteger
+  public static func >> <Other>(lhs: DIDWalletSDK.BigInt, rhs: Other) -> DIDWalletSDK.BigInt where Other : Swift.BinaryInteger
+  public static func >>= <Other>(lhs: inout DIDWalletSDK.BigInt, rhs: Other) where Other : Swift.BinaryInteger
+}
+extension DIDWalletSDK.BigUInt {
+  public mutating func multiply(byWord y: DIDWalletSDK.BigUInt.Word)
+  public func multiplied(byWord y: DIDWalletSDK.BigUInt.Word) -> DIDWalletSDK.BigUInt
+  public mutating func multiplyAndAdd(_ x: DIDWalletSDK.BigUInt, _ y: DIDWalletSDK.BigUInt.Word, shiftedBy shift: Swift.Int = 0)
+  public func multiplied(by y: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static let directMultiplicationLimit: Swift.Int
+  public static func * (x: DIDWalletSDK.BigUInt, y: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static func *= (a: inout DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt)
+}
+extension DIDWalletSDK.BigInt {
+  public static func * (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func *= (a: inout DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt)
+}
+extension DIDWalletSDK.BigUInt : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension DIDWalletSDK.BigInt : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public enum JSONError : Swift.Error {
+  case unexpectedByte(at: Swift.Int, found: [Swift.UInt8])
+  case unexpectedToken(at: Swift.Int, expected: [any DIDWalletSDK.JSONToken.Type], found: any DIDWalletSDK.JSONToken)
+  case dataTruncated
+  case typeMismatch
+  case dataCorrupted
+  case missingValue
+}
+@dynamicMemberLookup public enum JSON {
+  public static let formatter: Foundation.NumberFormatter
+  case string(Swift.String)
+  case number(digits: Swift.String)
+  case bool(Swift.Bool)
+  case object(keyValues: DIDWalletSDK.JSONKeyValues)
+  case array(DIDWalletSDK.JSONArray)
+  case null
+  public init(_ convertible: any DIDWalletSDK.LosslessJSONConvertible)
+  public init(_ convertible: any DIDWalletSDK.JSONConvertible) throws
+}
+extension DIDWalletSDK.JSON {
+  public func stringValue() throws -> Swift.String
+}
+extension DIDWalletSDK.JSON {
+  public func doubleValue() throws -> Swift.Double
+  public func decimalValue() throws -> Foundation.Decimal
+  public func intValue() throws -> Swift.Int
+}
+extension DIDWalletSDK.JSON {
+  public func boolValue() throws -> Swift.Bool
+}
+public typealias JSONKeyValues = [(key: Swift.String, value: DIDWalletSDK.JSON)]
+extension Swift.Array where Element == (key: Swift.String, value: DIDWalletSDK.JSON) {
+  public var keys: [Swift.String] {
+    get
+  }
+  public subscript(key: Swift.String) -> DIDWalletSDK.JSON? {
+    get
+    set
+  }
+}
+extension DIDWalletSDK.JSON {
+  public func keyValues() throws -> DIDWalletSDK.JSONKeyValues
+  public func dictionaryValue() throws -> [Swift.String : DIDWalletSDK.JSON]
+  public func getValue(for key: Swift.String) throws -> DIDWalletSDK.JSON
+  public func getAllValues(for key: Swift.String) throws -> [DIDWalletSDK.JSON]
+  public subscript(key: Swift.String) -> DIDWalletSDK.JSON? {
+    get
+  }
+  public subscript(dynamicMember key: Swift.String) -> DIDWalletSDK.JSON {
+    get
+  }
+}
+public typealias JSONArray = [DIDWalletSDK.JSON]
+extension DIDWalletSDK.JSON {
+  public func arrayValue() throws -> [DIDWalletSDK.JSON]
+  public func count() throws -> Swift.Int
+  public func getValue(at index: Swift.Int) throws -> DIDWalletSDK.JSON
+  public subscript(index: Swift.Int) -> DIDWalletSDK.JSON {
+    get
+  }
+}
+extension DIDWalletSDK.JSON {
+  public var isNull: Swift.Bool {
+    get
+  }
+}
+extension DIDWalletSDK.JSON : Swift.Equatable {
+  public static func == (lhs: DIDWalletSDK.JSON, rhs: DIDWalletSDK.JSON) -> Swift.Bool
+}
+extension DIDWalletSDK.JSON : Swift.Hashable {
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+public protocol JSONConvertible {
+  func jsonValue() throws -> DIDWalletSDK.JSON
+}
+public protocol LosslessJSONConvertible : DIDWalletSDK.JSONConvertible {
+  func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.String : DIDWalletSDK.LosslessJSONConvertible {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.BinaryInteger {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Int : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.Int8 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.Int16 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.Int32 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.Int64 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.UInt : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.UInt8 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.UInt16 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.UInt32 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.UInt64 : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.BinaryFloatingPoint {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Float : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.Double : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Foundation.Decimal : DIDWalletSDK.LosslessJSONConvertible {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension DIDWalletSDK.JSON : DIDWalletSDK.LosslessJSONConvertible {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Bool : DIDWalletSDK.LosslessJSONConvertible {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Sequence where Self.Element : DIDWalletSDK.LosslessJSONConvertible {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Sequence where Self.Element : DIDWalletSDK.JSONConvertible {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension Foundation.NSArray : DIDWalletSDK.JSONConvertible {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension Foundation.NSDictionary : DIDWalletSDK.JSONConvertible {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension Swift.Array : DIDWalletSDK.LosslessJSONConvertible where Element : DIDWalletSDK.LosslessJSONConvertible {
+}
+extension Swift.Array : DIDWalletSDK.JSONConvertible where Element : DIDWalletSDK.JSONConvertible {
+}
+extension Swift.Sequence where Self.Element == (key: Swift.String, value: any DIDWalletSDK.LosslessJSONConvertible) {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Sequence where Self.Element == (key: Swift.String, value: any DIDWalletSDK.JSONConvertible) {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension Swift.Dictionary where Key == Swift.String, Value : DIDWalletSDK.LosslessJSONConvertible {
+  public func jsonValue() -> DIDWalletSDK.JSON
+}
+extension Swift.Dictionary where Key == Swift.String, Value : DIDWalletSDK.JSONConvertible {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension DIDWalletSDK.JSONTokenString : DIDWalletSDK.JSONConvertible {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension DIDWalletSDK.JSONTokenNumber : DIDWalletSDK.JSONConvertible {
+  public func jsonValue() throws -> DIDWalletSDK.JSON
+}
+extension DIDWalletSDK.JSON : Swift.Codable {
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+extension DIDWalletSDK.BigUInt {
+  public mutating func subtractReportingOverflow(_ b: DIDWalletSDK.BigUInt, shiftedBy shift: Swift.Int = 0) -> Swift.Bool
+  public func subtractingReportingOverflow(_ other: DIDWalletSDK.BigUInt, shiftedBy shift: Swift.Int) -> (partialValue: DIDWalletSDK.BigUInt, overflow: Swift.Bool)
+  public func subtractingReportingOverflow(_ other: DIDWalletSDK.BigUInt) -> (partialValue: DIDWalletSDK.BigUInt, overflow: Swift.Bool)
+  public mutating func subtract(_ other: DIDWalletSDK.BigUInt, shiftedBy shift: Swift.Int = 0)
+  public func subtracting(_ other: DIDWalletSDK.BigUInt, shiftedBy shift: Swift.Int = 0) -> DIDWalletSDK.BigUInt
+  public mutating func decrement(shiftedBy shift: Swift.Int = 0)
+  public static func - (a: DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static func -= (a: inout DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt)
+}
+extension DIDWalletSDK.BigInt {
+  public mutating func negate()
+  public static func - (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func -= (a: inout DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt)
+}
+extension DIDWalletSDK.BigUInt {
+  public func power(_ exponent: Swift.Int) -> DIDWalletSDK.BigUInt
+  public func power(_ exponent: DIDWalletSDK.BigUInt, modulus: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+}
+extension DIDWalletSDK.BigInt {
+  public func power(_ exponent: Swift.Int) -> DIDWalletSDK.BigInt
+  public func power(_ exponent: DIDWalletSDK.BigInt, modulus: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+}
+extension DIDWalletSDK.BigUInt {
+  public func greatestCommonDivisor(with b: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public func inverse(_ modulus: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt?
+}
+extension DIDWalletSDK.BigInt {
+  public func greatestCommonDivisor(with b: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public func inverse(_ modulus: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt?
+}
+extension DIDWalletSDK.BigUInt {
+  prefix public static func ~ (a: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static func |= (a: inout DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt)
+  public static func &= (a: inout DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt)
+  public static func ^= (a: inout DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt)
+}
+extension DIDWalletSDK.BigInt {
+  prefix public static func ~ (x: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func & (lhs: inout DIDWalletSDK.BigInt, rhs: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func | (lhs: inout DIDWalletSDK.BigInt, rhs: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func ^ (lhs: inout DIDWalletSDK.BigInt, rhs: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func &= (lhs: inout DIDWalletSDK.BigInt, rhs: DIDWalletSDK.BigInt)
+  public static func |= (lhs: inout DIDWalletSDK.BigInt, rhs: DIDWalletSDK.BigInt)
+  public static func ^= (lhs: inout DIDWalletSDK.BigInt, rhs: DIDWalletSDK.BigInt)
+}
+extension DIDWalletSDK.BigUInt {
+  public init(_ buffer: Swift.UnsafeRawBufferPointer)
+  public func serializeToBuffer() -> Swift.UnsafeRawBufferPointer
+  public init(_ data: Foundation.Data)
+  public func serialize() -> Foundation.Data
+}
+extension DIDWalletSDK.BigInt {
+  public init(_ buffer: Swift.UnsafeRawBufferPointer)
+  public func serializeToBuffer() -> Swift.UnsafeRawBufferPointer
+  public init(_ data: Foundation.Data)
+  public func serialize() -> Foundation.Data
+}
+extension DIDWalletSDK.BigUInt : Swift.Comparable {
+  public static func compare(_ a: DIDWalletSDK.BigUInt, _ b: DIDWalletSDK.BigUInt) -> Foundation.ComparisonResult
+  public static func == (a: DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt) -> Swift.Bool
+  public static func < (a: DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt) -> Swift.Bool
+}
+extension DIDWalletSDK.BigInt : Swift.Comparable {
+  public static func == (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> Swift.Bool
+  public static func < (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> Swift.Bool
+}
+public struct BigInt : Swift.SignedInteger, Swift.Sendable {
+  public enum Sign : Swift.Sendable {
+    case plus
+    case minus
+    public static func == (a: DIDWalletSDK.BigInt.Sign, b: DIDWalletSDK.BigInt.Sign) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public typealias Magnitude = DIDWalletSDK.BigUInt
+  public typealias Word = DIDWalletSDK.BigUInt.Word
+  public static var isSigned: Swift.Bool {
+    get
+  }
+  public var magnitude: DIDWalletSDK.BigUInt
+  public var sign: DIDWalletSDK.BigInt.Sign
+  public init(sign: DIDWalletSDK.BigInt.Sign, magnitude: DIDWalletSDK.BigUInt)
+  public var isZero: Swift.Bool {
+    get
+  }
+  public func signum() -> DIDWalletSDK.BigInt
+}
+extension DIDWalletSDK.BigUInt {
+  public static func randomInteger<RNG>(withMaximumWidth width: Swift.Int, using generator: inout RNG) -> DIDWalletSDK.BigUInt where RNG : Swift.RandomNumberGenerator
+  public static func randomInteger(withMaximumWidth width: Swift.Int) -> DIDWalletSDK.BigUInt
+  public static func randomInteger<RNG>(withExactWidth width: Swift.Int, using generator: inout RNG) -> DIDWalletSDK.BigUInt where RNG : Swift.RandomNumberGenerator
+  public static func randomInteger(withExactWidth width: Swift.Int) -> DIDWalletSDK.BigUInt
+  public static func randomInteger<RNG>(lessThan limit: DIDWalletSDK.BigUInt, using generator: inout RNG) -> DIDWalletSDK.BigUInt where RNG : Swift.RandomNumberGenerator
+  public static func randomInteger(lessThan limit: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+}
+public protocol JSONToken {
+  var data: Foundation.Data { get }
+  var possiblyTruncated: Swift.Bool { get }
+  var isIgnored: Swift.Bool { get }
+  var location: Swift.Int { get }
+}
+extension DIDWalletSDK.JSONToken {
+  public var length: Swift.Int {
+    get
+  }
+  public var possiblyTruncated: Swift.Bool {
+    get
+  }
+  public var isIgnored: Swift.Bool {
+    get
+  }
+  public var location: Swift.Int {
+    get
+  }
+}
+public struct JSONTokenArrayOpen : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenArrayClose : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenObjectOpen : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenObjectClose : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenKeyValueSeparator : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenListSeparator : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenLiteralTrue : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenLiteralFalse : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenLiteralNull : DIDWalletSDK.JSONToken {
+  public let data: Foundation.Data
+  public var location: Swift.Int
+}
+public struct JSONTokenString : DIDWalletSDK.JSONToken {
+  public var data: Foundation.Data
+  public var contents: Swift.String? {
+    get
+  }
+}
+public struct JSONTokenNumber : DIDWalletSDK.JSONToken {
+  public var data: Foundation.Data
+  public var possiblyTruncated: Swift.Bool
+  public var contents: Swift.String? {
+    get
+  }
+}
+public struct JSONTokenWhitespace : DIDWalletSDK.JSONToken {
+  public var data: Foundation.Data
+  public var possiblyTruncated: Swift.Bool
+  public var isIgnored: Swift.Bool {
+    get
+  }
+}
+public class JSONTokenizer {
+  public init()
+  public func allTokens(from data: Foundation.Data) throws -> [any DIDWalletSDK.JSONToken]
+  public func firstToken(from data: Foundation.Data) throws -> any DIDWalletSDK.JSONToken
+  @objc deinit
+}
+extension DIDWalletSDK.BigUInt {
+  public init?<T>(exactly source: T) where T : Swift.BinaryInteger
+  public init<T>(_ source: T) where T : Swift.BinaryInteger
+  public init<T>(truncatingIfNeeded source: T) where T : Swift.BinaryInteger
+  public init<T>(clamping source: T) where T : Swift.BinaryInteger
+}
+extension DIDWalletSDK.BigInt {
+  public init()
+  public init(_ integer: DIDWalletSDK.BigUInt)
+  public init<T>(_ source: T) where T : Swift.BinaryInteger
+  public init?<T>(exactly source: T) where T : Swift.BinaryInteger
+  public init<T>(clamping source: T) where T : Swift.BinaryInteger
+  public init<T>(truncatingIfNeeded source: T) where T : Swift.BinaryInteger
+}
+extension DIDWalletSDK.BigUInt : Swift.ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Swift.UInt64)
+  public typealias IntegerLiteralType = Swift.UInt64
+}
+extension DIDWalletSDK.BigInt : Swift.ExpressibleByIntegerLiteral {
+  public init(integerLiteral value: Swift.Int64)
+  public typealias IntegerLiteralType = Swift.Int64
+}
+extension DIDWalletSDK.BigUInt {
+  public func isStrongProbablePrime(_ base: DIDWalletSDK.BigUInt) -> Swift.Bool
+  public func isPrime(rounds: Swift.Int = 10) -> Swift.Bool
+}
+extension DIDWalletSDK.BigInt {
+  public func isStrongProbablePrime(_ base: DIDWalletSDK.BigInt) -> Swift.Bool
+  public func isPrime(rounds: Swift.Int = 10) -> Swift.Bool
+}
+extension DIDWalletSDK.BigUInt {
+  public static func + (a: DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static func += (a: inout DIDWalletSDK.BigUInt, b: DIDWalletSDK.BigUInt)
+}
+extension DIDWalletSDK.BigInt {
+  public static func + (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func += (a: inout DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt)
+}
+extension DIDWalletSDK.BigUInt {
+  public init?<T>(exactly source: T) where T : Swift.BinaryFloatingPoint
+  public init<T>(_ source: T) where T : Swift.BinaryFloatingPoint
+  public init?(exactly source: Foundation.Decimal)
+  public init?(truncating source: Foundation.Decimal)
+}
+extension DIDWalletSDK.BigInt {
+  public init?<T>(exactly source: T) where T : Swift.BinaryFloatingPoint
+  public init<T>(_ source: T) where T : Swift.BinaryFloatingPoint
+  public init?(exactly source: Foundation.Decimal)
+  public init?(truncating source: Foundation.Decimal)
+}
+extension Swift.BinaryFloatingPoint where Self.RawExponent : Swift.FixedWidthInteger, Self.RawSignificand : Swift.FixedWidthInteger {
+  public init(_ value: DIDWalletSDK.BigInt)
+  public init(_ value: DIDWalletSDK.BigUInt)
+}
+extension DIDWalletSDK.BigInt.Sign {
+  public init(_ sign: Swift.FloatingPointSign)
+}
+extension Foundation.Decimal {
+  public init(_ value: DIDWalletSDK.BigUInt)
+  public init(_ value: DIDWalletSDK.BigInt)
+}
+extension DIDWalletSDK.BigUInt {
+  public func quotientAndRemainder(dividingBy y: DIDWalletSDK.BigUInt) -> (quotient: DIDWalletSDK.BigUInt, remainder: DIDWalletSDK.BigUInt)
+  public static func / (x: DIDWalletSDK.BigUInt, y: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static func % (x: DIDWalletSDK.BigUInt, y: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigUInt
+  public static func /= (x: inout DIDWalletSDK.BigUInt, y: DIDWalletSDK.BigUInt)
+  public static func %= (x: inout DIDWalletSDK.BigUInt, y: DIDWalletSDK.BigUInt)
+}
+extension DIDWalletSDK.BigInt {
+  public func quotientAndRemainder(dividingBy y: DIDWalletSDK.BigInt) -> (quotient: DIDWalletSDK.BigInt, remainder: DIDWalletSDK.BigInt)
+  public static func / (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public static func % (a: DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+  public func modulus(_ mod: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt
+}
+extension DIDWalletSDK.BigInt {
+  public static func /= (a: inout DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt)
+  public static func %= (a: inout DIDWalletSDK.BigInt, b: DIDWalletSDK.BigInt)
+}
+public class JSONWriter {
+  public struct Options : Swift.OptionSet {
+    public var rawValue: Swift.UInt
+    public init(rawValue: Swift.UInt)
+    public static let prettyPrinted: DIDWalletSDK.JSONWriter.Options
+    public static var sortedKeys: DIDWalletSDK.JSONWriter.Options
+    public static var withoutEscapingSlashes: DIDWalletSDK.JSONWriter.Options
+    public typealias ArrayLiteralElement = DIDWalletSDK.JSONWriter.Options
+    public typealias Element = DIDWalletSDK.JSONWriter.Options
+    public typealias RawValue = Swift.UInt
+  }
+  public init(options: DIDWalletSDK.JSONWriter.Options = [])
+  final public let options: DIDWalletSDK.JSONWriter.Options
+  public func encode(_ value: DIDWalletSDK.JSON) throws -> Swift.String
+  @objc deinit
+}
+extension DIDWalletSDK.BigUInt {
+  public init?<S>(_ text: S, radix: Swift.Int = 10) where S : Swift.StringProtocol
+}
+extension DIDWalletSDK.BigInt {
+  public init?<S>(_ text: S, radix: Swift.Int = 10) where S : Swift.StringProtocol
+}
+extension Swift.String {
+  public init(_ v: DIDWalletSDK.BigUInt)
+  public init(_ v: DIDWalletSDK.BigUInt, radix: Swift.Int, uppercase: Swift.Bool = false)
+  public init(_ value: DIDWalletSDK.BigInt, radix: Swift.Int = 10, uppercase: Swift.Bool = false)
+}
+extension DIDWalletSDK.BigUInt : Swift.ExpressibleByStringLiteral {
+  public init(unicodeScalarLiteral value: Swift.UnicodeScalar)
+  public init(extendedGraphemeClusterLiteral value: Swift.String)
+  public init(stringLiteral value: Swift.StringLiteralType)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.StringLiteralType
+  public typealias UnicodeScalarLiteralType = Swift.UnicodeScalar
+}
+extension DIDWalletSDK.BigInt : Swift.ExpressibleByStringLiteral {
+  public init(unicodeScalarLiteral value: Swift.UnicodeScalar)
+  public init(extendedGraphemeClusterLiteral value: Swift.String)
+  public init(stringLiteral value: Swift.StringLiteralType)
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.StringLiteralType
+  public typealias UnicodeScalarLiteralType = Swift.UnicodeScalar
+}
+extension DIDWalletSDK.BigUInt : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension DIDWalletSDK.BigInt : Swift.CustomStringConvertible {
+  public var description: Swift.String {
+    get
+  }
+}
+extension DIDWalletSDK.BigUInt : Swift.CustomDebugStringConvertible {
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension DIDWalletSDK.BigInt : Swift.CustomDebugStringConvertible {
+  public var debugDescription: Swift.String {
+    get
+  }
+}
+extension DIDWalletSDK.BigUInt : Swift.CustomPlaygroundDisplayConvertible {
+  public var playgroundDescription: Any {
+    get
+  }
+}
+extension DIDWalletSDK.BigInt : Swift.CustomPlaygroundDisplayConvertible {
+  public var playgroundDescription: Any {
+    get
+  }
+}
+extension DIDWalletSDK.BigUInt : Swift.Strideable {
+  public typealias Stride = DIDWalletSDK.BigInt
+  public func advanced(by n: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigUInt
+  public func distance(to other: DIDWalletSDK.BigUInt) -> DIDWalletSDK.BigInt
+}
+extension DIDWalletSDK.BigInt : Swift.Strideable {
+  public typealias Stride = DIDWalletSDK.BigInt
+  public func advanced(by n: DIDWalletSDK.BigInt.Stride) -> DIDWalletSDK.BigInt
+  public func distance(to other: DIDWalletSDK.BigInt) -> DIDWalletSDK.BigInt.Stride
+}
+public struct BigUInt : Swift.UnsignedInteger, Swift.Sendable {
+  public typealias Word = Swift.UInt
+  public init()
+  public init(words: [DIDWalletSDK.BigUInt.Word])
+  public typealias Magnitude = DIDWalletSDK.BigUInt
+}
+extension DIDWalletSDK.BigUInt {
+  public static var isSigned: Swift.Bool {
+    get
+  }
+  public var isZero: Swift.Bool {
+    get
+  }
+  public func signum() -> DIDWalletSDK.BigUInt
+}
 public protocol CommnunicationProtocol {
   func doGet(url: Foundation.URL) async throws -> Foundation.Data
   func doPost(url: Foundation.URL, requestJsonData: Foundation.Data) async throws -> Foundation.Data
@@ -214,6 +985,233 @@ public struct KeyInfo {
 extension DIDWalletSDK.KeyInfo : Swift.Codable {
   public init(from decoder: any Swift.Decoder) throws
   public func encode(to encoder: any Swift.Encoder) throws
+}
+public struct ZKPCredentialRequestMeta {
+}
+public struct MasterSecretBlindingData {
+}
+public enum CredentialType : Swift.String, Swift.Codable {
+  case cl
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ZKPCredentialDefinition : DIDWalletSDK.Jsonable, DIDWalletSDK.OrderedJson {
+  public let id: Swift.String
+  public let schemaId: Swift.String
+  public let ver: Swift.String
+  public let type: DIDWalletSDK.CredentialType
+  public let value: DIDWalletSDK.CredentialDefinitionValue
+  public let tag: Swift.String
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct CredentialDefinitionValue : DIDWalletSDK.Jsonable, DIDWalletSDK.OrderedJson {
+  public let primary: DIDWalletSDK.CredentialPrimaryPublicKey
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct CredentialPrimaryPublicKey : DIDWalletSDK.Jsonable, DIDWalletSDK.OrderedJson {
+  public let n: DIDWalletSDK.BigIntString
+  public let z: DIDWalletSDK.BigIntString
+  public let s: DIDWalletSDK.BigIntString
+  public var r: OrderedCollections.OrderedDictionary<Swift.String, DIDWalletSDK.BigIntString>
+  public let rctxt: DIDWalletSDK.BigIntString
+}
+extension DIDWalletSDK.CredentialPrimaryPublicKey {
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ZKPCredentialSchema : DIDWalletSDK.Jsonable {
+  public let id: Swift.String
+  public let name: Swift.String
+  public let version: Swift.String
+  public let attrNames: [Swift.String]
+  public let tag: Swift.String
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+@frozen public enum PredicateType : Swift.String, Swift.Codable {
+  case GE
+  case LE
+  case GT
+  case LT
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+public struct ProofRequest : DIDWalletSDK.Jsonable {
+  public let name: Swift.String
+  public let version: Swift.String
+  public let nonce: DIDWalletSDK.BigIntString
+  public let requestedAttributes: [Swift.String : DIDWalletSDK.AttributeInfo]
+  public let requestedPredicates: [Swift.String : DIDWalletSDK.PredicateInfo]
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct AttributeInfo : DIDWalletSDK.Jsonable {
+  public let name: Swift.String
+  public let restrictions: [[Swift.String : Swift.String]]
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct PredicateInfo : DIDWalletSDK.Jsonable {
+  public let name: Swift.String
+  public let pType: DIDWalletSDK.PredicateType
+  public let pValue: Swift.Int
+  public let restrictions: [[Swift.String : Swift.String]]
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ZKPProof : DIDWalletSDK.Jsonable {
+  public let proofs: [DIDWalletSDK.ZKPProof.SubProof]
+  public let aggregatedProof: DIDWalletSDK.ZKPProof.AggregatedProof
+  public let requestedProof: DIDWalletSDK.ZKPProof.RequestedProof
+  public let identifiers: [DIDWalletSDK.ZKPProof.Identifier]
+  public struct SubProof : Swift.Codable {
+    public let primaryProof: DIDWalletSDK.ZKPProof.SubProof.PrimaryProof
+    public struct PrimaryProof : Swift.Codable {
+      public let eqProof: DIDWalletSDK.ZKPProof.SubProof.PrimaryProof.PrimaryEqualProof
+      public let neProofs: [DIDWalletSDK.ZKPProof.SubProof.PrimaryProof.PrimaryPredicateInequalityProof]
+      public struct PrimaryEqualProof : Swift.Codable {
+        public let revealedAttrs: DIDWalletSDK.BigIntStringDictionary
+        public let aPrime: DIDWalletSDK.BigIntString
+        public let e: DIDWalletSDK.BigIntString
+        public let v: DIDWalletSDK.BigIntString
+        public let m: DIDWalletSDK.BigIntStringDictionary
+        public let m2: DIDWalletSDK.BigIntString
+        public func encode(to encoder: any Swift.Encoder) throws
+        public init(from decoder: any Swift.Decoder) throws
+      }
+      public struct PrimaryPredicateInequalityProof : Swift.Codable {
+        public let u: DIDWalletSDK.BigIntStringDictionary
+        public let r: DIDWalletSDK.BigIntStringDictionary
+        public let t: DIDWalletSDK.BigIntStringDictionary
+        public let mj: DIDWalletSDK.BigIntString
+        public let alpha: DIDWalletSDK.BigIntString
+        public let predicate: DIDWalletSDK.ZKPProof.Predicate
+        public func encode(to encoder: any Swift.Encoder) throws
+        public init(from decoder: any Swift.Decoder) throws
+      }
+      public func encode(to encoder: any Swift.Encoder) throws
+      public init(from decoder: any Swift.Decoder) throws
+    }
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct AggregatedProof : Swift.Codable {
+    public let cHash: DIDWalletSDK.BigIntString
+    public let cList: [[Swift.UInt8]]
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct RequestedProof : Swift.Codable {
+    public let selfAttestedAttrs: DIDWalletSDK.StringDictionary
+    public let predicates: DIDWalletSDK.RequestedAttrDictionary
+    public let revealedAttrs: DIDWalletSDK.RequestedAttrDictionary
+    public let unrevealedAttrs: DIDWalletSDK.RequestedAttrDictionary
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct RequestedAttribute : Swift.Codable {
+    public let subProofIndex: Swift.Int
+    public let raw: Swift.String?
+    public let encoded: Swift.String?
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct Identifier : Swift.Codable {
+    public let credDefId: Swift.String
+    public let schemaId: Swift.String
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public struct Predicate : Swift.Codable {
+    public let pType: DIDWalletSDK.PredicateType
+    public let pValue: Swift.Int
+    public let attrName: Swift.String
+    public func encode(to encoder: any Swift.Encoder) throws
+    public init(from decoder: any Swift.Decoder) throws
+  }
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ZKPProofParam {
+  public let schemas: [Swift.String : DIDWalletSDK.ZKPCredentialSchema]
+  public let creDefs: [Swift.String : DIDWalletSDK.ZKPCredentialDefinition]
+  public init(schemas: [Swift.String : DIDWalletSDK.ZKPCredentialSchema], creDefs: [Swift.String : DIDWalletSDK.ZKPCredentialDefinition])
+}
+public struct AvailableReferent {
+  public let selfAttrReferent: [DIDWalletSDK.AttrReferent]
+  public let attrReferent: [DIDWalletSDK.AttrReferent]
+  public let predicateReferent: [DIDWalletSDK.AttrReferent]
+}
+public struct AttrReferent {
+  public let key: Swift.String
+  public let name: Swift.String
+  public let checkRevealed: Swift.Bool
+  public let referent: [DIDWalletSDK.SubReferent]
+}
+public struct SubReferent {
+  public let raw: Swift.String
+  public let credId: Swift.String
+  public let credDefId: Swift.String
+  public let schemaId: Swift.String
+}
+public struct UserReferent {
+  public let credId: Swift.String?
+  public let raw: Swift.String
+  public let referentKey: Swift.String
+  public let referentName: Swift.String
+  public let isRevealed: Swift.Bool
+  public init(raw: Swift.String, referentKey: Swift.String, referentName: Swift.String)
+  public init(selectedAttrSubReferent: DIDWalletSDK.SubReferent, referentKey: Swift.String, referentName: Swift.String, isRevealed: Swift.Bool)
+  public init(attrReferent: DIDWalletSDK.AttrReferent, selectedIndex: Swift.UInt, isRevealed: Swift.Bool) throws
+}
+public struct ZKPCredentialOffer : DIDWalletSDK.Jsonable {
+  public let credDefId: Swift.String
+  public let schemaId: Swift.String
+  public let keyCorrectnessProof: DIDWalletSDK.KeyCorrectnessProof
+  public let nonce: DIDWalletSDK.BigIntString
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct KeyCorrectnessProof : DIDWalletSDK.Jsonable {
+  public let c: DIDWalletSDK.BigIntString
+  public let xzCap: DIDWalletSDK.BigIntString
+  public let xrCap: DIDWalletSDK.BigIntStringDictionary
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct ZKPCredentialRequestContainer {
+  public let credentialRequest: DIDWalletSDK.ZKPCredentialRequest
+  public let credentialRequestMeta: DIDWalletSDK.ZKPCredentialRequestMeta
+}
+public struct ZKPCredentialRequest : DIDWalletSDK.Jsonable {
+  public let proverDID: Swift.String
+  public let credDefId: Swift.String
+  public let nonce: DIDWalletSDK.BigIntString
+  public let blindedMs: DIDWalletSDK.BlindedCredentialSecrets
+  public let blindedMsCorrectnessProof: DIDWalletSDK.BlindedCredentialSecretsCorrectnessProof
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct BlindedCredentialSecrets : DIDWalletSDK.Jsonable {
+  public let u: DIDWalletSDK.BigIntString
+  public let hiddenAttributes: [Swift.String]
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
+}
+public struct BlindedCredentialSecretsCorrectnessProof : DIDWalletSDK.Jsonable {
+  public let c: DIDWalletSDK.BigIntString
+  public let vDashCap: DIDWalletSDK.BigIntString
+  public var mCaps: DIDWalletSDK.BigIntStringDictionary
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init(from decoder: any Swift.Decoder) throws
 }
 public struct WalletCoreError : Swift.Error {
   public let code: Swift.String
@@ -1049,6 +2047,10 @@ public enum DidDocumentType : Swift.Int, DIDWalletSDK.Jsonable {
     get
   }
 }
+public protocol OrderedJson {
+}
+public protocol FromSnake {
+}
 public protocol Jsonable : Swift.Decodable, Swift.Encodable {
   init(from jsonData: Foundation.Data) throws
   init(from jsonString: Swift.String) throws
@@ -1682,6 +2684,10 @@ extension DIDWalletSDK.WalletAPI {
   public func isAnyKeysSaved() throws -> Swift.Bool
   public func changePin(id: Swift.String, oldPIN: Swift.String, newPIN: Swift.String) throws
 }
+public typealias BigIntString = Swift.String
+public typealias StringDictionary = [Swift.String : Swift.String]
+public typealias BigIntStringDictionary = [Swift.String : DIDWalletSDK.BigIntString]
+public typealias RequestedAttrDictionary = [Swift.String : DIDWalletSDK.ZKPProof.RequestedAttribute]
 public class WalletUtil {
   public init()
   public static func generateMessageID() -> Swift.String
@@ -1795,6 +2801,8 @@ extension DIDWalletSDK.UserEntity : Swift.Identifiable {
 extension DIDWalletSDK.WalletLogLevel : Swift.Equatable {}
 extension DIDWalletSDK.WalletLogLevel : Swift.Hashable {}
 extension DIDWalletSDK.WalletLogLevel : Swift.RawRepresentable {}
+extension DIDWalletSDK.BigInt.Sign : Swift.Equatable {}
+extension DIDWalletSDK.BigInt.Sign : Swift.Hashable {}
 extension DIDWalletSDK.SecureEnclaveAccessMethod : Swift.Equatable {}
 extension DIDWalletSDK.SecureEnclaveAccessMethod : Swift.Hashable {}
 extension DIDWalletSDK.SecureEnclaveAccessMethod : Swift.RawRepresentable {}
@@ -1804,6 +2812,14 @@ extension DIDWalletSDK.StorageOption : Swift.RawRepresentable {}
 extension DIDWalletSDK.KeyAccessMethod : Swift.Equatable {}
 extension DIDWalletSDK.KeyAccessMethod : Swift.Hashable {}
 extension DIDWalletSDK.KeyAccessMethod : Swift.RawRepresentable {}
+extension DIDWalletSDK.CredentialType : Swift.Equatable {}
+extension DIDWalletSDK.CredentialType : Swift.Hashable {}
+extension DIDWalletSDK.CredentialType : Swift.RawRepresentable {}
+extension DIDWalletSDK.PredicateType : Swift.Equatable {}
+extension DIDWalletSDK.PredicateType : Swift.Hashable {}
+extension DIDWalletSDK.PredicateType : Swift.RawRepresentable {}
+extension DIDWalletSDK.PredicateType : Swift.Sendable {}
+extension DIDWalletSDK.PredicateType : Swift.BitwiseCopyable {}
 extension DIDWalletSDK.OfferTypeEnum : Swift.Equatable {}
 extension DIDWalletSDK.OfferTypeEnum : Swift.Hashable {}
 extension DIDWalletSDK.OfferTypeEnum : Swift.RawRepresentable {}

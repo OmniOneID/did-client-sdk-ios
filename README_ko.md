@@ -18,30 +18,31 @@ did-client-sdk-ios
 ├── RELEASE-PROCESS.md
 ├── docs
 │   └── api
-│       ├── Communication
+│       ├── README.md
+│       ├── public
 │       │   ├── Communication.md
 │       │   ├── CommunicationError.md
-│       │   └── Communication_ko.md
-│       ├── Core
-│       │   ├── DIDManager.md
-│       │   ├── DIDManager_ko.md
-│       │   ├── KeyManager.md
-│       │   ├── KeyManager_ko.md
-│       │   ├── SecureEncryptor.md
-│       │   ├── SecureEncryptor_ko.md
-│       │   ├── VCManager.md
-│       │   ├── VCManager_ko.md
-│       │   └── WalletCoreError.md
-│       ├── DataModel
-│       │   └── DataModel.md
-│       ├── Utility
+│       │   ├── Communication_ko.md
+│       │   ├── DataModel.md
+│       │   ├── DataModel_ko.md
 │       │   ├── Utility.md
 │       │   ├── UtilityError.md
-│       │   └── Utility_ko.md
-│       └── Wallet
-│           ├── Wallet.md
-│           ├── WalletError.md
-│           └── Wallet_ko.md
+│       │   ├── Utility_ko.md
+│       │   ├── Wallet.md
+│       │   ├── WalletError.md
+│       │   ├── Wallet_ko.md
+│       │   └── WalletCoreError.md
+│       └── private
+│           ├── DIDManager.md
+│           ├── DIDManager_ko.md
+│           ├── KeyManager.md
+│           ├── KeyManager_ko.md
+│           ├── SecureEncryptor.md
+│           ├── SecureEncryptor_ko.md
+│           ├── VCManager.md
+│           ├── VCManager_ko.md
+│           ├── ZKPManager.md
+│           └── ZKPManager_ko.md
 └── source
     ├── did-wallet-sdk-ios
     │   ├── DIDWalletSDK.xcodeproj

@@ -26,6 +26,7 @@ struct StorageManager<M, T> where M: MetaProtocol, T: Codable {
         case key
         case did
         case vc
+        case zkp
     }
     
     struct ExternalWallet: Codable {

@@ -150,6 +150,60 @@
 		C9CF5DD92DAF7C090078DFFA /* DigestUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */; };
 		C9CF5DDA2DAF7C090078DFFA /* CryptoUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD62DAF7C090078DFFA /* CryptoUtilsTests.swift */; };
 		C9CF5DDB2DAF7C090078DFFA /* MultibaseUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD72DAF7C090078DFFA /* MultibaseUtilsTests.swift */; };
+		C9EB19952DB75F1900D152EE /* Words and Bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19932DB75F1900D152EE /* Words and Bits.swift */; };
+		C9EB19962DB75F1900D152EE /* Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19822DB75F1900D152EE /* Codable.swift */; };
+		C9EB19972DB75F1900D152EE /* Square Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198F2DB75F1900D152EE /* Square Root.swift */; };
+		C9EB19982DB75F1900D152EE /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB197A2DB75F1900D152EE /* Parser.swift */; };
+		C9EB19992DB75F1900D152EE /* Decoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19782DB75F1900D152EE /* Decoder.swift */; };
+		C9EB199A2DB75F1900D152EE /* Shifts.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198E2DB75F1900D152EE /* Shifts.swift */; };
+		C9EB199B2DB75F1900D152EE /* Multiplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198B2DB75F1900D152EE /* Multiplication.swift */; };
+		C9EB199C2DB75F1900D152EE /* Hashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19892DB75F1900D152EE /* Hashable.swift */; };
+		C9EB199D2DB75F1900D152EE /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19792DB75F1900D152EE /* JSON.swift */; };
+		C9EB199E2DB75F1900D152EE /* Subtraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19922DB75F1900D152EE /* Subtraction.swift */; };
+		C9EB199F2DB75F1900D152EE /* Exponentiation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19862DB75F1900D152EE /* Exponentiation.swift */; };
+		C9EB19A02DB75F1900D152EE /* GCD.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19882DB75F1900D152EE /* GCD.swift */; };
+		C9EB19A12DB75F1900D152EE /* Bitwise Ops.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19812DB75F1900D152EE /* Bitwise Ops.swift */; };
+		C9EB19A22DB75F1900D152EE /* Data Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19842DB75F1900D152EE /* Data Conversion.swift */; };
+		C9EB19A32DB75F1900D152EE /* Comparable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19832DB75F1900D152EE /* Comparable.swift */; };
+		C9EB19A42DB75F1900D152EE /* BigInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB197F2DB75F1900D152EE /* BigInt.swift */; };
+		C9EB19A52DB75F1900D152EE /* Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198D2DB75F1900D152EE /* Random.swift */; };
+		C9EB19A62DB75F1900D152EE /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB197B2DB75F1900D152EE /* Tokenizer.swift */; };
+		C9EB19A72DB75F1900D152EE /* Integer Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198A2DB75F1900D152EE /* Integer Conversion.swift */; };
+		C9EB19A82DB75F1900D152EE /* Prime Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198C2DB75F1900D152EE /* Prime Test.swift */; };
+		C9EB19A92DB75F1900D152EE /* Addition.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB197E2DB75F1900D152EE /* Addition.swift */; };
+		C9EB19AA2DB75F1900D152EE /* Floating Point Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19872DB75F1900D152EE /* Floating Point Conversion.swift */; };
+		C9EB19AB2DB75F1900D152EE /* Division.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19852DB75F1900D152EE /* Division.swift */; };
+		C9EB19AC2DB75F1900D152EE /* Writer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB197C2DB75F1900D152EE /* Writer.swift */; };
+		C9EB19AD2DB75F1900D152EE /* String Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19912DB75F1900D152EE /* String Conversion.swift */; };
+		C9EB19AE2DB75F1900D152EE /* Strideable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19902DB75F1900D152EE /* Strideable.swift */; };
+		C9EB19AF2DB75F1900D152EE /* BigUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19802DB75F1900D152EE /* BigUInt.swift */; };
+		C9EB19B22DB7605B00D152EE /* PublicDefines.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19B12DB7605B00D152EE /* PublicDefines.swift */; };
+		C9EB19B42DB760A600D152EE /* BigInt+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19B32DB760A600D152EE /* BigInt+String.swift */; };
+		C9EB19B62DB760CE00D152EE /* ZKPConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19B52DB760CE00D152EE /* ZKPConstants.swift */; };
+		C9EB19B82DB760DC00D152EE /* ZKPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19B72DB760DC00D152EE /* ZKPManager.swift */; };
+		C9EB19BA2DB7611800D152EE /* ZKPManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19B92DB7611800D152EE /* ZKPManagerError.swift */; };
+		C9EB19C42DB7618700D152EE /* KeyPairVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19C12DB7618700D152EE /* KeyPairVerifier.swift */; };
+		C9EB19C52DB7618700D152EE /* ProofInitiator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19BE2DB7618700D152EE /* ProofInitiator.swift */; };
+		C9EB19C62DB7618700D152EE /* CommitmentHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19C32DB7618700D152EE /* CommitmentHelper.swift */; };
+		C9EB19C72DB7618700D152EE /* CredentialRequestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19C02DB7618700D152EE /* CredentialRequestHelper.swift */; };
+		C9EB19C82DB7618700D152EE /* BigIntUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19C22DB7618700D152EE /* BigIntUtil.swift */; };
+		C9EB19C92DB7618700D152EE /* ChallengeBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19BF2DB7618700D152EE /* ChallengeBuilder.swift */; };
+		C9EB19CA2DB7618700D152EE /* ProofBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19BD2DB7618700D152EE /* ProofBuilder.swift */; };
+		C9EB19CD2DB7628000D152EE /* ZKPManagerDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19CC2DB7627B00D152EE /* ZKPManagerDataModel.swift */; };
+		C9EB19D02DB7633700D152EE /* ZKPCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19CF2DB7633700D152EE /* ZKPCredential.swift */; };
+		C9EB19DE2DB7636000D152EE /* ZKPCredentialRequestMeta.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D72DB7636000D152EE /* ZKPCredentialRequestMeta.swift */; };
+		C9EB19E02DB7636000D152EE /* ZKPCredentialDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D42DB7636000D152EE /* ZKPCredentialDefinition.swift */; };
+		C9EB19E12DB7636000D152EE /* ZKPCredentialSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D12DB7636000D152EE /* ZKPCredentialSchema.swift */; };
+		C9EB19E22DB7636000D152EE /* ProofRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DB2DB7636000D152EE /* ProofRequest.swift */; };
+		C9EB19E32DB7636000D152EE /* ZKPProof.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DC2DB7636000D152EE /* ZKPProof.swift */; };
+		C9EB19E42DB7636000D152EE /* ZKPProofParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D92DB7636000D152EE /* ZKPProofParam.swift */; };
+		C9EB19E52DB7636000D152EE /* ZKPReferent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DA2DB7636000D152EE /* ZKPReferent.swift */; };
+		C9EB19E62DB7636000D152EE /* ZKPCredentialOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D32DB7636000D152EE /* ZKPCredentialOffer.swift */; };
+		C9EB19E72DB7636000D152EE /* ZKPCredentialRequestContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D52DB7636000D152EE /* ZKPCredentialRequestContainer.swift */; };
+		C9EB19E82DB7636000D152EE /* ZKPCredentialRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D62DB7636000D152EE /* ZKPCredentialRequest.swift */; };
+		C9EB1A8A2DB7714C00D152EE /* CredentialValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB1A872DB7714C00D152EE /* CredentialValues.swift */; };
+		C9EB1A8B2DB7714C00D152EE /* AttributeValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB1A882DB7714C00D152EE /* AttributeValue.swift */; };
+		C9EB1A8E2DB772CF00D152EE /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = C9EB1A8D2DB772CF00D152EE /* OrderedCollections */; };
 		C9F294B42DB0BA21005376E1 /* Secp256R1ManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294AD2DB0BA21005376E1 /* Secp256R1ManagerTests.swift */; };
 		C9F294B52DB0BA21005376E1 /* SecureEncryptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294AF2DB0BA21005376E1 /* SecureEncryptorTests.swift */; };
 		C9F294B62DB0BA21005376E1 /* KeyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294B02DB0BA21005376E1 /* KeyManagerTests.swift */; };
@@ -343,6 +397,59 @@
 		C9CF5DD62DAF7C090078DFFA /* CryptoUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoUtilsTests.swift; sourceTree = "<group>"; };
 		C9CF5DD72DAF7C090078DFFA /* MultibaseUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultibaseUtilsTests.swift; sourceTree = "<group>"; };
 		C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigestUtilsTests.swift; sourceTree = "<group>"; };
+		C9EB19782DB75F1900D152EE /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
+		C9EB19792DB75F1900D152EE /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
+		C9EB197A2DB75F1900D152EE /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
+		C9EB197B2DB75F1900D152EE /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
+		C9EB197C2DB75F1900D152EE /* Writer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Writer.swift; sourceTree = "<group>"; };
+		C9EB197E2DB75F1900D152EE /* Addition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Addition.swift; sourceTree = "<group>"; };
+		C9EB197F2DB75F1900D152EE /* BigInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigInt.swift; sourceTree = "<group>"; };
+		C9EB19802DB75F1900D152EE /* BigUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigUInt.swift; sourceTree = "<group>"; };
+		C9EB19812DB75F1900D152EE /* Bitwise Ops.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bitwise Ops.swift"; sourceTree = "<group>"; };
+		C9EB19822DB75F1900D152EE /* Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Codable.swift; sourceTree = "<group>"; };
+		C9EB19832DB75F1900D152EE /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
+		C9EB19842DB75F1900D152EE /* Data Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data Conversion.swift"; sourceTree = "<group>"; };
+		C9EB19852DB75F1900D152EE /* Division.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Division.swift; sourceTree = "<group>"; };
+		C9EB19862DB75F1900D152EE /* Exponentiation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exponentiation.swift; sourceTree = "<group>"; };
+		C9EB19872DB75F1900D152EE /* Floating Point Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Floating Point Conversion.swift"; sourceTree = "<group>"; };
+		C9EB19882DB75F1900D152EE /* GCD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCD.swift; sourceTree = "<group>"; };
+		C9EB19892DB75F1900D152EE /* Hashable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hashable.swift; sourceTree = "<group>"; };
+		C9EB198A2DB75F1900D152EE /* Integer Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Integer Conversion.swift"; sourceTree = "<group>"; };
+		C9EB198B2DB75F1900D152EE /* Multiplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Multiplication.swift; sourceTree = "<group>"; };
+		C9EB198C2DB75F1900D152EE /* Prime Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Prime Test.swift"; sourceTree = "<group>"; };
+		C9EB198D2DB75F1900D152EE /* Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Random.swift; sourceTree = "<group>"; };
+		C9EB198E2DB75F1900D152EE /* Shifts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shifts.swift; sourceTree = "<group>"; };
+		C9EB198F2DB75F1900D152EE /* Square Root.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Square Root.swift"; sourceTree = "<group>"; };
+		C9EB19902DB75F1900D152EE /* Strideable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strideable.swift; sourceTree = "<group>"; };
+		C9EB19912DB75F1900D152EE /* String Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String Conversion.swift"; sourceTree = "<group>"; };
+		C9EB19922DB75F1900D152EE /* Subtraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subtraction.swift; sourceTree = "<group>"; };
+		C9EB19932DB75F1900D152EE /* Words and Bits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Words and Bits.swift"; sourceTree = "<group>"; };
+		C9EB19B12DB7605B00D152EE /* PublicDefines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicDefines.swift; sourceTree = "<group>"; };
+		C9EB19B32DB760A600D152EE /* BigInt+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BigInt+String.swift"; sourceTree = "<group>"; };
+		C9EB19B52DB760CE00D152EE /* ZKPConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPConstants.swift; sourceTree = "<group>"; };
+		C9EB19B72DB760DC00D152EE /* ZKPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPManager.swift; sourceTree = "<group>"; };
+		C9EB19B92DB7611800D152EE /* ZKPManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPManagerError.swift; sourceTree = "<group>"; };
+		C9EB19BD2DB7618700D152EE /* ProofBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofBuilder.swift; sourceTree = "<group>"; };
+		C9EB19BE2DB7618700D152EE /* ProofInitiator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofInitiator.swift; sourceTree = "<group>"; };
+		C9EB19BF2DB7618700D152EE /* ChallengeBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeBuilder.swift; sourceTree = "<group>"; };
+		C9EB19C02DB7618700D152EE /* CredentialRequestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialRequestHelper.swift; sourceTree = "<group>"; };
+		C9EB19C12DB7618700D152EE /* KeyPairVerifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPairVerifier.swift; sourceTree = "<group>"; };
+		C9EB19C22DB7618700D152EE /* BigIntUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BigIntUtil.swift; sourceTree = "<group>"; };
+		C9EB19C32DB7618700D152EE /* CommitmentHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommitmentHelper.swift; sourceTree = "<group>"; };
+		C9EB19CC2DB7627B00D152EE /* ZKPManagerDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPManagerDataModel.swift; sourceTree = "<group>"; };
+		C9EB19CF2DB7633700D152EE /* ZKPCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredential.swift; sourceTree = "<group>"; };
+		C9EB19D12DB7636000D152EE /* ZKPCredentialSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialSchema.swift; sourceTree = "<group>"; };
+		C9EB19D32DB7636000D152EE /* ZKPCredentialOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialOffer.swift; sourceTree = "<group>"; };
+		C9EB19D42DB7636000D152EE /* ZKPCredentialDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialDefinition.swift; sourceTree = "<group>"; };
+		C9EB19D52DB7636000D152EE /* ZKPCredentialRequestContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialRequestContainer.swift; sourceTree = "<group>"; };
+		C9EB19D62DB7636000D152EE /* ZKPCredentialRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialRequest.swift; sourceTree = "<group>"; };
+		C9EB19D72DB7636000D152EE /* ZKPCredentialRequestMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialRequestMeta.swift; sourceTree = "<group>"; };
+		C9EB19D92DB7636000D152EE /* ZKPProofParam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPProofParam.swift; sourceTree = "<group>"; };
+		C9EB19DA2DB7636000D152EE /* ZKPReferent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPReferent.swift; sourceTree = "<group>"; };
+		C9EB19DB2DB7636000D152EE /* ProofRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofRequest.swift; sourceTree = "<group>"; };
+		C9EB19DC2DB7636000D152EE /* ZKPProof.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPProof.swift; sourceTree = "<group>"; };
+		C9EB1A872DB7714C00D152EE /* CredentialValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialValues.swift; sourceTree = "<group>"; };
+		C9EB1A882DB7714C00D152EE /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeValue.swift; sourceTree = "<group>"; };
 		C9F294AD2DB0BA21005376E1 /* Secp256R1ManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256R1ManagerTests.swift; sourceTree = "<group>"; };
 		C9F294AE2DB0BA21005376E1 /* SecureEnclaveManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEnclaveManagerTests.swift; sourceTree = "<group>"; };
 		C9F294AF2DB0BA21005376E1 /* SecureEncryptorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEncryptorTests.swift; sourceTree = "<group>"; };
@@ -372,6 +479,7 @@
 			files = (
 				C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */,
 				C98D26052DB0A62B00B2E84D /* openssl.xcframework in Frameworks */,
+				C9EB1A8E2DB772CF00D152EE /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +508,8 @@
 		7CA9828F2C85CEBA00EDF367 /* DIDWalletSDK */ = {
 			isa = PBXGroup;
 			children = (
+				C9EB19B02DB7605100D152EE /* Defines */,
+				C9EB19772DB75EFF00D152EE /* OpenSource */,
 				C9F414F22DAE5D7700C04A1A /* Wallet */,
 				C94CDF3E2DAFB27D005FA89F /* Core */,
 				C9CF5DBC2DAF7A2D0078DFFA /* DataModel */,
@@ -613,6 +723,7 @@
 		C90D3BDC2DAFA61400292BFD /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				C9EB19CE2DB7632B00D152EE /* ZKP */,
 				C90D3BD62DAFA61400292BFD /* DIDDocument.swift */,
 				C90D3BD72DAFA61400292BFD /* VerifiableCredential.swift */,
 				C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */,
@@ -642,6 +753,8 @@
 		C94CDF3E2DAFB27D005FA89F /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				C9EB19BC2DB7617600D152EE /* Utility */,
+				C9EB19BB2DB7614E00D152EE /* Defines */,
 				C98D25C72DB09DF700B2E84D /* MainComponent */,
 				C98D25CF2DB09DF700B2E84D /* SubComponent */,
 				C98D25D12DB09DF700B2E84D /* Enumerator */,
@@ -658,6 +771,7 @@
 				C98D25C32DB09DF700B2E84D /* KeyManager.swift */,
 				C98D25C42DB09DF700B2E84D /* DIDManager.swift */,
 				C98D25C52DB09DF700B2E84D /* VCManager.swift */,
+				C9EB19B72DB760DC00D152EE /* ZKPManager.swift */,
 				C98D25C62DB09DF700B2E84D /* SecureEncryptor.swift */,
 			);
 			path = MainComponent;
@@ -704,6 +818,7 @@
 		C98D25D82DB09DF700B2E84D /* DataModel */ = {
 			isa = PBXGroup;
 			children = (
+				C9EB19CC2DB7627B00D152EE /* ZKPManagerDataModel.swift */,
 				C98D25D52DB09DF700B2E84D /* KeyManagerDataModel.swift */,
 				C98D25D62DB09DF700B2E84D /* DIDManagerDataModel.swift */,
 				C98D25D72DB09DF700B2E84D /* VCManagerDataModel.swift */,
@@ -719,6 +834,7 @@
 				C98D25DB2DB09DF700B2E84D /* KeyManagerError.swift */,
 				C98D25DC2DB09DF700B2E84D /* DIDManagerError.swift */,
 				C98D25DD2DB09DF700B2E84D /* VCManagerError.swift */,
+				C9EB19B92DB7611800D152EE /* ZKPManagerError.swift */,
 				C98D25DE2DB09DF700B2E84D /* StorageManagerError.swift */,
 				C98D25DF2DB09DF700B2E84D /* SignableError.swift */,
 				C98D25E02DB09DF700B2E84D /* SecureEnclaveError.swift */,
@@ -747,6 +863,7 @@
 			isa = PBXGroup;
 			children = (
 				C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */,
+				C9EB19B32DB760A600D152EE /* BigInt+String.swift */,
 				C90D3B922DAF909C00292BFD /* Digest+Extension.swift */,
 				C9CF5DCF2DAF7BF30078DFFA /* String+Extension.swift */,
 				C9CF5DD02DAF7BF30078DFFA /* Data+Extension.swift */,
@@ -820,6 +937,138 @@
 				C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		C9EB19772DB75EFF00D152EE /* OpenSource */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB197D2DB75F1900D152EE /* RNJSON */,
+				C9EB19942DB75F1900D152EE /* BigInt */,
+			);
+			path = OpenSource;
+			sourceTree = "<group>";
+		};
+		C9EB197D2DB75F1900D152EE /* RNJSON */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19782DB75F1900D152EE /* Decoder.swift */,
+				C9EB19792DB75F1900D152EE /* JSON.swift */,
+				C9EB197A2DB75F1900D152EE /* Parser.swift */,
+				C9EB197B2DB75F1900D152EE /* Tokenizer.swift */,
+				C9EB197C2DB75F1900D152EE /* Writer.swift */,
+			);
+			path = RNJSON;
+			sourceTree = "<group>";
+		};
+		C9EB19942DB75F1900D152EE /* BigInt */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB197E2DB75F1900D152EE /* Addition.swift */,
+				C9EB197F2DB75F1900D152EE /* BigInt.swift */,
+				C9EB19802DB75F1900D152EE /* BigUInt.swift */,
+				C9EB19812DB75F1900D152EE /* Bitwise Ops.swift */,
+				C9EB19822DB75F1900D152EE /* Codable.swift */,
+				C9EB19832DB75F1900D152EE /* Comparable.swift */,
+				C9EB19842DB75F1900D152EE /* Data Conversion.swift */,
+				C9EB19852DB75F1900D152EE /* Division.swift */,
+				C9EB19862DB75F1900D152EE /* Exponentiation.swift */,
+				C9EB19872DB75F1900D152EE /* Floating Point Conversion.swift */,
+				C9EB19882DB75F1900D152EE /* GCD.swift */,
+				C9EB19892DB75F1900D152EE /* Hashable.swift */,
+				C9EB198A2DB75F1900D152EE /* Integer Conversion.swift */,
+				C9EB198B2DB75F1900D152EE /* Multiplication.swift */,
+				C9EB198C2DB75F1900D152EE /* Prime Test.swift */,
+				C9EB198D2DB75F1900D152EE /* Random.swift */,
+				C9EB198E2DB75F1900D152EE /* Shifts.swift */,
+				C9EB198F2DB75F1900D152EE /* Square Root.swift */,
+				C9EB19902DB75F1900D152EE /* Strideable.swift */,
+				C9EB19912DB75F1900D152EE /* String Conversion.swift */,
+				C9EB19922DB75F1900D152EE /* Subtraction.swift */,
+				C9EB19932DB75F1900D152EE /* Words and Bits.swift */,
+			);
+			path = BigInt;
+			sourceTree = "<group>";
+		};
+		C9EB19B02DB7605100D152EE /* Defines */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19B12DB7605B00D152EE /* PublicDefines.swift */,
+			);
+			path = Defines;
+			sourceTree = "<group>";
+		};
+		C9EB19BB2DB7614E00D152EE /* Defines */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19B52DB760CE00D152EE /* ZKPConstants.swift */,
+			);
+			path = Defines;
+			sourceTree = "<group>";
+		};
+		C9EB19BC2DB7617600D152EE /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19CB2DB761CF00D152EE /* ZKP */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		C9EB19CB2DB761CF00D152EE /* ZKP */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19BD2DB7618700D152EE /* ProofBuilder.swift */,
+				C9EB19BE2DB7618700D152EE /* ProofInitiator.swift */,
+				C9EB19BF2DB7618700D152EE /* ChallengeBuilder.swift */,
+				C9EB19C02DB7618700D152EE /* CredentialRequestHelper.swift */,
+				C9EB19C12DB7618700D152EE /* KeyPairVerifier.swift */,
+				C9EB19C22DB7618700D152EE /* BigIntUtil.swift */,
+				C9EB19C32DB7618700D152EE /* CommitmentHelper.swift */,
+			);
+			path = ZKP;
+			sourceTree = "<group>";
+		};
+		C9EB19CE2DB7632B00D152EE /* ZKP */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19CF2DB7633700D152EE /* ZKPCredential.swift */,
+				C9EB1A892DB7714C00D152EE /* Common */,
+				C9EB19D82DB7636000D152EE /* Issue */,
+				C9EB19DD2DB7636000D152EE /* Verify */,
+			);
+			path = ZKP;
+			sourceTree = "<group>";
+		};
+		C9EB19D82DB7636000D152EE /* Issue */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19D12DB7636000D152EE /* ZKPCredentialSchema.swift */,
+				C9EB19D32DB7636000D152EE /* ZKPCredentialOffer.swift */,
+				C9EB19D42DB7636000D152EE /* ZKPCredentialDefinition.swift */,
+				C9EB19D52DB7636000D152EE /* ZKPCredentialRequestContainer.swift */,
+				C9EB19D62DB7636000D152EE /* ZKPCredentialRequest.swift */,
+				C9EB19D72DB7636000D152EE /* ZKPCredentialRequestMeta.swift */,
+			);
+			path = Issue;
+			sourceTree = "<group>";
+		};
+		C9EB19DD2DB7636000D152EE /* Verify */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB19D92DB7636000D152EE /* ZKPProofParam.swift */,
+				C9EB19DA2DB7636000D152EE /* ZKPReferent.swift */,
+				C9EB19DB2DB7636000D152EE /* ProofRequest.swift */,
+				C9EB19DC2DB7636000D152EE /* ZKPProof.swift */,
+			);
+			path = Verify;
+			sourceTree = "<group>";
+		};
+		C9EB1A892DB7714C00D152EE /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				C9EB1A872DB7714C00D152EE /* CredentialValues.swift */,
+				C9EB1A882DB7714C00D152EE /* AttributeValue.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		C9F294AB2DB0BA17005376E1 /* WalletCore */ = {
@@ -989,6 +1238,9 @@
 				Base,
 			);
 			mainGroup = 7CB8D8222BC917370063D094;
+			packageReferences = (
+				C9EB1A8C2DB772CF00D152EE /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = 7CB8D82D2BC917370063D094 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1053,6 +1305,36 @@
 				C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */,
 				C90D3C1B2DAFA62200292BFD /* PropertyWrapper.swift in Sources */,
 				C9CF5DAE2DAF41540078DFFA /* CommnunicationClient.swift in Sources */,
+				C9EB19952DB75F1900D152EE /* Words and Bits.swift in Sources */,
+				C9EB1A8A2DB7714C00D152EE /* CredentialValues.swift in Sources */,
+				C9EB1A8B2DB7714C00D152EE /* AttributeValue.swift in Sources */,
+				C9EB19962DB75F1900D152EE /* Codable.swift in Sources */,
+				C9EB19972DB75F1900D152EE /* Square Root.swift in Sources */,
+				C9EB19D02DB7633700D152EE /* ZKPCredential.swift in Sources */,
+				C9EB19982DB75F1900D152EE /* Parser.swift in Sources */,
+				C9EB19992DB75F1900D152EE /* Decoder.swift in Sources */,
+				C9EB199A2DB75F1900D152EE /* Shifts.swift in Sources */,
+				C9EB199B2DB75F1900D152EE /* Multiplication.swift in Sources */,
+				C9EB199C2DB75F1900D152EE /* Hashable.swift in Sources */,
+				C9EB199D2DB75F1900D152EE /* JSON.swift in Sources */,
+				C9EB199E2DB75F1900D152EE /* Subtraction.swift in Sources */,
+				C9EB199F2DB75F1900D152EE /* Exponentiation.swift in Sources */,
+				C9EB19A02DB75F1900D152EE /* GCD.swift in Sources */,
+				C9EB19A12DB75F1900D152EE /* Bitwise Ops.swift in Sources */,
+				C9EB19A22DB75F1900D152EE /* Data Conversion.swift in Sources */,
+				C9EB19A32DB75F1900D152EE /* Comparable.swift in Sources */,
+				C9EB19A42DB75F1900D152EE /* BigInt.swift in Sources */,
+				C9EB19A52DB75F1900D152EE /* Random.swift in Sources */,
+				C9EB19A62DB75F1900D152EE /* Tokenizer.swift in Sources */,
+				C9EB19A72DB75F1900D152EE /* Integer Conversion.swift in Sources */,
+				C9EB19A82DB75F1900D152EE /* Prime Test.swift in Sources */,
+				C9EB19A92DB75F1900D152EE /* Addition.swift in Sources */,
+				C9EB19AA2DB75F1900D152EE /* Floating Point Conversion.swift in Sources */,
+				C9EB19AB2DB75F1900D152EE /* Division.swift in Sources */,
+				C9EB19AC2DB75F1900D152EE /* Writer.swift in Sources */,
+				C9EB19AD2DB75F1900D152EE /* String Conversion.swift in Sources */,
+				C9EB19AE2DB75F1900D152EE /* Strideable.swift in Sources */,
+				C9EB19AF2DB75F1900D152EE /* BigUInt.swift in Sources */,
 				C9CF5DAF2DAF41540078DFFA /* CommnunicationProtocol.swift in Sources */,
 				C98D25E22DB09DF700B2E84D /* SecureEncryptor.swift in Sources */,
 				C98D25E32DB09DF700B2E84D /* VCManagerDataModel.swift in Sources */,
@@ -1061,9 +1343,20 @@
 				C98D25E62DB09DF700B2E84D /* KeyManagerDataModel.swift in Sources */,
 				C98D25E72DB09DF700B2E84D /* StorageManagerError.swift in Sources */,
 				C98D25E82DB09DF700B2E84D /* DIDManager.swift in Sources */,
+				C9EB19DE2DB7636000D152EE /* ZKPCredentialRequestMeta.swift in Sources */,
+				C9EB19E02DB7636000D152EE /* ZKPCredentialDefinition.swift in Sources */,
+				C9EB19E12DB7636000D152EE /* ZKPCredentialSchema.swift in Sources */,
+				C9EB19E22DB7636000D152EE /* ProofRequest.swift in Sources */,
+				C9EB19E32DB7636000D152EE /* ZKPProof.swift in Sources */,
+				C9EB19E42DB7636000D152EE /* ZKPProofParam.swift in Sources */,
+				C9EB19E52DB7636000D152EE /* ZKPReferent.swift in Sources */,
+				C9EB19E62DB7636000D152EE /* ZKPCredentialOffer.swift in Sources */,
+				C9EB19E72DB7636000D152EE /* ZKPCredentialRequestContainer.swift in Sources */,
+				C9EB19E82DB7636000D152EE /* ZKPCredentialRequest.swift in Sources */,
 				C98D25E92DB09DF700B2E84D /* SecureEnclaveError.swift in Sources */,
 				C98D25EA2DB09DF700B2E84D /* WalletCoreCommonError.swift in Sources */,
 				C98D25EB2DB09DF700B2E84D /* SecureEnclaveManager.swift in Sources */,
+				C9EB19B42DB760A600D152EE /* BigInt+String.swift in Sources */,
 				C98D25EC2DB09DF700B2E84D /* KeyManagerError.swift in Sources */,
 				C98D25ED2DB09DF700B2E84D /* OpenSSLWrapper.m in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
@@ -1109,6 +1402,7 @@
 				C90D3BF52DAFA61400292BFD /* WalletTokenSeed.swift in Sources */,
 				C90D3BF62DAFA61400292BFD /* RequestRegisterUser.swift in Sources */,
 				C90D3BF72DAFA61400292BFD /* ConfirmRevokeVc.swift in Sources */,
+				C9EB19B62DB760CE00D152EE /* ZKPConstants.swift in Sources */,
 				C90D3BF82DAFA61400292BFD /* RequestOfferPayload.swift in Sources */,
 				C90D3BF92DAFA61400292BFD /* ReqRevokeVc.swift in Sources */,
 				C90D3BFA2DAFA61400292BFD /* VCPlan.swift in Sources */,
@@ -1130,6 +1424,7 @@
 				C90D3C092DAFA61400292BFD /* ServerTokenData.swift in Sources */,
 				C90D3C0A2DAFA61400292BFD /* RequestAttestedAppInfo.swift in Sources */,
 				C90D3C0B2DAFA61400292BFD /* ReqVC.swift in Sources */,
+				C9EB19BA2DB7611800D152EE /* ZKPManagerError.swift in Sources */,
 				C90D3C0C2DAFA61400292BFD /* ProposeUpdateDidDoc.swift in Sources */,
 				C9F294BD2DB0BA57005376E1 /* Encodable+Extension.swift in Sources */,
 				C90D3C0D2DAFA61400292BFD /* InvokedDidDoc.swift in Sources */,
@@ -1150,13 +1445,23 @@
 				C98D26022DB0A5DE00B2E84D /* Error+Extension.swift in Sources */,
 				C90D3C232DAFAC0800292BFD /* DataModelEnums.swift in Sources */,
 				C90D3C192DAFA61400292BFD /* VCStatusEnum.swift in Sources */,
+				C9EB19CD2DB7628000D152EE /* ZKPManagerDataModel.swift in Sources */,
 				C9CF5DCD2DAF7BDF0078DFFA /* UtilityEnums.swift in Sources */,
 				C9CF5DCE2DAF7BDF0078DFFA /* MultibaseUtilsError.swift in Sources */,
 				C9CF5DD22DAF7BF30078DFFA /* String+Extension.swift in Sources */,
 				C9CF5DD32DAF7BF30078DFFA /* Data+Extension.swift in Sources */,
+				C9EB19C42DB7618700D152EE /* KeyPairVerifier.swift in Sources */,
+				C9EB19C52DB7618700D152EE /* ProofInitiator.swift in Sources */,
+				C9EB19C62DB7618700D152EE /* CommitmentHelper.swift in Sources */,
+				C9EB19C72DB7618700D152EE /* CredentialRequestHelper.swift in Sources */,
+				C9EB19C82DB7618700D152EE /* BigIntUtil.swift in Sources */,
+				C9EB19C92DB7618700D152EE /* ChallengeBuilder.swift in Sources */,
+				C9EB19CA2DB7618700D152EE /* ProofBuilder.swift in Sources */,
 				C9CF5DD42DAF7BF30078DFFA /* Character+Extension.swift in Sources */,
 				7CA982A12C85CEBA00EDF367 /* WalletAPIError.swift in Sources */,
+				C9EB19B82DB760DC00D152EE /* ZKPManager.swift in Sources */,
 				7CA982A02C85CEBA00EDF367 /* WalletAPI.swift in Sources */,
+				C9EB19B22DB7605B00D152EE /* PublicDefines.swift in Sources */,
 				7CA9829D2C85CEBA00EDF367 /* WalletUtil.swift in Sources */,
 				C98D25FA2DB0A10700B2E84D /* SecKey+Extension.swift in Sources */,
 				7CA9829E2C85CEBA00EDF367 /* WalletLockManager.swift in Sources */,
@@ -1572,6 +1877,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C9EB1A8C2DB772CF00D152EE /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C9EB1A8D2DB772CF00D152EE /* OrderedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C9EB1A8C2DB772CF00D152EE /* XCRemoteSwiftPackageReference "swift-collections" */;
+			productName = OrderedCollections;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		C9F414EA2DAE5D6A00C04A1A /* WalletModel.xcdatamodeld */ = {

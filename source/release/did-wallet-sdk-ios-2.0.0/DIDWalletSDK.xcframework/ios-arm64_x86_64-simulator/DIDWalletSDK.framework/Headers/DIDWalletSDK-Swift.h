@@ -320,6 +320,10 @@ SWIFT_CLASS_NAMED("CaEntity")
 @end
 
 
+
+
+
+
 SWIFT_CLASS_NAMED("TokenEntity")
 @interface TokenEntity : NSManagedObject
 - (nonnull instancetype)initWithEntity:(NSEntityDescription * _Nonnull)entity insertIntoManagedObjectContext:(NSManagedObjectContext * _Nullable)context OBJC_DESIGNATED_INITIALIZER;
@@ -683,6 +687,10 @@ SWIFT_CLASS_NAMED("CaEntity")
 @property (nonatomic, copy) NSString * _Nullable idx;
 @property (nonatomic, copy) NSString * _Nullable pkgName;
 @end
+
+
+
+
 
 
 SWIFT_CLASS_NAMED("TokenEntity")

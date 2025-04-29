@@ -28,12 +28,24 @@ $ ./build_xcframework.sh
     DIDWalletSDK.xcframework
     ```
 3. Set the frameworks to `Embeded & Sign`.
+4. In the app project’s `Package Dependencies`, click the `+` to add the following items.
+    ```groovy
+    https://github.com/apple/swift-collections.git
+    Exact Version 1.1.4
+    ```
+<br>
+
+## Optimization
+There is an optimization issue related to BigInt when using ZKP-related functions.
+- This is not an issue when using `DIDWalletSDK.xcframework`.
+- When referencing and using the `DIDWalletSDK` project, there is a delay in all APIs that perform ZKP-related operations.
+- To resolve this issue, the `Build Configuration` should be changed to `Release`.
 
 <br>
 
 ## API Specification
 | Category           | API Document Link    Link                                                                              |
 |---------------|-------------------------------------------------------------------------------------------|
-| Wallet        | [Wallet SDK - Wallet API](../../../docs/api/did-wallet-sdk-ios/Wallet.md)            |
-| WalletError   | [Wallet Error](../../../docs/api/did-wallet-sdk-ios/WalletError.md)                                |
+| Wallet        | [Wallet SDK - Wallet API](../../docs/api/did-wallet-sdk-ios/Wallet.md)            |
+| WalletError   | [Wallet Error](../../docs/api/did-wallet-sdk-ios/WalletError.md)                                |
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,25 @@
 
 import Foundation
 
+struct AnyCodingKey: CodingKey {
+    
+    let stringValue: String
+    let intValue: Int?
+    
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+        self.intValue = nil
+    }
+    
+    init?(intValue: Int) {
+        self.intValue = intValue
+        self.stringValue = "\(intValue)"
+    }
+}
+
+public protocol OrderedJson {}
+public protocol FromSnake {}
+
 //MARK: - Jsonable
 /// Model to Json, and vice versa
 public protocol Jsonable : Codable
@@ -31,7 +50,25 @@ public extension Jsonable
     init(from jsonData: Data) throws {
         do
         {
-            self = try JSONDecoder().decode(Self.self, from: jsonData)
+            if Self.self is OrderedJson.Type
+            {
+                let decoder = RNJSONDecoder()
+                if Self.self is FromSnake.Type
+                {
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                }
+                self = try decoder.decode(Self.self, from: jsonData)
+            }
+            else
+            {
+                let decoder = JSONDecoder()
+                if Self.self is FromSnake.Type
+                {
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                }
+                
+                self = try decoder.decode(Self.self, from: jsonData)
+            }
         }
         catch let e
         {
@@ -44,20 +81,46 @@ public extension Jsonable
         try self.init(from: data)
     }
     
-    func toJsonData(isPretty: Bool = false) throws -> Data {
-        var formatting : JSONEncoder.OutputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-        if isPretty
-        {
-            formatting.insert(.prettyPrinted)
-        }
-        
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = formatting
-        
+    func toJsonData(isPretty: Bool = false) throws -> Data
+    {
         do
         {
-            let data = try jsonEncoder.encode(self)
-            return data
+            if Self.self is OrderedJson.Type
+            {
+                var formatting : RNJSONEncoder.OutputFormatting = [.withoutEscapingSlashes]
+                if isPretty
+                {
+                    formatting.insert(.prettyPrinted)
+                }
+                
+                let jsonEncoder = RNJSONEncoder()
+                if Self.self is FromSnake.Type
+                {
+                    jsonEncoder.keyEncodingStrategy = .convertToSnakeCase
+                }
+                jsonEncoder.outputFormatting = formatting
+                
+                let data = try jsonEncoder.encode(self)
+                return data
+            }
+            else
+            {
+                var formatting : JSONEncoder.OutputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+                if isPretty
+                {
+                    formatting.insert(.prettyPrinted)
+                }
+                
+                let jsonEncoder = JSONEncoder()
+                if Self.self is FromSnake.Type
+                {
+                    jsonEncoder.keyEncodingStrategy = .convertToSnakeCase
+                }
+                jsonEncoder.outputFormatting = formatting
+                
+                let data = try jsonEncoder.encode(self)
+                return data
+            }
         }
         catch let e
         {
