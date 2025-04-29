@@ -15,7 +15,14 @@ jobs:
         with:
           script: |
             const author = context.payload.pull_request.user.login;
-            let reviewers = ['black-billed-magpie'];
+            let reviewers = ['JoshuaLeeshock','djpark0402'];
+            if (reviewers.includes(author)) {
+              if(reviewers.length === 1)
+                  reviewers = reviewers.map(reviewer => reviewer === author ? 'mikyung-lee' : reviewer);
+              else {
+                  reviewers = reviewers.filter(reviewer => reviewer !== author);
+              }
+            }
             await github.rest.pulls.requestReviewers({
               owner: context.repo.owner,
               repo: context.repo.repo,
