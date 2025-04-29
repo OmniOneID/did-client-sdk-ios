@@ -15,7 +15,7 @@ jobs:
         with:
           script: |
             const author = context.payload.pull_request.user.login;
-            let reviewers = ['JoshuaLeeshock','djpark0402','woosang-raon','black-billed-magpie'];
+            let reviewers = ['JoshuaLeeshock','djpark0402','black-billed-magpie'];
             if (reviewers.includes(author)) {
               if(reviewers.length === 1)
                   reviewers = reviewers.map(reviewer => reviewer === author ? 'mikyung-lee' : reviewer);
