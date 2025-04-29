@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import Foundation
 @testable import DIDWalletSDK
 
 struct TokenMock {

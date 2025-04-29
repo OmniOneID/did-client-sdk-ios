@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import Foundation
 @testable import DIDWalletSDK
 
 class WalletTokenMock : WalletTokenImpl {
     
-    func verifyWalletToken(hWalletToken: String, purposes: [DIDDataModelSDK.WalletTokenPurposeEnum]) throws {
+    func verifyWalletToken(hWalletToken: String, purposes: [WalletTokenPurposeEnum]) throws {
     
         var isPurpose = false
         
@@ -59,7 +61,7 @@ class WalletTokenMock : WalletTokenImpl {
         return seed
     }
     
-    func createNonceForWalletToken(walletTokenData: DIDDataModelSDK.WalletTokenData?, APIGatewayURL: String) async throws -> String {
+    func createNonceForWalletToken(walletTokenData: WalletTokenData?, APIGatewayURL: String) async throws -> String {
         
         let resultNonce = "F9909CA2B700D1EC658098ECE03A97343"
         // Hex

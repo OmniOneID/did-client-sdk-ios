@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import Foundation
+
 @testable import DIDWalletSDK
 
 class WalletServiceMock : WalletServiceImpl {
@@ -23,7 +25,7 @@ class WalletServiceMock : WalletServiceImpl {
         self.walletCore = walletCore
     }
     // TODO
-    func requestUpdateUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDDataModelSDK.DIDAuth?, signedDIDDoc: DIDDataModelSDK.SignedDIDDoc?) async throws -> DIDDataModelSDK._RequestUpdateDidDoc {
+    func requestUpdateUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDAuth?, signedDIDDoc: SignedDIDDoc?) async throws -> _RequestUpdateDidDoc {
         return _RequestUpdateDidDoc(txId: "txid")
     }
     // TODO
@@ -40,7 +42,7 @@ class WalletServiceMock : WalletServiceImpl {
         return true
     }
     
-    func requestVp(hWalletToken: String, claimInfos: [DIDCoreSDK.ClaimInfo]?, verifierProfile: DIDDataModelSDK._RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (DIDDataModelSDK.AccE2e, Data) {
+    func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]?, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data) {
         
         let holderDidDoc = try WalletAPI.shared.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
 
@@ -105,7 +107,7 @@ class WalletServiceMock : WalletServiceImpl {
         
     }
     
-    func createSignedDIDDoc(passcode: String?) throws -> DIDDataModelSDK.SignedDIDDoc {
+    func createSignedDIDDoc(passcode: String?) throws -> SignedDIDDoc {
         
 //        let deviceDidDoc = try DIDDocument(from: "{\"@context\":[\"https://www.w3.org/ns/did/v1\"],\"assertionMethod\":[\"assert\"],\"authentication\":[\"auth\"],\"controller\":\"did:omn:tas\",\"created\":\"2024-08-26T08:03:54Z\",\"deactivated\":false,\"id\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"keyAgreement\":[\"keyagree\"],\"updated\":\"2024-08-26T08:03:54Z\",\"verificationMethod\":[{\"authType\":1,\"controller\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"id\":\"assert\",\"publicKeyMultibase\":\"zgb1nZK5suXBQcLZkp16kBRoxEVDZLbyKKyFnEgcrrjYz\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":1,\"controller\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"id\":\"keyagree\",\"publicKeyMultibase\":\"zwsgd3wB68xRbyMMg9feHp4ygtaMfy5BB5s5qCiesCVoy\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":1,\"controller\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"id\":\"auth\",\"publicKeyMultibase\":\"z2Am6tznjCHXFeni3XoYgDStY9L7d92GctvE2W3Y1pHHgJ\",\"type\":\"Secp256r1VerificationKey2018\"}],\"versionId\":\"1\"}")
            
@@ -182,16 +184,16 @@ class WalletServiceMock : WalletServiceImpl {
 
     }
     // TODO
-    func createProofs(ownerDidDoc: DIDDataModelSDK.DIDDocument?, proofPurpose: String) throws -> Data {
+    func createProofs(ownerDidDoc: DIDDocument?, proofPurpose: String) throws -> Data {
         return Data()
     }
     
-    func createDeviceDocument() throws -> DIDDataModelSDK.DIDDocument {
+    func createDeviceDocument() throws -> DIDDocument {
         // 1. deviceKey 생성 (core func)
         var didDoc = try walletCore.createDeviceDidDocument()
         var proofArry: [Proof] = .init()
         // 2. proofValue를 제외한 proof 생성
-        var assertProof = DIDDataModelSDK.Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: DIDDataModelSDK.ProofPurpose.assertionMethod, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#assert", type: DIDDataModelSDK.ProofType.secp256r1Signature2018)
+        var assertProof = Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: ProofPurpose.assertionMethod, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#assert", type: ProofType.secp256r1Signature2018)
         didDoc.proof = assertProof
         let assertSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
         WalletLogger.shared.debug("assert didDoc Str: \(try didDoc.toJson())")
@@ -200,7 +202,7 @@ class WalletServiceMock : WalletServiceImpl {
         assertProof.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: assertSignature)
         proofArry.append(assertProof)
         
-        var authProof = DIDDataModelSDK.Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: DIDDataModelSDK.ProofPurpose.authentication, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#auth", type: DIDDataModelSDK.ProofType.secp256r1Signature2018)
+        var authProof = Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: ProofPurpose.authentication, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#auth", type: ProofType.secp256r1Signature2018)
         
         didDoc.proof = authProof
         let authSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
@@ -219,7 +221,7 @@ class WalletServiceMock : WalletServiceImpl {
         return didDoc
     }
     // TODO
-    func requestRegisterWallet(tasURL: String, walletURL: String, ownerDidDoc: DIDDataModelSDK.DIDDocument?) async throws -> Bool {
+    func requestRegisterWallet(tasURL: String, walletURL: String, ownerDidDoc: DIDDocument?) async throws -> Bool {
         return false
     }
     
@@ -241,11 +243,11 @@ class WalletServiceMock : WalletServiceImpl {
         return true
     }
     // TODO
-    func requestRegisterUser(tasURL: String, txId: String, serverToken: String, signedDIDDoc: DIDDataModelSDK.SignedDIDDoc?) async throws -> DIDDataModelSDK._RequestRegisterUser {
+    func requestRegisterUser(tasURL: String, txId: String, serverToken: String, signedDIDDoc: SignedDIDDoc?) async throws -> _RequestRegisterUser {
         return _RequestRegisterUser(txId: "txId")
     }
     
-    func getSignedDidAuth(authNonce: String, passcode: String?) throws -> DIDDataModelSDK.DIDAuth {
+    func getSignedDidAuth(authNonce: String, passcode: String?) throws -> DIDAuth {
         // 1. 홀더 did 조회
         var didDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
         // 2. proofValue를 제외한 proof 생성
@@ -277,7 +279,7 @@ class WalletServiceMock : WalletServiceImpl {
         return didAuth
     }
     
-    func requestIssueVc(tasURL: String, didAuth: DIDDataModelSDK.DIDAuth?, issuerProfile: DIDDataModelSDK._RequestIssueProfile?, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, DIDDataModelSDK._RequestIssueVc?) {
+    func requestIssueVc(tasURL: String, didAuth: DIDAuth?, issuerProfile: _RequestIssueProfile?, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?) {
     
         let holderDidDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
         let proof = Proof(created: Date.getUTC0Date(seconds: 0),
@@ -368,15 +370,15 @@ class WalletServiceMock : WalletServiceImpl {
         return (vc.id, decodedResponse)
     }
     // TODO
-    func requestRevokeVc(tasURL: String, authType: DIDDataModelSDK.VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String?) async throws -> DIDDataModelSDK._RequestRevokeVc {
+    func requestRevokeVc(tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String?) async throws -> _RequestRevokeVc {
         return try _RequestRevokeVc(from: Data())
     }
     // TODO
-    func requestRestoreUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDDataModelSDK.DIDAuth?) async throws -> DIDDataModelSDK._RequestRestoreDidDoc {
+    func requestRestoreUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDAuth?) async throws -> _RequestRestoreDidDoc {
         return try _RequestRestoreDidDoc(txId: "txId")
     }
     // TODO
-    func getSignedWalletInfo() throws -> DIDDataModelSDK.SignedWalletInfo {
+    func getSignedWalletInfo() throws -> SignedWalletInfo {
         return try SignedWalletInfo(from: Data())
     }
 }
