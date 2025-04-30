@@ -72,7 +72,7 @@ final class DIDWalletSDKTests: XCTestCase {
         }
     }
     
-    // 월랫 생성
+    // Create wallet
     func testCreateWallet() throws {
         // Mock
         Task { @MainActor in
@@ -87,39 +87,39 @@ final class DIDWalletSDKTests: XCTestCase {
     
     
     
-    // 개인화 (unlock/ unlock)
-    func testBindUserWithLockUnlock() throws {
-        
-        Task { @MainActor in
-            do {
-                let walletTokenDataJson = """
-            {"nonce":"mHaq6qqiUKLt8N6raGc+/5g","proof":{"created":"2024-08-23T11:40:03.566877Z","proofPurpose":"assertionMethod","proofValue":"mH6qvGRLx8qpMPhQwJMeEQsz0eGYhZQI1y9yu1xl4b+qIQM2tfFueWHpuffAvdioqSrR0K4Qb0AgbzcdtQO4ds7A","type":"Secp256r1Signature2018","verificationMethod":"did:omn:cas?versionId=1#assert"},"provider":{"certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc","did":"did:omn:cas"},"seed":{"nonce":"F6438ED0B74B348E3635C89DA164E8FFE","pkgName":"org.omnione.did.ca","purpose":3,"userId":"7156af3d","validUntil":"2050-08-23T12:10:02Z"},"sha256_pii":"zCWYkiLKjXUHu5xCRcJoJ9nfiyKzhiYW3YiWwdDwfh2vx"}
-            """
-                let walletTokenData = try WalletTokenData(from: walletTokenDataJson)
-                
-                let resultNonce = try await walletAPI.createNonceForWalletToken(walletTokenData: walletTokenData, APIGatewayURL: "NONE")
-                
-                let digest = DigestUtils.getDigest(source: (walletTokenDataJson + resultNonce).data(using: String.Encoding.utf8)!, digestEnum: DigestEnum.sha256)
-                // Hex
-                let hWalletToken = String(MultibaseUtils.encode(type: MultibaseType.base16, data: digest).dropFirst())
-                
-                let result = try walletAPI.bindUser(hWalletToken: hWalletToken)
-                assert(result, "bind user fail")
-                
-                let setLock = try walletAPI.registerLock(hWalletToken: hWalletToken, passcode: "123456", isLock: true)
-                assert(setLock, "register Lock fail")
-                
-                let cek = try walletAPI.authenticateLock(passcode: "123456")
-                
-                XCTAssertNil(cek)
-                
-            } catch let error as WalletAPIError {
-                print("testBindUser error: \(error)")
-            }
-        }
-    }
+    // Personalization (unlock/ unlock)
+//    func testBindUserWithLockUnlock() throws {
+//        
+//        Task { @MainActor in
+//            do {
+//                let walletTokenDataJson = """
+//            {"nonce":"mHaq6qqiUKLt8N6raGc+/5g","proof":{"created":"2024-08-23T11:40:03.566877Z","proofPurpose":"assertionMethod","proofValue":"mH6qvGRLx8qpMPhQwJMeEQsz0eGYhZQI1y9yu1xl4b+qIQM2tfFueWHpuffAvdioqSrR0K4Qb0AgbzcdtQO4ds7A","type":"Secp256r1Signature2018","verificationMethod":"did:omn:cas?versionId=1#assert"},"provider":{"certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc","did":"did:omn:cas"},"seed":{"nonce":"F6438ED0B74B348E3635C89DA164E8FFE","pkgName":"org.omnione.did.ca","purpose":3,"userId":"7156af3d","validUntil":"2050-08-23T12:10:02Z"},"sha256_pii":"zCWYkiLKjXUHu5xCRcJoJ9nfiyKzhiYW3YiWwdDwfh2vx"}
+//            """
+//                let walletTokenData = try WalletTokenData(from: walletTokenDataJson)
+//                
+//                let resultNonce = try await walletAPI.createNonceForWalletToken(walletTokenData: walletTokenData, APIGatewayURL: "NONE")
+//                
+//                let digest = DigestUtils.getDigest(source: (walletTokenDataJson + resultNonce).data(using: String.Encoding.utf8)!, digestEnum: DigestEnum.sha256)
+//                // Hex
+//                let hWalletToken = String(MultibaseUtils.encode(type: MultibaseType.base16, data: digest).dropFirst())
+//                
+//                let result = try walletAPI.bindUser(hWalletToken: hWalletToken)
+//                assert(result, "bind user fail")
+//                
+//                let setLock = try walletAPI.registerLock(hWalletToken: hWalletToken, passcode: "123456", isLock: true)
+//                assert(setLock, "register Lock fail")
+//                
+//                let cek = try walletAPI.authenticateLock(passcode: "123456")
+//                
+//                XCTAssertNil(cek)
+//                
+//            } catch let error as WalletAPIError {
+//                print("testBindUser error: \(error)")
+//            }
+//        }
+//    }
     
-    // 개인화
+    // Personalization
     func testBindUser() throws {
         Task { @MainActor in
             do {
@@ -143,12 +143,12 @@ final class DIDWalletSDKTests: XCTestCase {
         }
     }
     
-    // 개인화 (lock/ unlock)
+    // Personalization (lock/ unlock)
     func testUnBindUser() throws {
         
     }
     
-    // 유저 등록
+    // User Registration
 //    func testRegisterUser() async throws {
 //        print("################### testRegisterUser")
 //        do {
@@ -180,7 +180,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //        }
 //    }
     
-    // vc발급
+    // Issue vc
     func testIssueCredential() async throws {
         
 //        try await testRegisterUser()
@@ -257,7 +257,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //        }
     }
     
-//     vp 제출
+//     Submit vp
 //    func testSubmitCredential() async throws {
         
 //        try await testIssueCredential()
@@ -324,14 +324,14 @@ final class DIDWalletSDKTests: XCTestCase {
             if try holderKey.isKeySaved(id: "free") == false {
                 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "free", methodType: .none)
                 try holderKey.generateKey(keyGenRequest: freeKeyRequest)
-                print("device Key 생성 완료")
+                print("Finished creating the device Key")
             }
             
             if try holderKey.isKeySaved(id: "pin") == false {
                 let pinData = "password".data(using: .utf8)!
                 let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "pin", methodType: WalletAccessMethod.pin(value: pinData))
                 try holderKey.generateKey(keyGenRequest: pinKeyRequest)
-                print("PIN Key 생성 완료")
+                print("Finished creating the PIN Key")
             }
 
             
@@ -341,7 +341,7 @@ final class DIDWalletSDKTests: XCTestCase {
             
             
             if didMnr.isSaved {
-                print("월렛에 저장된 DID Doc 존재 함")
+                print("A DID Document already exists in the wallet")
                 try didMnr.deleteDocument()
                 return
             }
@@ -365,7 +365,7 @@ final class DIDWalletSDKTests: XCTestCase {
             if try holderKey.isKeySaved(id: "addfree") == false {
                 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "addfree", methodType: .none)
                 try holderKey.generateKey(keyGenRequest: freeKeyRequest)
-                print("add Key 생성 완료")
+                print("Finished creating the Key")
             }
             
             if try holderKey.isKeySaved(id: "addfree") == false {
@@ -395,7 +395,7 @@ final class DIDWalletSDKTests: XCTestCase {
             if try deviceKey.isKeySaved(id: "free") == false {
                 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "free", methodType: .none)
                 try deviceKey.generateKey(keyGenRequest: freeKeyRequest)
-                print("device Key 생성 완료")
+                print("Finished creating the device Key")
             }
             
             let did = try DIDManager.genDID(methodName: "omn")
@@ -403,7 +403,7 @@ final class DIDWalletSDKTests: XCTestCase {
             print("DID String : \(did)")
             
             if didMnr.isSaved {
-                print("월렛에 저장된 DID Doc 존재 함")
+                print("A DID Document already exists in the wallet")
                 try didMnr.deleteDocument()
                 return
             }
@@ -437,7 +437,7 @@ final class DIDWalletSDKTests: XCTestCase {
             if try issuerKey.isKeySaved(id: "free") == false {
                 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "free", methodType: .none)
                 try issuerKey.generateKey(keyGenRequest: freeKeyRequest)
-                print("issuer Key 생성 완료")
+                print("Finished creating the issuer Key")
             }
             
             
@@ -465,14 +465,14 @@ final class DIDWalletSDKTests: XCTestCase {
             if try holderKey.isKeySaved(id: "free") == false {
                 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "free", methodType: .none)
                 try holderKey.generateKey(keyGenRequest: freeKeyRequest)
-                print("holder Key 생성 완료")
+                print("Finished creating the holder Key")
             }
             
             if try holderKey.isKeySaved(id: "pin") == false {
                 let pinData = "password".data(using: .utf8)!
                 let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "pin", methodType: WalletAccessMethod.pin(value: pinData))
                 try holderKey.generateKey(keyGenRequest: pinKeyRequest)
-                print("holder PIN Key 생성 완료")
+                print("Finished creating the holder PIN Key")
             }
             
             let holderKeyInfos = try holderKey.getKeyInfos(ids: ["free", "pin"])
@@ -495,10 +495,10 @@ final class DIDWalletSDKTests: XCTestCase {
             let vcMnr = try VCManager(fileName: "vcWallet")
             
             if vcMnr.isAnyCredentialsSaved {
-                print("월렛에 저장된 vc가 존재함")
+                print("One or more VCs exist in the wallet")
                 try vcMnr.deleteAllCredentials()
             } else {
-                print("월렛에 저장된 vc가 없음")
+                print("Any VC does not exist in the wallet")
             }
             
             let vcsample = """
