@@ -18,83 +18,40 @@ did-client-sdk-ios
 ├── RELEASE-PROCESS.md
 ├── docs
 │   └── api
-│       ├── did-communication-sdk-ios
+│       ├── README.md
+│       ├── public
 │       │   ├── Communication.md
 │       │   ├── CommunicationError.md
-│       │   └── Communication_ko.md
-│       ├── did-core-sdk-ios
-│       │   ├── DIDManager.md
-│       │   ├── DIDManager_ko.md
-│       │   ├── KeyManager.md
-│       │   ├── KeyManager_ko.md
-│       │   ├── SecureEncryptor.md
-│       │   ├── SecureEncryptor_ko.md
-│       │   ├── VCManager.md
-│       │   ├── VCManager_ko.md
-│       │   └── WalletCoreError.md
-│       ├── did-datamodel-sdk-ios
-│       │   └── DataModel.md
-│       ├── did-utility-sdk-ios
+│       │   ├── Communication_ko.md
+│       │   ├── DataModel.md
+│       │   ├── DataModel_ko.md
 │       │   ├── Utility.md
 │       │   ├── UtilityError.md
-│       │   └── Utility_ko.md
-│       └── did-wallet-sdk-ios
-│           ├── Wallet.md
-│           ├── WalletError.md
-│           └── Wallet_ko.md
+│       │   ├── Utility_ko.md
+│       │   ├── Wallet.md
+│       │   ├── WalletError.md
+│       │   ├── Wallet_ko.md
+│       │   └── WalletCoreError.md
+│       └── private
+│           ├── DIDManager.md
+│           ├── DIDManager_ko.md
+│           ├── KeyManager.md
+│           ├── KeyManager_ko.md
+│           ├── SecureEncryptor.md
+│           ├── SecureEncryptor_ko.md
+│           ├── VCManager.md
+│           ├── VCManager_ko.md
+│           ├── ZKPManager.md
+│           └── ZKPManager_ko.md
 └── source
-    └── DIDClientSDK
-        ├── did-communication-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDCommunicationSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-core-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDCoreSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-datamodel-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDDataModelSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-utility-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDUtilitySDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-wallet-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDWalletSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        └── release
-            ├── did-communication-sdk-ios-1.0.0
-            │   └── DIDCommunicationSDK.xcframework
-            ├── did-core-sdk-ios-1.0.0
-            │   └── DIDCoreSDK.xcframework
-            ├── did-datamodel-sdk-ios-1.0.0
-            │   └── DIDDataModelSDK.xcframework
-            ├── did-utility-sdk-ios-1.0.0
-            │   └── DIDUtilitySDK.xcframework
-            └── did-wallet-sdk-ios-1.0.0
-                └── DIDWalletSDK.xcframework
+    ├── did-wallet-sdk-ios
+    │   ├── DIDWalletSDK.xcodeproj
+    │   ├── README_ko.md
+    │   ├── README.md
+    │   └── build_xcframework.sh
+    └── release
+        └── did-wallet-sdk-ios-2.0.0
+            └── DIDWalletSDK.xcframework
 ```
 
 |  이름                    |         역할                          |
@@ -116,33 +73,7 @@ did-client-sdk-ios
 
 ## 라이브러리
 
-라이브러리는 [release 폴더](source/DIDClientSDK/release)에서 찾을 수 있습니다.
-
-### Core SDK
-
-1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDCoreSDK.xcframework` 파일을 복사합니다.
-2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
-
-### DataModel SDK
-
-1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDDataModelSDK.xcframework` 파일을 복사합니다.
-2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
-
-### Utility SDK
-
-1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDUtilitySDK.xcframework` 파일을 복사합니다.
-2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
-
-### Communication SDK
-
-1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDCommunicationSDK.xcframework` 파일을 복사합니다.
-2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
-
-### Wallet SDK
+라이브러리는 [release 폴더](source/release)에서 찾을 수 있습니다.
 
 1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDWalletSDK.xcframework` 파일을 복사합니다.
 2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
@@ -150,23 +81,13 @@ did-client-sdk-ios
 
 ## API 참조
 
-API 참조는 아래에서 확인할 수 있습니다.
-<br>
-- [Core SDK](source/DIDClientSDK/did-core-sdk-ios/README_ko.md)  
-- [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/README_ko.md)  
-- [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/README_ko.md) 
-- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/README_ko.md)  
-- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/README_ko.md) 
+API 참조는 [여기](source/did-wallet-sdk-ios/README_ko.md)에서 확인할 수 있습니다.
+
 
 ## 수정내역
 
-수정내역은 아래에서 확인할 수 있습니다. 
-<br>
-- [Core SDK](source/DIDClientSDK/did-core-sdk-ios/CHANGELOG.md)  
-- [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/CHANGELOG.md)
-- [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/CHANGELOG.md)  
-- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/CHANGELOG.md)  
-- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/CHANGELOG.md)  
+Change Log에는 버전별 변경 사항과 업데이트가 자세히 기록되어 있습니다. 다음에서 확인할 수 있습니다:
+- [Change Log](./CHANGELOG.md)    
 
 ## 데모 영상 <br>
 OpenDID 시스템의 실제 동작을 보여주는 데모 영상은 [Demo Repository](https://github.com/OmniOneID/did-demo-server) 에서 확인하실 수 있습니다. <br>
