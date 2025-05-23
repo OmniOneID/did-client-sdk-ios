@@ -16,10 +16,6 @@
 
 import Foundation
 
-
-
-
-
 // Controller
 public class WalletAPI {
     
@@ -158,7 +154,7 @@ public class WalletAPI {
         return try lockMnr.authenticateLock(passcode: passcode)
     }
     
-    /// Description: This function generates a Verifiable Presentation (VP) by creating a cryptographic proof,
+    /// This function generates a Verifiable Presentation (VP) by creating a cryptographic proof,
     /// encrypting the presentation, and returning it along with end-to-end encryption (E2E) parameters. The VP
     /// is used to authenticate a holder's identity and claims to a verifier.
     ///
@@ -355,18 +351,6 @@ extension WalletAPI {
         return try walletCore.sign(keyId: keyId, pin: pin, data: data, type: type)
     }
     
-    /// Creates a verifiable presentation (VP) using the specified wallet token, claim information, and presentation information.
-    /// - Parameters:
-    ///  - hWalletToken: The token associated with the wallet.
-    ///  - claimInfos: An array of ClaimInfo objects containing the claim information to include in the presentation.
-    ///  - presentationInfo: The presentation information to include in the VP.
-    /// - Returns: VerifiablePresentation object representing the created presentation.
-    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func createVp(hWalletToken: String, claimInfos: [ClaimInfo], presentationInfo: PresentationInfo) throws -> VerifiablePresentation {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
-        return try walletCore.makePresentation(claimInfos:claimInfos, presentationInfo: presentationInfo)
-    }
-    
     /// Verifies a signature using the specified wallet token, public key, data, and signature.
     /// - Parameters:
     ///   - publicKey: The public key to use for verification.
@@ -378,14 +362,33 @@ extension WalletAPI {
         return try walletCore.verify(publicKey: publicKey, data: data, signature: signature)
     }
     
+    //MARK: Verifiable Credential
     /// Revokes the specified verifiable credentials from the wallet using the provided wallet token.
     /// - Parameters:
     ///   - hWalletToken: The token associated with the wallet.
     ///   - ids: An array of identifiers for the credentials to revoke.
     /// - Returns: boolean value indicating whether the credentials were successfully revoked.
     /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func deleteCredentials(hWalletToken: String, ids: [String]) throws -> Bool {
+    public func deleteCredentials(hWalletToken: String, ids: [String]) throws -> Bool
+    {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.REMOVE_VC])
+        
+        var existedZkpIds:[String] = []
+        
+        for id in ids
+        {
+            if walletCore.isZKPCredentialSaved(id: id)
+            {
+                existedZkpIds.append(id)
+            }
+        }
+        
+        if !existedZkpIds.isEmpty
+        {
+            try walletCore.deleteZKPCredential(ids: existedZkpIds)
+        }
+        
+        
         return try walletCore.deleteCredential(ids: ids)
     }
     
@@ -412,6 +415,148 @@ extension WalletAPI {
         }
         return nil
     }
+    
+    /// Creates a verifiable presentation (VP) using the specified wallet token, claim information, and presentation information.
+    /// - Parameters:
+    ///  - hWalletToken: The token associated with the wallet.
+    ///  - claimInfos: An array of ClaimInfo objects containing the claim information to include in the presentation.
+    ///  - presentationInfo: The presentation information to include in the VP.
+    /// - Returns: VerifiablePresentation object representing the created presentation.
+    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func createVp(hWalletToken: String, claimInfos: [ClaimInfo], presentationInfo: PresentationInfo) throws -> VerifiablePresentation {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        return try walletCore.makePresentation(claimInfos:claimInfos, presentationInfo: presentationInfo)
+    }
+    
+    //MARK: Zero-Knowledge Proof
+    /// Checks if a ZKP credential with the given ID is saved.
+    ///
+    /// - Parameter id: Credential ID
+    /// - Returns: `true` if saved, `false` otherwise
+    public func isZKPCredentialSaved(id : String) -> Bool
+    {
+        return walletCore.isZKPCredentialSaved(id: id)
+    }
+    
+    /// Revokes the specified ZKP credentials from the wallet using the provided wallet token.
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    ///   - ids: An array of identifiers for the credentials to revoke.
+    /// - Returns: boolean value indicating whether the credentials were successfully revoked.
+    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func deleteZKPCredentials(hWalletToken: String,
+                                     ids: [String]) throws -> Bool
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes:[.REMOVE_VC])
+        return try walletCore.deleteZKPCredential(ids: ids)
+    }
+    
+    /// Retrieves the specified ZKP credentials from the wallet using the provided wallet token.
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    ///   - ids: An array of identifiers for the credentials to retrieve.
+    /// - Returns:An array of ZKP Credential objects representing the retrieved credentials.
+    /// - Throws:WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func getZKPCredentials(hWalletToken: String,
+                                  ids: [String]) throws -> [ZKPCredential]
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes:[.LIST_VC,
+                                                         .DETAIL_VC,
+                                                         .LIST_VC_AND_PRESENT_VP])
+        return try walletCore.getZKPCredential(ids: ids)
+    }
+    
+    
+    
+    /// Retrieves all ZKP credentials stored in the wallet using the provided wallet token.
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    /// - Returns: An array of ZKP Credential objects representing all stored credentials, or nil if no credentials are saved.
+    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func getAllZKPCrentials(hWalletToken: String) throws -> [ZKPCredential]?
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes:[.LIST_VC,
+                                                         .DETAIL_VC,
+                                                         .LIST_VC_AND_PRESENT_VP])
+        if walletCore.isAnyCredentialsSaved()
+        {
+            return try walletCore.getAllZKPCredentials()
+        }
+        return nil
+    }
+    
+    /// Searches for credentials that satisfy the given proof request.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    ///   - proofRequest: The proof request specifying required attributes and predicates
+    /// - Returns: An `AvailableReferent` containing referents for matching credentials
+    public func searchCredentials(hWalletToken: String,
+                                  proofRequest : ProofRequest) throws -> AvailableReferent
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes:[.PRESENT_VP,
+                                                         .LIST_VC_AND_PRESENT_VP])
+        
+        return try walletCore.searchZKPCredentials(proofRequest: proofRequest)
+    }
+    
+    /// Creates a zero-knowledge proof based on the given request and selected referents.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    ///   - proofRequest: The proof request specifying required attributes and predicates
+    ///   - selectedReferents: The referents selected by the user to satisfy the proof request
+    ///   - proofParam: Additional parameters used to construct the proof
+    /// - Returns: A `ZKProof` instance
+    public func createZKProof(hWalletToken: String,
+                              proofRequest : ProofRequest,
+                              selectedReferents : [UserReferent],
+                              proofParam : ZKProofParam) throws -> ZKProof
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes:[.PRESENT_VP,
+                                                         .LIST_VC_AND_PRESENT_VP])
+        
+        return try walletCore.createZKProof(proofRequest: proofRequest,
+                                            selectedReferents: selectedReferents,
+                                            proofParam: proofParam)
+    }
+    
+    /// This function generates a Zero-knowledge proof by creating a cryptographic proof,
+    /// encrypting the proof, and returning it along with end-to-end encryption (E2E) parameters.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: String - The wallet token representing the holder's wallet.
+    ///   - selectedReferents: The referents selected by the user to satisfy the proof request
+    ///   - proofParam: Additional parameters used to construct the proof
+    ///   - proofRequestProfile: _RequestProofRequestProfile - The profile of the verifier, including information such as DID and zkp certificate.
+    ///   - APIGatewayURL: String - The URL of the API gateway for communication and verification.
+    ///
+    /// Returns: (AccE2e, Data) - Returns a tuple containing the AccE2e object with encryption data and the encrypted proof.
+    ///
+    /// Throws: Errors can be thrown for cryptographic failures, data encoding issues, or network communication problems.
+    public func createEncZKProof(hWalletToken:String,
+                                 selectedReferents : [UserReferent],
+                                 proofParam : ZKProofParam,
+                                 proofRequestProfile: _RequestProofRequestProfile,
+                                 APIGatewayURL: String) async throws -> (AccE2e, Data)
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.PRESENT_VP,
+                                                          .LIST_VC_AND_PRESENT_VP])
+        
+        return try await walletService.requestZKProof(hWalletToken: hWalletToken,
+                                                      selectedReferents: selectedReferents,
+                                                      proofParam: proofParam,
+                                                      proofRequestProfile: proofRequestProfile,
+                                                      APIGatewayURL: APIGatewayURL)
+    }
+    
+    //MARK: Key
     
     /// Retrieves information about a specific type of key stored in a wallet.
     /// - Parameters:

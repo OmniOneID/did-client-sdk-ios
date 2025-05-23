@@ -17,14 +17,12 @@
     
 import Foundation
 
-public struct ZKPProofParam
+public struct CredDefVO: Jsonable
 {
-    public let schemas : [String : ZKPCredentialSchema]
-    public let creDefs : [String : ZKPCredentialDefinition]
+    public var credDef: String
     
-    public init(schemas: [String : ZKPCredentialSchema], creDefs: [String : ZKPCredentialDefinition])
+    public init(credDef: String)
     {
-        self.schemas = schemas
-        self.creDefs = creDefs
+        self.credDef = credDef
     }
 }

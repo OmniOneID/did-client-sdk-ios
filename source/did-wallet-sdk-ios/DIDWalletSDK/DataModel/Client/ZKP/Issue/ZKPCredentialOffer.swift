@@ -19,16 +19,23 @@ import Foundation
 
 public struct ZKPCredentialOffer : Jsonable
 {
+    /// Identifier for crendential definition
     public let credDefId : String
+    /// Identifier for crendential schama
     public let schemaId : String
+    /// KeyCorrectness proof
     public let keyCorrectnessProof : KeyCorrectnessProof
+    /// Nonce
     public let nonce : BigIntString
     
 }
 
 public struct KeyCorrectnessProof : Jsonable
 {
+    /// Hash value
     public let c : BigIntString
+    /// xzCap
     public let xzCap : BigIntString
+    /// xrCap
     public let xrCap : BigIntStringDictionary
 }

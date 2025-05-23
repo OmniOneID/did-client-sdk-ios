@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,14 @@ public struct Option: Jsonable {
     public var delegatedIssuance: Bool
 }
 
-public struct VCPlan: Jsonable {
+public struct VCPlan: Jsonable
+{
+    public struct CredentialDefinition: Jsonable
+    {
+        public var id: String
+        public var schemaId: String
+    }
+    
     public var vcPlanId: String
     public var name: String
     public var description: String
@@ -37,7 +44,10 @@ public struct VCPlan: Jsonable {
     public var allowedIssuers: [String]?
     public var manager: String
     
-    public init(vcPlanId: String, name: String, description: String, url: String? = nil, logo: LogoImage? = nil, validFrom: String? = nil, validUntil: String? = nil, tags: [String]? = nil, credentialSchema: IssueProfile.Profile.CredentialSchema, option: Option, delegate: String? = nil, allowedIssuers: [String]? = nil, manager: String) {
+    public var credentialDefinition : VCPlan.CredentialDefinition?
+    
+    public init(vcPlanId: String, name: String, description: String, url: String? = nil, logo: LogoImage? = nil, validFrom: String? = nil, validUntil: String? = nil, tags: [String]? = nil, credentialSchema: IssueProfile.Profile.CredentialSchema, option: Option, delegate: String? = nil, allowedIssuers: [String]? = nil, manager: String, credentialDefinition : VCPlan.CredentialDefinition?)
+    {
         self.vcPlanId = vcPlanId
         self.name = name
         self.description = description
@@ -51,6 +61,8 @@ public struct VCPlan: Jsonable {
         self.delegate = delegate
         self.allowedIssuers = allowedIssuers
         self.manager = manager
+        
+        self.credentialDefinition = credentialDefinition
     }
     
 }

@@ -15,11 +15,16 @@
  * limitations under the License.
  */
     
+import Foundation
 
-public typealias BigIntString = String
-public typealias StringDictionary = [String : String]
-public typealias BigIntStringDictionary = [String : BigIntString]
-
-public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
-
-public typealias CaptionString = String
+public struct ZKProofParam
+{
+    public let schemas : [String : ZKPCredentialSchema]
+    public let creDefs : [String : ZKPCredentialDefinition]
+    
+    public init(schemas: [String : ZKPCredentialSchema], creDefs: [String : ZKPCredentialDefinition])
+    {
+        self.schemas = schemas
+        self.creDefs = creDefs
+    }
+}

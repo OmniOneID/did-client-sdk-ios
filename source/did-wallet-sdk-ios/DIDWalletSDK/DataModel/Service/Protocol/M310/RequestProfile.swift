@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,3 +37,15 @@ public struct _RequestProfile: Jsonable {
         self.profile = profile
     }
 }
+
+public struct _RequestProofRequestProfile: Jsonable {
+    public var txId: String
+    public var proofRequestProfile: ProofRequestProfile
+    
+    public init(txId: String, proofRequestProfile: ProofRequestProfile) {
+        self.txId = txId
+        self.proofRequestProfile = proofRequestProfile
+    }
+}
+
+

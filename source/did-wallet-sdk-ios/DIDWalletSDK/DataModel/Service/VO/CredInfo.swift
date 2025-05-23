@@ -15,11 +15,10 @@
  * limitations under the License.
  */
     
+import Foundation
 
-public typealias BigIntString = String
-public typealias StringDictionary = [String : String]
-public typealias BigIntStringDictionary = [String : BigIntString]
-
-public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
-
-public typealias CaptionString = String
+public struct CredInfo : Jsonable
+{
+    public let vc: VerifiableCredential
+    public let credential : ZKPCredential?
+}

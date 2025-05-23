@@ -40,7 +40,7 @@ struct ProofBuilder
         initProofs.append(initProof)
     }
   
-    func build(nonce : BigInt) throws -> ([ZKPProof.SubProof], ZKPProof.AggregatedProof)
+    func build(nonce : BigInt) throws -> ([ZKProof.SubProof], ZKProof.AggregatedProof)
     {
         let challenge = ChallengeBuilder()
             .append(tauList)
@@ -48,12 +48,12 @@ struct ProofBuilder
             .append(nonce)
             .buildWithHashing()
         
-        let aggregatedProof : ZKPProof.AggregatedProof = .init(
+        let aggregatedProof : ZKProof.AggregatedProof = .init(
             cHash: challenge.decimalString,
             cList: cList
         )
         
-        var subProofs : [ZKPProof.SubProof] = .init()
+        var subProofs : [ZKProof.SubProof] = .init()
         for initProof in initProofs
         {
             
@@ -81,7 +81,7 @@ extension ProofBuilder
 {
     fileprivate func generateEqProof(eqInitProof : ProofInitiator.PrimaryEqualInitProof,
                                      challenge : BigInt,
-                                     credValues : CredentialValues) throws -> ZKPProof.SubProof.PrimaryProof.PrimaryEqualProof
+                                     credValues : CredentialValues) throws -> ZKProof.SubProof.PrimaryProof.PrimaryEqualProof
     {
         let aPrime = eqInitProof.aPrime
         let eTilde = eqInitProof.eTilde
@@ -133,10 +133,10 @@ extension ProofBuilder
 extension ProofBuilder
 {
     fileprivate func generateNeProofs(neInitProofs : [ProofInitiator.PrimaryPredicateInequalityInitProof],
-                                      eqProof : ZKPProof.SubProof.PrimaryProof.PrimaryEqualProof,
-                                      challenge : BigInt) throws -> [ZKPProof.SubProof.PrimaryProof.PrimaryPredicateInequalityProof]
+                                      eqProof : ZKProof.SubProof.PrimaryProof.PrimaryEqualProof,
+                                      challenge : BigInt) throws -> [ZKProof.SubProof.PrimaryProof.PrimaryPredicateInequalityProof]
     {
-        var neProofs : [ZKPProof.SubProof.PrimaryProof.PrimaryPredicateInequalityProof] = .init()
+        var neProofs : [ZKProof.SubProof.PrimaryProof.PrimaryPredicateInequalityProof] = .init()
         
         for neInitProof in neInitProofs
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ public enum ProfileType : String, Codable
 {
     case IssueProfile
     case VerifyProfile
+    case ProofRequestProfile
 }
 
 /// Logo image
@@ -108,6 +109,8 @@ public struct IssueProfile : Jsonable, ProofContainer
         public var issuer : ProviderDetail
         /// VC schema information
         public var credentialSchema : CredentialSchema
+        /// ZKP Credential offer information
+        public var credentialOffer  : ZKPCredentialOffer?
         /// Issuing process
         public var process : Process
     }
@@ -205,3 +208,36 @@ public struct VerifyProfile : Jsonable, ProofContainer
     public var proof : Proof?
 }
 
+/// ProofRequest Profile
+public struct ProofRequestProfile : Jsonable, ProofContainer
+{
+    /// Profile contents
+    public struct Profile : Jsonable
+    {
+        /// Verifier information
+        public var verifier : ProviderDetail
+        /// ProofRequest information
+        public var proofRequest : ProofRequest
+        /// Request information
+        public var reqE2e :  ReqE2e
+    }
+    
+    /// Profile ID
+    public var id : String
+    /// Profile type
+    public var type : ProfileType
+    /// Profile title
+    public var title : String
+    /// Profile description
+    public var description : String?
+    /// Logo image
+    public var logo : LogoImage?
+    /// Profile encoding type
+    public var encoding : String
+    /// Profile language code
+    public var language : String
+    /// Profile contents
+    public var profile : Profile
+    /// Owner proof
+    public var proof : Proof?
+}

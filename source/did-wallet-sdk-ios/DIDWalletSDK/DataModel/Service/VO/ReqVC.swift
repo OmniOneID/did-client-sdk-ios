@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,11 @@ public struct ReqVcProfile: Jsonable {
 public struct ReqVC: Jsonable {
     public var refId: String
     public var profile: ReqVcProfile
+    public var credentialRequest : ZKPCredentialRequest?
     
-    public init(refId: String, profile: ReqVcProfile) {
+    public init(refId: String, profile: ReqVcProfile, credentialRequest: ZKPCredentialRequest? = nil) {
         self.refId = refId
         self.profile = profile
+        self.credentialRequest = credentialRequest
     }
 }

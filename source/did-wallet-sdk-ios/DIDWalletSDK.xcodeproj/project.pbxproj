@@ -101,6 +101,9 @@
 		C90D3C212DAFA66C00292BFD /* DataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C202DAFA66C00292BFD /* DataModelTests.swift */; };
 		C90D3C232DAFAC0800292BFD /* DataModelEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */; };
 		C90D3C252DAFAF6200292BFD /* OptionSet+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */; };
+		C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */; };
+		C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */; };
+		C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D32DDF261B00A67DA3 /* CredInfo.swift */; };
 		C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A5D2C91887400DE37D1 /* CoreData.framework */; };
 		C98D25E22DB09DF700B2E84D /* SecureEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C62DB09DF700B2E84D /* SecureEncryptor.swift */; };
 		C98D25E32DB09DF700B2E84D /* VCManagerDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25D72DB09DF700B2E84D /* VCManagerDataModel.swift */; };
@@ -195,8 +198,8 @@
 		C9EB19E02DB7636000D152EE /* ZKPCredentialDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D42DB7636000D152EE /* ZKPCredentialDefinition.swift */; };
 		C9EB19E12DB7636000D152EE /* ZKPCredentialSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D12DB7636000D152EE /* ZKPCredentialSchema.swift */; };
 		C9EB19E22DB7636000D152EE /* ProofRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DB2DB7636000D152EE /* ProofRequest.swift */; };
-		C9EB19E32DB7636000D152EE /* ZKPProof.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DC2DB7636000D152EE /* ZKPProof.swift */; };
-		C9EB19E42DB7636000D152EE /* ZKPProofParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D92DB7636000D152EE /* ZKPProofParam.swift */; };
+		C9EB19E32DB7636000D152EE /* ZKProof.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DC2DB7636000D152EE /* ZKProof.swift */; };
+		C9EB19E42DB7636000D152EE /* ZKProofParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D92DB7636000D152EE /* ZKProofParam.swift */; };
 		C9EB19E52DB7636000D152EE /* ZKPReferent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19DA2DB7636000D152EE /* ZKPReferent.swift */; };
 		C9EB19E62DB7636000D152EE /* ZKPCredentialOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D32DB7636000D152EE /* ZKPCredentialOffer.swift */; };
 		C9EB19E72DB7636000D152EE /* ZKPCredentialRequestContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19D52DB7636000D152EE /* ZKPCredentialRequestContainer.swift */; };
@@ -347,6 +350,9 @@
 		C90D3C202DAFA66C00292BFD /* DataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTests.swift; sourceTree = "<group>"; };
 		C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelEnums.swift; sourceTree = "<group>"; };
 		C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptionSet+Extension.swift"; sourceTree = "<group>"; };
+		C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredDefVO.swift; sourceTree = "<group>"; };
+		C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredSchemaVO.swift; sourceTree = "<group>"; };
+		C96061D32DDF261B00A67DA3 /* CredInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredInfo.swift; sourceTree = "<group>"; };
 		C9712A5D2C91887400DE37D1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		C98D25C32DB09DF700B2E84D /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
 		C98D25C42DB09DF700B2E84D /* DIDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDManager.swift; sourceTree = "<group>"; };
@@ -444,10 +450,10 @@
 		C9EB19D52DB7636000D152EE /* ZKPCredentialRequestContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialRequestContainer.swift; sourceTree = "<group>"; };
 		C9EB19D62DB7636000D152EE /* ZKPCredentialRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialRequest.swift; sourceTree = "<group>"; };
 		C9EB19D72DB7636000D152EE /* ZKPCredentialRequestMeta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPCredentialRequestMeta.swift; sourceTree = "<group>"; };
-		C9EB19D92DB7636000D152EE /* ZKPProofParam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPProofParam.swift; sourceTree = "<group>"; };
+		C9EB19D92DB7636000D152EE /* ZKProofParam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKProofParam.swift; sourceTree = "<group>"; };
 		C9EB19DA2DB7636000D152EE /* ZKPReferent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPReferent.swift; sourceTree = "<group>"; };
 		C9EB19DB2DB7636000D152EE /* ProofRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProofRequest.swift; sourceTree = "<group>"; };
-		C9EB19DC2DB7636000D152EE /* ZKPProof.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPProof.swift; sourceTree = "<group>"; };
+		C9EB19DC2DB7636000D152EE /* ZKProof.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKProof.swift; sourceTree = "<group>"; };
 		C9EB1A872DB7714C00D152EE /* CredentialValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialValues.swift; sourceTree = "<group>"; };
 		C9EB1A882DB7714C00D152EE /* AttributeValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributeValue.swift; sourceTree = "<group>"; };
 		C9F294AD2DB0BA21005376E1 /* Secp256R1ManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256R1ManagerTests.swift; sourceTree = "<group>"; };
@@ -680,6 +686,9 @@
 			children = (
 				C90D3BB82DAFA61400292BFD /* AccE2e.swift */,
 				C90D3BB92DAFA61400292BFD /* AttestedAppInfo.swift */,
+				C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */,
+				C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */,
+				C96061D32DDF261B00A67DA3 /* CredInfo.swift */,
 				C90D3BBA2DAFA61400292BFD /* AttestedDIDDoc.swift */,
 				C90D3BBB2DAFA61400292BFD /* DataPayload.swift */,
 				C90D3BBC2DAFA61400292BFD /* DIDAuth.swift */,
@@ -1054,10 +1063,10 @@
 		C9EB19DD2DB7636000D152EE /* Verify */ = {
 			isa = PBXGroup;
 			children = (
-				C9EB19D92DB7636000D152EE /* ZKPProofParam.swift */,
+				C9EB19D92DB7636000D152EE /* ZKProofParam.swift */,
 				C9EB19DA2DB7636000D152EE /* ZKPReferent.swift */,
 				C9EB19DB2DB7636000D152EE /* ProofRequest.swift */,
-				C9EB19DC2DB7636000D152EE /* ZKPProof.swift */,
+				C9EB19DC2DB7636000D152EE /* ZKProof.swift */,
 			);
 			path = Verify;
 			sourceTree = "<group>";
@@ -1319,6 +1328,7 @@
 				C9EB199D2DB75F1900D152EE /* JSON.swift in Sources */,
 				C9EB199E2DB75F1900D152EE /* Subtraction.swift in Sources */,
 				C9EB199F2DB75F1900D152EE /* Exponentiation.swift in Sources */,
+				C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */,
 				C9EB19A02DB75F1900D152EE /* GCD.swift in Sources */,
 				C9EB19A12DB75F1900D152EE /* Bitwise Ops.swift in Sources */,
 				C9EB19A22DB75F1900D152EE /* Data Conversion.swift in Sources */,
@@ -1329,6 +1339,7 @@
 				C9EB19A72DB75F1900D152EE /* Integer Conversion.swift in Sources */,
 				C9EB19A82DB75F1900D152EE /* Prime Test.swift in Sources */,
 				C9EB19A92DB75F1900D152EE /* Addition.swift in Sources */,
+				C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */,
 				C9EB19AA2DB75F1900D152EE /* Floating Point Conversion.swift in Sources */,
 				C9EB19AB2DB75F1900D152EE /* Division.swift in Sources */,
 				C9EB19AC2DB75F1900D152EE /* Writer.swift in Sources */,
@@ -1347,8 +1358,8 @@
 				C9EB19E02DB7636000D152EE /* ZKPCredentialDefinition.swift in Sources */,
 				C9EB19E12DB7636000D152EE /* ZKPCredentialSchema.swift in Sources */,
 				C9EB19E22DB7636000D152EE /* ProofRequest.swift in Sources */,
-				C9EB19E32DB7636000D152EE /* ZKPProof.swift in Sources */,
-				C9EB19E42DB7636000D152EE /* ZKPProofParam.swift in Sources */,
+				C9EB19E32DB7636000D152EE /* ZKProof.swift in Sources */,
+				C9EB19E42DB7636000D152EE /* ZKProofParam.swift in Sources */,
 				C9EB19E52DB7636000D152EE /* ZKPReferent.swift in Sources */,
 				C9EB19E62DB7636000D152EE /* ZKPCredentialOffer.swift in Sources */,
 				C9EB19E72DB7636000D152EE /* ZKPCredentialRequestContainer.swift in Sources */,
@@ -1453,6 +1464,7 @@
 				C9EB19C42DB7618700D152EE /* KeyPairVerifier.swift in Sources */,
 				C9EB19C52DB7618700D152EE /* ProofInitiator.swift in Sources */,
 				C9EB19C62DB7618700D152EE /* CommitmentHelper.swift in Sources */,
+				C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */,
 				C9EB19C72DB7618700D152EE /* CredentialRequestHelper.swift in Sources */,
 				C9EB19C82DB7618700D152EE /* BigIntUtil.swift in Sources */,
 				C9EB19C92DB7618700D152EE /* ChallengeBuilder.swift in Sources */,

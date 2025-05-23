@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import Foundation
+
+public struct CredSchemaVO: Jsonable
+{
+    public var credSchema: String
     
-
-public typealias BigIntString = String
-public typealias StringDictionary = [String : String]
-public typealias BigIntStringDictionary = [String : BigIntString]
-
-public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
-
-public typealias CaptionString = String
+    public init(credSchema: String)
+    {
+        self.credSchema = credSchema
+    }
+}

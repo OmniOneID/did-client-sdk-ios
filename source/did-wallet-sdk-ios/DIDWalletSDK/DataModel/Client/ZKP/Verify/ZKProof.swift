@@ -17,7 +17,7 @@
     
 import Foundation
 
-public struct ZKPProof : Jsonable
+public struct ZKProof : Jsonable
 {
     public let proofs : [SubProof]
     public let aggregatedProof : AggregatedProof

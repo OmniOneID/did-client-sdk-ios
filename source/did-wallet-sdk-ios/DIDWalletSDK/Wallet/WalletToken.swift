@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,7 +125,7 @@ class WalletToken: WalletTokenImpl {
         try await self.verifyCertVcRef(roleType: roleType, providerDID: walletTokenData.provider.did, providerURL: walletTokenData.provider.certVcRef, APIGatewayURL: APIGatewayURL)
         
         // get CAS DIDDoc
-        let casDidDocData = try await CommnunicationClient().doGet(url: URL(string: APIGatewayURL+"/api-gateway/api/v1/did-doc?did=" + walletTokenData.provider.did)!)
+        let casDidDocData = try await CommnunicationClient.doGet(url: URL(string: APIGatewayURL+"/api-gateway/api/v1/did-doc?did=" + walletTokenData.provider.did)!)
         let _casDidDoc = try DIDDocVO(from: casDidDocData)
         
         
@@ -187,7 +187,7 @@ class WalletToken: WalletTokenImpl {
         // get certVC
         WalletLogger.shared.debug("verifyCertVc(WalletUtil)")
         
-        let certVcData = try await CommnunicationClient().doGet(url: URL(string: providerURL)!)
+        let certVcData = try await CommnunicationClient.doGet(url: URL(string: providerURL)!)
         var certVc = try VerifiableCredential.init(from: certVcData)
         
         // compare did
@@ -197,7 +197,7 @@ class WalletToken: WalletTokenImpl {
         }
         
         // get CAS DIDDoc
-        let didDocData = try await CommnunicationClient().doGet(url: URL(string: APIGatewayURL+"/api-gateway/api/v1/did-doc?did=" + certVc.issuer.id)!)
+        let didDocData = try await CommnunicationClient.doGet(url: URL(string: APIGatewayURL+"/api-gateway/api/v1/did-doc?did=" + certVc.issuer.id)!)
         let _didDoc = try DIDDocVO(from: didDocData)
         
         
@@ -207,7 +207,7 @@ class WalletToken: WalletTokenImpl {
         
         // compare rule
         let schemaUrl = certVc.credentialSchema.id
-        let schemaData = try await CommnunicationClient().doGet(url: URL(string: schemaUrl)!)
+        let schemaData = try await CommnunicationClient.doGet(url: URL(string: schemaUrl)!)
         
         let vcSchema = try VCSchema.init(from: schemaData)
         let vcSchemaClaims = vcSchema.credentialSubject.claims

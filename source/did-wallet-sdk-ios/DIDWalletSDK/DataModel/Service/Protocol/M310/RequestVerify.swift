@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import Foundation
 
+//MARK: Verifiable Presentation
 public struct RequestVerify: Jsonable {
     public var id: String
     public var txId: String
@@ -35,5 +36,22 @@ public struct _RequestVerify: Jsonable {
     
     public init(txId: String) {
         self.txId = txId
+    }
+}
+
+//MARK: Zero-Knowledge Proof
+public struct RequestZKPVerify: Jsonable {
+    public var id: String
+    public var txId: String
+    public var accE2e: AccE2e
+    public var encProof: String
+    public var nonce : BigIntString
+    
+    public init(id: String, txId: String, accE2e: AccE2e, encProof: String, nonce : BigIntString) {
+        self.id = id
+        self.txId = txId
+        self.accE2e = accE2e
+        self.encProof = encProof
+        self.nonce = nonce
     }
 }

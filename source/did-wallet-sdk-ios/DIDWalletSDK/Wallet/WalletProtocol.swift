@@ -50,13 +50,35 @@ public protocol WalletCoreImpl {
     func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo]
     func getKeyInfos(ids: [String]) throws -> [KeyInfo]
     func isAnyKeysSaved() throws -> Bool
-    func changePin(id: String, oldPIN: String, newPIN: String) throws 
+    func changePin(id: String, oldPIN: String, newPIN: String) throws
+    
+    //MARK: Zero-Knowledge Proof
+    func isAnyZKPCredentialsSaved() -> Bool
+    func isZKPCredentialSaved(id : String) -> Bool
+    func createZKPCredentialRequest(proverDid : String,
+                                    credentialDefinition : ZKPCredentialDefinition,
+                                    credOffer : ZKPCredentialOffer) throws -> ZKPCredentialRequestContainer
+    @discardableResult func verifyAndStoreZKPCredential(credentialMeta : ZKPCredentialRequestMeta,
+                                                        credentialDefinition : ZKPCredentialDefinition,
+                                                        credential : ZKPCredential) throws -> Bool
+    @discardableResult func deleteZKPCredential(ids: [String]) throws -> Bool
+    func getZKPCredential(ids: [String]) throws -> [ZKPCredential]
+    func getAllZKPCredentials() throws -> [ZKPCredential]
+    func searchZKPCredentials(proofRequest : ProofRequest) throws -> AvailableReferent
+    func createZKProof(proofRequest : ProofRequest,
+                       selectedReferents : [UserReferent],
+                       proofParam : ZKProofParam) throws -> ZKProof
 }
 
 public protocol WalletServiceImpl {
     func deleteWallet() throws -> Bool
     func createWallet(tasURL: String, walletURL: String) async throws -> Bool
     func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]?, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data)
+    func requestZKProof(hWalletToken:String,
+                        selectedReferents : [UserReferent],
+                        proofParam : ZKProofParam,
+                        proofRequestProfile: _RequestProofRequestProfile?,
+                        APIGatewayURL: String) async throws -> (AccE2e, Data)
     func createSignedDIDDoc(passcode: String?) throws -> SignedDIDDoc
     func createProofs(ownerDidDoc: DIDDocument?, proofPurpose: String) throws -> Data
     func createDeviceDocument() throws -> DIDDocument
