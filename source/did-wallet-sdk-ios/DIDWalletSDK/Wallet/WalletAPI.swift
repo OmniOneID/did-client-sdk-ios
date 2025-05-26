@@ -481,7 +481,7 @@ extension WalletAPI {
                                                purposes:[.LIST_VC,
                                                          .DETAIL_VC,
                                                          .LIST_VC_AND_PRESENT_VP])
-        if walletCore.isAnyCredentialsSaved()
+        if walletCore.isAnyZKPCredentialsSaved()
         {
             return try walletCore.getAllZKPCredentials()
         }
