@@ -30,8 +30,8 @@ public struct ProofRequest : Jsonable
     public let name : String
     public let version : String
     public let nonce : BigIntString
-    public let requestedAttributes : [String : AttributeInfo]
-    public let requestedPredicates : [String : PredicateInfo]
+    public let requestedAttributes : [String : AttributeInfo]?
+    public let requestedPredicates : [String : PredicateInfo]?
 }
 
 public struct AttributeInfo: Jsonable

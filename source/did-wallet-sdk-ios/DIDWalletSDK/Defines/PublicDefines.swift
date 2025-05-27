@@ -20,4 +20,6 @@ public typealias BigIntString = String
 public typealias StringDictionary = [String : String]
 public typealias BigIntStringDictionary = [String : BigIntString]
 
-public typealias RequestedAttrDictionary = [String : ZKPProof.RequestedAttribute]
+public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
+
+public typealias CaptionString = String

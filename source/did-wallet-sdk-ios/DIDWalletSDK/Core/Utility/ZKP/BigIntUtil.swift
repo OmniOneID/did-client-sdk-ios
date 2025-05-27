@@ -261,56 +261,42 @@ extension BigIntUtil
      * */
     static func fourSquares(delta : Int) throws -> [Int]
     {
+        
         if delta < 0
         {
             throw WalletCoreCommonError.invalidParameter(code: .zkpManager, name: "delta").getError()
         }
         
-        var roots : [Int] = [largestSquareLessThan(usize: delta), 0, 0, 0]
+        var roots = [largestSquareLessThan(usize:delta), 0, 0, 0]
         
-        for i in (1 ... roots[0]).reversed()
-        {
+        for i in stride(from: roots[0], through: 0, by: -1) {
             roots[0] = i
-            
-            if delta == roots[0]
-            {
-                for j in 1..<4
-                {
-                    roots[j] = 0
-                }
+            if delta == i * i {
+                roots[1] = 0; roots[2] = 0; roots[3] = 0
                 return roots
             }
             
-            roots[1] = largestSquareLessThan(usize: delta - (roots[0] * roots[0]))
-            
-            for j in (1 ... roots[1]).reversed()
-            {
+            roots[1] = largestSquareLessThan(usize:delta - (roots[0] * roots[0]))
+            for j in stride(from: roots[1], through: 0, by: -1) {
                 roots[1] = j
-                
-                if delta == ((roots[0] * roots[0]) + (roots[1] * roots[1]))
-                {
-                    roots[2] = 0
-                    roots[3] = 0
+                let sum1 = roots[0] * roots[0] + roots[1] * roots[1]
+                if delta == sum1 {
+                    roots[2] = 0; roots[3] = 0
                     return roots
                 }
                 
-                roots[2] = largestSquareLessThan(usize: delta - ((roots[0] * roots[0]) + (roots[1] * roots[1])))
-                
-                for k in (1 ... roots[2]).reversed()
-                {
+                roots[2] = largestSquareLessThan(usize:delta - sum1)
+                for k in stride(from: roots[2], through: 0, by: -1) {
                     roots[2] = k
-                    var exptemp = ((roots[0] * roots[0]) + (roots[1] * roots[1])) + (roots[2] * roots[2])
-                    
-                    if delta == exptemp
-                    {
+                    let sum2 = sum1 + roots[2] * roots[2]
+                    if delta == sum2 {
                         roots[3] = 0
                         return roots
                     }
                     
-                    roots[3] = largestSquareLessThan(usize: delta - exptemp)
-                    exptemp += (roots[3] * roots[3])
-                    if delta == exptemp
-                    {
+                    roots[3] = largestSquareLessThan(usize:delta - sum2)
+                    let sum3 = sum2 + roots[3] * roots[3]
+                    if delta == sum3 {
                         return roots
                     }
                 }

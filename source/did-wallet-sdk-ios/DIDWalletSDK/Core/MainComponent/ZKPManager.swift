@@ -55,6 +55,18 @@ struct ZKPManager
         let metas = try! getAllCredentialMetas()
         return !metas.isEmpty
     }
+    
+    /// Check whether a specific ZKPCredential exists by its identifier.
+    ///
+    /// - Parameter by: Specific identifier for the credential
+    /// - Returns: State of existence
+    public func isCredentialSaved(by identifier : String) -> Bool
+    {
+        if !isAnyCredentialsSaved { return false }
+       
+        let metas = try! getAllCredentialMetas()
+        return metas.filter { $0.id == identifier }.count == 1
+    }
 }
 
 extension ZKPManager
@@ -434,52 +446,59 @@ extension ZKPManager
     typealias RequestedPredicates = [String : InnerRequestedPredicate]
                                     
     
-    func getRequestedAttributes(attributes : [String : AttributeInfo]) -> (SelfAttrReferents, RequestedAttributes)
+    func getRequestedAttributes(attributes : [String : AttributeInfo]?) -> (SelfAttrReferents, RequestedAttributes)
     {
         var requestedAttributes : [String : InnerRequestedAttribute] = .init()
         var selfAttrReferents   : [AttrReferent] = .init()
         
-        for (referentKey, value) in attributes
+        if let attributes = attributes
         {
-            let restrictions = value.restrictions.map { $0.values }.reduce(into: Array<String>()) { $0.append(contentsOf: $1)
-            }
-            
-            if restrictions.isEmpty
+            for (referentKey, value) in attributes
             {
-                selfAttrReferents.append(.init(key: referentKey,
-                                               name: value.name,
-                                               checkRevealed: true,
-                                               referent: .init()))
-            }
-            else
-            {
-                requestedAttributes[referentKey] = .init(credDefIds: restrictions,
-                                                        referentName: value.name)
+                let restrictions = value.restrictions.map { $0.values }.reduce(into: Array<String>()) { $0.append(contentsOf: $1)
+                }
+                
+                if restrictions.isEmpty
+                {
+                    selfAttrReferents.append(.init(key: referentKey,
+                                                   name: value.name,
+                                                   checkRevealed: true,
+                                                   referent: .init()))
+                }
+                else
+                {
+                    requestedAttributes[referentKey] = .init(credDefIds: restrictions,
+                                                            referentName: value.name)
+                }
             }
         }
+        
         
         return (selfAttrReferents, requestedAttributes)
     }
     
-    func getRequestedPredicates(predicates : [String : PredicateInfo]) throws -> RequestedPredicates
+    func getRequestedPredicates(predicates : [String : PredicateInfo]?) throws -> RequestedPredicates
     {
         var requestedPredicates : [String : InnerRequestedPredicate] = .init()
         
-        for (referentKey, value) in predicates
+        if let predicates = predicates
         {
-            let restrictions = value.restrictions.map { $0.values }.reduce(into: Array<String>()) { $0.append(contentsOf: $1)
-            }
-            
-            if restrictions.isEmpty
+            for (referentKey, value) in predicates
             {
-                throw E.predicateMustHaveRestictions.getError()
-            }
-            else
-            {
-                requestedPredicates[referentKey] = .init(credDefIds: restrictions,
-                                                         referentName: value.name,
-                                                         pType: value.pType,
-                                                         pValue: value.pValue)
+                let restrictions = value.restrictions.map { $0.values }.reduce(into: Array<String>()) { $0.append(contentsOf: $1)
+                }
+                
+                if restrictions.isEmpty
+                {
+                    throw E.predicateMustHaveRestictions.getError()
+                }
+                else
+                {
+                    requestedPredicates[referentKey] = .init(credDefIds: restrictions,
+                                                             referentName: value.name,
+                                                             pType: value.pType,
+                                                             pValue: value.pValue)
+                }
             }
         }
         
@@ -590,7 +609,7 @@ extension ZKPManager
     struct ProvePredicate
     {
         let referentKey  : String
-        let predicate    : ZKPProof.Predicate
+        let predicate    : ZKProof.Predicate
     }
     
     func getProveCredentials(proofRequest : ProofRequest,
@@ -600,13 +619,13 @@ extension ZKPManager
         
         var proveCredentials : OrderedDictionary<String, ProveCredential> = .init()
         
-        var attrCounter : Int = proofRequest.requestedAttributes.filter { !$0.value.restrictions.isEmpty }.count
-        var predicateCounter : Int = proofRequest.requestedPredicates.count
+        var attrCounter : Int = proofRequest.requestedAttributes?.filter { !$0.value.restrictions.isEmpty }.count ?? 0
+        var predicateCounter : Int = proofRequest.requestedPredicates?.count ?? 0
         
         
         for selectedReferent in selectedReferents
         {
-            if let info = proofRequest.requestedAttributes[selectedReferent.referentKey]
+            if let info = proofRequest.requestedAttributes?[selectedReferent.referentKey]
             {
                 if let credId = selectedReferent.credId
                 {
@@ -639,7 +658,7 @@ extension ZKPManager
                         throw E.invalidAttributeReferentName.getError()
                     }
                     
-                    if let attributeInfo = proofRequest.requestedAttributes[selectedReferent.referentKey],
+                    if let attributeInfo = proofRequest.requestedAttributes?[selectedReferent.referentKey],
                        attributeInfo.restrictions.isEmpty,
                        !selectedReferent.raw.isEmpty
                     {
@@ -652,7 +671,7 @@ extension ZKPManager
                 }
                 
             }
-            else if proofRequest.requestedPredicates[selectedReferent.referentKey] != nil
+            else if proofRequest.requestedPredicates?[selectedReferent.referentKey] != nil
             {
                 guard let credId = selectedReferent.credId
                 else
@@ -660,7 +679,7 @@ extension ZKPManager
                     throw E.invalidSelfAttributeReferent.getError()
                 }
                 
-                let predicateInfo = proofRequest.requestedPredicates[selectedReferent.referentKey]!
+                let predicateInfo = proofRequest.requestedPredicates![selectedReferent.referentKey]!
                 
                 var proveCredential = proveCredentials[credId]
                 if proveCredential == nil
@@ -694,10 +713,10 @@ extension ZKPManager
     typealias SubProofIndex = [String : Int]
     
     func createIdentifiers(credentials :[String : ZKPCredential],
-                           credIds : OrderedSet<String>) -> (SubProofIndex, [ZKPProof.Identifier])
+                           credIds : OrderedSet<String>) -> (SubProofIndex, [ZKProof.Identifier])
     {
         var subProofIndex : SubProofIndex = .init()
-        var identifiers : [ZKPProof.Identifier] = .init()
+        var identifiers : [ZKProof.Identifier] = .init()
         
         for credId in credIds
         {
@@ -716,10 +735,10 @@ extension ZKPManager
     ///   - proofRequest: The proof request specifying required attributes and predicates
     ///   - selectedReferents: The referents selected by the user to satisfy the proof request
     ///   - proofParam: Additional parameters used to construct the proof
-    /// - Returns: A `ZKPProof` instance
+    /// - Returns: A `ZKProof` instance
     public func createProof(proofRequest : ProofRequest,
                             selectedReferents : [UserReferent],
-                            proofParam : ZKPProofParam) throws -> ZKPProof
+                            proofParam : ZKProofParam) throws -> ZKProof
     {
         let masterSecret = try loadMasterSecret()
         
@@ -769,7 +788,7 @@ extension ZKPManager
             let index = subProofIndex[credId]!
             
             var revealedAttrNames : [String]  = .init()
-            var predicates : [ZKPProof.Predicate] = .init()
+            var predicates : [ZKProof.Predicate] = .init()
             var credValues = CredentialValues()
             try credValues.addHidden(key: ZKPConstants.masterSecretKey, value: masterSecret.masterSecret)
             
@@ -848,7 +867,7 @@ extension ZKPManager
         
         let (subProofs, aggregatedProof) =  try builder.build(nonce: proofRequest.nonce.bigInt)
         
-        return ZKPProof.init(
+        return ZKProof.init(
             proofs: subProofs,
             aggregatedProof: aggregatedProof,
             requestedProof: .init(

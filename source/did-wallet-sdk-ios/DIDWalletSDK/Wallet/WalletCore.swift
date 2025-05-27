@@ -26,6 +26,7 @@ class WalletCore: WalletCoreImpl {
     private var holderDidManager: DIDManager
     
     private var vcManager: VCManager
+    private var zkpManager : ZKPManager
     
     public init() {
         self.deviceKeyManager = try! KeyManager(fileName: "device")
@@ -33,6 +34,7 @@ class WalletCore: WalletCoreImpl {
         self.holderKeyManager = try! KeyManager(fileName: "holder")
         self.holderDidManager = try! DIDManager(fileName: "holder")
         self.vcManager = try! VCManager(fileName: "vc")
+        self.zkpManager = try! ZKPManager(fileName: "zkp")
         
         WalletLogger.shared.debug("secceed create Wallet")
     }
@@ -65,6 +67,11 @@ class WalletCore: WalletCoreImpl {
         if vcManager.isAnyCredentialsSaved {
             try vcManager.deleteAllCredentials()
         }
+        
+        if zkpManager.isAnyCredentialsSaved {
+            try zkpManager.removeAllCredentials()
+        }
+        
         return true
     }
     
@@ -223,6 +230,7 @@ class WalletCore: WalletCoreImpl {
         return try holderKeyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: data, signature: signature)
     }
     
+    //MARK: Verifiable Credential
     public func addCredential(credential: VerifiableCredential) throws -> Bool {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -301,5 +309,101 @@ class WalletCore: WalletCoreImpl {
         }
         
         try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
+    }
+    
+    //MARK: Zero-Knowledge Proof
+    public func isAnyZKPCredentialsSaved() -> Bool {
+        return zkpManager.isAnyCredentialsSaved
+    }
+    
+    public func isZKPCredentialSaved(id : String) -> Bool
+    {
+        return zkpManager.isCredentialSaved(by: id)
+    }
+    
+    public func createZKPCredentialRequest(proverDid : String,
+                                           credentialDefinition : ZKPCredentialDefinition,
+                                           credOffer : ZKPCredentialOffer) throws -> ZKPCredentialRequestContainer
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        return try zkpManager.createCredentialRequest(proverDid: proverDid,
+                                                      credentialPublicKey: credentialDefinition.value.primary,
+                                                      credOffer: credOffer)
+    }
+    
+    @discardableResult
+    public func verifyAndStoreZKPCredential(credentialMeta : ZKPCredentialRequestMeta,
+                                            credentialDefinition : ZKPCredentialDefinition,
+                                            credential : ZKPCredential) throws -> Bool
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        try zkpManager.verifyAndStoreCredential(credentialMeta: credentialMeta,
+                                                publicKey: credentialDefinition.value.primary,
+                                                credential: credential)
+        return true
+    }
+    
+    @discardableResult
+    public func deleteZKPCredential(ids: [String]) throws -> Bool
+    {
+        if try WalletLockManager().isRegLock() &&  WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        try zkpManager.removeCredentials(by: ids)
+        return true
+    }
+    
+    public func getZKPCredential(ids: [String]) throws -> [ZKPCredential]
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        return try zkpManager.getCredentials(by: ids)
+    }
+    
+    public func getAllZKPCredentials() throws -> [ZKPCredential]
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        return try zkpManager.getAllCredentials()
+    }
+    
+    public func searchZKPCredentials(proofRequest : ProofRequest) throws -> AvailableReferent
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        return try zkpManager.searchCredentials(proofRequest: proofRequest)
+    }
+    
+    public func createZKProof(proofRequest : ProofRequest,
+                              selectedReferents : [UserReferent],
+                              proofParam : ZKProofParam) throws -> ZKProof
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        return try zkpManager.createProof(proofRequest: proofRequest,
+                                          selectedReferents: selectedReferents,
+                                          proofParam: proofParam)
     }
 }

@@ -49,28 +49,12 @@ struct ProofInitiator
         }
     }
     
-//    static func createUnrevealedAttributes(schema : CredentialSchema,
-//                                           revealedAttrNames : [String],
-//                                           predicateAttrNames : [String : ZKPProof.Predicate]) -> Set<String>
-//    {
-//        let attributeNames = Set(revealedAttrNames + predicateAttrNames.map({ $0.key}))
-//        var unrevealedAttributeNames = attributeNames.subtracting(Set(schema.attrNames))
-//        
-//        unrevealedAttributeNames.insert(ZKPConstants.masterSecretKey)
-//        return unrevealedAttributeNames
-//    }
-    
     static func createUnrevealedAttributes(schema : ZKPCredentialSchema,
                                            revealedAttrNames : [String]) -> Set<String>
     {
-        print("\(#function) start")
-        print("schema attrNames \(schema.attrNames)")
-        print("revealedAttrNames \(revealedAttrNames)")
         var unrevealedAttrNames = Set(schema.attrNames).subtracting(Set(revealedAttrNames))
-        print("unrevealedAttrNames \(unrevealedAttrNames)")
         unrevealedAttrNames.insert(ZKPConstants.masterSecretKey)
-        print("unrevealedAttrNames final \(unrevealedAttrNames)")
-        print("\(#function) end")
+
         return unrevealedAttrNames
     }
                                 
@@ -171,7 +155,7 @@ extension ProofInitiator
         let r          : [String : BigInt]
         let rTilde     : [String : BigInt]
         let alphaTilde : BigInt
-        let predicate  : ZKPProof.Predicate
+        let predicate  : ZKProof.Predicate
         let t          : [String : BigInt]
     }
     
@@ -179,7 +163,7 @@ extension ProofInitiator
     static func generateInitNeProofs(publicKey : CredentialPrimaryPublicKey,
                                      mTilde : [String : BigInt],
                                      credValues : CredentialValues,
-                                     predicates : [ZKPProof.Predicate]) throws -> [PrimaryPredicateInequalityInitProof]
+                                     predicates : [ZKProof.Predicate]) throws -> [PrimaryPredicateInequalityInitProof]
     {
         
         
@@ -200,7 +184,7 @@ extension ProofInitiator
     private static func initNeProof(publicKey : CredentialPrimaryPublicKey,
                                     mTilde : [String : BigInt],
                                     credValues : CredentialValues,
-                                    predicate : ZKPProof.Predicate) throws -> PrimaryPredicateInequalityInitProof
+                                    predicate : ZKProof.Predicate) throws -> PrimaryPredicateInequalityInitProof
     {
         
         

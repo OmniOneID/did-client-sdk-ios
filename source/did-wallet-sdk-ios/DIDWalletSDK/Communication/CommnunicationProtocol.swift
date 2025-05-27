@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,14 @@
 
 import Foundation
 
-public protocol CommnunicationProtocol {
-    func doGet(url: URL) async throws -> Data
-    func doPost(url: URL, requestJsonData: Data) async throws -> Data
+public protocol CommnunicationProtocol
+{
+    static func doGet(url: URL) async throws -> Data
+    static func doPost(url: URL, requestJsonData: Data) async throws -> Data
+}
+
+public protocol ZKPCommunicationProtocol
+{
+    static func getZKPCredentialSchama(hostUrlString : String, id : String) async throws -> ZKPCredentialSchema
+    static func getZKPCredentialDefinition(hostUrlString : String, id : String) async throws -> ZKPCredentialDefinition
 }

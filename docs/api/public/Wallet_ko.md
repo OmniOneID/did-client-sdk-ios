@@ -19,12 +19,13 @@ iOS Wallet API
 ==
 
 - Subject: WalletAPI
-- Writer: Dongjun Park
-- Date: 2024-10-18
-- Version: v1.0.0
+- Writer: 박주현
+- Date: 2025-05-27
+- Version: v2.0.0
 
 | Version | Date       | History                 |
 | ------- | ---------- | ------------------------|
+| v2.0.0  | 2025-05-27 | ZKP 관련 함수 추가         |
 | v1.0.0  | 2024-10-18 | 초기 작성                 |
 
 
@@ -60,9 +61,17 @@ iOS Wallet API
     - [25. getKeyInfos](#25-getkeyinfos)
     - [26. isAnyKeysSaved](#26-isanykeyssaved)
     - [27. changePIN](#27-changepin)
+    - [28. isZKPCredentialSaved](#28-iszkpcredentialsaved)  
+    - [29. deleteZKPCredentials](#29-deletezkpcredentials)  
+    - [30. getZKPCredentials](#30-getzkpcredentials)  
+    - [31. getAllZKPCrentials](#31-getallzkpcrentials)  
+    - [32. searchCredentials](#32-searchcredentials)  
+    - [33. createZKProof](#33-createzkproof)  
+    - [34. createEncZKProof](#34-createenczkproof)
+
     
 - [Enumerators](#enumerators)
-    - [1. WALLET_TOKEN_PURPOSE](#1-wallet_token_purpose)
+    - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
 
 - [Value Object](#value-object)
     - [1. WalletTokenSeed](#1-wallettokenseed)
@@ -71,6 +80,8 @@ iOS Wallet API
     - [4. SignedDIDDoc](#4-signeddiddoc)
     - [5. SignedWalletInfo](#5-signedwalletinfo)
     - [6. DIDAuth](#6-didauth)
+
+
 # API 목록
 ## 0. constructor
 
@@ -969,9 +980,226 @@ try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
 
 <br>
 
+## 28. isZKPCredentialSaved
+
+### Description
+`주어진 ID를 가진 ZKP 자격증명이 저장되어 있는지 확인한다.`
+
+### Declaration
+
+```swift
+func isZKPCredentialSaved(id: String) -> Bool
+```
+
+### Parameters
+
+| Name | Type   | Description      | **M/O** | **Note** |
+| ---- | ------ | ---------------- | ------- | -------- |
+| id   | String | 자격증명 ID       | M       |          |
+
+### Returns
+
+| Type | Description                    | **M/O** | **Note**                                |
+| ---- | ------------------------------ | ------- | ---------------------------------------- |
+| Bool | 저장 여부 (`true`/`false`)      | M       | `true`: 저장되어 있음<br>`false`: 없음 |
+
+<br>
+
+## 29. deleteZKPCredentials
+
+### Description
+`지정한 ZKP 자격증명들을 월렛에서 제거한다.`
+
+### Declaration
+
+```swift
+func deleteZKPCredentials(hWalletToken: String, ids: [String]) throws -> Bool
+```
+
+### Parameters
+
+| Name         | Type     | Description            | **M/O** | **Note**                                |
+| ------------ | -------- | ---------------------- | ------- | ---------------------------------------- |
+| hWalletToken | String   | 월렛 토큰               | M       | 유효하지 않을 경우 예외 발생            |
+| ids          | [String] | 삭제할 자격증명 ID 배열 | M       |                                          |
+
+### Returns
+
+| Type | Description                | **M/O** | **Note**                                 |
+| ---- | -------------------------- | ------- | ---------------------------------------- |
+| Bool | 삭제 성공 여부 (`true`/`false`) | M       | `true`: 성공<br>`false`: 실패           |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)` : 월렛 토큰 검증 실패 시 발생
+
+
+<br>
+
+## 30. getZKPCredentials
+
+### Description
+`지정한 ZKP 자격증명들을 월렛에서 조회한다.`
+
+### Declaration
+
+```swift
+func getZKPCredentials(hWalletToken: String, ids: [String]) throws -> [ZKPCredential]
+```
+
+### Parameters
+
+| Name         | Type     | Description            | **M/O** | **Note**                                |
+| ------------ | -------- | ---------------------- | ------- | ---------------------------------------- |
+| hWalletToken | String   | 월렛 토큰               | M       | 유효하지 않을 경우 예외 발생            |
+| ids          | [String] | 조회할 자격증명 ID 배열 | M       |                                          |
+
+### Returns
+
+| Type            | Description                     | **M/O** | **Note**                      |
+| --------------- | ------------------------------- | ------- | ----------------------------- |
+| [ZKPCredential] | 조회된 ZKP 자격증명 객체 목록     | M       | 각 객체는 자격증명 정보를 포함 |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)` : 월렛 토큰 검증 실패 시 발생
+
+
+<br>
+
+## 31. getAllZKPCrentials
+
+### Description  
+`월렛에 저장된 모든 ZKP 자격증명을 조회한다.`
+
+### Declaration
+
+```swift
+func getAllZKPCrentials(hWalletToken: String) throws -> [ZKPCredential]?
+```
+
+### Parameters
+
+| Name         | Type   | Description    | **M/O** | **Note**                     |
+| ------------ | ------ | -------------- | ------- | ---------------------------- |
+| hWalletToken | String | 월렛 토큰       | M       | 유효하지 않을 경우 예외 발생 |
+
+### Returns
+
+| Type              | Description                    | **M/O** | **Note**                                |
+| ----------------- | ------------------------------ | ------- | --------------------------------------- |
+| [ZKPCredential]?  | 저장된 ZKP 자격증명 리스트 (옵셔널) | O       | 저장된 항목이 없으면 `nil` 반환         |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)` : 월렛 토큰 검증 실패 시 발생
+
+
+<br>
+
+## 32. searchCredentials
+
+### Description  
+`주어진 증명 요청(proof request)을 만족하는 자격증명을 검색한다.`
+
+### Declaration
+
+```swift
+func searchCredentials(hWalletToken: String, proofRequest: ProofRequest) throws -> AvailableReferent
+```
+
+### Parameters
+
+| Name         | Type         | Description             | **M/O** | **Note**                     |
+| ------------ | ------------ | ----------------------- | ------- | ---------------------------- |
+| hWalletToken | String       | 월렛 토큰                | M       | 유효하지 않을 경우 예외 발생 |
+| proofRequest | ProofRequest | 증명 요청 객체            | M       | 필요한 속성과 조건 포함      |
+
+### Returns
+
+| Type              | Description                             | **M/O** | **Note**                                |
+| ----------------- | --------------------------------------- | ------- | --------------------------------------- |
+| AvailableReferent | 조건에 일치하는 자격증명 참조 정보 객체 | M       | 검색된 참조 정보 목록 포함              |
+
+### Throws
+
+(정의된 예외 없음, 구현에 따라 추가 가능)
+
+
+<br>
+
+## 33. createZKProof
+
+### Description  
+`주어진 증명 요청과 선택된 참조값을 기반으로 영지식 증명(ZK Proof)을 생성한다.`
+
+### Declaration
+
+```swift
+func createZKProof(hWalletToken: String, proofRequest: ProofRequest, selectedReferents: [UserReferent], proofParam: ZKProofParam) throws -> ZKProof
+```
+
+### Parameters
+
+| Name              | Type             | Description                              | **M/O** | **Note**                      |
+| ----------------- | ---------------- | ---------------------------------------- | ------- | ----------------------------- |
+| hWalletToken      | String           | 월렛 토큰                                 | M       | 유효하지 않을 경우 예외 발생 |
+| proofRequest      | ProofRequest     | 증명 요청 (속성 및 조건 포함)             | M       |                               |
+| selectedReferents | [UserReferent]   | 사용자가 선택한 자격증명 참조 정보 목록   | M       |                               |
+| proofParam        | ZKProofParam     | 증명 생성에 필요한 추가 파라미터          | M       |                               |
+
+### Returns
+
+| Type   | Description             | **M/O** | **Note**                    |
+| ------ | ----------------------- | ------- | --------------------------- |
+| ZKProof | 생성된 ZK 증명 객체     | M       | VC 기반으로 구성된 영지식 증명 |
+
+### Throws
+
+(정의된 예외 없음, 구현에 따라 추가 가능)
+
+
+<br>
+
+## 34. createEncZKProof
+
+### Description  
+`영지식 증명(ZK Proof)을 생성하고 암호화하여 E2E 파라미터와 함께 반환한다.`
+
+### Declaration
+
+```swift
+func createEncZKProof(hWalletToken: String, selectedReferents: [UserReferent], proofParam: ZKProofParam, proofRequestProfile: _RequestProofRequestProfile, APIGatewayURL: String) async throws -> (AccE2e, Data)
+```
+
+### Parameters
+
+| Name                 | Type                         | Description                              | **M/O** | **Note**                          |
+| -------------------- | ---------------------------- | ---------------------------------------- | ------- | --------------------------------- |
+| hWalletToken         | String                       | 월렛 토큰                                 | M       |                                   |
+| selectedReferents    | [UserReferent]               | 선택된 자격증명 참조 목록                  | M       | ProofRequest 조건을 만족해야 함   |
+| proofParam           | ZKProofParam                 | 영지식 증명 생성을 위한 추가 파라미터      | M       |                                   |
+| proofRequestProfile  | _RequestProofRequestProfile  | 검증자 프로필 (DID, ZKP 인증서 등 포함)    | M       |                                   |
+| APIGatewayURL        | String                       | API Gateway URL                           | M       | 통신 및 검증에 사용됨            |
+
+### Returns
+
+| Type         | Description                     | **M/O** | **Note**                                |
+| ------------ | ------------------------------- | ------- | --------------------------------------- |
+| AccE2e       | 암호화 관련 정보 객체             | M       | 증명 데이터 암호화 포함                 |
+| Data (EncZKProof) | 암호화된 영지식 증명 데이터       | M       | 전송 가능한 형식                        |
+
+### Throws
+
+- 암호화 실패, 인코딩 오류, 네트워크 통신 실패 등의 예외 발생 가능
+
+
+<br>
+
+
 
 # Enumerators
-## 1. WALLET_TOKEN_PURPOSE
+## 1. WalletTokenPurposeEnum
 
 ### Description
 

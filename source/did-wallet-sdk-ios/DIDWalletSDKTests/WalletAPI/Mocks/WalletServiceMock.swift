@@ -18,7 +18,13 @@ import Foundation
 
 @testable import DIDWalletSDK
 
-class WalletServiceMock : WalletServiceImpl {
+class WalletServiceMock : WalletServiceImpl
+{
+    //TODO: future
+    func requestZKProof(hWalletToken: String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile?, APIGatewayURL: String) async throws -> (DIDWalletSDK.AccE2e, Data) {
+        return (DIDWalletSDK.AccE2e.init(publicKey: "", iv: ""), Data())
+    }
+    
     private let walletCore: WalletCoreImpl
     
     public init(_ walletCore: WalletCoreImpl) {

@@ -4,12 +4,13 @@ Open DID에 필요한 WalletToken, Lock/Unlock, Key, DID Document(DID 문서), V
 
 
 ## S/W 사양
-| 구분           | 내용                         |
-|---------------|-----------------------------|
-| OS            | iOS                         |
-| Language      | swift 5.8                   | 
-| IDE           | Xcode 16.2                  |
-| Compatibility | iOS 15.0 and higher         |
+| 구분              | 내용                          |
+|-------------------|-----------------------------|
+| OS                | iOS                         |
+| Language          | Swift 5.8                   |
+| IDE               | Xcode 16.2                  |
+| Compatibility     | iOS 15.0 이상                |
+| Test Environment  | iPhone 15 (17.5) 시뮬레이터   |
 
 
 ## 빌드 방법

@@ -31,7 +31,9 @@ did-client-sdk-ios
 │       │   ├── Wallet.md
 │       │   ├── WalletError.md
 │       │   ├── Wallet_ko.md
-│       │   └── WalletCoreError.md
+│       │   ├── WalletCoreError.md
+│       │   ├── ZKP_DataModel.md
+│       │   └── ZKP_DataModel_ko.md
 │       └── private
 │           ├── DIDManager.md
 │           ├── DIDManager_ko.md
@@ -71,6 +73,16 @@ did-client-sdk-ios
 | RELEASE-PROCESS.md      | Release process                                 |
 | SECURITY.md             | Security policies and vulnerability reporting   |
 
+
+## S/W Specification
+| Category         | Details                     |
+|------------------|-----------------------------|
+| OS               | iOS                         |
+| Language         | Swift 5.8                   |
+| IDE              | Xcode 16.2                  |
+| Compatibility    | iOS 15.0 and higher         |
+| Test Environment | iPhone 15 (17.5) Simulator  |
+
 ## Libraries
 
 Libraries can be found in the [releases folder](source/release).
@@ -92,7 +104,7 @@ The Change Log provides a detailed record of version-specific changes and update
 - [Change Log](./CHANGELOG.md)
 
 
-## OpenDID Demonstration Videos <br>
+## OpenDID Demonstration Videos
 To watch our demonstration videos of the OpenDID system in action, please visit our [Demo Repository](https://github.com/OmniOneID/did-demo-server). <br>
 
 These videos showcase key features including user registration, VC issuance, and VP submission processes.
