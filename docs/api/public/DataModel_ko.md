@@ -19,13 +19,14 @@ iOS DataModel
 ==
 
 - Subject: DataModel
-- Writer: JooHyun Park
-- Date: 2024-08-28
-- Version: v1.0.0
+- Writer: 박주현
+- Date: 2025-05-27
+- Version: v2.0.0
 
 | Version          | Date       | History                 |
 | ---------------- | ---------- | ------------------------|
-| v1.0.0           | 2024-08-28 | Initial                 |
+| v2.0.0           | 2025-05-27 | ZKP 관련 모델 추가         |
+| v1.0.0           | 2024-08-28 | 초기 작성                 |
 
 
 <div style="page-break-after: always;"></div>
@@ -51,7 +52,7 @@ iOS DataModel
             - [5.1.1. Profle](#511-profile)
                 - [5.1.1.1. CredentialSchema](#5111-credentialschema)
                 - [5.1.1.2. Process](#5112-process)
-        - [5.2 VerifyProfile](#51-verifyprofile)
+        - [5.2 VerifyProfile](#52-verifyprofile)
             - [5.2.1. Profile](#521-profile)
                 - [5.2.1.1. ProfileFilter](#5211-profilefilter)
                     - [5.2.1.1.1. CredentialSchema](#52111-credentialschema)
@@ -59,6 +60,8 @@ iOS DataModel
         - [5.3. LogoImage](#53-logoimage)
         - [5.4. ProviderDetail](#54-providerdetail)
         - [5.5. ReqE2e](#55-reqe2e)
+        - [5.6. ProofRequestProfile](#56-proofrequestprofile)
+            - [5.6.1. Profile](#561-profile)
     - [6. VCSchema](#6-vcschema)
         - [6.1. VCMetadata](#61-vcmetadata)
         - [6.2. CredentialSubject](#62-credentialsubject)
@@ -67,19 +70,42 @@ iOS DataModel
                 - [6.2.1.2. ClaimDef](#6212-claimdef)
 
 - [WalletService](#walletservice)
-    - [1. Protocol](#protocol)
-        - [1.1. M132](#1-m132-reg-user)
-        - [1.2. M210](#2-m210-issue-vc)
-        - [1.3. M310 (VP제출)](#3-m310-submit-vp)
-        - [1.4. M220 (VC폐기)](#4-m220-revoke-vc)
-        - [1.5. M142 (DID복구)](#5-m142-restore-DID)
+    - [1. Protocol](#1-protocol)
+        - [1.1. M132](#11-m132-reg-user)
+            - [1.1.1. ProposeRegisterUser/ _ProposeRegisterUser](#111-proposeregisteruser-_proposeregisteruser)
+            - [1.1.2. RequestEcdh/ _RequestEcdh](#112-requestecdh-_requestecdh)
+            - [1.1.3. AttestedAppInfo](#113-attestedappinfo)
+            - [1.1.4. WalletTokenData](#114-wallettokendata)
+            - [1.1.5. RequestCreateToken/ _RequestCreateToken](#115-requestcreatetoken-_requestcreatetoken)
+            - [1.1.6. RetieveKyc/ _RetieveKyc](#116-retievekyc-_retievekyc)
+            - [1.1.7. RequestRegisterUser/ _RequestRegisterUser](#117-requestregisteruser-_requestregisteruser)
+            - [1.1.8. ConfirmRegisterUser/ _ConfirmRegisterUser](#118-confirmregisteruser-_confirmregisteruser)
+        - [1.2. M210](#12-m210-issue-vc)
+            - [1.2.1. ProposeIssueVc/ _ProposeIssueVc](#121-proposeissuevc-_proposeissuevc)
+            - [1.2.2. RequestIssueProfile/ _RequestIssueProfile](#122-requestissueprofile-_requestissueprofile)
+            - [1.2.3. RequestIssueVc/ _RequestIssueVc](#123-requestissuevc-_requestissuevc)
+            - [1.2.4. ConfirmIssueVc/ _ConfirmIssueVc](#124-confirmissuevc-_confirmissuevc)
+        - [1.3. M310 (submit vp)](#13-m310-submit-vp)
+            - [1.3.1. RequestProfile/ _RequestProfile](#131-requestprofile-_requestprofile)
+            - [1.3.2. RequestVerify/ _RequestVerify](#132-requestverify-_requestverify)
+        - [1.4. M220 (revoke vc)](#14-m220-revoke-vc)
+            - [1.4.1. ProposeRevokeVc/ _ProposeRevokeVc](#141-proposerevokevc-_proposerevokevc)
+            - [1.4.2. RequestRevokeVc/ _RequestRevokeVc](#142-requestrevokevc-_requestrevokevc)
+            - [1.4.3. ConfirmRevokeVc/ _ConfirmRevokeVc](#143-confirmrevokevc-_confirmrevokevc)
+        - [1.5. M142 (restore DID)](#15-m142-restore-did)
+            - [1.5.1. ProposeRestoreDidDoc/ _ProposeRestoreDidDoc](#151-proposerestorediddoc-_proposerestorediddoc)
+            - [1.5.2. RequestRestoreDIDDoc/ _RequestRestoreDIDDoc](#152-requestrestorediddoc-_requestrestorediddoc)
+            - [1.5.3. ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc](#153-confirmrestorediddoc-_confirmrestorediddoc)
+        - [1.6. M310 (submit zkproof)](#16-m310-submit-zkproof)
+            - [1.6.1. RequestProfile/ _RequestProofRequestProfile](#161-requestprofile-_requestproofrequestprofile)
+            - [1.6.2. RequestZKPVerify/ _RequestVerify](#162-requestzkpverify-_requestverify)
   
     - [2. Token](#2-token)
         - [2.1. ServerTokenSeed](#21-servertokenseed)
-        - [2.1.1. AttestedAppInfo](#211-attestedappinfo)
-        - [2.1.1.1. Provider](#2111-provider)
-        - [2.1.2. SignedWalletInfo](#212-signedwalletinfo)
-        - [2.1.2.1. Wallet](#2121-wallet)
+            - [2.1.1. AttestedAppInfo](#211-attestedappinfo)
+                - [2.1.1.1. Provider](#2111-provider)
+            - [2.1.2. SignedWalletInfo](#212-signedwalletinfo)
+                - [2.1.2.1. Wallet](#2121-wallet)
         - [2.2. ServerTokenData](#22-servertokendata)
         - [2.3. WalletTokenSeed](#23-wallettokenseed)
         - [2.4. WalletTokenData](#24-wallettokendata)
@@ -102,10 +128,11 @@ iOS DataModel
 
     - [6. VC](#6-vc)
         - [6.1. ReqVC](#61-reqvc)
-        - [6.1.1. ReqVcProfile](#611-reqvcprofile)
+            - [6.1.1. ReqVcProfile](#611-reqvcprofile)
         - [6.2. VCPlanList](#62-vcplanlist)
-        - [6.2.1. VCPlan](#621-vcplan)
-        - [6.2.1.1. Option](#6211-option)
+            - [6.2.1. VCPlan](#621-vcplan)
+                - [6.2.1.1. Option](#6211-option)
+                - [6.2.1.2. VCPlan.CredentialDefinition](#6212-vcplancredentialdefinition)
 
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
@@ -128,9 +155,10 @@ iOS DataModel
     - [16. AlgorithmType](#16-algorithmtype)
     - [17. CredentialSchemaType](#17-credentialschematype)
     - [18. EllipticCurveType](#18-ellipticcurvetype)
-    - [19. ROLE_TYPE](#19-role_type)
-    - [20. SERVER_TOKEN_PURPOSE](#20-server_token_purpose)
-    - [21. WALLET_TOKEN_PURPOSE](#21-wallet_token_purpose)
+    - [19. RoleTypeEnum](#19-roletypeenum)
+    - [20. ServerTokenPurposeEnum](#20-servertokenpurposeenum)
+    - [21. WalletTokenPurposeEnum](#21-wallettokenpurposeenum)
+    - [22. OfferTypeEnum](#22-offertypeenum)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
@@ -660,16 +688,18 @@ public struct Profile : Jsonable
     public var issuer : ProviderDetail
     public var credentialSchema : CredentialSchema
     public var process : Process
+    public var credentialOffer  : ZKPCredentialOffer?
 }
 ```
 
 ### Property
 
-| Name             | Type             | Description           | **M/O** | **Note**                 |
-|------------------|------------------|-----------------------|---------|--------------------------|
-| issuer           | ProviderDetail   | 발급처 정보              |    M    | [ProviderDetail](#54-providerdetail)   |
-| credentialSchema | CredentialSchema | VC schema 정보         |    M    | [CredentialSchema](#5111-credentialschema)          |
-| process          | Process          | 발급 절차               |    M    |  [Process](#5112-process)     |
+| Name             | Type               | Description                | **M/O** | **Note**                                     |
+|------------------|--------------------|----------------------------|---------|----------------------------------------------|
+| issuer           | ProviderDetail     | 발급처 정보                 |    M    | [ProviderDetail](#54-providerdetail)         |
+| credentialSchema | CredentialSchema   | VC schema 정보             |    M    | [CredentialSchema](#5111-credentialschema)   |
+| process          | Process            | 발급 절차                   |    M    | [Process](#5112-process)                     |
+| credentialOffer  | ZKPCredentialOffer | ZKP Credential offer 정보  |    O    | ZKP_DataModel_ko.md 참고                      |
 
 <br>
 
@@ -773,7 +803,7 @@ public struct VerifyProfile : Jsonable, ProofContainer
 
 ### Description
 
-`프로필 내용`
+`프로파일 내용`
 
 ### Declaration
 
@@ -845,15 +875,16 @@ public struct CredentialSchema : Jsonable
 
 ### Property
 
-| Name           | Type                 | Description                                   | **M/O** | **Note**                                              |
-|----------------|----------------------|-----------------------------------------------|---------|-------------------------------------------------------|
-| id             | String               | URL for VC schema                             |    M    |                                                       |
-| type           | CredentialSchemaType | VC schema format type                         |    M    | [CredentialSchemaType](#17-credentialschematype)      |
-| value          | String               | VC schema                                     |    O    | Encoded by Multibase                                  |
-| presentAll     | Bool                 | Require to present all claims. Default(false) |    O    | Ignore display and required claims when if it is true |
-| displayClaims  | [String]             | 사용자 화면에 노출될 claims 목록                    |    O    | Literally display values on device screen             |
-| requiredClaims | [String]             | 발급시 필수 claims                               |    O    | Required values to present VP                         |
-| allowedIssuers | [String]             | 허용된 발급처의 DID 목록                           |    O    |                                                       |
+| Name           | Type                 | Description                                   | **M/O** | **Note**                                                              |
+|----------------|----------------------|-----------------------------------------------|---------|------------------------------------------------------------------------|
+| id             | String               | URL for VC schema                             |    M    |                                                                        |
+| type           | CredentialSchemaType | VC schema format type                         |    M    | [CredentialSchemaType](#17-credentialschematype)                      |
+| value          | String               | VC schema                                     |    O    | Multibase로 인코딩됨                                                  |
+| presentAll     | Bool                 | Require to present all claims. Default(false) |    O    | 이 값이 true인 경우, display 및 required 클레임은 무시됩니다          |
+| displayClaims  | [String]             | 사용자 화면에 노출될 claims 목록              |    O    | 디바이스 화면에 표시될 값                                             |
+| requiredClaims | [String]             | 발급시 필수 claims                            |    O    | VP를 제출하기 위해 필요한 값들                                        |
+| allowedIssuers | [String]             | 허용된 발급처의 DID 목록                      |    O    |                                                                        |
+
 
 <br>
 
@@ -983,6 +1014,72 @@ public struct ReqE2e : Jsonable, ProofContainer
 | proof     | Proof                | Key aggreement proof               |    O    | [Proof](#4-proof)                                |
 
 <br>
+
+## 5.6 ProofRequestProfile
+
+### Description
+
+`ProofRequest 프로파일`
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProofRequestProfile : Jsonable, ProofContainer
+{
+    public var id : String
+    public var type : ProfileType
+    public var title : String
+    public var description : String?
+    public var logo : LogoImage?
+    public var encoding : String
+    public var language : String
+    public var profile : Profile
+    public var proof : Proof?
+}
+```
+
+### Property
+
+| Name        | Type        | Description           | **M/O** | **Note**                 |
+|-------------|-------------|-----------------------|---------|--------------------------|
+| id          | String      | 프로파일 ID             |    M    |                          |
+| type        | ProfileType | 프로파일 유형            |    M    | [ProfileType](#9-profiletype)         |
+| title       | String      | 프로파일 제목            |    M    |                          |
+| description | String      | 프로파일 설명            |    O    |                          |
+| logo        | LogoImage   | 로고 이미지              |    O    |  [LogoImage](#53-logoimage)        |
+| encoding    | String      | 프로파일 인코딩 유형       |    M    |                          |
+| language    | String      | 프로파일 언어 코드        |    M    |                          |
+| profile     | Profile     | 프로파일 컨텐츠          |    M    | [Profile](#561-profile)      |
+| proof       | Proof       | 소유자 proof           |    O    | [Proof](#4-proof)       |
+
+<br>
+
+## 5.6.1 Profile
+
+### Description
+
+`프로파일 내용`
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct Profile : Jsonable
+{    
+    public var verifier : ProviderDetail
+    public var proofRequest : ProofRequest
+    public var reqE2e :  ReqE2e
+}
+```
+
+### Property
+
+| Name         | Type           | Description         | **M/O** | **Note**                                               |
+|--------------|----------------|---------------------|---------|--------------------------------------------------------|
+| verifier     | ProviderDetail | 검증자 정보          |    M    | [ProviderDetail](#54-providerdetail)                  |
+| proofRequest | ProofRequest   | ProofRequest 정보    |    M    | ZKP_DataModel_ko.md 참고                              |
+| reqE2e       | ReqE2e         | 요청 정보            |    M    | Proof not included <br> [ReqE2e](#55-reqe2e)           |
 
 ## 6. VCSchema
 
@@ -1166,11 +1263,11 @@ public struct ClaimDef : Jsonable
 <br>
 
 # WalletService
-## Protocol
+## 1. Protocol
 
-### 1. M132 (reg user)
+### 1.1. M132 (reg user)
 
-#### 1.1 ProposeRegisterUser/ _ProposeRegisterUser
+#### 1.1.1 ProposeRegisterUser/ _ProposeRegisterUser
 
 #### Description
 `유저등록 제안`
@@ -1202,7 +1299,7 @@ public struct _ProposeRegisterUser: Jsonable {
 
 <br>
 
-#### 1.2 RequestEcdh/ _RequestEcdh
+#### 1.1.2. RequestEcdh/ _RequestEcdh
 
 #### Description
 `세션 암호화`
@@ -1239,7 +1336,7 @@ public struct _RequestEcdh: Jsonable {
 | accEcdh | AccEcdh |                                |    M    |          |
 <br>
 
-#### 1.3 AttestedAppInfo
+#### 1.1.3. AttestedAppInfo
 
 #### Description
 `인증된 앱 정보`
@@ -1261,7 +1358,7 @@ public struct RequestAttestedAppInfo: Jsonable {
 
 <br>
 
-#### 1.4 WalletTokenData
+#### 1.1.4. WalletTokenData
 
 #### Description
 
@@ -1297,7 +1394,7 @@ public struct WalletTokenData: Jsonable, ProofContainer {
 
 <br>
 
-#### 1.5 RequestCreateToken/ _RequestCreateToken
+#### 1.1.5. RequestCreateToken/ _RequestCreateToken
 
 #### Description
 
@@ -1340,7 +1437,7 @@ public struct _RequestCreateToken: Jsonable {
 <br>
 
 
-#### 1.6 RetieveKyc/ _RetieveKyc
+#### 1.1.6. RetieveKyc/ _RetieveKyc
 
 #### Description
 
@@ -1381,7 +1478,7 @@ public struct _RetrieveKyc: Jsonable {
 <br>
 
 
-#### 1.7 RequestRegisterUser/ _RequestRegisterUser
+#### 1.1.7. RequestRegisterUser/ _RequestRegisterUser
 
 #### Description
 
@@ -1421,7 +1518,7 @@ public struct _RequestRegisterUser: Jsonable {
 <br>
 
 
-#### 1.8 ConfirmRegisterUser/ _ConfirmRegisterUser
+#### 1.1.8. ConfirmRegisterUser/ _ConfirmRegisterUser
 
 #### Description
 
@@ -1459,8 +1556,8 @@ public struct _ConfirmRegisterUser: Jsonable {
 <br>
 
 
-### 2. M210 (issue vc)
-#### 2.1 ProposeIssueVc/ _ProposeIssueVc
+### 1.2. M210 (issue vc)
+#### 1.2.1. ProposeIssueVc/ _ProposeIssueVc
 
 #### Description
 
@@ -1501,27 +1598,10 @@ public struct _ProposeIssueVc: Jsonable {
 | offerId      | String           | offer ID                       |    O    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
 | refId        | String           | 참조 ID                         |    M    |          |
+
 <br>
 
-
-#### 2.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
-<br>
-
-#### 2.3 AttestedAppInfo
-[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
-<br>
-
-#### 2.4 WalletTokenData
-[1.4 WalletTokenData 참조](#14-WalletTokenData)
-<br>
-
-#### 2.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
-<br>
-
-
-#### 2.6 RequestIssueProfile/ _RequestIssueProfile
+#### 1.2.2. RequestIssueProfile/ _RequestIssueProfile
 
 #### Description
 
@@ -1563,7 +1643,7 @@ public struct _RequestIssueProfile: Jsonable {
 | profile      | IssuerProfile    | 발급자 프로파일                    |    M    |          |
 <br>
 
-#### 2.7 RequestIssueVc/ _RequestIssueVc
+#### 1.2.3. RequestIssueVc/ _RequestIssueVc
 
 #### Description
 
@@ -1611,7 +1691,7 @@ public struct _RequestIssueVc: Jsonable {
 | e2e          | E2E              | e2e                            |    M    |          |
 <br>
 
-#### 2.8 ConfirmIssueVc/ _ConfirmIssueVc
+#### 1.2.4. ConfirmIssueVc/ _ConfirmIssueVc
 
 #### Description
 
@@ -1650,8 +1730,33 @@ public struct _ConfirmIssueVc: Jsonable {
 | vcId         | String           | vc ID                          |    M    |          |
 <br>
 
-### 3. M310 (submit vp)
-#### 3.1 RequestProfile/ _RequestProfile
+#### 1.2.5. CredInfo
+
+#### Description
+
+`발급받은 VC 및 영지식 인증서`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct CredInfo : Jsonable
+{
+    public let vc: VerifiableCredential
+    public let credential : ZKPCredential?
+}
+```
+#### Property
+| Name       | Type                   | Description            | **M/O** | **Note**                     |
+|------------|------------------------|------------------------|---------|------------------------------|
+| vc         | VerifiableCredential   | 분산형 디지털 인증서        | M       |                              |
+| credential | ZKPCredential          | 영지식 인증서             | O       | ZKP_DataModel_ko.md 참고      |
+
+<br>
+
+
+### 1.3. M310 (submit vp)
+#### 1.3.1. RequestProfile/ _RequestProfile
 
 #### Description
 
@@ -1682,19 +1787,16 @@ public struct _RequestProfile: Jsonable {
 }
 ```
 #### Property
-| Name         | Type             | Description                    | **M/O** | **Note** |
-|--------------|------------------|--------------------------------|---------|----------|
-| id           | String           | 메시지 ID                        |    M    |          |
-| txId         | String           | 거래 ID                         |    O    |          |
-| offerId      | String           | offer ID                       |    M    |          |
-| profile      | VerifyProfile    | vc ID                          |    M    |          |
-<br>
-
-#### 3.2 WalletTokenData
+| Name     | Type          | Description           | **M/O** | **Note** |
+|----------|---------------|-----------------------|---------|----------|
+| id       | String        | 메시지 ID              | M       |          |
+| txId     | String        | 거래 ID                | O       |          |
+| offerId  | String        | offer ID              | M       |          |
+| profile  | VerifyProfile | VP 제출용 프로파일        | M       |          |
 
 <br>
 
-#### 3.3 RequestVerify/ _RequestVerify
+#### 1.3.2. RequestVerify/ _RequestVerify
 #### Description
 
 `프로필 검증 요청`
@@ -1736,8 +1838,8 @@ public struct _RequestVerify: Jsonable {
 <br>
 
 
-### 4. M220 (revoke vc)
-#### 4.1 ProposeRevokeVc/ _ProposeRevokeVc
+### 1.4. M220 (revoke vc)
+#### 1.4.1. ProposeRevokeVc/ _ProposeRevokeVc
 
 #### Description
 `VC폐기 제안`
@@ -1777,25 +1879,7 @@ public struct _ProposeRevokeVc: Jsonable {
 | authType     | VerifyAuthType   | 제출용 인증수단                    |    M    |          |
 <br>
 
-
-#### 4.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
-<br>
-
-#### 4.3 AttestedAppInfo
-[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
-<br>
-
-#### 4.4 WalletTokenData
-[1.4 WalletTokenData 참조](#14-WalletTokenData)
-<br>
-
-#### 4.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
-<br>
-
-
-#### 4.6 RequestRevokeVc/ _RequestRevokeVc
+#### 1.4.2. RequestRevokeVc/ _RequestRevokeVc
 
 #### Description
 
@@ -1838,7 +1922,7 @@ public struct _RequestRevokeVc: Jsonable {
 
 
 
-#### 4.7 ConfirmRevokeVc/ _ConfirmRevokeVc
+#### 1.4.3. ConfirmRevokeVc/ _ConfirmRevokeVc
 
 #### Description
 
@@ -1876,8 +1960,8 @@ public struct _ConfirmRevokeVc: Jsonable {
 | serverToken  | String           | 서버 토큰                        |    M    |          |
 <br>
 
-### 5. M142 (restore DID)
-#### 5.1 ProposeRestoreDidDoc/ _ProposeRestoreDidDoc
+### 1.5. M142 (restore DID)
+#### 1.5.1. ProposeRestoreDidDoc/ _ProposeRestoreDidDoc
 
 #### Description
 
@@ -1915,26 +1999,10 @@ public struct _ProposeRestoreDidDoc: Jsonable {
 | id           | String           | 메시지    ID                     |    M    |          |
 | offerId      | String           | offer ID                       |    M    |          |
 | did          | String           | did                            |    M    |          |
+
 <br>
 
-#### 5.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh 참조](#12-requestecdh-_requestecdh)
-<br>
-
-#### 5.3 AttestedAppInfo
-[1.3 AttestedAppInfo 참조](#13-AttestedAppInfo)
-<br>
-
-#### 5.4 WalletTokenData
-[1.4 WalletTokenData 참조](#14-WalletTokenData)
-<br>
-
-#### 5.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken 참조](#15-RequestCreateToken-_RequestCreateToken)
-<br>
-
-
-#### 5.6 RequestRestoreDIDDoc/ _RequestRestoreDIDDoc
+#### 1.5.2. RequestRestoreDIDDoc/ _RequestRestoreDIDDoc
 
 #### Description
 
@@ -1975,7 +2043,7 @@ public struct _RequestRestoreDidDoc: Jsonable {
 | didAuth      | DIDAuth          | DID auth 데이터                  |    M    |          |
 <br>
 
-#### 5.7 ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc
+#### 1.5.3. ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc
 
 #### Description
 
@@ -2010,6 +2078,76 @@ public struct _ConfirmRestoreDidDoc: Jsonable {
 | id           | String           | 메시지 ID                        |    M    |          |
 | txId         | String           | 거래 ID                          |    M    |          |
 | serverToken  | String           | 서버 토큰                         |    M    |          |
+<br>
+
+
+### 1.6. M310 (submit zkproof)
+#### 1.6.1. RequestProfile/ _RequestProofRequestProfile
+
+#### Description
+
+`request ZKP verifiy profile`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestProfile: Jsonable {
+    public var id: String
+    public var txId: String?
+    public var offerId: String
+}
+
+public struct _RequestProofRequestProfile: Jsonable {
+    public var txId: String
+    public var proofRequestProfile: ProofRequestProfile
+}
+```
+#### Property
+| Name                 | Type                | Description              | **M/O** | **Note** |
+|----------------------|---------------------|--------------------------|---------|----------|
+| id                   | String              | 메시지 ID                 | M       |          |
+| txId                 | String              | 거래 ID                   | O       |          |
+| offerId              | String              | offer ID                  | M       |          |
+| proofRequestProfile  | ProofRequestProfile | ZKP 제출용 프로파일        | M       |          |
+
+<br>
+
+#### 1.6.2. RequestZKPVerify/ _RequestVerify
+#### Description
+
+`request verifiy ZKProof`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestZKPVerify: Jsonable
+ {
+    public var id: String
+    public var txId: String
+    public var accE2e: AccE2e
+    public var encProof: String
+    public var nonce : BigIntString
+}
+
+public struct _RequestVerify: Jsonable 
+{
+    public var txId: String
+}
+```
+#### Property
+| Name     | Type         | Description              | **M/O** | **Note** |
+|----------|--------------|--------------------------|---------|----------|
+| id       | String       | 메시지 ID                 | M       |          |
+| txId     | String       | 거래 ID                   | M       |          |
+| accE2e   | AccE2e       | E2e 암호화 데이터          | M       |          |
+| encProof | String       | 암호화된 zkproof          | M       |          |
+| nonce    | BigIntString | proof request의 nonce     | M       |          |
+
+
+
+
 <br>
 
 ## 2. Token
@@ -2506,14 +2644,16 @@ public struct VerifyOfferPayload: Jsonable {
 public struct ReqVC: Jsonable {
     public var refId: String
     public var profile: ReqVcProfile
+    public var credentialRequest : ZKPCredentialRequest?
 }
 ```
 
 ### Property
-| Name         | Type            | Description                | **M/O** | **Note** |
-|--------------|-----------------|----------------------------|---------|----------|
-| refId        | String          | 참조 ID               |    M    |          |
-| profile      | ReqVcProfile    | 발급 요청 프로파일      |    M    |          |
+| Name              | Type                 | Description          | **M/O** | **Note** |
+|-------------------|----------------------|----------------------|---------|----------|
+| refId             | String               | 참조 ID               | M       |          |
+| profile           | ReqVcProfile         | 발급 요청 프로파일       | M       |          |
+| credentialRequest | ZKPCredentialRequest | ZKP 크레덴셜 요청문      | O       |          |
 
 <br>
 
@@ -2583,25 +2723,28 @@ public struct VCPlan: Jsonable {
     public var delegate: String?
     public var allowedIssuers: [String]?
     public var manager: String
+    public var credentialDefinition : VCPlan.CredentialDefinition?
 }
 ```
 
 ### Property
-| Name           | Type               | Description                          | **M/O** | **Note** |
-|----------------|--------------------|--------------------------------------|---------|----------|
-| vcPlanId       | String             | VC plan ID                           |    M    |          |
-| name           | String             | VC plan 이름                          |    M    |          |
-| description    | String             | VC plan 설명                          |    M    |          |
-| url            | String             | issuer url                           |    O    |          |
-| logo           | LogoImage          | 로고 이미지                             |    O    | [LogoImage](#29-logoimage) |
-| validFrom      | String             | 유효시작일                              |    O    |          |
-| validUntil     | String             | 유효만료일                              |    O    |          |
-| tags           | array[String]     | tags                                  |    O    |          |
-| credentialSchema| CredentialSchema  | Credential schema                    |    M    |          |
-| option         | VCPlan.Option      | VC Plan 옵션                          |    M    |          |
-| delegate       | String             | delegate                             |    O    |          |
-| allowedIssuers | array[String]      | VC plan 사용이 허용된 발급 사업자 DID 목록  |    O    |          |
-| manager        | String             | VC plan 관리 권한을 가진 엔티티            |    M    |          |
+| Name                 | Type                            | Description                              | **M/O** | **Note**                        |
+|----------------------|----------------------------------|-----------------------------------------|---------|----------------------------------|
+| vcPlanId             | String                          | VC plan ID                               | M       |                                  |
+| name                 | String                          | VC plan 이름                              | M       |                                  |
+| description          | String                          | VC plan 설명                              | M       |                                  |
+| url                  | String                          | issuer url                               | O       |                                  |
+| logo                 | LogoImage                       | 로고 이미지                                 | O       | [LogoImage](#29-logoimage)       |
+| validFrom            | String                          | 유효시작일                                  | O       |                                  |
+| validUntil           | String                          | 유효만료일                                  | O       |                                  |
+| tags                 | array[String]                   | tags                                     | O       |                                  |
+| credentialSchema     | CredentialSchema                | Credential schema                        | M       |                                  |
+| option               | VCPlan.Option                   | VC Plan 옵션                              | M       |                                  |
+| delegate             | String                          | delegate                                 | O       |                                  |
+| allowedIssuers       | array[String]                   | VC plan 사용이 허용된 발급 사업자 DID 목록      | O       |                                  |
+| manager              | String                          | VC plan 관리 권한을 가진 엔티티               | M       |                                  |
+| credentialDefinition | VCPlan.CredentialDefinition     | VC 발급에 연관된 ZKP 정보                    | O       |                                  |
+
 
 <br>
 
@@ -2628,8 +2771,28 @@ public struct Option: Jsonable {
 
 <br>
 
+## 6.2.1.2. VCPlan.CredentialDefinition
+
+### Description
+`VC 발급에 연관된 ZKP 정보`
+
+### Declaration
+```swift
+public struct CredentialDefinition: Jsonable
+{
+    public var id: String
+    public var schemaId: String
+}
+```
+
+### Property
+| Name     | Type   | Description                     | **M/O** | **Note** |
+|----------|--------|---------------------------------|---------|----------|
+| id       | String | ZKP CredentialDefinition ID     | M       |          |
+| schemaId | String | ZKP CredentialSchema ID         | M       |          |
 
 
+<br>
 
 # OptionSet
 ## 1. VerifyAuthType
@@ -2835,6 +2998,7 @@ public enum ProfileType : String, Codable
 {
     case IssueProfile
     case VerifyProfile
+    case ProofRequestProfile
 }
 ```
 
@@ -3109,6 +3273,22 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
 ```
 <br>
 
+## 22. OfferTypeEnum
+
+### Description
+`오퍼 유형의 열거`
+
+### Declaration
+```swift
+public enum OfferTypeEnum: String, Codable {
+    case IssueOffer
+    case VerifyOffer
+    case RestoreDidOffer
+    case ZkpIssueOffer
+    case VerifyProofOffer
+}
+```
+<br>
 
 # Protocols
 

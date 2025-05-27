@@ -20,11 +20,12 @@ iOS ZKPManager API
 
 - Subject: ZKPManager
 - Writer: JooHyun Park
-- Date: 2025-04-24
-- Version: v1.0.0
+- Date: 2025-05-27
+- Version: v2.0.0
 
 | Version          | Date       | History                           |
 | ---------------- | ---------- | ----------------------------------|
+| v2.0.0           | 2025-05-27 | Add isCredentialSaved function    |
 | v1.0.0           | 2025-04-24 | Initial                           |
 
 
@@ -35,14 +36,16 @@ iOS ZKPManager API
 - [APIs](#apis)
     - [1. init](#1-init)
     - [2. IsAnyCredentialsSaved](#2-isanycredentialssaved)
-    - [3. CreateCredentialRequest](#3-createcredentialrequest)
-    - [4. VerifyAndStoreCredential](#4-verifyandstorecredential)
-    - [5. GetAllCredentials](#5-getallcredentials)
-    - [6. GetCredentials](#6-getcredentials)
-    - [7. RemoveAllCredentials](#7-removeallcredentials)
-    - [8. RemoveCredentials](#8-removecredentials)
-    - [9. SearchCredentials](#9-searchcredentials)
-    - [10. CreateProof](#10-createproof)
+    - [3. isCredentialSaved](#3-iscredentialsaved)
+    - [4. CreateCredentialRequest](#4-createcredentialrequest)
+    - [5. VerifyAndStoreCredential](#5-verifyandstorecredential)
+    - [6. GetAllCredentials](#6-getallcredentials)
+    - [7. GetCredentials](#7-getcredentials)
+    - [8. RemoveAllCredentials](#8-removeallcredentials)
+    - [9. RemoveCredentials](#9-removecredentials)
+    - [10. SearchCredentials](#10-searchcredentials)
+    - [11. CreateProof](#11-createproof)
+
 
 
 # APIs
@@ -100,7 +103,40 @@ if ! zkpManager.isAnyCredentialsSaved {
 
 <br>
 
-## 3. CreateCredentialRequest
+## 3. isCredentialSaved
+
+### Description
+`Check whether a specific ZKPCredential exists by its identifier.`
+
+### Declaration
+
+```swift
+public func isCredentialSaved(by identifier : String) -> Bool
+```
+
+### Parameters
+
+| Name       | Type   | Description                            | **M/O** | **Note** |
+|------------|--------|----------------------------------------|---------|----------|
+| identifier | String | Specific identifier for the credential | M       |          |
+
+
+### Returns
+
+| Type  | Description         | **M/O** | **Note** |
+|-------|---------------------|---------|----------|
+| Bool  | State of existence  | M       |          |
+
+### Usage
+```swift
+if !zkpManager.isCredentialSaved(by: "id") {
+    print("id for ZKP Credential is not saved.")
+}
+```
+
+<br>
+
+## 4. CreateCredentialRequest
 
 ### Description
 `Creates the CredentialRequest and its meta`
@@ -127,9 +163,19 @@ public func createCredentialRequest(proverDid : String,
 |-------------------------------|-----------------------------------------------------|---------|----------|
 | ZKPCredentialRequestContainer | The object contains credential request and its meta | M       |          |
 
+### Usage
+```swift
+let proverDid : String
+let credentialDefinition : ZKPCredentialDefinition
+let credOffer : ZKPCredentialOffer
+let container = try zkpManager.createCredentialRequest(proverDid: proverDid,
+                                                       credentialPublicKey: credentialDefinition.value.primary,
+                                                       credOffer: credOffer)
+```
+
 <br>
 
-## 4. VerifyAndStoreCredential
+## 5. VerifyAndStoreCredential
 
 ### Description
 `Verifies and stores a ZKP credential.`
@@ -154,9 +200,19 @@ public func verifyAndStoreCredential(credentialMeta : ZKPCredentialRequestMeta,
 
 Void
 
+### Usage
+```swift
+let container
+let credentialDefinition : ZKPCredentialDefinition
+let credential : ZKPCredential
+try zkpManager.verifyAndStoreCredential(credentialMeta: container.credentialRequestMeta,
+                                        publicKey: credentialDefinition.value.primary,
+                                        credential: credential)
+```
+
 <br>
 
-## 5. GetAllCredentials
+## 6. GetAllCredentials
 
 ### Description
 `Returns all stored ZKP credentials.`
@@ -173,9 +229,14 @@ public func getAllCredentials() throws -> [ZKPCredential]
 |-----------------|--------------------------------|---------|----------|
 | [ZKPCredential] | Array of all saved credentials | M       |          |
 
+### Usage
+```swift
+let zkpCredentials = try zkpManager.getAllCredentials()
+```
+
 <br>
 
-## 6. GetCredentials
+## 7. GetCredentials
 
 ### Description
 `Returns ZKP credentials for the given identifiers.`
@@ -198,9 +259,15 @@ public func getCredentials(by identifiers : [String]) throws -> [ZKPCredential]
 |-----------------|----------------------|---------|----------|
 | [ZKPCredential] | Matching credentials | M       |          |
 
+### Usage
+```swift
+let ids = ["id"]
+let zkpCredentials = try zkpManager.getCredentials(by: ids)
+```
+
 <br>
 
-## 7. RemoveAllCredentials
+## 8. RemoveAllCredentials
 
 ### Description
 `Removes all stored credentials.`
@@ -215,9 +282,14 @@ public func removeAllCredentials() throws
 
 Void
 
+### Usage
+```swift
+let zkpCredentials = try zkpManager.removeAllCredentials()
+```
+
 <br>
 
-## 8. RemoveCredentials
+## 9. RemoveCredentials
 
 ### Description
 `Removes credentials matching the given identifiers.`
@@ -238,9 +310,15 @@ public func removeCredentials(by identifiers : [String]) throws
 
 Void
 
+### Usage
+```swift
+let ids = ["id"]
+let zkpCredentials = try zkpManager.removeCredentials(by: ids)
+```
+
 <br>
 
-## 9. SearchCredentials
+## 10. SearchCredentials
 
 ### Description
 `Searches for credentials that satisfy the given proof request.`
@@ -263,9 +341,15 @@ public func searchCredentials(proofRequest : ProofRequest) throws -> AvailableRe
 |-------------------|------------------------------------|---------|----------|
 | AvailableReferent | Referents for matching credentials | M       |          |
 
+### Usage
+```swift
+let proofRequest : ProofRequest
+let availableReferent = try zkpManager.searchCredentials(proofRequest: proofRequest)
+```
+
 <br>
 
-## 10. CreateProof
+## 11. CreateProof
 
 ### Description
 `Creates a zero-knowledge proof based on the given request and selected referents.`
@@ -275,7 +359,7 @@ public func searchCredentials(proofRequest : ProofRequest) throws -> AvailableRe
 ```swift
 public func createProof(proofRequest : ProofRequest,
                         selectedReferents : [UserReferent],
-                        proofParam : ZKPProofParam) throws -> ZKPProof
+                        proofParam : ZKProofParam) throws -> ZKProof
 ```
 
 ### Parameters
@@ -284,10 +368,22 @@ public func createProof(proofRequest : ProofRequest,
 |-------------------|------------------|----------------------------------------------------------------|---------|----------|
 | proofRequest      | ProofRequest     | The proof request specifying required attributes and predicates | M       |          |
 | selectedReferents | [UserReferent]   | The referents selected by the user to satisfy the proof request | M       |          |
-| proofParam        | ZKPProofParam    | Additional parameters used to construct the proof               | M       |          |
+| proofParam        | ZKProofParam     | Additional parameters used to construct the proof               | M       |          |
 
 ### Returns
 
 | Type     | Description | **M/O** | **Note** |
 |----------|-------------|---------|----------|
-| ZKPProof | A ZKP proof | M       |          |
+| ZKProof  | A ZKProof   | M       |          |
+
+### Usage
+```swift
+let proofRequest : ProofRequest
+let selectedReferents : [UserReferent]
+let proofParam : ZKProofParam
+let proof =  try zkpManager.createProof(proofRequest: proofRequest,
+                                        selectedReferents: selectedReferents,
+                                        proofParam: proofParam)
+```
+
+<br>

@@ -20,11 +20,12 @@ iOS DataModel
 
 - Subject: DataModel
 - Writer: JooHyun Park
-- Date: 2024-08-28
-- Version: v1.0.0
+- Date: 2025-05-27
+- Version: v2.0.0
 
 | Version          | Date       | History                 |
 | ---------------- | ---------- | ------------------------|
+| v2.0.0           | 2025-05-27 | Add ZKP-related models  |
 | v1.0.0           | 2024-08-28 | Initial                 |
 
 
@@ -51,7 +52,7 @@ iOS DataModel
             - [5.1.1. Profle](#511-profile)
                 - [5.1.1.1. CredentialSchema](#5111-credentialschema)
                 - [5.1.1.2. Process](#5112-process)
-        - [5.2 VerifyProfile](#51-verifyprofile)
+        - [5.2 VerifyProfile](#52-verifyprofile)
             - [5.2.1. Profile](#521-profile)
                 - [5.2.1.1. ProfileFilter](#5211-profilefilter)
                     - [5.2.1.1.1. CredentialSchema](#52111-credentialschema)
@@ -59,6 +60,8 @@ iOS DataModel
         - [5.3. LogoImage](#53-logoimage)
         - [5.4. ProviderDetail](#54-providerdetail)
         - [5.5. ReqE2e](#55-reqe2e)
+        - [5.6. ProofRequestProfile](#56-proofrequestprofile)
+            - [5.6.1. Profile](#561-profile)
     - [6. VCSchema](#6-vcschema)
         - [6.1. VCMetadata](#61-vcmetadata)
         - [6.2. CredentialSubject](#62-credentialsubject)
@@ -67,19 +70,43 @@ iOS DataModel
                 - [6.2.1.2. ClaimDef](#6212-claimdef)
 
 - [WalletService](#walletservice)
-    - [1. Protocol](#protocol)
-        - [1.1. M132](#1-m132-reg-user)
-        - [1.2. M210](#2-m210-issue-vc)
-        - [1.3. M310 (VP sumbit)](#3-m310-submit-vp)
-        - [1.4. M220 (VC revoke)](#4-m220-revoke-vc)
-        - [1.5. M142 (DID restore)](#5-m142-restore-DID)
-  
+    - [1. Protocol](#1-protocol)
+        - [1.1. M132](#11-m132-reg-user)
+            - [1.1.1. ProposeRegisterUser/ _ProposeRegisterUser](#111-proposeregisteruser-_proposeregisteruser)
+            - [1.1.2. RequestEcdh/ _RequestEcdh](#112-requestecdh-_requestecdh)
+            - [1.1.3. AttestedAppInfo](#113-attestedappinfo)
+            - [1.1.4. WalletTokenData](#114-wallettokendata)
+            - [1.1.5. RequestCreateToken/ _RequestCreateToken](#115-requestcreatetoken-_requestcreatetoken)
+            - [1.1.6. RetieveKyc/ _RetieveKyc](#116-retievekyc-_retievekyc)
+            - [1.1.7. RequestRegisterUser/ _RequestRegisterUser](#117-requestregisteruser-_requestregisteruser)
+            - [1.1.8. ConfirmRegisterUser/ _ConfirmRegisterUser](#118-confirmregisteruser-_confirmregisteruser)
+        - [1.2. M210](#12-m210-issue-vc)
+            - [1.2.1. ProposeIssueVc/ _ProposeIssueVc](#121-proposeissuevc-_proposeissuevc)
+            - [1.2.2. RequestIssueProfile/ _RequestIssueProfile](#122-requestissueprofile-_requestissueprofile)
+            - [1.2.3. RequestIssueVc/ _RequestIssueVc](#123-requestissuevc-_requestissuevc)
+            - [1.2.4. ConfirmIssueVc/ _ConfirmIssueVc](#124-confirmissuevc-_confirmissuevc)
+            - [1.2.5. CredInfo](#125-credinfo)
+        - [1.3. M310 (submit vp)](#13-m310-submit-vp)
+            - [1.3.1. RequestProfile/ _RequestProfile](#131-requestprofile-_requestprofile)
+            - [1.3.2. RequestVerify/ _RequestVerify](#132-requestverify-_requestverify)
+        - [1.4. M220 (revoke vc)](#14-m220-revoke-vc)
+            - [1.4.1. ProposeRevokeVc/ _ProposeRevokeVc](#141-proposerevokevc-_proposerevokevc)
+            - [1.4.2. RequestRevokeVc/ _RequestRevokeVc](#142-requestrevokevc-_requestrevokevc)
+            - [1.4.3. ConfirmRevokeVc/ _ConfirmRevokeVc](#143-confirmrevokevc-_confirmrevokevc)
+        - [1.5. M142 (restore DID)](#15-m142-restore-did)
+            - [1.5.1. ProposeRestoreDidDoc/ _ProposeRestoreDidDoc](#151-proposerestorediddoc-_proposerestorediddoc)
+            - [1.5.2. RequestRestoreDIDDoc/ _RequestRestoreDIDDoc](#152-requestrestorediddoc-_requestrestorediddoc)
+            - [1.5.3. ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc](#153-confirmrestorediddoc-_confirmrestorediddoc)
+        - [1.6. M310 (submit zkproof)](#16-m310-submit-zkproof)
+            - [1.6.1. RequestProfile/ _RequestProofRequestProfile](#161-requestprofile-_requestproofrequestprofile)
+            - [1.6.2. RequestZKPVerify/ _RequestVerify](#162-requestzkpverify-_requestverify)
+
     - [2. Token](#2-token)
         - [2.1. ServerTokenSeed](#21-servertokenseed)
-        - [2.1.1. AttestedAppInfo](#211-attestedappinfo)
-        - [2.1.1.1. Provider](#2111-provider)
-        - [2.1.2. SignedWalletInfo](#212-signedwalletinfo)
-        - [2.1.2.1. Wallet](#2121-wallet)
+            - [2.1.1. AttestedAppInfo](#211-attestedappinfo)
+                - [2.1.1.1. Provider](#2111-provider)
+            - [2.1.2. SignedWalletInfo](#212-signedwalletinfo)
+                - [2.1.2.1. Wallet](#2121-wallet)
         - [2.2. ServerTokenData](#22-servertokendata)
         - [2.3. WalletTokenSeed](#23-wallettokenseed)
         - [2.4. WalletTokenData](#24-wallettokendata)
@@ -102,10 +129,11 @@ iOS DataModel
 
     - [6. VC](#6-vc)
         - [6.1. ReqVC](#61-reqvc)
-        - [6.1.1. ReqVcProfile](#611-reqvcprofile)
+            - [6.1.1. ReqVcProfile](#611-reqvcprofile)
         - [6.2. VCPlanList](#62-vcplanlist)
-        - [6.2.1. VCPlan](#621-vcplan)
-        - [6.2.1.1. Option](#6211-option)
+            - [6.2.1. VCPlan](#621-vcplan)
+                - [6.2.1.1. Option](#6211-option)
+                - [6.2.1.2. VCPlan.CredentialDefinition](#6212-vcplancredentialdefinition)
 
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
@@ -128,9 +156,10 @@ iOS DataModel
     - [16. AlgorithmType](#16-algorithmtype)
     - [17. CredentialSchemaType](#17-credentialschematype)
     - [18. EllipticCurveType](#18-ellipticcurvetype)
-    - [19. ROLE_TYPE](#19-role_type)
-    - [20. SERVER_TOKEN_PURPOSE](#20-server_token_purpose)
-    - [21. WALLET_TOKEN_PURPOSE](#21-wallet_token_purpose)
+    - [19. RoleTypeEnum](#19-roletypeenum)
+    - [20. ServerTokenPurposeEnum](#20-servertokenpurposeenum)
+    - [21. WalletTokenPurposeEnum](#21-wallettokenpurposeenum)
+    - [22. OfferTypeEnum](#22-offertypeenum)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
@@ -659,16 +688,18 @@ public struct Profile : Jsonable
     public var issuer : ProviderDetail
     public var credentialSchema : CredentialSchema
     public var process : Process
+    public var credentialOffer  : ZKPCredentialOffer?
 }
 ```
 
 ### Property
 
-| Name             | Type             | Description           | **M/O** | **Note**                 |
-|------------------|------------------|-----------------------|---------|--------------------------|
-| issuer           | ProviderDetail   | Issuer information    |    M    | [ProviderDetail](#54-providerdetail)   |
-| credentialSchema | CredentialSchema | VC schema information |    M    | [CredentialSchema](#5111-credentialschema)          |
-| process          | Process          | Issuing process       |    M    |  [Process](#5112-process)     |
+| Name             | Type               | Description                 | **M/O** | **Note**                                    |
+|------------------|--------------------|-----------------------------|---------|---------------------------------------------|
+| issuer           | ProviderDetail     | Issuer information          |    M    | [ProviderDetail](#54-providerdetail)        |
+| credentialSchema | CredentialSchema   | VC schema information       |    M    | [CredentialSchema](#5111-credentialschema)  |
+| process          | Process            | Issuing process             |    M    | [Process](#5112-process)                    |
+| credentialOffer  | ZKPCredentialOffer | ZKP Credential offer information |    O    | Refer to the ZKP_DataModel.md  |
 
 <br>
 
@@ -983,6 +1014,74 @@ public struct ReqE2e : Jsonable, ProofContainer
 
 <br>
 
+## 5.6 ProofRequestProfile
+
+### Description
+
+`ProofRequest Profile`
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProofRequestProfile : Jsonable, ProofContainer
+{
+    public var id : String
+    public var type : ProfileType
+    public var title : String
+    public var description : String?
+    public var logo : LogoImage?
+    public var encoding : String
+    public var language : String
+    public var profile : Profile
+    public var proof : Proof?
+}
+```
+
+### Property
+
+| Name        | Type        | Description           | **M/O** | **Note**                 |
+|-------------|-------------|-----------------------|---------|--------------------------|
+| id          | String      | Profile ID            |    M    |                          |
+| type        | ProfileType | Profile type          |    M    | [ProfileType](#9-profiletype)         |
+| title       | String      | Profile title         |    M    |                          |
+| description | String      | Profile description   |    O    |                          |
+| logo        | LogoImage   | Logo image            |    O    |  [LogoImage](#53-logoimage)        |
+| encoding    | String      | Profile encoding type |    M    |                          |
+| language    | String      | Profile language code |    M    |                          |
+| profile     | Profile     | Profile contents      |    M    | [Profile](#561-profile)      |
+| proof       | Proof       | Owner proof           |    O    | [Proof](#4-proof)       |
+
+<br>
+
+## 5.6.1 Profile
+
+### Description
+
+`Profile contents`
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct Profile : Jsonable
+{    
+    public var verifier : ProviderDetail
+    public var proofRequest : ProofRequest
+    public var reqE2e :  ReqE2e
+}
+```
+
+### Property
+
+| Name         | Type           | Description                | **M/O** | **Note**                                           |
+|--------------|----------------|----------------------------|---------|----------------------------------------------------|
+| verifier     | ProviderDetail | Verifier information       |    M    | [ProviderDetail](#54-providerdetail)              |
+| proofRequest | ProofRequest   | ProofRequest information   |    M    | Refer to the ZKP_DataModel.md                     |
+| reqE2e       | ReqE2e         | Request information        |    M    | Proof not included <br> [ReqE2e](#55-reqe2e)
+
+<br>
+
 ## 6. VCSchema
 
 ### Description
@@ -1165,11 +1264,11 @@ public struct ClaimDef : Jsonable
 <br>
 
 # WalletService
-## Protocol
+## 1. Protocol
 
-### 1. M132 (reg user)
+### 1.1. M132 (reg user)
 
-#### 1.1 ProposeRegisterUser/ _ProposeRegisterUser
+#### 1.1.1. ProposeRegisterUser/ _ProposeRegisterUser
 
 #### Description
 `User Reg`
@@ -1201,7 +1300,7 @@ public struct _ProposeRegisterUser: Jsonable {
 
 <br>
 
-#### 1.2 RequestEcdh/ _RequestEcdh
+#### 1.1.2. RequestEcdh/ _RequestEcdh
 
 #### Description
 `session encryption`
@@ -1238,7 +1337,7 @@ public struct _RequestEcdh: Jsonable {
 | accEcdh | AccEcdh |                                |    M    |          |
 <br>
 
-#### 1.3 AttestedAppInfo
+#### 1.1.3. AttestedAppInfo
 
 #### Description
 `attested app info`
@@ -1260,7 +1359,7 @@ public struct RequestAttestedAppInfo: Jsonable {
 
 <br>
 
-#### 1.4 WalletTokenData
+#### 1.1.4. WalletTokenData
 
 #### Description
 
@@ -1296,7 +1395,7 @@ public struct WalletTokenData: Jsonable, ProofContainer {
 
 <br>
 
-#### 1.5 RequestCreateToken/ _RequestCreateToken
+#### 1.1.5. RequestCreateToken/ _RequestCreateToken
 
 #### Description
 
@@ -1339,7 +1438,7 @@ public struct _RequestCreateToken: Jsonable {
 <br>
 
 
-#### 1.6 RetieveKyc/ _RetieveKyc
+#### 1.1.6. RetieveKyc/ _RetieveKyc
 
 #### Description
 
@@ -1380,7 +1479,7 @@ public struct _RetrieveKyc: Jsonable {
 <br>
 
 
-#### 1.7 RequestRegisterUser/ _RequestRegisterUser
+#### 1.1.7. RequestRegisterUser/ _RequestRegisterUser
 
 #### Description
 
@@ -1420,7 +1519,7 @@ public struct _RequestRegisterUser: Jsonable {
 <br>
 
 
-#### 1.8 ConfirmRegisterUser/ _ConfirmRegisterUser
+#### 1.1.8. ConfirmRegisterUser/ _ConfirmRegisterUser
 
 #### Description
 
@@ -1458,8 +1557,8 @@ public struct _ConfirmRegisterUser: Jsonable {
 <br>
 
 
-### 2. M210 (issue vc)
-#### 2.1 ProposeIssueVc/ _ProposeIssueVc
+### 1.2. M210 (issue vc)
+#### 1.2.1. ProposeIssueVc/ _ProposeIssueVc
 
 #### Description
 
@@ -1502,25 +1601,7 @@ public struct _ProposeIssueVc: Jsonable {
 | refId        | String           | reference ID                   |    M    |          |
 <br>
 
-
-#### 2.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh reference](#12-requestecdh-_requestecdh)
-<br>
-
-#### 2.3 AttestedAppInfo
-[1.3 AttestedAppInfo reference](#13-AttestedAppInfo)
-<br>
-
-#### 2.4 WalletTokenData
-[1.4 WalletTokenData reference](#14-WalletTokenData)
-<br>
-
-#### 2.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken reference](#15-RequestCreateToken-_RequestCreateToken)
-<br>
-
-
-#### 2.6 RequestIssueProfile/ _RequestIssueProfile
+#### 1.2.2. RequestIssueProfile/ _RequestIssueProfile
 
 #### Description
 
@@ -1562,7 +1643,7 @@ public struct _RequestIssueProfile: Jsonable {
 | profile      | IssuerProfile    | issuer profile                 |    M    |          |
 <br>
 
-#### 2.7 RequestIssueVc/ _RequestIssueVc
+#### 1.2.3. RequestIssueVc/ _RequestIssueVc
 
 #### Description
 
@@ -1610,7 +1691,7 @@ public struct _RequestIssueVc: Jsonable {
 | e2e          | E2E              | e2e                            |    M    |          |
 <br>
 
-#### 2.8 ConfirmIssueVc/ _ConfirmIssueVc
+#### 1.2.4. ConfirmIssueVc/ _ConfirmIssueVc
 
 #### Description
 
@@ -1649,8 +1730,32 @@ public struct _ConfirmIssueVc: Jsonable {
 | vcId         | String           | vc ID                          |    M    |          |
 <br>
 
-### 3. M310 (submit vp)
-#### 3.1 RequestProfile/ _RequestProfile
+#### 1.2.5. CredInfo
+
+#### Description
+
+`Issued Verifiable Credential and Zero-knowledge Proof Credential`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct CredInfo : Jsonable
+{
+    public let vc: VerifiableCredential
+    public let credential : ZKPCredential?
+}
+```
+#### Property
+| Name       | Type                   | Description                          | **M/O** | **Note**                       |
+|------------|------------------------|--------------------------------------|---------|--------------------------------|
+| vc         | VerifiableCredential   | Verifiable Credential                | M       |                                |
+| credential | ZKPCredential          | Zero-knowledge Proof Credential      | O       | Refer to the ZKP_DataModel.md |
+
+<br>
+
+### 1.3. M310 (submit vp)
+#### 1.3.1. RequestProfile/ _RequestProfile
 
 #### Description
 
@@ -1681,19 +1786,16 @@ public struct _RequestProfile: Jsonable {
 }
 ```
 #### Property
-| Name         | Type             | Description                    | **M/O** | **Note** |
-|--------------|------------------|--------------------------------|---------|----------|
-| id           | String           | message ID                     |    M    |          |
-| txId         | String           | transaction ID                 |    O    |          |
-| offerId      | String           | offer ID                       |    M    |          |
-| profile      | VerifyProfile    | vc ID                          |    M    |          |
-<br>
-
-#### 3.2 WalletTokenData
+| Name     | Type          | Description                | **M/O** | **Note** |
+|----------|---------------|----------------------------|---------|----------|
+| id       | String        | message ID                 | M       |          |
+| txId     | String        | transaction ID             | O       |          |
+| offerId  | String        | offer ID                   | M       |          |
+| profile  | VerifyProfile | Verify profile for VP      | M       |          |
 
 <br>
 
-#### 3.3 RequestVerify/ _RequestVerify
+#### 1.3.2. RequestVerify/ _RequestVerify
 #### Description
 
 `request verifiy profile`
@@ -1735,8 +1837,8 @@ public struct _RequestVerify: Jsonable {
 <br>
 
 
-### 4. M220 (revoke vc)
-#### 4.1 ProposeRevokeVc/ _ProposeRevokeVc
+### 1.4. M220 (revoke vc)
+#### 1.4.1. ProposeRevokeVc/ _ProposeRevokeVc
 
 #### Description
 `propose revoke vc`
@@ -1768,33 +1870,17 @@ public struct _ProposeRevokeVc: Jsonable {
 }
 ```
 #### Property
-| Name         | Type             | Description                    | **M/O** | **Note** |
-|--------------|------------------|--------------------------------|---------|----------|
-| id           | String           | message ID                     |    M    |          |
-| vcId         | String           | vc ID                          |    M    |          |
-| issuerNonce  | String           |                                |    M    |          |
-| authType     | VerifyAuthType   |                                |    M    |          |
+| Name        | Type             | Description                         | **M/O** | **Note**                             |
+|-------------|------------------|-------------------------------------|---------|--------------------------------------|
+| id          | String           | message ID                          | M       |                                      |
+| vcId        | String           | vc ID                               | M       |                                      |
+| issuerNonce | String           | Issuer nonce                        | M       |                                      |
+| authType    | VerifyAuthType   | Indicate access method for Key      | M       | [VerifyAuthType](#1-verifyauthtype)  |
+
+
 <br>
 
-
-#### 4.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh reference](#12-requestecdh-_requestecdh)
-<br>
-
-#### 4.3 AttestedAppInfo
-[1.3 AttestedAppInfo reference](#13-AttestedAppInfo)
-<br>
-
-#### 4.4 WalletTokenData
-[1.4 WalletTokenData reference](#14-WalletTokenData)
-<br>
-
-#### 4.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken reference](#15-RequestCreateToken-_RequestCreateToken)
-<br>
-
-
-#### 4.6 RequestRevokeVc/ _RequestRevokeVc
+#### 1.4.2. RequestRevokeVc/ _RequestRevokeVc
 
 #### Description
 
@@ -1837,7 +1923,7 @@ public struct _RequestRevokeVc: Jsonable {
 
 
 
-#### 4.7 ConfirmRevokeVc/ _ConfirmRevokeVc
+#### 1.4.3. ConfirmRevokeVc/ _ConfirmRevokeVc
 
 #### Description
 
@@ -1875,8 +1961,8 @@ public struct _ConfirmRevokeVc: Jsonable {
 | serverToken  | String           | server token                   |    M    |          |
 <br>
 
-### 5. M142 (restore DID)
-#### 5.1 ProposeRestoreDidDoc/ _ProposeRestoreDidDoc
+### 1.5. M142 (restore DID)
+#### 1.5.1. ProposeRestoreDidDoc/ _ProposeRestoreDidDoc
 
 #### Description
 
@@ -1916,24 +2002,7 @@ public struct _ProposeRestoreDidDoc: Jsonable {
 | did          | String           | did                            |    M    |          |
 <br>
 
-#### 5.2 RequestEcdh/ _RequestEcdh
-[1.2 RequestEcdh/ _RequestEcdh reference](#12-requestecdh-_requestecdh)
-<br>
-
-#### 5.3 AttestedAppInfo
-[1.3 AttestedAppInfo reference](#13-AttestedAppInfo)
-<br>
-
-#### 5.4 WalletTokenData
-[1.4 WalletTokenData reference](#14-WalletTokenData)
-<br>
-
-#### 5.5 RequestCreateToken/ _RequestCreateToken
-[1.5 RequestCreateToken reference](#15-RequestCreateToken-_RequestCreateToken)
-<br>
-
-
-#### 5.6 RequestRestoreDIDDoc/ _RequestRestoreDIDDoc
+#### 1.5.2. RequestRestoreDIDDoc/ _RequestRestoreDIDDoc
 
 #### Description
 
@@ -1974,7 +2043,7 @@ public struct _RequestRestoreDidDoc: Jsonable {
 | didAuth      | DIDAuth          | did auth                       |    M    |          |
 <br>
 
-#### 5.7 ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc
+#### 1.5.3. ConfirmRestoreDidDoc/ _ConfirmRestoreDidDoc
 
 #### Description
 
@@ -2009,7 +2078,75 @@ public struct _ConfirmRestoreDidDoc: Jsonable {
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transcation ID                 |    M    |          |
 | serverToken  | String           | server token                   |    M    |          |
+
 <br>
+
+### 1.6. M310 (submit zkproof)
+#### 1.6.1. RequestProfile/ _RequestProofRequestProfile
+
+#### Description
+
+`request ZKP verifiy profile`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestProfile: Jsonable {
+    public var id: String
+    public var txId: String?
+    public var offerId: String
+}
+
+public struct _RequestProofRequestProfile: Jsonable {
+    public var txId: String
+    public var proofRequestProfile: ProofRequestProfile
+}
+```
+#### Property
+| Name                 | Type                | Description                      | **M/O** | **Note** |
+|----------------------|---------------------|----------------------------------|---------|----------|
+| id                   | String              | message ID                       | M       |          |
+| txId                 | String              | transaction ID                   | O       |          |
+| offerId              | String              | offer ID                         | M       |          |
+| proofRequestProfile  | ProofRequestProfile | Verify profile for ZKP           | M       |          |
+
+<br>
+
+#### 1.6.2. RequestZKPVerify/ _RequestVerify
+#### Description
+
+`request verifiy ZKProof`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestZKPVerify: Jsonable
+ {
+    public var id: String
+    public var txId: String
+    public var accE2e: AccE2e
+    public var encProof: String
+    public var nonce : BigIntString
+}
+
+public struct _RequestVerify: Jsonable 
+{
+    public var txId: String
+}
+```
+#### Property
+| Name     | Type         | Description                | **M/O** | **Note** |
+|----------|--------------|----------------------------|---------|----------|
+| id       | String       | message ID                 | M       |          |
+| txId     | String       | transaction ID             | M       |          |
+| accE2e   | AccE2e       | access E2e                 | M       |          |
+| encProof | String       | encrypted zkproof          | M       |          |
+| nonce    | BigIntString | proof request's nonce      | M       |          |
+
+<br>
+
 
 ## 2. Token
 ## 2.1. ServerTokenSeed
@@ -2481,16 +2618,17 @@ public struct VerifyOfferPayload: Jsonable {
 ```
 
 ### Property
-| Name       | Type                | Description                       | **M/O** | **Note** |
-|------------|---------------------|-----------------------------------|---------|----------|
-| offerId    | String              | Offer ID                          |    M    |          |
-| type       | OfferTypeEnum       | Offer type                        |    M    |          |
-| mode       | PresentModeEnum     | Presentation mode                 |    M    |          |
-| device     | String              | 응대장치 식별자                       |    O    |          |
-| service    | String              | 서비스 식별자                        |    O    |          |
-| endpoints  | String[]            | profile 요청 API endpoint 목록      |    O    |          |
-| validUntil | String              | end date of the offer             |    M    |          |
-| locked     | Bool                | offer 잠김 여부                     |    O    |          |
+| Name       | Type                | Description                                | **M/O** | **Note** |
+|------------|---------------------|--------------------------------------------|---------|----------|
+| offerId    | String              | Offer ID                                   |    M    |          |
+| type       | OfferTypeEnum       | Offer type                                 |    M    |          |
+| mode       | PresentModeEnum     | Presentation mode                          |    M    |          |
+| device     | String              | Identifier of the response device          |    O    |          |
+| service    | String              | Identifier of the service                  |    O    |          |
+| endpoints  | String[]            | List of profile request API endpoints      |    O    |          |
+| validUntil | String              | End date of the offer                      |    M    |          |
+| locked     | Bool                | Whether the offer is locked                |    O    |          |
+
 
 <br>
 
@@ -2505,14 +2643,16 @@ public struct VerifyOfferPayload: Jsonable {
 public struct ReqVC: Jsonable {
     public var refId: String
     public var profile: ReqVcProfile
+    public var credentialRequest : ZKPCredentialRequest?
 }
 ```
 
 ### Property
-| Name         | Type            | Description                | **M/O** | **Note** |
-|--------------|-----------------|----------------------------|---------|----------|
-| refId        | String          | Reference ID               |    M    |          |
-| profile      | ReqVcProfile    | Request issue profile      |    M    |          |
+| Name              | Type                 | Description                    | **M/O** | **Note** |
+|-------------------|----------------------|--------------------------------|---------|----------|
+| refId             | String               | Reference ID                   | M       |          |
+| profile           | ReqVcProfile         | Request issue profile          | M       |          |
+| credentialRequest | ZKPCredentialRequest | Request for ZKP Credential     | O       |          |
 
 <br>
 
@@ -2582,25 +2722,27 @@ public struct VCPlan: Jsonable {
     public var delegate: String?
     public var allowedIssuers: [String]?
     public var manager: String
+    public var credentialDefinition : VCPlan.CredentialDefinition?
 }
 ```
 
 ### Property
-| Name           | Type               | Description                          | **M/O** | **Note** |
-|----------------|--------------------|--------------------------------------|---------|----------|
-| vcPlanId       | String             | VC plan ID                           |    M    |          |
-| name           | String             | VC plan name                         |    M    |          |
-| description    | String             | VC plan description                  |    M    |          |
-| url            | String             | issuer url                           |    O    |          |
-| logo           | LogoImage          | Logo image                           |    O    | [LogoImage](#29-logoimage) |
-| validFrom      | String             | Validity start date                  |    O    |          |
-| validUntil     | String             | Validity end date                    |    O    |          |
-| tags           | array[String]     | tags                                  |    O    |          |
-| credentialSchema| CredentialSchema  | Credential schema                    |    M    |          |
-| option         | VCPlan.Option      | Plan options                         |    M    |          |
-| delegate       | String             | delegate                             |    O    |          |
-| allowedIssuers | array[String]      | VC plan 사용이 허용된 발급 사업자 DID 목록  |    O    |          |
-| manager        | String             | VC plan 관리 권한을 가진 엔티티            |    M    |          |
+| Name                 | Type                          | Description                                                   | **M/O** | **Note**                        |
+|----------------------|-------------------------------|---------------------------------------------------------------|---------|----------------------------------|
+| vcPlanId             | String                        | VC plan ID                                                    | M       |                                  |
+| name                 | String                        | VC plan name                                                  | M       |                                  |
+| description          | String                        | VC plan description                                           | M       |                                  |
+| url                  | String                        | Issuer URL                                                    | O       |                                  |
+| logo                 | LogoImage                     | Logo image                                                    | O       | [LogoImage](#29-logoimage)       |
+| validFrom            | String                        | Validity start date                                           | O       |                                  |
+| validUntil           | String                        | Validity end date                                             | O       |                                  |
+| tags                 | array[String]                 | Tags                                                          | O       |                                  |
+| credentialSchema     | CredentialSchema              | Credential schema                                             | M       |                                  |
+| option               | VCPlan.Option                 | Plan options                                                  | M       |                                  |
+| delegate             | String                        | Delegate                                                      | O       |                                  |
+| allowedIssuers       | array[String]                 | List of issuer DIDs allowed to use this VC plan               | O       |                                  |
+| manager              | String                        | Entity with administrative authority over the VC plan         | M       |                                  |
+| credentialDefinition | VCPlan.CredentialDefinition   | ZKP-related information associated with VC issuance           | O       |                                  |
 
 <br>
 
@@ -2619,16 +2761,37 @@ public struct Option: Jsonable {
 ```
 
 ### Property
-| Name              | Type        | Description                         | **M/O** | **Note** |
-|-------------------|-------------|-------------------------------------|---------|----------|
-| allowUserInit     | Bool        | 사용자에 의한 발급 개시 허용 여부           |    M    |          |
-| allowIssuerInit   | Bool        | 이슈어에 의한 발급 개시 허용 여부           |    M    |          |
-| delegatedIssuance | Bool        | 대표 발급자에 의한 위임발급 여부            |    M    |          |
+| Name              | Type | Description                                                      | **M/O** | **Note** |
+|-------------------|------|------------------------------------------------------------------|---------|----------|
+| allowUserInit     | Bool | Whether issuance can be initiated by the user                    | M       |          |
+| allowIssuerInit   | Bool | Whether issuance can be initiated by the issuer                  | M       |          |
+| delegatedIssuance | Bool | Whether delegated issuance by a representative issuer is allowed | M       |          |
+
+
 
 <br>
 
+## 6.2.1.2. VCPlan.CredentialDefinition
 
+### Description
+`ZKP-related information associated with VC issuance`
 
+### Declaration
+```swift
+public struct CredentialDefinition: Jsonable
+{
+    public var id: String
+    public var schemaId: String
+}
+```
+
+### Property
+| Name     | Type   | Description                               | **M/O** | **Note** |
+|----------|--------|-------------------------------------------|---------|----------|
+| id       | String | Identifier for ZKP CredentialDefinition   | M       |          |
+| schemaId | String | Identifier for ZKP CredentialSchema       | M       |          |
+
+<br>
 
 # OptionSet
 ## 1. VerifyAuthType
@@ -2834,6 +2997,7 @@ public enum ProfileType : String, Codable
 {
     case IssueProfile
     case VerifyProfile
+    case ProofRequestProfile
 }
 ```
 
@@ -3104,6 +3268,23 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
     case DETAIL_VC                  = 12
     case CREATE_DID_AND_ISSUE_VC    = 13
     case LIST_VC_AND_PRESENT_VP     = 14
+}
+```
+<br>
+
+## 22. OfferTypeEnum
+
+### Description
+`Enumeration for Offer type`
+
+### Declaration
+```swift
+public enum OfferTypeEnum: String, Codable {
+    case IssueOffer
+    case VerifyOffer
+    case RestoreDidOffer
+    case ZkpIssueOffer
+    case VerifyProofOffer
 }
 ```
 <br>

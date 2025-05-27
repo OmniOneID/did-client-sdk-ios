@@ -33,34 +33,35 @@ iOS ZKP DataModel SDK
 
 - [DataModel](#datamodel)
     - [1. ZKPCredentialRequestContainer](#1-zkpcredentialrequestcontainer)
-        - [1.1. ZKPCredentialRequest](#1-1-zkpcredentialrequest)
-            - [1.1.1. BlindedCredentialSecrets](#1-1-1-blindedcredentialsecrets)
-            - [1.1.2. BlindedCredentialSecretsCorrectnessProof](#1-1-2-blindedcredentialsecretscorrectnessproof)
-        - [1.2. ZKPCredentialRequestMeta](#1-2-zkpcredentialrequestmeta)
-            - [1.2.1. MasterSecretBlindingData](#1-2-1-mastersecretblindingdata)
+        - [1.1. ZKPCredentialRequest](#11-zkpcredentialrequest)
+            - [1.1.1. BlindedCredentialSecrets](#111-blindedcredentialsecrets)
+            - [1.1.2. BlindedCredentialSecretsCorrectnessProof](#112-blindedcredentialsecretscorrectnessproof)
+        - [1.2. ZKPCredentialRequestMeta](#12-zkpcredentialrequestmeta)
+            - [1.2.1. MasterSecretBlindingData](#121-mastersecretblindingdata)
     - [2. ZKPCredential](#2-zkpcredential)
-        - [2.1. AttributeValue](#2-1-attributevalue)
-        - [2.2. CredentialSignature](#2-2-credentialsignature)
-            - [2.2.1. PrimaryCredentialSignature](#2-2-1-primarycredentialsignature)
-        - [2.3. SignatureCorrectnessProof](#2-3-signaturecorrectnessproof)
+        - [2.1. AttributeValue](#21-attributevalue)
+        - [2.2. CredentialSignature](#22-credentialsignature)
+            - [2.2.1. PrimaryCredentialSignature](#221-primarycredentialsignature)
+        - [2.3. SignatureCorrectnessProof](#23-signaturecorrectnessproof)
     - [3. AvailableReferent](#3-availablereferent)
-        - [3.1. AttrReferent](#3-1-attrreferent)
-            - [3.1.1. SubReferent](#3-1-1-subreferent)
-    - [4. ZKPProof](#4-zkpproof)
-        - [4.1. SubProof](#4-1-subproof)
-            - [4.1.1. PrimaryProof](#4-1-1-primaryproof)
-                - [4.1.1.1. PrimaryEqualProof](#4-1-1-1-primaryequalproof)
-                - [4.1.1.2. PrimaryPredicateInequalityProof](#4-1-1-2-primarypredicateinequalityproof)
-                    - [4.1.1.2.1. Predicate](#4-1-1-2-1-predicate)
-        - [4.2. AggregatedProof](#4-2-aggregatedproof)
-        - [4.3. RequestedProof](#4-3-requestedproof)
-            - [4.3.1. RequestedAttribute](#4-3-1-requestedattribute)
-        - [4.4. Identifier](#4-4-identifier)
+        - [3.1. AttrReferent](#31-attrreferent)
+            - [3.1.1. SubReferent](#311-subreferent)
+    - [4. ZKProof](#4-zkproof)
+        - [4.1. SubProof](#41-subproof)
+            - [4.1.1. PrimaryProof](#411-primaryproof)
+                - [4.1.1.1. PrimaryEqualProof](#4111-primaryequalproof)
+                - [4.1.1.2. PrimaryPredicateInequalityProof](#4112-primarypredicateinequalityproof)
+                    - [4.1.1.2.1. Predicate](#41121-predicate)
+        - [4.2. AggregatedProof](#42-aggregatedproof)
+        - [4.3. RequestedProof](#43-requestedproof)
+            - [4.3.1. RequestedAttribute](#431-requestedattribute)
+        - [4.4. Identifier](#44-identifier)
 - [Defines](#defines)
-    - [1. BigIntString](#1bigintstring)
-    - [2. StringDictionary](#2stringdictionary)
-    - [3. BigIntStringDictionary](#3bigintstringdictionary)
-    - [4. RequestedAttrDictionary](#4requestedattrdictionary)
+    - [1. BigIntString](#1-bigintstring)
+    - [2. StringDictionary](#2-stringdictionary)
+    - [3. BigIntStringDictionary](#3-bigintstringdictionary)
+    - [4. RequestedAttrDictionary](#4-requestedattrdictionary)
+    - [5. CaptionString](#5-captionstring)
 
 ---
 <br>
@@ -454,7 +455,7 @@ public struct SubReferent {
 
 <br>
 
-## 4. ZKPProof
+## 4. ZKProof
 
 ### Description
 
@@ -463,7 +464,7 @@ public struct SubReferent {
 ### Declaration
 
 ```swift
-public struct ZKPProof : Jsonable {
+public struct ZKProof : Jsonable {
     public let proofs : [SubProof]
     public let aggregatedProof : AggregatedProof
     public let requestedProof : RequestedProof
@@ -476,7 +477,7 @@ public struct ZKPProof : Jsonable {
 | Name            | Type             | Description                                  | **M/O** | **Note** |
 |-----------------|------------------|----------------------------------------------|---------|----------|
 | proofs          | [SubProof]       | Array of sub-proofs                          | M       |          |
-| aggregatedProof | AggregatedProof  | Aggregated ZKP proof value                   | M       |          |
+| aggregatedProof | AggregatedProof  | Aggregated ZKProof value                     | M       |          |
 | requestedProof  | RequestedProof   | Proof corresponding to requested attributes  | M       |          |
 | identifiers     | [Identifier]     | Credential identifiers used                  | M       |          |
 
@@ -770,5 +771,13 @@ public typealias BigIntStringDictionary = [String : BigIntString]
 ### Declaration
 
 ```swift
-public typealias RequestedAttrDictionary = [String : ZKPProof.RequestedAttribute]
+public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
+```
+
+## 5. CaptionString
+
+### Declaration
+
+```swift
+public typealias CaptionString = String
 ```

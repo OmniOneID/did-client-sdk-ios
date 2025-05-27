@@ -19,14 +19,14 @@ iOS Wallet API
 ==
 
 - Subject: WalletAPI
-- Writer: Dongjun Park
-- Date: 2024-10-18
-- Version: v1.0.0
+- Writer: JooHyun Park
+- Date: 2025-05-27
+- Version: v2.0.0
 
-| Version | Date       | History                 |
-| ------- | ---------- | ------------------------|
-| v1.0.0  | 2024-10-18 | Initial                 |
-
+| Version | Date       | History                  |
+| ------- | ---------- | -------------------------|
+| v2.0.0  | 2025-05-27 | Add ZKP-related function |
+| v1.0.0  | 2024-10-18 | Initial                  |
 
 <div style="page-break-after: always;"></div>
 
@@ -60,9 +60,17 @@ iOS Wallet API
     - [25. getKeyInfos](#25-getkeyinfos)
     - [26. isAnyKeysSaved](#26-isanykeyssaved)
     - [27. changePIN](#27-changepin)
+    - [28. isZKPCredentialSaved](#28-iszkpcredentialsaved)  
+    - [29. deleteZKPCredentials](#29-deletezkpcredentials)  
+    - [30. getZKPCredentials](#30-getzkpcredentials)  
+    - [31. getAllZKPCrentials](#31-getallzkpcrentials)  
+    - [32. searchCredentials](#32-searchcredentials)  
+    - [33. createZKProof](#33-createzkproof)  
+    - [34. createEncZKProof](#34-createenczkproof)
     
 - [Enumerators](#enumerators)
-    - [1. WALLET_TOKEN_PURPOSE](#1-wallet_token_purpose)fgetSignedWalletInfo
+    - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
+
 - [Value Object](#value-object)
     - [1. WalletTokenSeed](#1-wallettokenseed)
     - [2. WalletTokenData](#2-wallettokendata)
@@ -70,6 +78,8 @@ iOS Wallet API
     - [4. SignedDIDDoc](#4-signeddiddoc)
     - [5. SignedWalletInfo](#5-signedwalletinfo)
     - [6. DIDAuth](#6-didauth)
+
+
 # API List
 ## 0. constructor
 
@@ -974,9 +984,228 @@ try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
 
 <br>
 
+## 28. isZKPCredentialSaved
+
+### Description
+`Checks whether a ZKP credential with the given ID is stored.`
+
+### Declaration
+
+```swift
+func isZKPCredentialSaved(id: String) -> Bool
+```
+
+### Parameters
+
+| Name | Type   | Description         | **M/O** | **Note** |
+| ---- | ------ | ------------------- | ------- | -------- |
+| id   | String | Credential ID       | M       |          |
+
+### Returns
+
+| Type | Description                     | **M/O** | **Note**                                |
+| ---- | ------------------------------- | ------- | ---------------------------------------- |
+| Bool | Whether the credential is saved | M       | `true`: saved<br>`false`: not saved     |
+
+
+<br>
+
+## 29. deleteZKPCredentials
+
+### Description
+`Revokes the specified ZKP credentials from the wallet using the provided wallet token.`
+
+### Declaration
+
+```swift
+func deleteZKPCredentials(hWalletToken: String, ids: [String]) throws -> Bool
+```
+
+### Parameters
+
+| Name         | Type     | Description                             | **M/O** | **Note**                        |
+| ------------ | -------- | --------------------------------------- | ------- | ------------------------------- |
+| hWalletToken | String   | The token associated with the wallet    | M       | Throws if token is not verified |
+| ids          | [String] | Array of credential IDs to be revoked   | M       |                                 |
+
+### Returns
+
+| Type | Description                         | **M/O** | **Note**                       |
+| ---- | ----------------------------------- | ------- | ------------------------------ |
+| Bool | Whether credentials were revoked    | M       | `true`: success, `false`: fail |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
+
+
+<br>
+
+## 30. getZKPCredentials
+
+### Description
+`Retrieves the specified ZKP credentials from the wallet using the provided wallet token.`
+
+### Declaration
+
+```swift
+func getZKPCredentials(hWalletToken: String, ids: [String]) throws -> [ZKPCredential]
+```
+
+### Parameters
+
+| Name         | Type     | Description                             | **M/O** | **Note**                        |
+| ------------ | -------- | --------------------------------------- | ------- | ------------------------------- |
+| hWalletToken | String   | The token associated with the wallet    | M       | Throws if token is not verified |
+| ids          | [String] | Array of credential IDs to retrieve     | M       |                                 |
+
+### Returns
+
+| Type            | Description                                  | **M/O** | **Note**                      |
+| --------------- | -------------------------------------------- | ------- | ----------------------------- |
+| [ZKPCredential] | List of retrieved ZKP credential objects      | M       | Each object contains VC info  |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
+
+
+
+<br>
+
+## 31. getAllZKPCrentials
+
+### Description  
+`Retrieves all ZKP credentials stored in the wallet using the provided wallet token.`
+
+### Declaration
+
+```swift
+func getAllZKPCrentials(hWalletToken: String) throws -> [ZKPCredential]?
+```
+
+### Parameters
+
+| Name         | Type   | Description                          | **M/O** | **Note**                        |
+| ------------ | ------ | ------------------------------------ | ------- | ------------------------------- |
+| hWalletToken | String | The token associated with the wallet | M       | Throws if token is not verified |
+
+### Returns
+
+| Type              | Description                                    | **M/O** | **Note**                               |
+| ----------------- | ---------------------------------------------- | ------- | -------------------------------------- |
+| [ZKPCredential]?  | List of all stored ZKP credentials (optional) | O       | Returns `nil` if no credentials exist  |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
+
+
+<br>
+
+## 32. searchCredentials
+
+### Description  
+`Searches for credentials that satisfy the given proof request.`
+
+### Declaration
+
+```swift
+func searchCredentials(hWalletToken: String, proofRequest: ProofRequest) throws -> AvailableReferent
+```
+
+### Parameters
+
+| Name         | Type         | Description                                    | **M/O** | **Note**                        |
+| ------------ | ------------ | ---------------------------------------------- | ------- | ------------------------------- |
+| hWalletToken | String       | The token associated with the wallet           | M       | Throws if token is not verified |
+| proofRequest | ProofRequest | The proof request with required attributes     | M       | Includes attributes/predicates  |
+
+### Returns
+
+| Type              | Description                                              | **M/O** | **Note**                              |
+| ----------------- | -------------------------------------------------------- | ------- | ------------------------------------- |
+| AvailableReferent | Contains referents matching credentials for the request | M       | Includes matched credential references |
+
+### Throws
+
+(No explicit errors listed, may vary by implementation)
+
+
+<br>
+
+## 33. createZKProof
+
+### Description  
+`Creates a zero-knowledge proof based on the given request and selected referents.`
+
+### Declaration
+
+```swift
+func createZKProof(hWalletToken: String, proofRequest: ProofRequest, selectedReferents: [UserReferent], proofParam: ZKProofParam) throws -> ZKProof
+```
+
+### Parameters
+
+| Name              | Type             | Description                                               | **M/O** | **Note**                        |
+| ----------------- | ---------------- | --------------------------------------------------------- | ------- | ------------------------------- |
+| hWalletToken      | String           | The token associated with the wallet                      | M       | Throws if token is not verified |
+| proofRequest      | ProofRequest     | The proof request specifying required attributes          | M       |                                 |
+| selectedReferents | [UserReferent]   | The referents selected to satisfy the proof request       | M       |                                 |
+| proofParam        | ZKProofParam     | Additional parameters for constructing the proof          | M       |                                 |
+
+### Returns
+
+| Type    | Description                        | **M/O** | **Note**                          |
+| ------- | ---------------------------------- | ------- | --------------------------------- |
+| ZKProof | A zero-knowledge proof instance     | M       | Based on selected credentials     |
+
+### Throws
+
+(No explicit errors listed; may vary depending on implementation)
+
+
+
+<br>
+
+## 34. createEncZKProof
+
+### Description  
+`Generates a zero-knowledge proof, encrypts it, and returns it along with end-to-end encryption (E2E) parameters.`
+
+### Declaration
+
+```swift
+func createEncZKProof(hWalletToken: String, selectedReferents: [UserReferent], proofParam: ZKProofParam, proofRequestProfile: _RequestProofRequestProfile, APIGatewayURL: String) async throws -> (AccE2e, Data)
+```
+
+### Parameters
+
+| Name                 | Type                         | Description                                                 | **M/O** | **Note**                             |
+| -------------------- | ---------------------------- | ----------------------------------------------------------- | ------- | ------------------------------------ |
+| hWalletToken         | String                       | The token representing the holder's wallet                  | M       |                                      |
+| selectedReferents    | [UserReferent]               | The referents selected to satisfy the proof request         | M       | Must match proof request criteria    |
+| proofParam           | ZKProofParam                 | Additional parameters for proof construction                | M       |                                      |
+| proofRequestProfile  | _RequestProofRequestProfile  | Verifier profile including DID and ZKP certificate info     | M       |                                      |
+| APIGatewayURL        | String                       | The URL of the API gateway for communication and validation | M       |                                      |
+
+### Returns
+
+| Type         | Description                                  | **M/O** | **Note**                              |
+| ------------ | -------------------------------------------- | ------- | ------------------------------------- |
+| AccE2e       | Object containing encryption parameters       | M       | Includes cryptographic context        |
+| Data (EncZKProof) | Encrypted ZK proof data                      | M       | Used for secure submission            |
+
+### Throws
+
+- Errors may occur due to cryptographic failures, data encoding issues, or network communication problems.
+
+
+<br>
+
 
 # Enumerators
-## 1. WALLET_TOKEN_PURPOSE
+## 1. WalletTokenPurposeEnum
 
 ### Description
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.0.0 (2025-04-29)
+## v2.0.0 (2025-05-27)
 
 ### Integration
 - The Wallet SDK integrates four other SDKs. The list is Below:

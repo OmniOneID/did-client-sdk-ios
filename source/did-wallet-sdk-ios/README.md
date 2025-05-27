@@ -3,12 +3,14 @@ This document is a guide for using the OpenDID Wallet SDK, and provides function
 
 
 ## S/W Specification
-| Category      | Details                     |
-|---------------|-----------------------------|
-| OS            | iOS                         |
-| Language      | swift 5.8                   | 
-| IDE           | Xcode 16.2                  |   
-| Compatibility | iOS 15.0 and higher         |
+| Category         | Details                     |
+|------------------|-----------------------------|
+| OS               | iOS                         |
+| Language         | Swift 5.8                   |
+| IDE              | Xcode 16.2                  |
+| Compatibility    | iOS 15.0 and higher         |
+| Test Environment | iPhone 15 (17.5) Simulator  |
+
 
 
 ## Build Method
