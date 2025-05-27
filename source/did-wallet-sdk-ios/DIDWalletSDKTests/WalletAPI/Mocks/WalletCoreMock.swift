@@ -18,6 +18,42 @@ import Foundation
 @testable import DIDWalletSDK
 
 class WalletCoreMock: WalletCoreImpl {
+    func isAnyZKPCredentialsSaved() -> Bool {
+        return true
+    }
+    
+    func isZKPCredentialSaved(id: String) -> Bool {
+        return true
+    }
+    
+    func createZKPCredentialRequest(proverDid: String, credentialDefinition: DIDWalletSDK.ZKPCredentialDefinition, credOffer: DIDWalletSDK.ZKPCredentialOffer) throws -> DIDWalletSDK.ZKPCredentialRequestContainer {
+        return .init(credentialRequest: try .init(from: ""), credentialRequestMeta: .init(masterSecretBlidingData: .init(vPrime: "123"), nonce: "456", masterSecretName: "789"))
+    }
+    
+    func verifyAndStoreZKPCredential(credentialMeta: DIDWalletSDK.ZKPCredentialRequestMeta, credentialDefinition: DIDWalletSDK.ZKPCredentialDefinition, credential: DIDWalletSDK.ZKPCredential) throws -> Bool {
+        return true
+    }
+    
+    func deleteZKPCredential(ids: [String]) throws -> Bool {
+        return true
+    }
+    
+    func getZKPCredential(ids: [String]) throws -> [DIDWalletSDK.ZKPCredential] {
+        return .init()
+    }
+    
+    func getAllZKPCredentials() throws -> [DIDWalletSDK.ZKPCredential] {
+        return []
+    }
+    
+    func searchZKPCredentials(proofRequest: DIDWalletSDK.ProofRequest) throws -> DIDWalletSDK.AvailableReferent {
+        return .init(selfAttrReferent: [], attrReferent: [], predicateReferent: [])
+    }
+    
+    func createZKProof(proofRequest: DIDWalletSDK.ProofRequest, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam) throws -> DIDWalletSDK.ZKProof {
+        return try .init(from: "")
+    }
+    
     func isAnyKeysSaved() throws -> Bool {
         return false
     }
