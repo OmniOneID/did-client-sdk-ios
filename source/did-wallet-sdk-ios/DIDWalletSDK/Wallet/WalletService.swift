@@ -540,11 +540,6 @@ class WalletService: WalletServiceImpl {
         
         if let credential = credInfo.credential
         {
-            if walletCore.isZKPCredentialSaved(id: credential.credentialId)
-            {
-                try walletCore.deleteZKPCredential(ids: [credential.credentialId])
-            }
-            
             try walletCore.verifyAndStoreZKPCredential(credentialMeta: credentialMeta!,
                                                        credentialDefinition: credDef!,
                                                        credential: credential)
@@ -581,9 +576,17 @@ class WalletService: WalletServiceImpl {
             let vcs = try walletCore.getAllCredentials()
             for v in vcs {
                 if v.credentialSchema.id == vc.credentialSchema.id {
+                    let vcId = v.id
                     WalletLogger.shared.debug("v.credentialSchema.id: \(v.credentialSchema.id)")
                     WalletLogger.shared.debug("vc.credentialSchema.id: \(vc.credentialSchema.id)")
-                    _ = try walletCore.deleteCredential(ids: [v.id])
+                    _ = try walletCore.deleteCredential(ids: [vcId])
+                    
+                    if walletCore.isZKPCredentialSaved(id: vcId)
+                    {
+                        try walletCore.deleteZKPCredential(ids: [vcId])
+                    }
+                    
+                    break
                 }
             }
         }
