@@ -66,8 +66,7 @@ iOS Wallet API
     - [30. getZKPCredentials](#30-getzkpcredentials)  
     - [31. getAllZKPCrentials](#31-getallzkpcrentials)  
     - [32. searchCredentials](#32-searchcredentials)  
-    - [33. createZKProof](#33-createzkproof)  
-    - [34. createEncZKProof](#34-createenczkproof)
+    - [33. createEncZKProof](#33-createenczkproof)
 
     
 - [Enumerators](#enumerators)
@@ -1128,40 +1127,7 @@ func searchCredentials(hWalletToken: String, proofRequest: ProofRequest) throws 
 
 <br>
 
-## 33. createZKProof
-
-### Description  
-`주어진 증명 요청과 선택된 참조값을 기반으로 영지식 증명(ZK Proof)을 생성한다.`
-
-### Declaration
-
-```swift
-func createZKProof(hWalletToken: String, proofRequest: ProofRequest, selectedReferents: [UserReferent], proofParam: ZKProofParam) throws -> ZKProof
-```
-
-### Parameters
-
-| Name              | Type             | Description                              | **M/O** | **Note**                      |
-| ----------------- | ---------------- | ---------------------------------------- | ------- | ----------------------------- |
-| hWalletToken      | String           | 월렛 토큰                                 | M       | 유효하지 않을 경우 예외 발생 |
-| proofRequest      | ProofRequest     | 증명 요청 (속성 및 조건 포함)             | M       |                               |
-| selectedReferents | [UserReferent]   | 사용자가 선택한 자격증명 참조 정보 목록   | M       |                               |
-| proofParam        | ZKProofParam     | 증명 생성에 필요한 추가 파라미터          | M       |                               |
-
-### Returns
-
-| Type   | Description             | **M/O** | **Note**                    |
-| ------ | ----------------------- | ------- | --------------------------- |
-| ZKProof | 생성된 ZK 증명 객체     | M       | VC 기반으로 구성된 영지식 증명 |
-
-### Throws
-
-(정의된 예외 없음, 구현에 따라 추가 가능)
-
-
-<br>
-
-## 34. createEncZKProof
+## 33. createEncZKProof
 
 ### Description  
 `영지식 증명(ZK Proof)을 생성하고 암호화하여 E2E 파라미터와 함께 반환한다.`

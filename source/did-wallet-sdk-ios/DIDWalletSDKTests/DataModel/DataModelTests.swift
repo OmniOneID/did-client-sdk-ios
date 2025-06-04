@@ -30,7 +30,7 @@ final class DIDDataModelSDKTests: XCTestCase {
     func testAlgorithmConvertible() throws
     {
         let proofTypeConvertedTo = ProofType.secp256r1Signature2018.convertTo()
-        let ecTypeConvertedTo = EllipticCurveType.secp256r1.convertTo()
+        let ecTypeConvertedTo = ECType.secp256r1.convertTo()
         let didKeyTypeConvertedTo = DIDDocument.DIDKeyType.secp256r1VerificationKey2018.convertTo()
         
         for converted in [proofTypeConvertedTo,
