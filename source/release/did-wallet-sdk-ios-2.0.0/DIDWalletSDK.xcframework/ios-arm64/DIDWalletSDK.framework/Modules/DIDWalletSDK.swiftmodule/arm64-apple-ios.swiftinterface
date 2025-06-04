@@ -1078,8 +1078,8 @@ public struct ZKPCredentialSchema : DIDWalletSDK.Jsonable {
       public init(from decoder: any Swift.Decoder) throws
     }
     public enum AttributeValueType : Swift.String, Swift.Codable {
-      case STRING
-      case NUMBER
+      case String
+      case Number
       public init?(rawValue: Swift.String)
       public typealias RawValue = Swift.String
       public var rawValue: Swift.String {
