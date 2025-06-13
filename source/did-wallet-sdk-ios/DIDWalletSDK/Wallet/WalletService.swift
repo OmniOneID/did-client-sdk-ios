@@ -201,7 +201,7 @@ class WalletService: WalletServiceImpl {
     
     private func fatchCaInfo(tasURL: String) async throws -> Void {
                                                                                      
-        let data = try await CommnunicationClient.doGet(url: URL(string: tasURL + "/list/api/v1/allowed-ca/list?wallet=org.omnione.did.sdk.wallet")!)
+        let data = try await CommunicationClient.doGet(url: URL(string: tasURL + "/list/api/v1/allowed-ca/list?wallet=org.omnione.did.sdk.wallet")!)
         let allowCAList = try AllowCAList.init(from: data)
         
         guard allowCAList.count != 0 else {
@@ -346,10 +346,10 @@ class WalletService: WalletServiceImpl {
         }
         
         let ownerDidDocJsonData = try ownerDidDoc.toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string:walletURL + "/wallet/api/v1/request-sign-wallet")!, requestJsonData: ownerDidDocJsonData)
+        let responseData = try await CommunicationClient.doPost(url: URL(string:walletURL + "/wallet/api/v1/request-sign-wallet")!, requestJsonData: ownerDidDocJsonData)
         let attDIDDoc = try AttestedDIDDoc.init(from: responseData)
         let reqAttDidDoc = RequestAttestedDIDDoc(id: WalletUtil.generateMessageID(), attestedDIDDoc: attDIDDoc)
-        _ = try await CommnunicationClient.doPost(url: URL(string: tasURL + "/tas/api/v1/request-register-wallet")!, requestJsonData: try reqAttDidDoc.toJsonData())
+        _ = try await CommunicationClient.doPost(url: URL(string: tasURL + "/tas/api/v1/request-register-wallet")!, requestJsonData: try reqAttDidDoc.toJsonData())
         Properties.setWalletId(id: attDIDDoc.walletId)
         WalletLogger.shared.debug("saved walletId")
         try walletCore.saveDidDocument(type: DidDocumentType.DeviceDidDocument)
@@ -389,7 +389,7 @@ class WalletService: WalletServiceImpl {
         }
         
         let parameter = try RequestRegisterUser(id: WalletUtil.generateMessageID(), txId: txId, signedDidDoc: signedDIDDoc, serverToken: serverToken).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestRegisterUser.init(from: responseData)
     }
     
@@ -410,7 +410,7 @@ class WalletService: WalletServiceImpl {
         }
         
         let parameter = try RequestRestoreDidDoc(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, didAuth: didAuth).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestRestoreDidDoc.init(from: responseData)
     }
     
@@ -436,7 +436,7 @@ class WalletService: WalletServiceImpl {
         
         let parameter = try RequestUpdateDidDoc(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, didAuth: didAuth, signedDidDoc: signedDIDDoc).toJsonData()/*RequestUpdateDidDoc(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, didAuth: didAuth, signedDIDDoc: signedDIDDoc).toJsonData()*/
         
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestUpdateDidDoc.init(from: responseData)
     }
     
@@ -527,7 +527,7 @@ class WalletService: WalletServiceImpl {
         
         if let credentialOffer = issuerProfile.profile.profile.credentialOffer
         {   
-            credDef = try await CommnunicationClient.getZKPCredentialDefinition(hostUrlString: APIGatewayURL,
+            credDef = try await CommunicationClient.getZKPCredentialDefinition(hostUrlString: APIGatewayURL,
                                                                                 id: credentialOffer.credDefId)
             
             let container = try walletCore.createZKPCredentialRequest(proverDid: holderDidDoc.id,
@@ -554,7 +554,7 @@ class WalletService: WalletServiceImpl {
         
         let multiEncReqVc = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: encReqVc)
         let parameter = try RequestIssueVc(id: WalletUtil.generateMessageID(), txId: issuerProfile.txId, serverToken: serverToken, didAuth: didAuth, accE2e: accE2e, encReqVc: multiEncReqVc).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         let decodedResponse = try _RequestIssueVc.init(from: responseData)
         let envVc = try MultibaseUtils.decode(encoded: decodedResponse.e2e.encVc)
         
@@ -575,7 +575,7 @@ class WalletService: WalletServiceImpl {
         
         var vc = credInfo.vc
 
-        let data = try await CommnunicationClient.doGet(url: URL(string: APIGatewayURL + "/api-gateway/api/v1/did-doc?did=" + vc.issuer.id)!)
+        let data = try await CommunicationClient.doGet(url: URL(string: APIGatewayURL + "/api-gateway/api/v1/did-doc?did=" + vc.issuer.id)!)
         let DIDDoc = try DIDDocVO.init(from: data)
         let issuerDIDDocJson = try MultibaseUtils.decode(encoded: DIDDoc.didDoc)
         let issuerDIDDoc = try DIDDocument.init(from: issuerDIDDocJson)
@@ -670,7 +670,7 @@ class WalletService: WalletServiceImpl {
                     
         reqRevokeVc.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature!)
         let parameter = try RequestRevokeVc.init(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, request: reqRevokeVc).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestRevokeVc.init(from: responseData)
     }
 

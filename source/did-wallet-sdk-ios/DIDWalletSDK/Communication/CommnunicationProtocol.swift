@@ -16,7 +16,7 @@
 
 import Foundation
 
-public protocol CommnunicationProtocol
+public protocol CommunicationProtocol
 {
     static func doGet(url: URL) async throws -> Data
     static func doPost(url: URL, requestJsonData: Data) async throws -> Data

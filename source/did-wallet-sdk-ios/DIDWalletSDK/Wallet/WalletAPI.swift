@@ -331,7 +331,7 @@ extension WalletAPI {
     @discardableResult
     public func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Bool {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.CREATE_DID])
-        try walletCore.generateKey(passcode: passcode, keyId: keyId, algType: algType)
+        try walletCore.generateKey(passcode: passcode, keyId: keyId, algType: algType, promptMsg: promptMsg)
         return true
 
     }

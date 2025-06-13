@@ -100,7 +100,7 @@ class WalletCore: WalletCoreImpl {
         return true
     }
     
-    public func generateKey(passcode: String? = nil, keyId: String, algType: AlgorithmType) throws -> Void {
+    public func generateKey(passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Void {
         // type,status
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -110,7 +110,7 @@ class WalletCore: WalletCoreImpl {
             let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .pin(value: (passcode?.data(using: .utf8))!))
             try holderKeyManager.generateKey(keyGenRequest: pinKeyRequest)
         } else if keyId == "bio" {
-            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: "please regist your biometrics")
+            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: promptMsg ?? "please regist your biometrics")
             try holderKeyManager.generateKey(keyGenRequest: bioKeyRequest)
         }
         // 무인증 (keyagree)

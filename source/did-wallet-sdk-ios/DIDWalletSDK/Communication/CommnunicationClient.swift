@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct CommnunicationClient: CommnunicationProtocol {
+public struct CommunicationClient: CommunicationProtocol {
     
     static let defaultTimeoutInterval: TimeInterval = 30
     
@@ -98,7 +98,7 @@ public struct CommnunicationClient: CommnunicationProtocol {
     }
 }
 
-extension CommnunicationClient : ZKPCommunicationProtocol
+extension CommunicationClient : ZKPCommunicationProtocol
 {
     /// Retrieves ZKPCredentialSchema object from the specified URL in an synchronous manner using the GET method.
     /// - Parameters:

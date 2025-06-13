@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7CA982992C85CEBA00EDF367 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9827D2C85CEBA00EDF367 /* DateUtil.swift */; };
 		7CA9829B2C85CEBA00EDF367 /* KeyChainWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA9827F2C85CEBA00EDF367 /* KeyChainWrapper.swift */; };
 		7CA9829C2C85CEBA00EDF367 /* Properties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA982802C85CEBA00EDF367 /* Properties.swift */; };
 		7CA9829D2C85CEBA00EDF367 /* WalletUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA982812C85CEBA00EDF367 /* WalletUtil.swift */; };
@@ -254,7 +253,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		7CA9827D2C85CEBA00EDF367 /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
 		7CA9827F2C85CEBA00EDF367 /* KeyChainWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyChainWrapper.swift; sourceTree = "<group>"; };
 		7CA982802C85CEBA00EDF367 /* Properties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Properties.swift; sourceTree = "<group>"; };
 		7CA982812C85CEBA00EDF367 /* WalletUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalletUtil.swift; sourceTree = "<group>"; };
@@ -503,7 +501,6 @@
 		7CA982822C85CEBA00EDF367 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				7CA9827D2C85CEBA00EDF367 /* DateUtil.swift */,
 				7CA9827F2C85CEBA00EDF367 /* KeyChainWrapper.swift */,
 				7CA982802C85CEBA00EDF367 /* Properties.swift */,
 				7CA982812C85CEBA00EDF367 /* WalletUtil.swift */,
@@ -1484,7 +1481,6 @@
 				C9F414F12DAE5D6A00C04A1A /* Token.swift in Sources */,
 				7CA982A72C85CEBA00EDF367 /* WalletService.swift in Sources */,
 				7CA982A22C85CEBA00EDF367 /* WalletCore.swift in Sources */,
-				7CA982992C85CEBA00EDF367 /* DateUtil.swift in Sources */,
 				7CA982A92C85CEBA00EDF367 /* WalletToken.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
