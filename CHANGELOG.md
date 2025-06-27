@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.0 (2025-05-27)
+
+### Integration
+- The Wallet SDK integrates four other SDKs. The list is Below:
+    - Core SDK
+    - Utility SDK
+    - DataModel SDK
+    - Communication SDK
+    
+### New Features
+- Zero-Knowledge Proof (ZKP) functionality is now supported
+
+
 ## v1.0.0 (2024-10-18)
 
 ### 🚀 New Features

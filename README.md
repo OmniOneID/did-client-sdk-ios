@@ -18,84 +18,42 @@ did-client-sdk-ios
 ├── RELEASE-PROCESS.md
 ├── docs
 │   └── api
-│       ├── did-communication-sdk-ios
+│       ├── README.md
+│       ├── public
 │       │   ├── Communication.md
 │       │   ├── CommunicationError.md
-│       │   └── Communication_ko.md
-│       ├── did-core-sdk-ios
-│       │   ├── DIDManager.md
-│       │   ├── DIDManager_ko.md
-│       │   ├── KeyManager.md
-│       │   ├── KeyManager_ko.md
-│       │   ├── SecureEncryptor.md
-│       │   ├── SecureEncryptor_ko.md
-│       │   ├── VCManager.md
-│       │   ├── VCManager_ko.md
-│       │   └── WalletCoreError.md
-│       ├── did-datamodel-sdk-ios
-│       │   └── DataModel.md
-│       ├── did-utility-sdk-ios
+│       │   ├── Communication_ko.md
+│       │   ├── DataModel.md
+│       │   ├── DataModel_ko.md
 │       │   ├── Utility.md
 │       │   ├── UtilityError.md
-│       │   └── Utility_ko.md
-│       └── did-wallet-sdk-ios
-│           ├── Wallet.md
-│           ├── WalletError.md
-│           └── Wallet_ko.md
-└── source
-    └── DIDClientSDK
-        ├── DIDClientSDK.xcworkspace    
-        ├── did-communication-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDCommunicationSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README_ko.md
-        │   ├── README.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-core-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDCoreSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README.md
-        │   ├── README_ko.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-datamodel-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDDataModelSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README.md
-        │   ├── README_ko.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-utility-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDUtilitySDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README.md
-        │   ├── README_ko.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        ├── did-wallet-sdk-ios
-        │   ├── CHANGELOG.md
-        │   ├── DIDWalletSDK.xcodeproj
-        │   ├── dependencies-license.md
-        │   ├── README.md
-        │   ├── README_ko.md
-        │   ├── SECURITY.md
-        │   └── build_xcframework.sh
-        └── release
-            ├── did-communication-sdk-ios-1.0.0
-            │   └── DIDCommunicationSDK.xcframework
-            ├── did-core-sdk-ios-1.0.0
-            │   └── DIDCoreSDK.xcframework
-            ├── did-datamodel-sdk-ios-1.0.0
-            │   └── DIDDataModelSDK.xcframework
-            ├── did-utility-sdk-ios-1.0.0
-            │   └── DIDUtilitySDK.xcframework
-            └── did-wallet-sdk-ios-1.0.0
-                └── DIDWalletSDK.xcframework
+│       │   ├── Utility_ko.md
+│       │   ├── Wallet.md
+│       │   ├── WalletError.md
+│       │   ├── Wallet_ko.md
+│       │   ├── WalletCoreError.md
+│       │   ├── ZKP_DataModel.md
+│       │   └── ZKP_DataModel_ko.md
+│       └── private
+│           ├── DIDManager.md
+│           ├── DIDManager_ko.md
+│           ├── KeyManager.md
+│           ├── KeyManager_ko.md
+│           ├── SecureEncryptor.md
+│           ├── SecureEncryptor_ko.md
+│           ├── VCManager.md
+│           ├── VCManager_ko.md
+│           ├── ZKPManager.md
+│           └── ZKPManager_ko.md
+└── source  
+    ├── did-wallet-sdk-ios
+    │   ├── DIDWalletSDK.xcodeproj
+    │   ├── README.md
+    │   ├── README_ko.md
+    │   └── build_xcframework.sh
+    └── release
+        └── did-wallet-sdk-ios-2.0.0
+            └── DIDWalletSDK.xcframework
 ```
 
 | Name                    | Description                                     |
@@ -115,33 +73,19 @@ did-client-sdk-ios
 | RELEASE-PROCESS.md      | Release process                                 |
 | SECURITY.md             | Security policies and vulnerability reporting   |
 
+
+## S/W Specification
+| Category         | Details                     |
+|------------------|-----------------------------|
+| OS               | iOS                         |
+| Language         | Swift 5.8                   |
+| IDE              | Xcode 16.2                  |
+| Compatibility    | iOS 15.0 and higher         |
+| Test Environment | iPhone 15 (17.5) Simulator  |
+
 ## Libraries
 
-Libraries can be found in the [releases folder](source/DIDClientSDK/release).
-
-### Core SDK
-
-1. Copy the `DIDCoreSDK.xcframework` file to the framework directory of the app project.
-2. Add the framework to the app project dependencies.
-3. Set the framework to `Embeded & Sign`.
-
-### DataModel SDK
-
-1. Copy the `DIDDataModelSDK.xcframework` file to the framework directory of the app project.
-2. Add the framework to the app project dependencies.
-3. Set the framework to `Embeded & Sign`.
-
-### Utility SDK
-
-1. Copy the `DIDUtilitySDK.xcframework` file to the framework directory of the app project.
-2. Add the framework to the app project dependencies.
-3. Set the framework to `Embeded & Sign`.
-
-### Communication SDK
-
-1. Copy the `DIDCommunicationSDK.xcframework` file to the framework directory of the app project.
-2. Add the framework to the app project dependencies.
-3. Set the framework to `Embeded & Sign`.
+Libraries can be found in the [releases folder](source/release).
 
 ### Wallet SDK
 
@@ -151,27 +95,16 @@ Libraries can be found in the [releases folder](source/DIDClientSDK/release).
 
 ## API Reference
 
-API Reference can be found : 
-<br>
-- [Core SDK](source/DIDClientSDK/did-core-sdk-ios/README.md)  
-- [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/README.md)  
-- [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/README.md)  
-- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/README.md)  
-- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/README.md)  
+API Reference can be found [here](source/did-wallet-sdk-ios/README.md)
 
 
 ## Change Log
 
-ChangeLog can be found : 
-<br>
-- [Core SDK](source/DIDClientSDK/did-core-sdk-ios/CHANGELOG.md)  
-- [DataModel SDK](source/DIDClientSDK/did-datamodel-sdk-ios/CHANGELOG.md)
-- [Utility SDK](source/DIDClientSDK/did-utility-sdk-ios/CHANGELOG.md)  
-- [Communication SDK](source/DIDClientSDK/did-communication-sdk-ios/CHANGELOG.md)  
-- [Wallet SDK](source/DIDClientSDK/did-wallet-sdk-ios/CHANGELOG.md)  
+The Change Log provides a detailed record of version-specific changes and updates. You can find it here:
+- [Change Log](./CHANGELOG.md)
 
 
-## OpenDID Demonstration Videos <br>
+## OpenDID Demonstration Videos
 To watch our demonstration videos of the OpenDID system in action, please visit our [Demo Repository](https://github.com/OmniOneID/did-demo-server). <br>
 
 These videos showcase key features including user registration, VC issuance, and VP submission processes.
