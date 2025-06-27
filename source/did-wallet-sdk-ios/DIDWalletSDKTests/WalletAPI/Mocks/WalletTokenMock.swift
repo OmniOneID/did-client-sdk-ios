@@ -31,10 +31,7 @@ class WalletTokenMock : WalletTokenImpl {
             throw WalletAPIError.verifyTokenFail.getError()
         }
         
-        if try !DateUtil.checkDate(targetDateStr: token.validUntil) {
-            print("isValidUntil fail")
-            throw WalletAPIError.verifyTokenFail.getError()
-        }
+        try Date.checkValidation(dateString: token.validUntil)
         
         for purpose in purposes {
             

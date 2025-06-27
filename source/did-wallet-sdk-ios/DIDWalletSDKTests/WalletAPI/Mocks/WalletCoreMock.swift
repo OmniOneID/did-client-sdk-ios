@@ -131,7 +131,7 @@ class WalletCoreMock: WalletCoreImpl {
         return true
     }
     
-    public func generateKey(passcode: String? = nil, keyId: String, algType: AlgorithmType) throws -> Void {
+    public func generateKey(passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Void {
         if try WalletLockManager().isRegLock() && WalletLockManagerMock.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
@@ -140,7 +140,7 @@ class WalletCoreMock: WalletCoreImpl {
             let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .pin(value: (passcode?.data(using: .utf8))!))
             try holderKeyManager.generateKey(keyGenRequest: pinKeyRequest)
         } else if try !holderKeyManager.isKeySaved(id: "bio") && keyId == "bio" {
-            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: "please regist your biometrics")
+            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: promptMsg ?? "please regist your biometrics")
             try holderKeyManager.generateKey(keyGenRequest: bioKeyRequest)
         }
         // 무인증 (keyagree)

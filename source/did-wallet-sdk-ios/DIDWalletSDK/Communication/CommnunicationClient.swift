@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct CommnunicationClient: CommnunicationProtocol {
+public struct CommunicationClient: CommunicationProtocol {
     
     static let defaultTimeoutInterval: TimeInterval = 30
     
@@ -37,6 +37,8 @@ public struct CommnunicationClient: CommnunicationProtocol {
             var request = URLRequest(url: url)
             request.timeoutInterval = Self.defaultTimeoutInterval
             request.setValue("application/json;charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+
             request.httpMethod = "GET"
             
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -75,6 +77,8 @@ public struct CommnunicationClient: CommnunicationProtocol {
             var request = URLRequest(url: url)
             request.timeoutInterval = Self.defaultTimeoutInterval
             request.setValue("application/json;charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+
             request.httpMethod = "POST"
             request.httpBody = requestJsonData
             
@@ -94,7 +98,7 @@ public struct CommnunicationClient: CommnunicationProtocol {
     }
 }
 
-extension CommnunicationClient : ZKPCommunicationProtocol
+extension CommunicationClient : ZKPCommunicationProtocol
 {
     /// Retrieves ZKPCredentialSchema object from the specified URL in an synchronous manner using the GET method.
     /// - Parameters:

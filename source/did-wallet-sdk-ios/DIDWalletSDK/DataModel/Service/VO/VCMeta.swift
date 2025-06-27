@@ -17,28 +17,15 @@
 import Foundation
 
 public struct VCMeta: Jsonable {
-    public var vcId: String
+    public var id: String
     public var issuer: Provider
-    public var did: String
-    public var credentialSchema: VCSchema
+    public var subject: String
+    public var credentialSchema: IssueProfile.Profile.CredentialSchema
     public var status: VCStatusEnum
     public var issuanceDate: String
     public var validFrom: String
     public var validUntil: String
     public var formatVersion: String
     public var language: String
-    
-    public init(vcId: String, issuer: Provider, did: String, credentialSchema: VCSchema, status: VCStatusEnum, issuanceDate: String, validFrom: String, validUntil: String, formatVersion: String, language: String) {
-        self.vcId = vcId
-        self.issuer = issuer
-        self.did = did
-        self.credentialSchema = credentialSchema
-        self.status = status
-        self.issuanceDate = issuanceDate
-        self.validFrom = validFrom
-        self.validUntil = validUntil
-        self.formatVersion = formatVersion
-        self.language = language
-    }
 }
 

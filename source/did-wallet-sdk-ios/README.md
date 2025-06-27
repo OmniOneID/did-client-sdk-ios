@@ -48,6 +48,6 @@ There is an optimization issue related to BigInt when using ZKP-related function
 ## API Specification
 | Category           | API Document Link    Link                                                                              |
 |---------------|-------------------------------------------------------------------------------------------|
-| Wallet        | [Wallet SDK - Wallet API](../../docs/api/did-wallet-sdk-ios/Wallet.md)            |
-| WalletError   | [Wallet Error](../../docs/api/did-wallet-sdk-ios/WalletError.md)                                |
+| Wallet        | [Wallet SDK - Wallet API](../../docs/api/public/Wallet.md)            |
+| WalletError   | [Wallet Error](../../docs/api/public/WalletError.md)                                |
 

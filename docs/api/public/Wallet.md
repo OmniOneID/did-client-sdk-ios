@@ -65,8 +65,7 @@ iOS Wallet API
     - [30. getZKPCredentials](#30-getzkpcredentials)  
     - [31. getAllZKPCrentials](#31-getallzkpcrentials)  
     - [32. searchCredentials](#32-searchcredentials)  
-    - [33. createZKProof](#33-createzkproof)  
-    - [34. createEncZKProof](#34-createenczkproof)
+    - [33. createEncZKProof](#33-createenczkproof)
     
 - [Enumerators](#enumerators)
     - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
@@ -1134,41 +1133,7 @@ func searchCredentials(hWalletToken: String, proofRequest: ProofRequest) throws 
 
 <br>
 
-## 33. createZKProof
-
-### Description  
-`Creates a zero-knowledge proof based on the given request and selected referents.`
-
-### Declaration
-
-```swift
-func createZKProof(hWalletToken: String, proofRequest: ProofRequest, selectedReferents: [UserReferent], proofParam: ZKProofParam) throws -> ZKProof
-```
-
-### Parameters
-
-| Name              | Type             | Description                                               | **M/O** | **Note**                        |
-| ----------------- | ---------------- | --------------------------------------------------------- | ------- | ------------------------------- |
-| hWalletToken      | String           | The token associated with the wallet                      | M       | Throws if token is not verified |
-| proofRequest      | ProofRequest     | The proof request specifying required attributes          | M       |                                 |
-| selectedReferents | [UserReferent]   | The referents selected to satisfy the proof request       | M       |                                 |
-| proofParam        | ZKProofParam     | Additional parameters for constructing the proof          | M       |                                 |
-
-### Returns
-
-| Type    | Description                        | **M/O** | **Note**                          |
-| ------- | ---------------------------------- | ------- | --------------------------------- |
-| ZKProof | A zero-knowledge proof instance     | M       | Based on selected credentials     |
-
-### Throws
-
-(No explicit errors listed; may vary depending on implementation)
-
-
-
-<br>
-
-## 34. createEncZKProof
+## 33. createEncZKProof
 
 ### Description  
 `Generates a zero-knowledge proof, encrypts it, and returns it along with end-to-end encryption (E2E) parameters.`

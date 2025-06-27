@@ -66,7 +66,7 @@ public struct ReqE2e : Jsonable, ProofContainer
     /// Value for symmetric key creation
     public var nonce : String
     /// Elliptic curve type
-    public var curve : EllipticCurveType
+    public var curve : ECType
     /// Server's public key for encryption
     public var publicKey : String
     /// Cipher type

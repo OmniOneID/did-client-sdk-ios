@@ -17,6 +17,9 @@
 import Foundation
 
 extension Date {
+    
+    private static let dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    
     public static func getUTC0Date(seconds : UInt) -> String
     {
         var date = Date()
@@ -26,11 +29,45 @@ extension Date {
             date.addTimeInterval(doubleSec)
         }
         
-        let formatter = DateFormatter()
-        formatter.timeZone = .init(identifier: "UTC")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-        formatter.locale = .init(identifier: "en_US_POSIX")
+        let formatter = getDateFormatter()
         
         return formatter.string(from: date)
+    }
+    
+    public static func getDateFormatter() -> DateFormatter
+    {
+        let formatter = DateFormatter()
+        formatter.timeZone = .init(identifier: "UTC")
+        formatter.dateFormat = dateFormat
+        formatter.locale = .init(identifier: "en_US_POSIX")
+        
+        return formatter
+    }
+    
+    public static func checkValidation(dateString : String) throws
+    {
+        WalletLogger.shared.debug("dateString: \(dateString)")
+        
+        let dateFormatter = getDateFormatter()
+        
+        guard let targetDate = dateFormatter.date(from: dateString) else {
+            throw NSError(domain: "InvalidDateFormat", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid date format"])
+        }
+        
+        let utcDateFormatter = getDateFormatter()
+        
+        let utcDate = Date()
+        let utcDateString = utcDateFormatter.string(from: utcDate)
+        
+        let today = utcDateFormatter.date(from: utcDateString)!
+        
+        WalletLogger.shared.debug("today: \(today)")
+        WalletLogger.shared.debug("untilDate: \(targetDate)")
+        
+        if today >= targetDate
+        {
+            WalletLogger.shared.debug("isValidUntil fail")
+            throw WalletAPIError.verifyTokenFail.getError()
+        }
     }
 }

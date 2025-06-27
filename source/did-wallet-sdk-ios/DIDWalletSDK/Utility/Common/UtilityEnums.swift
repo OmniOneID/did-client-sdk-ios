@@ -18,12 +18,6 @@ import Foundation
 
 //MARK: - CryptoUtils
 
-/// Elliptic Curve Key Algorithm Type
-public enum ECType: String {
-    case secp256r1 = "Secp256r1"
-    case secp256k1 = "Secp256k1"
-}
-
 /// Symmetric key encryption algorithm type
 public enum EncryptionType: String {
     case aes = "AES"

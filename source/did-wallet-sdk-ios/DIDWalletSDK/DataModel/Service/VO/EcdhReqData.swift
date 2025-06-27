@@ -20,7 +20,7 @@ public class ReqEcdhBuilder {
     private var client: String = ""
     private var clientNonce: String = ""
     private var publicKey: String = ""
-    private var curve: EllipticCurveType = .secp256r1
+    private var curve: ECType = .secp256r1
     var candidate: [SymmetricCipherType]? = [.aes256CBC]
     var proof: Proof? = nil
     
@@ -41,7 +41,7 @@ public class ReqEcdhBuilder {
         return self
     }
     
-    public func setCurve(_ curve: EllipticCurveType) -> ReqEcdhBuilder {
+    public func setCurve(_ curve: ECType) -> ReqEcdhBuilder {
         self.curve = curve
         return self
     }
@@ -66,12 +66,12 @@ public struct ReqEcdh: Jsonable, ProofContainer {
     var client: String
     var clientNonce: String
     var publicKey: String
-    var curve: EllipticCurveType
+    var curve: ECType
     var candidate: [SymmetricCipherType]?
     public var proof: Proof?
     
         
-    public init(client: String, clientNonce: String, publicKey: String, curve: EllipticCurveType, candidate: [SymmetricCipherType]? = nil, proof: Proof? = nil) {
+    public init(client: String, clientNonce: String, publicKey: String, curve: ECType, candidate: [SymmetricCipherType]? = nil, proof: Proof? = nil) {
         self.client = client
         self.clientNonce = clientNonce
         self.publicKey = publicKey

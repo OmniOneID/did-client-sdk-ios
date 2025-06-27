@@ -87,7 +87,7 @@ public enum CredentialSchemaType : String, Codable
 }
 
 /// Elliptic curve type
-public enum EllipticCurveType: String, Codable, ConvertibleToAlgorithmType
+public enum ECType: String, Codable, ConvertibleToAlgorithmType
 {
     public static var commonString: String
     {

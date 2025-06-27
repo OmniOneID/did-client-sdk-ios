@@ -155,11 +155,10 @@ iOS DataModel
     - [15. SymmetricCipherType](#15-symmetricciphertype)
     - [16. AlgorithmType](#16-algorithmtype)
     - [17. CredentialSchemaType](#17-credentialschematype)
-    - [18. EllipticCurveType](#18-ellipticcurvetype)
+    - [18. OfferTypeEnum](#18-offertypeenum)
     - [19. RoleTypeEnum](#19-roletypeenum)
     - [20. ServerTokenPurposeEnum](#20-servertokenpurposeenum)
     - [21. WalletTokenPurposeEnum](#21-wallettokenpurposeenum)
-    - [22. OfferTypeEnum](#22-offertypeenum)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
@@ -993,7 +992,7 @@ public struct ProviderDetail : Jsonable
 public struct ReqE2e : Jsonable, ProofContainer
 {
     public var nonce : String
-    public var curve : EllipticCurveType
+    public var curve : ECType
     public var publicKey : String
     public var cipher : SymmetricCipherType
     public var padding : SymmetricPaddingType
@@ -1006,7 +1005,7 @@ public struct ReqE2e : Jsonable, ProofContainer
 | Name      | Type      | Description                                   | **M/O** | **Note**                 |
 |-----------|-----------|-----------------------------------------------|---------|--------------------------|
 | nonce     | String               | Value for symmetric key creation   |    M    | Encoded by Multibase     |
-| curve     | EllipticCurveType    | Elliptic curve type                |    M    | [EllipticCurveType](#18-ellipticcurvetype)   |
+| curve     | ECType    | Elliptic curve type                |    M    |                          |
 | publicKey | String               | Server's public key for encryption |    M    | Encoded by Multibase     |
 | cipher    | SymmetricCipherType  | Cipher type                        |    M    | [SymmetricCipherType](#15-symmetricciphertype)  |
 | padding   | SymmetricPaddingType | Padding type                       |    M    | [SymmetricPaddingType](#14-symmetricpaddingtype)   |
@@ -2383,7 +2382,7 @@ public struct ReqEcdh: Jsonable, ProofContainer {
     var client: String
     var clientNonce: String
     var publicKey: String
-    var curve: EllipticCurveType
+    var curve: ECType
     var candidate: [SymmetricCipherType]?
     public var proof: Proof?
 }
@@ -2394,7 +2393,7 @@ public struct ReqEcdh: Jsonable, ProofContainer {
 |-------------|----------------------------------|--------------------------------|---------|----------|
 | client      | String                           | Client DID                     |    M    |          |
 | clientNonce | String                           | Client Nonce                   |    M    |          |
-| curve       | EllipticCurveType.ELLIPTIC_CURVE_TYPE | Curve type for ECDH       |    M    |          |
+| curve       | ECType.ELLIPTIC_CURVE_TYPE       | Curve type for ECDH       |    M    |          |
 | publicKey   | String                           | Public key for ECDH            |    M    |          |
 | candidate   | ReqEcdh.Ciphers                  | Candidate ciphers              |    O    |          |
 | proof       | Proof                            | Proof                          |    O    | [Proof](#4-proof) |
@@ -3170,28 +3169,21 @@ public enum CredentialSchemaType : String, Codable
 
 <br>
 
-## 18. EllipticCurveType
+## 18. OfferTypeEnum
 
 ### Description
-
-`Elliptic curve type`
+`Enumeration for Offer type`
 
 ### Declaration
-
 ```swift
-// Declaration in Swift
-public enum EllipticCurveType: String, Codable, ConvertibleToAlgorithmType
-{
-    public static var commonString: String
-    {
-        emptyString
-    }
-    
-    case secp256k1 = "Secp256k1"
-    case secp256r1 = "Secp256r1"
+public enum OfferTypeEnum: String, Codable {
+    case IssueOffer
+    case VerifyOffer
+    case RestoreDidOffer
+    case ZkpIssueOffer
+    case VerifyProofOffer
 }
 ```
-
 <br>
 
 ## 19. RoleTypeEnum
@@ -3271,24 +3263,6 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
 }
 ```
 <br>
-
-## 22. OfferTypeEnum
-
-### Description
-`Enumeration for Offer type`
-
-### Declaration
-```swift
-public enum OfferTypeEnum: String, Codable {
-    case IssueOffer
-    case VerifyOffer
-    case RestoreDidOffer
-    case ZkpIssueOffer
-    case VerifyProofOffer
-}
-```
-<br>
-
 
 # Protocols
 

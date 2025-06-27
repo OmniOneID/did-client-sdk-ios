@@ -79,11 +79,18 @@ class WalletService: WalletServiceImpl {
                           verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + "#keyagree",
                           type: ProofType.secp256r1Signature2018)
         
-        let keyPair = try CryptoUtils.generateECKeyPair(ecType: ECType.secp256r1)
+        let reqE2e = verifierProfile.profile.profile.process.reqE2e
+        let curve = reqE2e.curve
+        let cipher = reqE2e.cipher
+        let padding = reqE2e.padding
+        
+        let keyPair = try CryptoUtils.generateECKeyPair(ecType: curve)
         let iv = try CryptoUtils.generateNonce(size: 16)
         
-        var accE2e = AccE2e(publicKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: keyPair.publicKey),
-                            iv: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: iv),
+        var accE2e = AccE2e(publicKey: MultibaseUtils.encode(type: MultibaseType.base58BTC,
+                                                             data: keyPair.publicKey),
+                            iv: MultibaseUtils.encode(type: MultibaseType.base58BTC,
+                                                      data: iv),
                             proof: proof)
         
         let source = try DigestUtils.getDigest(source: accE2e.toJsonData(), digestEnum: DigestEnum.sha256)
@@ -94,7 +101,9 @@ class WalletService: WalletServiceImpl {
                                                 validUntil: Date.getUTC0Date(seconds: 5000),
                                                 verifierNonce: verifierProfile.profile.profile.process.verifierNonce)
 
-        var vp = try WalletAPI.shared.createVp(hWalletToken: hWalletToken, claimInfos: claimInfos!, presentationInfo: presentationInfo)
+        var vp = try walletCore.makePresentation(claimInfos:claimInfos!,
+                                                 presentationInfo: presentationInfo)
+        
         let authType = passcode != nil ? "#pin" : "#bio"
         WalletLogger.shared.debug("vp: \(try vp.toJson())")
         let vpProof = Proof(created: Date.getUTC0Date(seconds: 0),
@@ -112,12 +121,16 @@ class WalletService: WalletServiceImpl {
         }
         vp.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: vpSignature!)
         let serverNonce = try MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.verifierNonce)
-        let sessKey = try CryptoUtils.generateSharedSecret(ecType: ECType.secp256r1,
+        let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
                                                            publicKey: MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.reqE2e.publicKey))
         
-        let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: SymmetricCipherType.aes256CBC)
-        let encVp = try CryptoUtils.encrypt(plain: vp.toJsonData(), info: CipherInfo(cipherType: SymmetricCipherType.aes256CBC, padding: SymmetricPaddingType.pkcs5), key: clientMergedSharedSecret, iv: iv)
+        let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: cipher)
+        let encVp = try CryptoUtils.encrypt(plain: vp.toJsonData(),
+                                            info: CipherInfo(cipherType: cipher,
+                                                             padding: padding),
+                                            key: clientMergedSharedSecret,
+                                            iv: iv)
         return (accE2e, encVp)
     }
     
@@ -149,31 +162,38 @@ class WalletService: WalletServiceImpl {
                           verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + "#keyagree",
                           type: ProofType.secp256r1Signature2018)
         
-        let keyPair = try CryptoUtils.generateECKeyPair(ecType: ECType.secp256r1)
+        let reqE2e = proofRequestProfile.proofRequestProfile.profile.reqE2e
+        let curve = reqE2e.curve
+        let cipher = reqE2e.cipher
+        let padding = reqE2e.padding
+        
+        let keyPair = try CryptoUtils.generateECKeyPair(ecType: curve)
         let iv = try CryptoUtils.generateNonce(size: 16)
         
-        var accE2e = AccE2e(publicKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: keyPair.publicKey),
-                            iv: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: iv),
+        var accE2e = AccE2e(publicKey: MultibaseUtils.encode(type: MultibaseType.base58BTC,
+                                                             data: keyPair.publicKey),
+                            iv: MultibaseUtils.encode(type: MultibaseType.base58BTC,
+                                                      data: iv),
                             proof: proof)
         
         let source = try DigestUtils.getDigest(source: accE2e.toJsonData(), digestEnum: DigestEnum.sha256)
         let signature = try WalletAPI.shared.sign(keyId: "keyagree", data: source, type: DidDocumentType.HolderDidDocumnet)
         accE2e.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature)
         
-        let zkproof = try WalletAPI.shared.createZKProof(hWalletToken: hWalletToken,
-                                                         proofRequest: proofRequestProfile.proofRequestProfile.profile.proofRequest,
-                                                         selectedReferents: selectedReferents,
-                                                         proofParam: proofParam)
+        
+        let zkproof = try walletCore.createZKProof(proofRequest: proofRequestProfile.proofRequestProfile.profile.proofRequest,
+                                                   selectedReferents: selectedReferents,
+                                                   proofParam: proofParam)
         
         let serverNonce = try MultibaseUtils.decode(encoded: proofRequestProfile.proofRequestProfile.profile.reqE2e.nonce)
-        let sessKey = try CryptoUtils.generateSharedSecret(ecType: ECType.secp256r1,
+        let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
                                                            publicKey: MultibaseUtils.decode(encoded: proofRequestProfile.proofRequestProfile.profile.reqE2e.publicKey))
         
-        let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: SymmetricCipherType.aes256CBC)
+        let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: cipher)
         let encVp = try CryptoUtils.encrypt(plain: zkproof.toJsonData(),
-                                            info: CipherInfo(cipherType: SymmetricCipherType.aes256CBC,
-                                                             padding: SymmetricPaddingType.pkcs5),
+                                            info: CipherInfo(cipherType: cipher,
+                                                             padding: padding),
                                             key: clientMergedSharedSecret,
                                             iv: iv)
         return (accE2e, encVp)
@@ -181,7 +201,7 @@ class WalletService: WalletServiceImpl {
     
     private func fatchCaInfo(tasURL: String) async throws -> Void {
                                                                                      
-        let data = try await CommnunicationClient.doGet(url: URL(string: tasURL + "/list/api/v1/allowed-ca/list?wallet=org.omnione.did.sdk.wallet")!)
+        let data = try await CommunicationClient.doGet(url: URL(string: tasURL + "/list/api/v1/allowed-ca/list?wallet=org.omnione.did.sdk.wallet")!)
         let allowCAList = try AllowCAList.init(from: data)
         
         guard allowCAList.count != 0 else {
@@ -326,10 +346,10 @@ class WalletService: WalletServiceImpl {
         }
         
         let ownerDidDocJsonData = try ownerDidDoc.toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string:walletURL + "/wallet/api/v1/request-sign-wallet")!, requestJsonData: ownerDidDocJsonData)
+        let responseData = try await CommunicationClient.doPost(url: URL(string:walletURL + "/wallet/api/v1/request-sign-wallet")!, requestJsonData: ownerDidDocJsonData)
         let attDIDDoc = try AttestedDIDDoc.init(from: responseData)
         let reqAttDidDoc = RequestAttestedDIDDoc(id: WalletUtil.generateMessageID(), attestedDIDDoc: attDIDDoc)
-        _ = try await CommnunicationClient.doPost(url: URL(string: tasURL + "/tas/api/v1/request-register-wallet")!, requestJsonData: try reqAttDidDoc.toJsonData())
+        _ = try await CommunicationClient.doPost(url: URL(string: tasURL + "/tas/api/v1/request-register-wallet")!, requestJsonData: try reqAttDidDoc.toJsonData())
         Properties.setWalletId(id: attDIDDoc.walletId)
         WalletLogger.shared.debug("saved walletId")
         try walletCore.saveDidDocument(type: DidDocumentType.DeviceDidDocument)
@@ -369,7 +389,7 @@ class WalletService: WalletServiceImpl {
         }
         
         let parameter = try RequestRegisterUser(id: WalletUtil.generateMessageID(), txId: txId, signedDidDoc: signedDIDDoc, serverToken: serverToken).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestRegisterUser.init(from: responseData)
     }
     
@@ -390,7 +410,7 @@ class WalletService: WalletServiceImpl {
         }
         
         let parameter = try RequestRestoreDidDoc(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, didAuth: didAuth).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestRestoreDidDoc.init(from: responseData)
     }
     
@@ -416,7 +436,7 @@ class WalletService: WalletServiceImpl {
         
         let parameter = try RequestUpdateDidDoc(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, didAuth: didAuth, signedDidDoc: signedDIDDoc).toJsonData()/*RequestUpdateDidDoc(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, didAuth: didAuth, signedDIDDoc: signedDIDDoc).toJsonData()*/
         
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestUpdateDidDoc.init(from: responseData)
     }
     
@@ -482,10 +502,17 @@ class WalletService: WalletServiceImpl {
                         type: ProofType.secp256r1Signature2018)
         
         
-        let keyPair = try CryptoUtils.generateECKeyPair(ecType: ECType.secp256r1)
+        let reqE2e = issuerProfile.profile.profile.process.reqE2e
+        let curve = reqE2e.curve
+        let cipher = reqE2e.cipher
+        let padding = reqE2e.padding
+        
+        let keyPair = try CryptoUtils.generateECKeyPair(ecType: curve)
         let iv = try CryptoUtils.generateNonce(size: 16)
-        var accE2e = AccE2e(publicKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: keyPair.publicKey),
-                            iv: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: iv),
+        var accE2e = AccE2e(publicKey: MultibaseUtils.encode(type: MultibaseType.base58BTC,
+                                                             data: keyPair.publicKey),
+                            iv: MultibaseUtils.encode(type: MultibaseType.base58BTC,
+                                                      data: iv),
                             proof: proof)
         
         let source = try DigestUtils.getDigest(source: accE2e.toJsonData(), digestEnum: DigestEnum.sha256)
@@ -500,7 +527,7 @@ class WalletService: WalletServiceImpl {
         
         if let credentialOffer = issuerProfile.profile.profile.credentialOffer
         {   
-            credDef = try await CommnunicationClient.getZKPCredentialDefinition(hostUrlString: APIGatewayURL,
+            credDef = try await CommunicationClient.getZKPCredentialDefinition(hostUrlString: APIGatewayURL,
                                                                                 id: credentialOffer.credDefId)
             
             let container = try walletCore.createZKPCredentialRequest(proverDid: holderDidDoc.id,
@@ -513,26 +540,27 @@ class WalletService: WalletServiceImpl {
         WalletLogger.shared.debug("reqVc: \(try reqVC.toJson(isPretty: true))")
         let serverNonce = try MultibaseUtils.decode(encoded: issuerProfile.profile.profile.process.issuerNonce)
         // generate sessionk ey
-        let sessKey = try CryptoUtils.generateSharedSecret(ecType: ECType.secp256r1,
+        let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
                                                            publicKey: MultibaseUtils.decode(encoded: issuerProfile.profile.profile.process.reqE2e.publicKey))
         
-        let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: SymmetricCipherType.aes256CBC)
+        let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: cipher)
 
         let encReqVc = try CryptoUtils.encrypt(plain: reqVC.toJsonData(), 
-                                               info: CipherInfo(cipherType: SymmetricCipherType.aes256CBC,
-                                                                padding: SymmetricPaddingType.pkcs5),
-                                               key: clientMergedSharedSecret, 
+                                               info: CipherInfo(cipherType: cipher,
+                                                                padding: padding),
+                                               key: clientMergedSharedSecret,
                                                iv: iv)
         
         let multiEncReqVc = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: encReqVc)
         let parameter = try RequestIssueVc(id: WalletUtil.generateMessageID(), txId: issuerProfile.txId, serverToken: serverToken, didAuth: didAuth, accE2e: accE2e, encReqVc: multiEncReqVc).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         let decodedResponse = try _RequestIssueVc.init(from: responseData)
         let envVc = try MultibaseUtils.decode(encoded: decodedResponse.e2e.encVc)
         
         let decVc = try CryptoUtils.decrypt(cipher: envVc,
-                                            info: CipherInfo(cipherType: SymmetricCipherType.aes256CBC, padding: SymmetricPaddingType.pkcs5),
+                                            info: CipherInfo(cipherType: cipher,
+                                                             padding: padding),
                                             key: clientMergedSharedSecret,
                                             iv: MultibaseUtils.decode(encoded: decodedResponse.e2e.iv))
         
@@ -540,11 +568,6 @@ class WalletService: WalletServiceImpl {
         
         if let credential = credInfo.credential
         {
-            if walletCore.isZKPCredentialSaved(id: credential.credentialId)
-            {
-                try walletCore.deleteZKPCredential(ids: [credential.credentialId])
-            }
-            
             try walletCore.verifyAndStoreZKPCredential(credentialMeta: credentialMeta!,
                                                        credentialDefinition: credDef!,
                                                        credential: credential)
@@ -552,7 +575,7 @@ class WalletService: WalletServiceImpl {
         
         var vc = credInfo.vc
 
-        let data = try await CommnunicationClient.doGet(url: URL(string: APIGatewayURL + "/api-gateway/api/v1/did-doc?did=" + vc.issuer.id)!)
+        let data = try await CommunicationClient.doGet(url: URL(string: APIGatewayURL + "/api-gateway/api/v1/did-doc?did=" + vc.issuer.id)!)
         let DIDDoc = try DIDDocVO.init(from: data)
         let issuerDIDDocJson = try MultibaseUtils.decode(encoded: DIDDoc.didDoc)
         let issuerDIDDoc = try DIDDocument.init(from: issuerDIDDocJson)
@@ -581,9 +604,17 @@ class WalletService: WalletServiceImpl {
             let vcs = try walletCore.getAllCredentials()
             for v in vcs {
                 if v.credentialSchema.id == vc.credentialSchema.id {
+                    let vcId = v.id
                     WalletLogger.shared.debug("v.credentialSchema.id: \(v.credentialSchema.id)")
                     WalletLogger.shared.debug("vc.credentialSchema.id: \(vc.credentialSchema.id)")
-                    _ = try walletCore.deleteCredential(ids: [v.id])
+                    _ = try walletCore.deleteCredential(ids: [vcId])
+                    
+                    if walletCore.isZKPCredentialSaved(id: vcId)
+                    {
+                        try walletCore.deleteZKPCredential(ids: [vcId])
+                    }
+                    
+                    break
                 }
             }
         }
@@ -639,7 +670,7 @@ class WalletService: WalletServiceImpl {
                     
         reqRevokeVc.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature!)
         let parameter = try RequestRevokeVc.init(id: WalletUtil.generateMessageID(), txId: txId, serverToken: serverToken, request: reqRevokeVc).toJsonData()
-        let responseData = try await CommnunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
+        let responseData = try await CommunicationClient.doPost(url: URL(string: tasURL)!, requestJsonData: parameter)
         return try _RequestRevokeVc.init(from: responseData)
     }
 

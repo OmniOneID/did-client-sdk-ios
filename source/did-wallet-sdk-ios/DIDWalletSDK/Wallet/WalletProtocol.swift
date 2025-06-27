@@ -35,7 +35,7 @@ public protocol WalletCoreImpl {
     func deleteWallet() throws -> Bool
     func saveDidDocument(type: DidDocumentType) throws -> Void
     func isExistWallet() throws -> Bool
-    func generateKey(passcode: String?, keyId: String, algType: AlgorithmType) throws -> Void
+    func generateKey(passcode: String?, keyId: String, algType: AlgorithmType, promptMsg: String?) throws -> Void
     func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType) throws -> Data
     func createDeviceDidDocument() throws -> DIDDocument
     func createHolderDidDocument() throws -> DIDDocument

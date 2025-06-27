@@ -16,8 +16,8 @@
 
 import Foundation
 
-public enum VCStatusEnum: String, Jsonable {
-    case Active = "ACTIVE"
-    case Inactive = "DEACTIVE"
-    case Revoked = "REVOKED"
+public enum VCStatusEnum: String, Codable {
+    case ACTIVE
+    case INACTIVE
+    case REVOKED
 }

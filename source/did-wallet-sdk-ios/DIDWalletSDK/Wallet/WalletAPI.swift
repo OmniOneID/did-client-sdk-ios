@@ -331,7 +331,7 @@ extension WalletAPI {
     @discardableResult
     public func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Bool {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.CREATE_DID])
-        try walletCore.generateKey(passcode: passcode, keyId: keyId, algType: algType)
+        try walletCore.generateKey(passcode: passcode, keyId: keyId, algType: algType, promptMsg: promptMsg)
         return true
 
     }
@@ -415,18 +415,7 @@ extension WalletAPI {
         }
         return nil
     }
-    
-    /// Creates a verifiable presentation (VP) using the specified wallet token, claim information, and presentation information.
-    /// - Parameters:
-    ///  - hWalletToken: The token associated with the wallet.
-    ///  - claimInfos: An array of ClaimInfo objects containing the claim information to include in the presentation.
-    ///  - presentationInfo: The presentation information to include in the VP.
-    /// - Returns: VerifiablePresentation object representing the created presentation.
-    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func createVp(hWalletToken: String, claimInfos: [ClaimInfo], presentationInfo: PresentationInfo) throws -> VerifiablePresentation {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
-        return try walletCore.makePresentation(claimInfos:claimInfos, presentationInfo: presentationInfo)
-    }
+
     
     //MARK: Zero-Knowledge Proof
     /// Checks if a ZKP credential with the given ID is saved.
@@ -436,20 +425,6 @@ extension WalletAPI {
     public func isZKPCredentialSaved(id : String) -> Bool
     {
         return walletCore.isZKPCredentialSaved(id: id)
-    }
-    
-    /// Revokes the specified ZKP credentials from the wallet using the provided wallet token.
-    /// - Parameters:
-    ///   - hWalletToken: The token associated with the wallet.
-    ///   - ids: An array of identifiers for the credentials to revoke.
-    /// - Returns: boolean value indicating whether the credentials were successfully revoked.
-    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func deleteZKPCredentials(hWalletToken: String,
-                                     ids: [String]) throws -> Bool
-    {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
-                                               purposes:[.REMOVE_VC])
-        return try walletCore.deleteZKPCredential(ids: ids)
     }
     
     /// Retrieves the specified ZKP credentials from the wallet using the provided wallet token.
@@ -502,28 +477,6 @@ extension WalletAPI {
                                                          .LIST_VC_AND_PRESENT_VP])
         
         return try walletCore.searchZKPCredentials(proofRequest: proofRequest)
-    }
-    
-    /// Creates a zero-knowledge proof based on the given request and selected referents.
-    ///
-    /// - Parameters:
-    ///   - hWalletToken: The token associated with the wallet.
-    ///   - proofRequest: The proof request specifying required attributes and predicates
-    ///   - selectedReferents: The referents selected by the user to satisfy the proof request
-    ///   - proofParam: Additional parameters used to construct the proof
-    /// - Returns: A `ZKProof` instance
-    public func createZKProof(hWalletToken: String,
-                              proofRequest : ProofRequest,
-                              selectedReferents : [UserReferent],
-                              proofParam : ZKProofParam) throws -> ZKProof
-    {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
-                                               purposes:[.PRESENT_VP,
-                                                         .LIST_VC_AND_PRESENT_VP])
-        
-        return try walletCore.createZKProof(proofRequest: proofRequest,
-                                            selectedReferents: selectedReferents,
-                                            proofParam: proofParam)
     }
     
     /// This function generates a Zero-knowledge proof by creating a cryptographic proof,
@@ -596,5 +549,22 @@ extension WalletAPI {
     /// - Throws: An error if the PIN change fails, such as if the old PIN is incorrect.
     public func changePin(id: String, oldPIN: String, newPIN: String) throws {
         try walletCore.changePin(id: id, oldPIN: oldPIN, newPIN: newPIN)
+    }
+}
+
+private extension WalletAPI
+{
+    /// Revokes the specified ZKP credentials from the wallet using the provided wallet token.
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    ///   - ids: An array of identifiers for the credentials to revoke.
+    /// - Returns: boolean value indicating whether the credentials were successfully revoked.
+    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    private func deleteZKPCredentials(hWalletToken: String,
+                                      ids: [String]) throws -> Bool
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes:[.REMOVE_VC])
+        return try walletCore.deleteZKPCredential(ids: ids)
     }
 }

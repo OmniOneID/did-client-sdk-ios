@@ -154,11 +154,10 @@ iOS DataModel
     - [15. SymmetricCipherType](#15-symmetricciphertype)
     - [16. AlgorithmType](#16-algorithmtype)
     - [17. CredentialSchemaType](#17-credentialschematype)
-    - [18. EllipticCurveType](#18-ellipticcurvetype)
+    - [18. OfferTypeEnum](#18-offertypeenum)
     - [19. RoleTypeEnum](#19-roletypeenum)
     - [20. ServerTokenPurposeEnum](#20-servertokenpurposeenum)
     - [21. WalletTokenPurposeEnum](#21-wallettokenpurposeenum)
-    - [22. OfferTypeEnum](#22-offertypeenum)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
@@ -994,7 +993,7 @@ public struct ProviderDetail : Jsonable
 public struct ReqE2e : Jsonable, ProofContainer
 {
     public var nonce : String
-    public var curve : EllipticCurveType
+    public var curve : ECType
     public var publicKey : String
     public var cipher : SymmetricCipherType
     public var padding : SymmetricPaddingType
@@ -1007,7 +1006,7 @@ public struct ReqE2e : Jsonable, ProofContainer
 | Name      | Type                 | Description                        | **M/O** | **Note**                                         |
 | --------- | -------------------- | ---------------------------------- | ------- | ------------------------------------------------ |
 | nonce     | String               | 대칭키 생성용 nonce                   |     M    | 멀티베이스 인코딩                                |
-| curve     | EllipticCurveType    | 타원곡선 유형                         |     M    | [EllipticCurveType](#18-ellipticcurvetype)       |
+| curve     | ECType               | 타원곡선 유형                         |     M    |                                               |
 | publicKey | String               | 암호화용 서버공개키                     |    M    | 멀티베이스 인코딩                             |
 | cipher    | SymmetricCipherType  | 암호화 유형                           |    M    | [SymmetricCipherType](#15-symmetricciphertype)   |
 | padding   | SymmetricPaddingType | 패딩 유형                            |    M    | [SymmetricPaddingType](#14-symmetricpaddingtype) |
@@ -2385,7 +2384,7 @@ public struct ReqEcdh: Jsonable, ProofContainer {
     var client: String
     var clientNonce: String
     var publicKey: String
-    var curve: EllipticCurveType
+    var curve: ECType
     var candidate: [SymmetricCipherType]?
     public var proof: Proof?
 }
@@ -2396,7 +2395,7 @@ public struct ReqEcdh: Jsonable, ProofContainer {
 |-------------|----------------------------------|--------------------------------|---------|----------|
 | client      | String                           | 클라이언트 DID                     |    M    |          |
 | clientNonce | String                           | 클라이언트 Nonce                   |    M    |          |
-| curve       | EllipticCurveType.ELLIPTIC_CURVE_TYPE | ECDH 커브 유형               |    M    |          |
+| curve       | ECType.ELLIPTIC_CURVE_TYPE       | ECDH 커브 유형                    |    M    |          |
 | publicKey   | String                           | 공개키 정보                        |    M    |          |
 | candidate   | ReqEcdh.Ciphers                  | 대칭키 암호화 정보                   |    O    |          |
 | proof       | Proof                            | Proof                           |    O    | [Proof](#4-proof) |
@@ -3171,29 +3170,23 @@ public enum CredentialSchemaType : String, Codable
 
 <br>
 
-## 18. EllipticCurveType
+## 18. OfferTypeEnum
 
 ### Description
-
-`타원 곡선 종류`
+`오퍼 유형의 열거`
 
 ### Declaration
-
 ```swift
-// Declaration in Swift
-public enum EllipticCurveType: String, Codable, ConvertibleToAlgorithmType
-{
-    public static var commonString: String
-    {
-        emptyString
-    }
-    
-    case secp256k1 = "Secp256k1"
-    case secp256r1 = "Secp256r1"
+public enum OfferTypeEnum: String, Codable {
+    case IssueOffer
+    case VerifyOffer
+    case RestoreDidOffer
+    case ZkpIssueOffer
+    case VerifyProofOffer
 }
 ```
-
 <br>
+
 
 ## 19. RoleTypeEnum
 
@@ -3269,23 +3262,6 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
     case DETAIL_VC                  = 12
     case CREATE_DID_AND_ISSUE_VC    = 13
     case LIST_VC_AND_PRESENT_VP     = 14
-}
-```
-<br>
-
-## 22. OfferTypeEnum
-
-### Description
-`오퍼 유형의 열거`
-
-### Declaration
-```swift
-public enum OfferTypeEnum: String, Codable {
-    case IssueOffer
-    case VerifyOffer
-    case RestoreDidOffer
-    case ZkpIssueOffer
-    case VerifyProofOffer
 }
 ```
 <br>
