@@ -73,7 +73,9 @@ class WalletServiceMock : WalletServiceImpl
                                                 validUntil: Date.getUTC0Date(seconds: 5000),
                                                 verifierNonce: verifierProfile!.profile.profile.process.verifierNonce)
 
-        var vp = try WalletAPI.shared.createVp(hWalletToken: hWalletToken, claimInfos: claimInfos!, presentationInfo: presentationInfo)
+        var vp = try walletCore.makePresentation(claimInfos:claimInfos!,
+                                                 presentationInfo: presentationInfo)
+        
         let authType = passcode != nil ? "#pin" : "#bio"
         print("vp: \(try vp.toJson())")
         let vpProof = Proof(created: Date.getUTC0Date(seconds: 0),
