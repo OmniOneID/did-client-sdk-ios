@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,15 +34,14 @@ public class WalletAPI {
         walletService = WalletService(walletCore)
     }
     
-    /// Checks if a wallet exists by verifying if any device keys or device DID documents are saved.
+    /// Checks if a wallet exists by verifying if any device keys and device DID document are saved.
     ///
     /// - Returns: A boolean indicating whether a wallet exists.
     ///            Returns false if no keys are saved and the device DID is not saved, otherwise true.
-    public func isExistWallet() throws -> Bool {
-        return try walletCore.isExistWallet()
+    public func isExistWallet() -> Bool {
+        return walletCore.isExistWallet()
     }
     
-    @discardableResult
     /// Creates a wallet by fetching certified app information, generating a device key,
     /// and registering the wallet with the given parameters.
     ///
@@ -51,6 +50,7 @@ public class WalletAPI {
     ///   - walletURL: The URL where the wallet will be registered.
     /// - Returns: A boolean indicating the success of the wallet creation.
     /// - Throws: An error if the process fails at any stage.
+    @discardableResult
     public func createWallet(tasURL: String, walletURL: String) async throws -> Bool {
         return try await walletService.createWallet(tasURL: tasURL, walletURL: walletURL)
     }
@@ -294,6 +294,8 @@ public class WalletAPI {
 extension WalletAPI {
     
     /// Creates a DID document wallet.
+    /// After Finish the registration,
+    /// Must call `saveHolderDIDDocument`
     /// - Parameters:
     ///   - hWalletToken: The wallet token used for verification.
     /// - Returns:
@@ -301,10 +303,23 @@ extension WalletAPI {
     /// - Throws:
     ///   An error if the wallet token verification fails or if there are issues with creating the document.
     @discardableResult
-    public func createHolderDIDDocument(hWalletToken: String) throws -> DIDDocument? {
+    public func createHolderDIDDocument(hWalletToken: String) throws -> DIDDocument {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.CREATE_DID])
         return try walletCore.createHolderDidDocument()
     }
+    
+    //
+    public func updateHolderDIDDocument(hWalletToken: String) throws -> DIDDocument {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.UPDATE_DID])
+        return try walletCore.createHolderDidDocument()
+    }
+    
+    /// Save holder's DID document changes
+    public func saveHolderDIDDocument() throws
+    {
+        try walletCore.saveHolderDIDDocument()
+    }
+    //
     
     /// Retrieves the DID document of the specified type.
     /// - Parameters:

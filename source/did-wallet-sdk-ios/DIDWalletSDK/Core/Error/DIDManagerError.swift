@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,17 +21,16 @@ enum DIDManagerError: WalletCoreErrorProcotol {
     case failToGenerateRandom       // Fail to generate random
     
     // Create document (012xx)
-    case documentIsAlreadyExists    // Document is already exists
+    case documentAlreadyExists    // Document is already exists
     
     // Edit document (013xx)
     case duplicateKeyIDExistsInVerificationMethod   // Duplicate key ID exists in verification method
     case notFoundKeyIDInVerificationMethod          // Not found key ID in verification method
     case duplicateServiceIDExistsInService          // Duplicate service ID exists in service
     case notFoundServiceIDInService                 // Not found service ID in service
-    case dontCallResetChangesIfNoDocumentSaved      // Don't call 'resetChanges' if no document saved
     
-    // ETC (019xx)
-    case unexpectedCondition        // Unexpected condition occurred
+    // DID Document (014xx)
+    case notFoundDocument        // Unexpected condition occurred
     
     
     func getCodeAndMessage() -> (String, String) {
@@ -41,8 +40,8 @@ enum DIDManagerError: WalletCoreErrorProcotol {
             return ("01100", "Fail to generate random")
             
             // Create document (012xx)
-        case .documentIsAlreadyExists:
-            return ("01200", "Document is already exists")
+        case .documentAlreadyExists:
+            return ("01200", "The document already exists")
             
             // Edit document (013xx)
         case .duplicateKeyIDExistsInVerificationMethod:
@@ -53,12 +52,10 @@ enum DIDManagerError: WalletCoreErrorProcotol {
             return ("01302", "Duplicate service ID exists in service")
         case .notFoundServiceIDInService:
             return ("01303", "Not found service ID in service")
-        case .dontCallResetChangesIfNoDocumentSaved:
-            return ("01304", "Don't call 'resetChanges' if no document saved")
             
-            // ETC (019xx)
-        case .unexpectedCondition:
-            return ("01900", "Unexpected condition occurred")
+            // DID Document (014xx)
+        case .notFoundDocument:
+            return ("01400", "The stored DID document could not be found")
         }
     }
 }

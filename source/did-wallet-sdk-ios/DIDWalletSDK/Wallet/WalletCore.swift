@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 import Foundation
-
-
 
 class WalletCore: WalletCoreImpl {
     
@@ -87,10 +85,7 @@ class WalletCore: WalletCoreImpl {
         }
     }
     
-    public func isExistWallet() throws -> Bool {
-//        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-//            throw WalletAPIError.lockedWallet.getError()
-//        }
+    public func isExistWallet() -> Bool {
         
         if !deviceKeyManager.isAnyKeysSaved && !deviceDidManager.isSaved {
             WalletLogger.shared.debug("deviceKey not created")
@@ -205,9 +200,47 @@ class WalletCore: WalletCoreImpl {
         
         WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
-        try holderDidManager.saveDocument()
+        return holderDidDoc
+    }
+    
+    public func updateHolderDIDDocument() throws -> DIDDocument
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        let bioKeyId = "bio"
+        
+        if try holderKeyManager.isKeySaved(id: bioKeyId)
+        {
+            let keyInfo = try holderKeyManager.getKeyInfos(ids: [bioKeyId])
+            
+            let keyInfos : DIDKeyInfo = .init(keyInfo: keyInfo[0],
+                                              methodType: [.assertionMethod, .authentication])
+            WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+            
+            try holderDidManager.addVerificationMethod(keyInfo: keyInfos)
+        }
+        else
+        {
+            try holderDidManager.removeVerificationMethod(keyId: bioKeyId)
+        }
+            
+        let holderDidDoc = try holderDidManager.getDocument()
+        
+        WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
         return holderDidDoc
+    }
+    
+    public func saveHolderDIDDocument() throws
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        try holderDidManager.saveDocument()
     }
     
     public func getDidDocument(type: DidDocumentType) throws -> DIDDocument {

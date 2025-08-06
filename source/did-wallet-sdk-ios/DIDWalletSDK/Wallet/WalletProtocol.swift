@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,16 @@ public protocol WalletCoreImpl {
     func isSavedKey(keyId: String) throws -> Bool
     func deleteWallet() throws -> Bool
     func saveDidDocument(type: DidDocumentType) throws -> Void
-    func isExistWallet() throws -> Bool
+    func isExistWallet() -> Bool
     func generateKey(passcode: String?, keyId: String, algType: AlgorithmType, promptMsg: String?) throws -> Void
     func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType) throws -> Data
+    
     func createDeviceDidDocument() throws -> DIDDocument
     func createHolderDidDocument() throws -> DIDDocument
+    func updateHolderDIDDocument() throws -> DIDDocument
+    func saveHolderDIDDocument() throws
     func getDidDocument(type: DidDocumentType) throws -> DIDDocument
+    
     func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool
     func addCredential(credential: VerifiableCredential) throws -> Bool
     func deleteCredential(ids: [String]) throws -> Bool
