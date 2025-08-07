@@ -46,7 +46,7 @@ public struct CommunicationClient: CommunicationProtocol {
             request.timeoutInterval = Self.defaultTimeoutInterval
             request.setValue("application/json;charset=utf-8", forHTTPHeaderField: "Content-Type")
             request.setValue("application/json", forHTTPHeaderField: "Accept")
-
+            
             request.httpMethod = "GET"
             
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -156,25 +156,30 @@ extension CommunicationClient
     ///   - headerFields: A dictionary of HTTP header fields. Defaults to `defaultHttpHeaderField`.
     ///   - requestJsonable: An optional request body conforming to `Jsonable`.
     ///
-    /// - Returns: A decoded response of type `T`.
-    ///
-    /// - Throws: An error if the request fails or if decoding the response fails.
+    /// - Returns: A tuple containing the decoded response of type `T` and the HTTP status code
+    /// - Throws: An error if the request fails, the URL is invalid,  the server returns an error response or if decoding the response fails.
     public static func sendRequest<T : Jsonable>(urlString : String,
                                                  httpMethod : HTTPMethod = .POST,
                                                  headerFields : StringDictionary = defaultHttpHeaderFields,
-                                                 requestJsonable : Jsonable? = nil) async throws -> T
+                                                 requestJsonable : Jsonable? = nil) async throws -> (T?, Int)
     {
         let jsonData : Data? = (requestJsonable != nil)
         ? try requestJsonable?.toJsonData()
         : nil
         
-        let resultData = try await sendRequest(urlString: urlString,
-                                               httpMethod: httpMethod,
-                                               headerFields: headerFields,
-                                               requestJsonData: jsonData)
+        let (resultData, statusCode) = try await sendRequest(urlString: urlString,
+                                                             httpMethod: httpMethod,
+                                                             headerFields: headerFields,
+                                                             requestJsonData: jsonData)
         
-        let resultObject : T = try .init(from: resultData)
-        return resultObject
+        var resultObject : T?
+        
+        if statusCode == 200
+        {
+            resultObject = try .init(from: resultData)
+        }
+        
+        return (resultObject, statusCode)
     }
     
     /// Sends an asynchronous HTTP request with the specified parameters and returns the raw response data.
@@ -188,13 +193,12 @@ extension CommunicationClient
     ///   - headerFields: A dictionary containing HTTP header fields. Defaults to `defaultHttpHeaderField`.
     ///   - requestJsonData: The optional request body in JSON format as `Data`. Can be `nil` for methods like GET.
     ///
-    /// - Returns: The raw response data returned by the server.
-    ///
+    /// - Returns: A tuple containing the raw response data and the HTTP status code
     /// - Throws: An error if the request fails, the URL is invalid, or the server returns an error response.
     public static func sendRequest(urlString : String,
                                    httpMethod : HTTPMethod = .POST,
                                    headerFields : StringDictionary = defaultHttpHeaderFields,
-                                   requestJsonData : Data? = nil) async throws -> Data
+                                   requestJsonData : Data? = nil) async throws -> (Data, Int)
     {
         WalletLogger.shared.debug("\n************** requestUrl: \(urlString) **************")
         
@@ -213,27 +217,36 @@ extension CommunicationClient
         
         request.httpMethod = httpMethod.rawValue
         
-        if httpMethod == .POST
+        if let requestJsonData = requestJsonData
         {
-            guard let requestJsonData = requestJsonData,
-                  !requestJsonData.isEmpty
-            else
+            if httpMethod == .GET
             {
                 throw CommunicationAPIError.invaildParameter.getError()
             }
-            request.httpBody = requestJsonData
+            else
+            {
+                if requestJsonData.isEmpty
+                {
+                    throw CommunicationAPIError.invaildParameter.getError()
+                }
+                
+                request.httpBody = requestJsonData
+            }
         }
         
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200
+        
+        guard let httpResponse = response as? HTTPURLResponse
         else
         {
-            WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
-            WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
-            throw CommunicationAPIError.serverFail(String(data: data, encoding: .utf8)!).getError()
+            throw CommunicationAPIError.unknown.getError()
         }
-        WalletLogger.shared.debug("errorcode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
-        WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
-        return data
+        
+        let statusCode = httpResponse.statusCode
+        
+        WalletLogger.shared.debug("statusCode: \(String(describing: statusCode))")
+        WalletLogger.shared.debug("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
+        
+        return (data, statusCode)
     }
 }
