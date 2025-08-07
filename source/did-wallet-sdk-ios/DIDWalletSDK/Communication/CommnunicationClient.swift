@@ -22,6 +22,7 @@ public struct CommunicationClient: CommunicationProtocol {
     {
         case GET
         case POST
+        case DELETE
     }
     
     static let defaultTimeoutInterval: TimeInterval = 30
@@ -159,11 +160,11 @@ extension CommunicationClient
     ///
     /// - Throws: An error if the request fails or if decoding the response fails.
     public static func sendRequest<T : Jsonable>(urlString : String,
-                                                  httpMethod : HTTPMethod = .POST,
-                                                  headerFields : StringDictionary = defaultHttpHeaderFields,
-                                                  requestJsonable : Jsonable?) async throws -> T
+                                                 httpMethod : HTTPMethod = .POST,
+                                                 headerFields : StringDictionary = defaultHttpHeaderFields,
+                                                 requestJsonable : Jsonable? = nil) async throws -> T
     {
-        var jsonData : Data? = (requestJsonable != nil)
+        let jsonData : Data? = (requestJsonable != nil)
         ? try requestJsonable?.toJsonData()
         : nil
         
@@ -191,9 +192,9 @@ extension CommunicationClient
     ///
     /// - Throws: An error if the request fails, the URL is invalid, or the server returns an error response.
     public static func sendRequest(urlString : String,
-                                    httpMethod : HTTPMethod = .POST,
-                                    headerFields : StringDictionary = defaultHttpHeaderFields,
-                                    requestJsonData : Data?) async throws -> Data
+                                   httpMethod : HTTPMethod = .POST,
+                                   headerFields : StringDictionary = defaultHttpHeaderFields,
+                                   requestJsonData : Data? = nil) async throws -> Data
     {
         WalletLogger.shared.debug("\n************** requestUrl: \(urlString) **************")
         

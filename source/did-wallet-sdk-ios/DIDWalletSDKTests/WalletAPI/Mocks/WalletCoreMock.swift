@@ -18,6 +18,14 @@ import Foundation
 @testable import DIDWalletSDK
 
 class WalletCoreMock: WalletCoreImpl {
+    func updateHolderDIDDocument() throws -> DIDWalletSDK.DIDDocument {
+        return try DIDDocument(from: "{\"@context\":[\"https://www.w3.org/ns/did/v1\"],\"assertionMethod\":[\"pin\",\"bio\"],\"authentication\":[\"pin\",\"bio\"],\"controller\":\"did:omn:tas\",\"created\":\"2024-08-26T08:37:04Z\",\"deactivated\":false,\"id\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"keyAgreement\":[\"keyagree\"],\"updated\":\"2024-08-26T08:37:04Z\",\"verificationMethod\":[{\"authType\":1,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"keyagree\",\"publicKeyMultibase\":\"z28MaU2yv21wAFi97rj8LC9wuJJaZJZ5bsxWtDvEjDUn9a\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":2,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"pin\",\"publicKeyMultibase\":\"z25yWffgpPpHd9GiZUxaVRhjGj82fnaGWL55xdNdnTduFJ\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":4,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"bio\",\"publicKeyMultibase\":\"zv52y8JMgwQYY2vucXbZQqG5eVMGNhndDV6g2jfdjgoNq\",\"type\":\"Secp256r1VerificationKey2018\"}],\"versionId\":\"1\"}")
+    }
+    
+    func saveHolderDIDDocument() throws {
+        ()
+    }
+    
     func isAnyZKPCredentialsSaved() -> Bool {
         return true
     }
