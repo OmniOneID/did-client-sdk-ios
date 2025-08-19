@@ -34,7 +34,7 @@ class WalletCore: WalletCoreImpl {
         self.vcManager = try! VCManager(fileName: "vc")
         self.zkpManager = try! ZKPManager(fileName: "zkp")
         
-        WalletLogger.shared.debug("secceed create Wallet")
+        WalletLogger.shared.debug("succeed create Wallet")
     }
     
     public func isSavedKey(keyId: String) throws -> Bool {

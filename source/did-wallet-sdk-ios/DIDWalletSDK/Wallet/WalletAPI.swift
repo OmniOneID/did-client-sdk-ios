@@ -378,6 +378,16 @@ extension WalletAPI {
     }
     
     //MARK: Verifiable Credential
+    
+    /// Checks whether any credentials are saved in the wallet.
+    ///
+    /// - Returns: `true` if at least one credential is saved,
+    ///            otherwise `false`.
+    public var isAnyCredentialsSaved : Bool
+    {
+        return walletCore.isAnyCredentialsSaved()
+    }
+    
     /// Revokes the specified verifiable credentials from the wallet using the provided wallet token.
     /// - Parameters:
     ///   - hWalletToken: The token associated with the wallet.

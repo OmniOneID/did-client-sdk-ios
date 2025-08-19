@@ -82,7 +82,7 @@ class WalletCoreMock: WalletCoreImpl {
         self.holderDidManager = try! DIDManager(fileName: "holder")
         self.vcManager = try! VCManager(fileName: "vc")
         
-        WalletLogger.shared.debug("secceed create Wallet")
+        WalletLogger.shared.debug("succeed create Wallet")
     }
     
     public func isSavedKey(keyId: String) throws -> Bool {
