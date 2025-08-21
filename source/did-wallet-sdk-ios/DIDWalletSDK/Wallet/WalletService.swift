@@ -24,12 +24,15 @@ class WalletService: WalletServiceImpl {
         self.walletCore = walletCore
     }
     
-    public func deleteWallet() throws -> Bool {
+    public func deleteWallet(deleteAll: Bool) throws {
         
-        try CoreDataManager.shared.deleteUser()
-        try CoreDataManager.shared.deleteToken()
-        try CoreDataManager.shared.deleteCaPakage()
-        return try walletCore.deleteWallet()
+        if deleteAll
+        {
+            try CoreDataManager.shared.deleteUser()
+            try CoreDataManager.shared.deleteToken()
+            try CoreDataManager.shared.deleteCaPakage()
+        }
+        try walletCore.deleteWallet(deleteAll:deleteAll)
     }
     
     public func createWallet(tasURL: String, walletURL: String) async throws -> Bool {
@@ -443,30 +446,37 @@ class WalletService: WalletServiceImpl {
     
     public func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth {
         
-        guard !authNonce.isEmpty else {
+        guard !authNonce.isEmpty
+        else
+        {
             throw WalletAPIError.verifyParameterFail("authNonce").getError()
         }
+        
         // 1. query did
-        var didDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
+        var didDoc = try walletCore.getDidDocument(type: .HolderDidDocumnet)
         // 2. except proofValue and generate proof
-        let authType = passcode != nil ? "#pin" : "#bio"
+        let authType = passcode != nil
+        ? "pin"
+        : "bio"
+        
         let proof = Proof(created: Date.getUTC0Date(seconds: 0),
-                        proofPurpose: ProofPurpose.authentication,
-                        verificationMethod: didDoc.id + "?versionId=" + didDoc.versionId + authType,
-                        type: ProofType.secp256r1Signature2018)
+                          proofPurpose: .authentication,
+                          verificationMethod: "\(didDoc.id)?versionId=\(didDoc.versionId)#\(authType)",
+                          type: .secp256r1Signature2018)
         didDoc.proof = proof
         // 3. prepare holder did, authnonce, proof(except proofValue)
         var didAuth = DIDAuth(did: didDoc.id, authNonce: authNonce, proof: proof)
         // 4. digest for signature
         let source = try DigestUtils.getDigest(source: didAuth.toJsonData(), digestEnum: DigestEnum.sha256)
-        let signature: Data?
-        if passcode != nil {
-            signature = try walletCore.sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: source, type: DidDocumentType.HolderDidDocumnet)
-        } else {
-            signature = try walletCore.sign(keyId: "bio", pin: nil, data: source, type: DidDocumentType.HolderDidDocumnet)
-        }
+        
+        let signature = try walletCore.sign(keyId: authType,
+                                            pin: passcode?.data(using: .utf8) ?? nil,
+                                            data: source,
+                                            type: .HolderDidDocumnet)
+        
         // 5. proofValue in DidAuth
-        didAuth.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature!)
+        didAuth.proof?.proofValue = MultibaseUtils.encode(type: .base58BTC,
+                                                          data: signature)
         return didAuth
     }
     

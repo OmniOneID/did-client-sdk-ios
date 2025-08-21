@@ -37,25 +37,27 @@ class WalletCore: WalletCoreImpl {
         WalletLogger.shared.debug("succeed create Wallet")
     }
     
-    public func isSavedKey(keyId: String) throws -> Bool {
-        if try holderKeyManager.isKeySaved(id: keyId) == false {
-            return false
-        }
-        
-        return true
+    public func isSavedKey(keyId: String) throws -> Bool
+    {
+        return try holderKeyManager.isKeySaved(id: keyId)
     }
     
-    public func deleteWallet() throws -> Bool {
+    public func deleteWallet(deleteAll: Bool) throws
+    {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
 
-        if deviceDidManager.isSaved {
-            try deviceDidManager.deleteDocument()
+        if deleteAll
+        {
+            if deviceDidManager.isSaved {
+                try deviceDidManager.deleteDocument()
+            }
+            if deviceKeyManager.isAnyKeysSaved {
+                try deviceKeyManager.deleteAllKeys()
+            }
         }
-        if deviceKeyManager.isAnyKeysSaved {
-            try deviceKeyManager.deleteAllKeys()
-        }
+        
         if holderDidManager.isSaved {
             try holderDidManager.deleteDocument()
         }
@@ -69,8 +71,6 @@ class WalletCore: WalletCoreImpl {
         if zkpManager.isAnyCredentialsSaved {
             try zkpManager.removeAllCredentials()
         }
-        
-        return true
     }
     
     public func saveDidDocument(type: DidDocumentType) throws -> Void {
@@ -105,7 +105,7 @@ class WalletCore: WalletCoreImpl {
             let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .pin(value: (passcode?.data(using: .utf8))!))
             try holderKeyManager.generateKey(keyGenRequest: pinKeyRequest)
         } else if keyId == "bio" {
-            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: promptMsg ?? "please regist your biometrics")
+            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .any, prompt: promptMsg ?? "please regist your biometrics")
             try holderKeyManager.generateKey(keyGenRequest: bioKeyRequest)
         }
         // 무인증 (keyagree)
@@ -113,6 +113,11 @@ class WalletCore: WalletCoreImpl {
             let keyagreeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
             try holderKeyManager.generateKey(keyGenRequest: keyagreeKeyRequest)
         }
+    }
+    
+    public func deleteKey(keyId: String) throws
+    {
+        try holderKeyManager.deleteKeys(ids: [keyId])
     }
     
     public func sign(keyId: String, pin: Data? = nil, data: Data, type: DidDocumentType) throws -> Data {

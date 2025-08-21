@@ -32,10 +32,11 @@ public protocol WalletTokenImpl {
 
 public protocol WalletCoreImpl {
     func isSavedKey(keyId: String) throws -> Bool
-    func deleteWallet() throws -> Bool
+    func deleteWallet(deleteAll: Bool) throws
     func saveDidDocument(type: DidDocumentType) throws -> Void
     func isExistWallet() -> Bool
     func generateKey(passcode: String?, keyId: String, algType: AlgorithmType, promptMsg: String?) throws -> Void
+    func deleteKey(keyId: String) throws
     func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType) throws -> Data
     
     func createDeviceDidDocument() throws -> DIDDocument
@@ -75,7 +76,7 @@ public protocol WalletCoreImpl {
 }
 
 public protocol WalletServiceImpl {
-    func deleteWallet() throws -> Bool
+    func deleteWallet(deleteAll : Bool) throws
     func createWallet(tasURL: String, walletURL: String) async throws -> Bool
     func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]?, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data)
     func requestZKProof(hWalletToken:String,

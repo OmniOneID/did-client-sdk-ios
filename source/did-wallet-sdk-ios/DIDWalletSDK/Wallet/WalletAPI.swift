@@ -57,12 +57,11 @@ public class WalletAPI {
     
     /// Deletes the wallet by removing datas and all associated documents and keys.
     ///
-    ///
+    /// - Parameter deleteAll: A flag to delete all wallets
     /// - Throws: An error of type `WalletAPIError` if the wallet is locked or if any deletion operation fails.
-    /// - Returns: A boolean indicating whether the wallet deletion was successful.
-    @discardableResult
-    public func deleteWallet() throws -> Bool {
-        return try walletService.deleteWallet()
+    public func deleteWallet(deleteAll: Bool) throws
+    {
+        try walletService.deleteWallet(deleteAll: deleteAll)
     }
     
     
@@ -332,6 +331,17 @@ extension WalletAPI {
         return try walletCore.getDidDocument(type: type)
     }
     
+    /// Checks whether a key pair with the given identifier is saved.
+    ///
+    /// This method verifies if the specified key ID exists in the wallet.
+    /// - Parameter keyId: The identifier of the key to check.
+    /// - Throws: An error if the key lookup fails.
+    /// - Returns: `true` if the key is saved, otherwise `false`.
+    public func isSavedKey(keyId: String) throws -> Bool
+    {
+        return try walletCore.isSavedKey(keyId: keyId)
+    }
+    
     /// Generates a key pair based on the specified wallet token, key ID, and algorithm type.
     /// - Parameters:
     ///   - hWalletToken: The wallet token used for verification.
@@ -345,10 +355,22 @@ extension WalletAPI {
     ///   An error if the wallet token verification fails or if there are issues with generating the key pair.
     @discardableResult
     public func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Bool {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.CREATE_DID])
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.CREATE_DID, .UPDATE_DID])
         try walletCore.generateKey(passcode: passcode, keyId: keyId, algType: algType, promptMsg: promptMsg)
         return true
-
+    }
+    
+    /// Deletes a key pair associated with the given wallet token and key ID.
+    ///
+    /// This method removes the specified key pair from the wallet.
+    /// - Parameters:
+    ///   - hWalletToken: The wallet token used for verification.
+    ///   - keyId: The identifier of the key pair to delete.
+    /// - Throws: An error if the key pair cannot be found or the deletion fails.
+    public func deleteKeyPair(hWalletToken: String, keyId: String) throws
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.UPDATE_DID])
+        try walletCore.deleteKey(keyId: keyId)
     }
     
     /// Signs the specified data using the private key associated with the specified key ID.
