@@ -127,9 +127,9 @@ struct DIDManager {
     /// - Returns: DID document object
     func getDocument() throws -> DIDDocument {
         
-        increaseVersionId()
         
-        if let didDoc = didDoc {
+        if var didDoc = didDoc {
+            increaseVersionId(didDoc: &didDoc)
             
             return didDoc
         }
@@ -397,9 +397,9 @@ extension DIDManager
     /// Increase the document's version by saved one
     /// If the document didn't saved,
     /// nothing happens
-    private func increaseVersionId()
+    private func increaseVersionId(didDoc: inout DIDDocument)
     {
-        guard var didDoc = didDoc else { return }
+//        guard var didDoc = didDoc else { return }
         
         if !isSaved { return }
         
