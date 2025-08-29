@@ -140,30 +140,39 @@ class WalletCore: WalletCoreImpl {
         let did = try DIDManager.genDID(methodName: "omn")
         WalletLogger.shared.debug("DID String : \(did)")
         
-        if try deviceKeyManager.isKeySaved(id: "assert") == false {
-            let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "assert", methodType: .none)
-            try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device assert Key generate completed")
-        }
+        let assertKeyId   = "assert"
+        let keyagreeKeyId = "keyagree"
+        let authKeyId     = "auth"
         
-        if try deviceKeyManager.isKeySaved(id: "keyagree") == false {
-            let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "keyagree", methodType: .none)
-            try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device keyagree Key 생성 완료")
-        }
+        let keyIds = [assertKeyId, keyagreeKeyId, authKeyId]
         
-        if try deviceKeyManager.isKeySaved(id: "auth") == false {
-            let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "auth", methodType: .none)
-            try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device auth Key generate completed")
+        for keyId in keyIds
+        {
+            if try deviceKeyManager.isKeySaved(id: keyId) == false {
+                let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
+                try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
+                WalletLogger.shared.debug("device \(keyId) Key generate completed")
+            }
         }
-        
-        let keyInfo = try deviceKeyManager.getKeyInfos(ids: ["assert", "keyagree", "auth"])
         
         var keyInfos: [DIDKeyInfo] = .init()
-        keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[0], methodType: [.assertionMethod]))
-        keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.keyAgreement]))
-        keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[2], methodType: [.authentication]))
+        
+        loop : for keyInfo in try deviceKeyManager.getKeyInfos(ids: keyIds)
+        {
+            let methodType : DIDMethodType!
+            switch keyInfo.id
+            {
+            case assertKeyId:
+                methodType = .assertionMethod
+            case keyagreeKeyId:
+                methodType = .keyAgreement
+            case authKeyId:
+                methodType = .authentication
+            default:
+                break loop
+            }
+            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo, methodType: methodType))
+        }
         
         WalletLogger.shared.debug("keyInfos: \(keyInfos)")
         
@@ -183,18 +192,31 @@ class WalletCore: WalletCoreImpl {
         let did = try DIDManager.genDID(methodName: "omn")
         WalletLogger.shared.debug("DID String : \(did)")
         
+        let pinKeyId      = "pin"
+        let bioKeyId      = "bio"
+        let keyagreeKeyId = "keyagree"
         
-        var keyInfo: [KeyInfo]
+        var keyIds = [pinKeyId, keyagreeKeyId]
+        if try holderKeyManager.isKeySaved(id: bioKeyId)
+        {
+            keyIds.append(bioKeyId)
+        }
+        
         var keyInfos: [DIDKeyInfo] = .init()
-        if try holderKeyManager.isKeySaved(id: "bio") {
-            keyInfo = try holderKeyManager.getKeyInfos(ids: ["keyagree", "pin", "bio"])
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[0], methodType: [.keyAgreement]))
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.assertionMethod, .authentication]))
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[2], methodType: [.assertionMethod, .authentication]))
-        } else {
-            keyInfo = try holderKeyManager.getKeyInfos(ids: ["keyagree", "pin"])
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[0], methodType: [.keyAgreement]))
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.assertionMethod, .authentication]))
+        
+        loop : for keyInfo in try holderKeyManager.getKeyInfos(ids: keyIds)
+        {
+            let methodType : DIDMethodType!
+            switch keyInfo.id
+            {
+            case pinKeyId, bioKeyId:
+                methodType = [.assertionMethod, .authentication]
+            case keyagreeKeyId:
+                methodType = .keyAgreement
+            default:
+                break loop
+            }
+            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo, methodType: methodType))
         }
         
         WalletLogger.shared.debug("keyInfos: \(keyInfos)")
@@ -210,6 +232,8 @@ class WalletCore: WalletCoreImpl {
     
     public func updateHolderDIDDocument() throws -> DIDDocument
     {
+        holderDidManager.resetChanges()
+        
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock
         {
             throw WalletAPIError.lockedWallet.getError()
