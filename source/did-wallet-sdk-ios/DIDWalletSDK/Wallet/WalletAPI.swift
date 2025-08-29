@@ -310,7 +310,7 @@ extension WalletAPI {
     //
     public func updateHolderDIDDocument(hWalletToken: String) throws -> DIDDocument {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.UPDATE_DID])
-        return try walletCore.createHolderDidDocument()
+        return try walletCore.updateHolderDIDDocument()
     }
     
     /// Save holder's DID document changes
