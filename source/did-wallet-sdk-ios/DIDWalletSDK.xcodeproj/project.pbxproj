@@ -100,6 +100,7 @@
 		C90D3C212DAFA66C00292BFD /* DataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C202DAFA66C00292BFD /* DataModelTests.swift */; };
 		C90D3C232DAFAC0800292BFD /* DataModelEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */; };
 		C90D3C252DAFAF6200292BFD /* OptionSet+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */; };
+		C95C41482E6562CD00DBD01F /* ResponseTxId.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C41472E6562C800DBD01F /* ResponseTxId.swift */; };
 		C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */; };
 		C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */; };
 		C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D32DDF261B00A67DA3 /* CredInfo.swift */; };
@@ -348,6 +349,7 @@
 		C90D3C202DAFA66C00292BFD /* DataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTests.swift; sourceTree = "<group>"; };
 		C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelEnums.swift; sourceTree = "<group>"; };
 		C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptionSet+Extension.swift"; sourceTree = "<group>"; };
+		C95C41472E6562C800DBD01F /* ResponseTxId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTxId.swift; sourceTree = "<group>"; };
 		C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredDefVO.swift; sourceTree = "<group>"; };
 		C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredSchemaVO.swift; sourceTree = "<group>"; };
 		C96061D32DDF261B00A67DA3 /* CredInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredInfo.swift; sourceTree = "<group>"; };
@@ -681,6 +683,7 @@
 		C90D3BD42DAFA61400292BFD /* VO */ = {
 			isa = PBXGroup;
 			children = (
+				C95C41472E6562C800DBD01F /* ResponseTxId.swift */,
 				C90D3BB82DAFA61400292BFD /* AccE2e.swift */,
 				C90D3BB92DAFA61400292BFD /* AttestedAppInfo.swift */,
 				C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */,
@@ -1442,6 +1445,7 @@
 				C90D3C112DAFA61400292BFD /* WalletTokenPurposeEnum.swift in Sources */,
 				C90D3C122DAFA61400292BFD /* VCPlanList.swift in Sources */,
 				C90D3C132DAFA61400292BFD /* ProposeRegisterUser.swift in Sources */,
+				C95C41482E6562CD00DBD01F /* ResponseTxId.swift in Sources */,
 				C90D3C142DAFA61400292BFD /* DIDAuth.swift in Sources */,
 				C90D3C152DAFA61400292BFD /* ConfirmRestoreDidDoc.swift in Sources */,
 				C90D3C162DAFA61400292BFD /* ProposeRevokeVc.swift in Sources */,
@@ -1752,7 +1756,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = org.omnione.did.sdk.wallet;
@@ -1789,7 +1793,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = org.omnione.did.sdk.wallet;

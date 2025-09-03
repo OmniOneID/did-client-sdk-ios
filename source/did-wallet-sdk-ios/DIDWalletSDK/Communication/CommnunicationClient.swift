@@ -50,15 +50,22 @@ public struct CommunicationClient: CommunicationProtocol {
             request.httpMethod = "GET"
             
             let (data, response) = try await URLSession.shared.data(for: request)
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
-                WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
-                throw CommunicationAPIError.serverFail((String(describing: String(data: data, encoding: .utf8)))).getError()
-            }
-            WalletLogger.shared.debug("errorcode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
+            
+            WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
             WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
+            
+            guard (response as? HTTPURLResponse)?.statusCode == 200
+            else
+            {
+                if let errorString = String(data: data, encoding: .utf8)
+                {
+                    throw CommunicationAPIError.serverFail(errorString).getError()
+                }
+                throw CommunicationAPIError.unknown.getError()
+            }
             return data
-        } catch _ as URLError {
+        } catch _ as URLError
+        {
             throw CommunicationAPIError.incorrectURLconnection.getError()
         }
     }
@@ -92,14 +99,19 @@ public struct CommunicationClient: CommunicationProtocol {
             request.httpBody = requestJsonData
             
             let (data, response) = try await URLSession.shared.data(for: request)
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
-                WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
-                throw CommunicationAPIError.serverFail(String(data: data, encoding: .utf8)!).getError()
-                
-            }
-            WalletLogger.shared.debug("errorcode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
+            
+            WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
             WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
+            
+            guard (response as? HTTPURLResponse)?.statusCode == 200
+            else
+            {
+                if let errorString = String(data: data, encoding: .utf8)
+                {
+                    throw CommunicationAPIError.serverFail(errorString).getError()
+                }
+                throw CommunicationAPIError.unknown.getError()
+            }
             return data
         } catch _ as URLError {
             throw CommunicationAPIError.incorrectURLconnection.getError()
@@ -118,9 +130,9 @@ extension CommunicationClient : ZKPCommunicationProtocol
     public static func getZKPCredentialSchama(hostUrlString : String, id : String) async throws -> ZKPCredentialSchema
     {
         let path : String = "\(hostUrlString)/api-gateway/api/v1/zkp-cred-schema?id=\(id)"
-        let responseData = try await Self.doGet(url: URL(string:path)!)
         
-        let credSchemaVO : CredSchemaVO = try .init(from: responseData)
+        let credSchemaVO : CredSchemaVO = try await sendRequest(urlString: path,
+                                                                httpMethod: .GET)
         
         return try .init(from: try MultibaseUtils.decode(encoded: credSchemaVO.credSchema))
     }
@@ -134,9 +146,9 @@ extension CommunicationClient : ZKPCommunicationProtocol
     public static func getZKPCredentialDefinition(hostUrlString : String, id : String) async throws -> ZKPCredentialDefinition
     {
         let path : String = "\(hostUrlString)/api-gateway/api/v1/zkp-cred-def?id=\(id)"
-        let responseData = try await Self.doGet(url: URL(string:path)!)
         
-        let credDefVO : CredDefVO = try .init(from: responseData)
+        let credDefVO : CredDefVO = try await sendRequest(urlString: path,
+                                                          httpMethod: .GET)
         
         return try .init(from: try MultibaseUtils.decode(encoded: credDefVO.credDef))
     }
@@ -156,12 +168,12 @@ extension CommunicationClient
     ///   - headerFields: A dictionary of HTTP header fields. Defaults to `defaultHttpHeaderField`.
     ///   - requestJsonable: An optional request body conforming to `Jsonable`.
     ///
-    /// - Returns: A tuple containing the decoded response of type `T` and the HTTP status code
+    /// - Returns: Decoded response of type `T`
     /// - Throws: An error if the request fails, the URL is invalid,  the server returns an error response or if decoding the response fails.
     public static func sendRequest<T : Jsonable>(urlString : String,
                                                  httpMethod : HTTPMethod = .POST,
                                                  headerFields : StringDictionary = defaultHttpHeaderFields,
-                                                 requestJsonable : Jsonable? = nil) async throws -> (T?, Int)
+                                                 requestJsonable : Jsonable? = nil) async throws -> T
     {
         let jsonData : Data? = (requestJsonable != nil)
         ? try requestJsonable?.toJsonData()
@@ -172,14 +184,18 @@ extension CommunicationClient
                                                              headerFields: headerFields,
                                                              requestJsonData: jsonData)
         
-        var resultObject : T?
-        
         if statusCode == 200
         {
-            resultObject = try .init(from: resultData)
+            return try .init(from: resultData)
         }
-        
-        return (resultObject, statusCode)
+        else
+        {
+            if let errorString = String(data: resultData, encoding: .utf8)
+            {
+                throw CommunicationAPIError.serverFail(errorString).getError()
+            }
+            throw CommunicationAPIError.unknown.getError()
+        }
     }
     
     /// Sends an asynchronous HTTP request with the specified parameters and returns the raw response data.

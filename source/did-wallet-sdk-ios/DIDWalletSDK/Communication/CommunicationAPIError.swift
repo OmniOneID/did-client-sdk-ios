@@ -48,7 +48,7 @@ enum CommunicationAPIError: CommunicationAPIErrorProtocol {
         case .invaildParameter:
             return ("00002", "invaild parameter")
         case .serverFail(let message):
-            return ("00003", "\(String(describing: message))")
+            return ("00003", message)
         }
     }
 }

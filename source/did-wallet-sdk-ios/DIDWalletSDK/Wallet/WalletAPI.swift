@@ -235,7 +235,7 @@ public class WalletAPI {
     ///   - `WalletApiError` when the wallet token verification fails.
     ///   - Any error thrown by `_getSignedDidAuth`.
     /// - Returns: The signed DID authentication object.
-    public func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth? {
+    public func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth {
         return try walletService.getSignedDidAuth(authNonce: authNonce, passcode: passcode)
     }
     
@@ -455,7 +455,7 @@ extension WalletAPI {
     ///   - hWalletToken: The token associated with the wallet.
     /// - Returns: An array of VerifiableCredential objects representing all stored credentials, or nil if no credentials are saved.
     /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func getAllCrentials(hWalletToken: String) throws -> [VerifiableCredential]? {
+    public func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]? {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
         if walletCore.isAnyCredentialsSaved() {
             return try walletCore.getAllCredentials()
