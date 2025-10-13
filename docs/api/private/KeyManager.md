@@ -20,12 +20,13 @@ iOS KeyManager API
 
 - Subject: KeyManager
 - Writer: JooHyun Park
-- Date: 2024-08-28
-- Version: v1.0.0
+- Date: 2025-10-13
+- Version: v2.0.1
 
-| Version          | Date       | History                           |
-| ---------------- | ---------- | ----------------------------------|
-| v1.0.0           | 2024-08-28 | Initial                           |
+| Version  | Date       | History                      |
+| -------- | ---------- | ---------------------------- |
+| v2.0.1   | 2025-10-13 | Add AuthenticatePin function |
+| v1.0.0   | 2024-08-28 | Initial                      |
 
 
 <div style="page-break-after: always;"></div>
@@ -38,12 +39,13 @@ iOS KeyManager API
     - [3. IsKeySaved](#3-iskeysaved)
     - [4. GenerateKey](#4-generatekey)
     - [5. ChangePin](#5-changepin)
-    - [6. GetKeyInfos by Ids](#6-getkeyinfos-by-ids)
-    - [7. GetKeyInfos by VerifyAuthType](#7-getkeyinfos-by-verifyauthtype)
-    - [8. DeleteKeys](#8-deletekeys)
-    - [9. DeleteAllKeys](#9-deleteallkeys)
-    - [10. Sign](#10-sign)
-    - [11. Verify](#11-verify)
+    - [6. AuthenticatePin](#6-authenticatepin)
+    - [7. GetKeyInfos by Ids](#7-getkeyinfos-by-ids)
+    - [8. GetKeyInfos by VerifyAuthType](#8-getkeyinfos-by-verifyauthtype)
+    - [9. DeleteKeys](#9-deletekeys)
+    - [10. DeleteAllKeys](#10-deleteallkeys)
+    - [11. Sign](#11-sign)
+    - [12. Verify](#12-verify)
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
 - [Enumerators](#enumerators)
@@ -124,7 +126,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-public func isKeySaved(id : String) -> Bool
+func isKeySaved(id : String) -> Bool
 ```
 
 ### Parameters
@@ -161,7 +163,7 @@ if !keyManager.isKeySaved(id: "free")
 
 ```swift
 // Declaration in swift
-public func generateKey(keyGenRequest : KeyGenRequestProtocol) throws
+func generateKey(keyGenRequest : KeyGenRequestProtocol) throws
 ```
 
 ### Parameters
@@ -206,7 +208,7 @@ try keyManager.generateKey(keyGenRequest: bioKeyRequest)
 
 ```swift
 // Declaration in swift
-public func changePin(id : String, oldPin : Data, newPin : Data) throws
+func changePin(id : String, oldPin : Data, newPin : Data) throws
 ```
 
 ### Parameters
@@ -225,6 +227,7 @@ Void
 ```swift
 let keyManager = KeyManager(fileName: "MyWallet")
 
+let pinID = "pin"
 let oldPinData : Data = "password".data(using: .utf8)!
 let newPinData : Data = "newPassword".data(using: .utf8)!
 try keyManager.changePin(id: pinID, oldPin: oldPinData, newPin: newPinData)
@@ -232,7 +235,41 @@ try keyManager.changePin(id: pinID, oldPin: oldPinData, newPin: newPinData)
 
 <br>
 
-## 6. GetKeyInfos by Ids
+## 6. AuthenticatePin
+
+### Description
+`Authenticates pin of the key which is walletPin`
+
+### Declaration
+
+```swift
+// Declaration in swift
+func authenticatePin(id: String, pin: Data) throws
+```
+
+### Parameters
+
+| Name | Type   | Description      | **M/O** | **Note** |
+|------|--------|------------------|---------|----------|
+| id   | String | Key name         | M       |          |
+| pin  | Data   | Pin of key       | M       |          |
+
+### Returns
+
+Void
+
+### Usage
+```swift
+let keyManager = KeyManager(fileName: "MyWallet")
+
+let pinID = "pin"
+let pinData : Data = "password".data(using: .utf8)!
+try keyManager.authenticatePin(id: pinID, pin: pinData)
+```
+
+<br>
+
+## 7. GetKeyInfos by Ids
 
 ### Description
 `Returns one or more KeyInfo which match by its name`
@@ -242,7 +279,7 @@ try keyManager.changePin(id: pinID, oldPin: oldPinData, newPin: newPinData)
 ```swift
 // Declaration in swift
 @discardableResult
-public func getKeyInfos(ids : [String]) throws -> [KeyInfo]
+func getKeyInfos(ids : [String]) throws -> [KeyInfo]
 ```
 
 ### Parameters
@@ -265,7 +302,7 @@ let keyInfos = try keyManager.getKeyInfos(ids: ["pin", "bio"])
 
 <br>
 
-## 7. GetKeyInfos by VerifyAuthType
+## 8. GetKeyInfos by VerifyAuthType
 
 ### Description
 `Returns one or more KeyInfo which match the conditions`
@@ -275,7 +312,7 @@ let keyInfos = try keyManager.getKeyInfos(ids: ["pin", "bio"])
 ```swift
 // Declaration in swift
 @discardableResult
-public func getKeyInfos(keyType : VerifyAuthType) throws -> [KeyInfo]
+func getKeyInfos(keyType : VerifyAuthType) throws -> [KeyInfo]
 ```
 
 ### Parameters
@@ -314,7 +351,7 @@ let andKeyInfos = try keyManager.getKeyInfos(keyType: [.and, .pin, .bio])
 
 <br>
 
-## 8. DeleteKeys
+## 9. DeleteKeys
 
 ### Description
 `Delete the keys which match its name`
@@ -323,7 +360,7 @@ let andKeyInfos = try keyManager.getKeyInfos(keyType: [.and, .pin, .bio])
 
 ```swift
 // Declaration in swift
-public func deleteKeys(ids : [String]) throws
+func deleteKeys(ids : [String]) throws
 ```
 
 ### Parameters
@@ -345,7 +382,7 @@ try keyManager.deleteKeys(ids: ["pin", "bio"])
 
 <br>
 
-## 9. DeleteAllKeys
+## 10. DeleteAllKeys
 
 ### Description
 `Delete All keys`
@@ -354,7 +391,7 @@ try keyManager.deleteKeys(ids: ["pin", "bio"])
 
 ```swift
 // Declaration in swift
-public func deleteAllKeys() throws
+func deleteAllKeys() throws
 ```
 
 ### Parameters
@@ -376,7 +413,7 @@ if keyManager.isAnyKeysSaved
 
 <br>
 
-## 10. Sign
+## 11. Sign
 
 ### Description
 `Sign the digest`
@@ -385,7 +422,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-public func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
+func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
 ```
 
 ### Parameters
@@ -420,7 +457,7 @@ let signature2 = try keyManager.sign(id: "pin", pin: pinData, digest: digest)
 
 <br>
 
-## 11. Verify
+## 12. Verify
 
 ### Description
 `Verify the signature value`
@@ -429,7 +466,7 @@ let signature2 = try keyManager.sign(id: "pin", pin: pinData, digest: digest)
 
 ```swift
 // Declaration in swift
-public func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, signature : Data) throws -> Bool
+func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, signature : Data) throws -> Bool
 ```
 
 ### Parameters
