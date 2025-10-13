@@ -74,7 +74,7 @@ struct KeyManager
         return metas.contains { $0.id == id }
     }
     
-    /// Generate the key which has given request
+    /// Generates the key which has given request
     ///
     /// - Parameters:
     ///   - keyGenRequest: Request which conforms to KeyGenRequestProtocol
@@ -216,7 +216,7 @@ struct KeyManager
                                                      item: detailKeyInfo))
     }
     
-    /// Change pin of the key which is walletPin
+    /// Changes pin of the key which is walletPin
     ///
     /// - Parameters:
     ///   - id: Key name
@@ -298,6 +298,67 @@ struct KeyManager
         
         try storageManager.updateItem(walletItem: .init(meta: keyInfo,
                                                         item: detailKeyInfo))
+    }
+    
+    /// Authenticates pin of the key which is walletPin
+    ///
+    /// - Parameters:
+    ///   - id: Key name
+    ///   - pin: Pin of key
+    func authenticatePin(id: String, pin: Data) throws
+    {
+        if id.isEmpty
+        {
+            throw C.invalidParameter(code: .keyManager,
+                                     name: "id").getError()
+        }
+        
+        if pin.isEmpty
+        {
+            throw C.invalidParameter(code: .keyManager,
+                                     name: "pin").getError()
+        }
+        
+        let walletItem = try storageManager.getItems(by: [id]).first!
+        let keyInfo = walletItem.meta
+        let detailKeyInfo = walletItem.item
+        
+        if keyInfo.accessMethod != .walletPin
+        {
+            throw E.notPinAuthType.getError()
+        }
+        
+        let keyAlgorithm = try getKeyAlgorithm(algorithmType: keyInfo.algorithmType)
+        
+        var priKey : Data
+        do
+        {
+            priKey = try MultibaseUtils.decode(encoded: detailKeyInfo.privateKey!)
+        }
+        catch
+        {
+            throw C.failToDecode(code: .keyManager,
+                                 name: "Data(R)").getError()
+        }
+        
+        let decrypted = try decryptAES256ViaPBKDF2(encryptResult: EncryptResult(encrypted: priKey,
+                                                                                salt: detailKeyInfo.salt!),
+                                                   password: pin)
+        
+        let publicKey : Data
+        do
+        {
+            publicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
+        }
+        catch
+        {
+            throw C.failToDecode(code: .keyManager,
+                                 name: "Data(U)").getError()
+        }
+        
+        try keyAlgorithm.checkKeyPairMatch(privateKey: decrypted,
+                                           publicKey: publicKey)
+        
     }
     
     /// Returns one or more KeyInfo which match the conditions

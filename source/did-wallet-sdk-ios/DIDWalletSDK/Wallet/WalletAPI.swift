@@ -33,7 +33,11 @@ public class WalletAPI {
         walletToken = WalletToken(walletCore)
         walletService = WalletService(walletCore)
     }
-    
+}
+
+//MARK: Device Wallet
+extension WalletAPI
+{
     /// Checks if a wallet exists by verifying if any device keys and device DID document are saved.
     ///
     /// - Returns: A boolean indicating whether a wallet exists.
@@ -63,7 +67,19 @@ public class WalletAPI {
     {
         try walletService.deleteWallet(deleteAll: deleteAll)
     }
-    
+}
+
+//MARK: Token
+extension WalletAPI
+{
+    /// Retrieves signed wallet information with the given wallet token.
+    /// - Returns:
+    ///  The signed wallet information.
+    /// - Throws:
+    ///  An error if verification of the wallet token fails.
+    public func getSignedWalletInfo() throws -> SignedWalletInfo {
+        return try walletService.getSignedWalletInfo()
+    }
     
     @discardableResult
     /// Creates a wallet token seed based on the provided purpose, package name, and user ID.
@@ -87,8 +103,11 @@ public class WalletAPI {
     public func createNonceForWalletToken(walletTokenData: WalletTokenData, APIGatewayURL: String) async throws -> String {
         return try await walletToken.createNonceForWalletToken(walletTokenData: walletTokenData, APIGatewayURL: APIGatewayURL)
     }
-    
-    
+}
+
+//MARK: User Binding
+extension WalletAPI
+{
     /// Attempts to bind a user using the provided wallet token (hWalletToken).
     ///
     /// The function first logs the wallet token for debugging purposes. Then, it verifies the token
@@ -124,6 +143,17 @@ public class WalletAPI {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.DEPERSONALIZED])
         return try walletService.unbindUser()
     }
+}
+ 
+//MARK: Wallet Authentication
+extension WalletAPI
+{
+    /// Checks if the lock is enabled.
+    /// - Returns: A boolean value indicating whether the lock is enabled.
+    /// - Throws: An error if there is an issue checking the lock status.
+    public func isLock() throws -> Bool {
+        return try lockMnr.isRegLock()
+    }
     
     /// Registers or updates the lock status of the wallet using the provided wallet token, passcode, and lock status.
     /// The function first verifies the wallet token to ensure it is valid for the purposes of personalization
@@ -153,33 +183,37 @@ public class WalletAPI {
         return try lockMnr.authenticateLock(passcode: passcode)
     }
     
-    /// This function generates a Verifiable Presentation (VP) by creating a cryptographic proof,
-    /// encrypting the presentation, and returning it along with end-to-end encryption (E2E) parameters. The VP
-    /// is used to authenticate a holder's identity and claims to a verifier.
-    ///
-    /// Parameters:
-    /// - hWalletToken: String - The wallet token representing the holder's wallet.
-    /// - claimInfos: [ClaimInfo]? - Optional. A list of claims that will be included in the presentation.
-    /// - verifierProfile: _RequestProfile - The profile of the verifier, including information such as DID and certificate.
-    /// - APIGatewayURL: String - The URL of the API gateway for communication and verification.
-    /// - passcode: String? (Optional) - An optional passcode for PIN-based authentication.
-    ///
-    /// Returns: (AccE2e, Data) - Returns a tuple containing the AccE2e object with encryption data and the encrypted VP.
-    ///
-    /// Throws: Errors can be thrown for cryptographic failures, data encoding issues, or network communication problems.
-    public func createEncVp(hWalletToken:String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data) {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
-        return try await walletService.requestVp(hWalletToken: hWalletToken, claimInfos: claimInfos, verifierProfile: verifierProfile, APIGatewayURL: APIGatewayURL, passcode: passcode)
+    /// Changes the lock for the wallet
+    /// - Parameters:
+    ///   - oldPasscode: The current passcode that needs to be replaced.
+    ///   - newPasscode: The new passcode that will be set.
+    /// - Throws: An error if the passcode change fails, such as if the old passcode is incorrect.
+    public func changeLock(oldPasscode: String, newPasscode: String) throws
+    {
+        return try lockMnr.changeLock(oldPasscode: oldPasscode, newPasscode: newPasscode)
     }
-    
-    /// Checks if the lock is enabled.
-    /// - Returns: A boolean value indicating whether the lock is enabled.
-    /// - Throws: An error if there is an issue checking the lock status.
-    public func isLock() throws -> Bool {
-        return try lockMnr.isRegLock()
+}
+ 
+//MARK: DID Auth
+extension WalletAPI
+{
+    /// Get signed DID authentication object.
+    /// This function verifies the wallet token and returns a signed DID authentication object.
+    /// - Parameters:
+    ///   - authNonce: The authentication nonce.
+    ///   - pin: The optional PIN to unlock the wallet.
+    /// - Throws:
+    ///   - `WalletApiError` when the wallet token verification fails.
+    ///   - Any error thrown by `_getSignedDidAuth`.
+    /// - Returns: The signed DID authentication object.
+    public func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth {
+        return try walletService.getSignedDidAuth(authNonce: authNonce, passcode: passcode)
     }
-    
-    
+}
+
+//MARK: API for Protocol
+extension WalletAPI
+{
     /// Creates a signed DID Document using the provided passcode.
     /// - Parameter passcode: An optional passcode used for creating the signed DID Document.
     /// - Returns: A SignedDidDoc object representing the signed DID Document.
@@ -195,11 +229,30 @@ public class WalletAPI {
     ///   - hWalletToken: The token used to authenticate the wallet.
     ///   - serverToken: The token used to authenticate the server.
     ///   - signedDidDoc: A signed DID Document representing the user's identity.
-    /// - Returns: A `_M132_RequestRegisterUser` object representing the registration request.
+    /// - Returns: A `_RequestRegisterUser` object representing the registration request.
     /// - Throws: A `WalletApiError` if there is an issue verifying the wallet token.
     public func requestRegisterUser(tasURL: String, txId: String, hWalletToken: String, serverToken: String, signedDIDDoc: SignedDIDDoc) async throws -> _RequestRegisterUser {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.CREATE_DID])
         return try await walletService.requestRegisterUser(tasURL: tasURL, txId: txId, serverToken: serverToken, signedDIDDoc: signedDIDDoc)
+    }
+    
+    /// Requests for update user's DID document.
+    ///
+    /// This function sends a request to the specified URL to update user's DID document
+    /// using the provided parameters including user ID, transaction ID, server token, and DID authentication details.
+    ///
+    /// - Parameters:
+    ///   - tasURL: The tasURL endpoint to send the update request to.
+    ///   - txId: The transaction ID associated with the update request.
+    ///   - hWalletToken: The token used to authenticate the wallet.
+    ///   - serverToken: The token for server authentication.
+    ///   - didAuth: The authentication details for the DID.
+    ///   - signedDidDoc: A signed DID Document representing the user's identity.
+    /// - Throws: An error if the request fails or if the response cannot be parsed.
+    /// - Returns: A `_RequestUpdateDidDoc` object containing the response data.
+    public func requestUpdateUser(tasURL: String, txId: String, hWalletToken: String, serverToken: String, didAuth: DIDAuth?, signedDIDDoc: SignedDIDDoc?) async throws -> _RequestUpdateDidDoc {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.UPDATE_DID])
+        return try await walletService.requestUpdateUser(tasURL: tasURL, txId: txId, serverToken: serverToken, didAuth: didAuth, signedDIDDoc: signedDIDDoc)
     }
     
     /// Requests a restore of a user's DID document.
@@ -218,25 +271,6 @@ public class WalletAPI {
     public func requestRestoreUser(tasURL: String, txId: String, hWalletToken: String, serverToken: String, didAuth: DIDAuth?) async throws -> _RequestRestoreDidDoc {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.RESTORE_DID])
         return try await walletService.requestRestoreUser(tasURL: tasURL, txId: txId, serverToken: serverToken, didAuth: didAuth)
-    }
-    
-    public func requestUpdateUser(tasURL: String, txId: String, hWalletToken: String, serverToken: String, didAuth: DIDAuth?, signedDIDDoc: SignedDIDDoc?) async throws -> _RequestUpdateDidDoc {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.UPDATE_DID])
-        return try await walletService.requestUpdateUser(tasURL: tasURL, txId: txId, serverToken: serverToken, didAuth: didAuth, signedDIDDoc: signedDIDDoc)
-    }
-    
-    
-    /// Get signed DID authentication object.
-    /// This function verifies the wallet token and returns a signed DID authentication object.
-    /// - Parameters:
-    ///   - authNonce: The authentication nonce.
-    ///   - pin: The optional PIN to unlock the wallet.
-    /// - Throws:
-    ///   - `WalletApiError` when the wallet token verification fails.
-    ///   - Any error thrown by `_getSignedDidAuth`.
-    /// - Returns: The signed DID authentication object.
-    public func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth {
-        return try walletService.getSignedDidAuth(authNonce: authNonce, passcode: passcode)
     }
     
     /// Request issue Credential with the given parameters.
@@ -279,26 +313,19 @@ public class WalletAPI {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.REMOVE_VC])
         return try await walletService.requestRevokeVc(tasURL: tasURL, authType: authType, vcId: vcId, issuerNonce: issuerNonce, txId: txId, serverToken: serverToken, passcode: passcode)
     }
-    
-    /// Retrieves signed wallet information with the given wallet token.
-    /// - Returns:
-    ///  The signed wallet information.
-    /// - Throws:
-    ///  An error if verification of the wallet token fails.
-    public func getSignedWalletInfo() throws -> SignedWalletInfo {
-        return try walletService.getSignedWalletInfo()
-    }
 }
 
-extension WalletAPI {
+//MARK: Holder Wallet
+extension WalletAPI
+{
     
-    /// Creates a DID document wallet.
+    /// Creates a DID document
     /// After Finish the registration,
     /// Must call `saveHolderDIDDocument`
     /// - Parameters:
     ///   - hWalletToken: The wallet token used for verification.
     /// - Returns:
-    ///    A DIDDocument object representing the created document, or nil if creation fails.
+    ///    A DIDDocument object representing the created document
     /// - Throws:
     ///   An error if the wallet token verification fails or if there are issues with creating the document.
     @discardableResult
@@ -307,7 +334,15 @@ extension WalletAPI {
         return try walletCore.createHolderDidDocument()
     }
     
-    //
+    /// Updates a DID document
+    /// After Finish the update,
+    /// Must call `saveHolderDIDDocument`
+    /// - Parameters:
+    ///   - hWalletToken: The wallet token used for verification.
+    /// - Returns:
+    ///    A DIDDocument object representing the updated document
+    /// - Throws:
+    ///   An error if the wallet token verification fails or if there are issues with updating the document.
     public func updateHolderDIDDocument(hWalletToken: String) throws -> DIDDocument {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.UPDATE_DID])
         return try walletCore.updateHolderDIDDocument()
@@ -316,9 +351,8 @@ extension WalletAPI {
     /// Save holder's DID document changes
     public func saveHolderDIDDocument() throws
     {
-        try walletCore.saveHolderDIDDocument()
+        try walletCore.saveDidDocument(type: .HolderDidDocumnet)
     }
-    //
     
     /// Retrieves the DID document of the specified type.
     /// - Parameters:
@@ -330,8 +364,21 @@ extension WalletAPI {
     public func getDidDocument(type: DidDocumentType) throws -> DIDDocument {
         return try walletCore.getDidDocument(type: type)
     }
+}
+ 
+//MARK: Key Management
+extension WalletAPI
+{
+    /// Checks if any keys are saved in the holder key manager.
+    /// Throws an error if the wallet is locked.
+    /// - Throws: WalletAPIError if the wallet is locked.
+    /// - Returns: A Boolean value indicating whether any keys are saved.
+    public func isAnyKeysSaved() throws -> Bool {
+        return try walletCore.isAnyKeysSaved()
+    }
     
     /// Checks whether a key pair with the given identifier is saved.
+    /// Throws an error if the wallet is locked.
     ///
     /// This method verifies if the specified key ID exists in the wallet.
     /// - Parameter keyId: The identifier of the key to check.
@@ -360,6 +407,38 @@ extension WalletAPI {
         return true
     }
     
+    /// Retrieves information about a specific type of key stored in a wallet.
+    /// - Parameters:
+    ///   - keyType: The type of keys to retrieve information for.
+    /// - Returns: An array of KeyInfo objects representing the information about the keys.
+    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo] {
+        return try walletCore.getKeyInfos(keyType: keyType)
+    }
+    
+    /// Retrieves key information for the specified identifiers.
+    ///
+    /// This function checks if the wallet is locked. If it is locked, it throws an error.
+    /// Otherwise, it retrieves key information for the provided list of IDs using the holderKeyManager.
+    ///
+    /// - Parameters:
+    ///   - ids: An array of strings representing the identifiers for which to retrieve key information.
+    /// - Throws: An error if the wallet is locked or if retrieving key information fails.
+    /// - Returns: An array of `KeyInfo` objects corresponding to the provided identifiers.
+    public func getKeyInfos(ids: [String]) throws -> [KeyInfo] {
+        return try walletCore.getKeyInfos(ids: ids)
+    }
+    
+    /// Changes the PIN for a specified wallet.
+    /// - Parameters:
+    ///   - id: The identifier for the wallet whose PIN is being changed.
+    ///   - oldPIN: The current PIN that needs to be replaced.
+    ///   - newPIN: The new PIN that will be set.
+    /// - Throws: An error if the PIN change fails, such as if the old PIN is incorrect.
+    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
+        try walletCore.changePin(id: id, oldPIN: oldPIN, newPIN: newPIN)
+    }
+    
     /// Deletes a key pair associated with the given wallet token and key ID.
     ///
     /// This method removes the specified key pair from the wallet.
@@ -373,11 +452,26 @@ extension WalletAPI {
         try walletCore.deleteKey(keyId: keyId)
     }
     
+    /// Authenticates pin of the key which is walletPin
+    ///
+    /// - Parameters:
+    ///   - id: Key name
+    ///   - pin: Pin of key
+    /// - Throws: An error occurs if authentication fails
+    public func authenticatePin(id: String, pin: String) throws
+    {
+        try walletCore.authenticatePin(id: id, pin: pin)
+    }
+}
+ 
+//MARK: Signature
+extension WalletAPI
+{
     /// Signs the specified data using the private key associated with the specified key ID.
     /// - Parameters:
     ///   - keyId: The ID of the key to use for signing.
     ///   - pin: The PIN to use for key decryption (optional).
-    ///   - data: The data to sign.
+    ///   - data: The digest to sign.
     ///   - type: The type of DID document associated with the key.
     /// - Returns:
     ///   The signature generated using the specified key and data.
@@ -391,15 +485,18 @@ extension WalletAPI {
     /// Verifies a signature using the specified wallet token, public key, data, and signature.
     /// - Parameters:
     ///   - publicKey: The public key to use for verification.
-    ///   - data: The data to verify.
+    ///   - data: The digest to verify.
     ///   - signature: The signature to verify.
     /// - Returns: boolean value indicating whether the signature is valid.
     /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
     public func verify(publicKey: Data, data: Data, signature: Data) throws -> Bool {
         return try walletCore.verify(publicKey: publicKey, data: data, signature: signature)
     }
-    
-    //MARK: Verifiable Credential
+}
+ 
+//MARK: Verifiable Credential Management
+extension WalletAPI
+{
     
     /// Checks whether any credentials are saved in the wallet.
     ///
@@ -408,6 +505,30 @@ extension WalletAPI {
     public var isAnyCredentialsSaved : Bool
     {
         return walletCore.isAnyCredentialsSaved()
+    }
+    
+    /// Retrieves the specified verifiable credentials from the wallet using the provided wallet token.
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    ///   - ids: An array of identifiers for the credentials to retrieve.
+    /// - Returns:An array of VerifiableCredential objects representing the retrieved credentials.
+    /// - Throws:WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func getCredentials(hWalletToken: String, ids: [String]) throws -> [VerifiableCredential] {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
+        return try walletCore.getCredential(ids: ids)
+    }
+    
+    /// Retrieves all verifiable credentials stored in the wallet using the provided wallet token.
+    /// - Parameters:
+    ///   - hWalletToken: The token associated with the wallet.
+    /// - Returns: An array of VerifiableCredential objects representing all stored credentials, or nil if no credentials are saved.
+    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
+    public func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]? {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
+        if walletCore.isAnyCredentialsSaved() {
+            return try walletCore.getAllCredentials()
+        }
+        return nil
     }
     
     /// Revokes the specified verifiable credentials from the wallet using the provided wallet token.
@@ -439,32 +560,29 @@ extension WalletAPI {
         return try walletCore.deleteCredential(ids: ids)
     }
     
-    /// Retrieves the specified verifiable credentials from the wallet using the provided wallet token.
-    /// - Parameters:
-    ///   - hWalletToken: The token associated with the wallet.
-    ///   - ids: An array of identifiers for the credentials to retrieve.
-    /// - Returns:An array of VerifiableCredential objects representing the retrieved credentials.
-    /// - Throws:WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func getCredentials(hWalletToken: String, ids: [String]) throws -> [VerifiableCredential] {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
-        return try walletCore.getCredential(ids: ids)
+    /// This function generates a Verifiable Presentation (VP) by creating a cryptographic proof,
+    /// encrypting the presentation, and returning it along with end-to-end encryption (E2E) parameters. The VP
+    /// is used to authenticate a holder's identity and claims to a verifier.
+    ///
+    /// Parameters:
+    /// - hWalletToken: String - The wallet token representing the holder's wallet.
+    /// - claimInfos: [ClaimInfo]? - Optional. A list of claims that will be included in the presentation.
+    /// - verifierProfile: _RequestProfile - The profile of the verifier, including information such as DID and certificate.
+    /// - APIGatewayURL: String - The URL of the API gateway for communication and verification.
+    /// - passcode: String? (Optional) - An optional passcode for PIN-based authentication.
+    ///
+    /// Returns: (AccE2e, Data) - Returns a tuple containing the AccE2e object with encryption data and the encrypted VP.
+    ///
+    /// Throws: Errors can be thrown for cryptographic failures, data encoding issues, or network communication problems.
+    public func createEncVp(hWalletToken:String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data) {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        return try await walletService.requestVp(hWalletToken: hWalletToken, claimInfos: claimInfos, verifierProfile: verifierProfile, APIGatewayURL: APIGatewayURL, passcode: passcode)
     }
-    
-    /// Retrieves all verifiable credentials stored in the wallet using the provided wallet token.
-    /// - Parameters:
-    ///   - hWalletToken: The token associated with the wallet.
-    /// - Returns: An array of VerifiableCredential objects representing all stored credentials, or nil if no credentials are saved.
-    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]? {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes:[.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
-        if walletCore.isAnyCredentialsSaved() {
-            return try walletCore.getAllCredentials()
-        }
-        return nil
-    }
-
-    
-    //MARK: Zero-Knowledge Proof
+}
+ 
+//MARK: Zero-Knowledge Proof Management
+extension WalletAPI
+{
     /// Checks if a ZKP credential with the given ID is saved.
     ///
     /// - Parameter id: Credential ID
@@ -554,48 +672,6 @@ extension WalletAPI {
                                                       proofParam: proofParam,
                                                       proofRequestProfile: proofRequestProfile,
                                                       APIGatewayURL: APIGatewayURL)
-    }
-    
-    //MARK: Key
-    
-    /// Retrieves information about a specific type of key stored in a wallet.
-    /// - Parameters:
-    ///   - keyType: The type of keys to retrieve information for.
-    /// - Returns: An array of KeyInfo objects representing the information about the keys.
-    /// - Throws: WalletApiError with VERIFY_TOKEN_FAIL error code if verification of the wallet token fails.
-    public func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo] {
-        return try walletCore.getKeyInfos(keyType: keyType)
-    }
-    
-    /// Retrieves key information for the specified identifiers.
-    ///
-    /// This function checks if the wallet is locked. If it is locked, it throws an error.
-    /// Otherwise, it retrieves key information for the provided list of IDs using the holderKeyManager.
-    ///
-    /// - Parameters:
-    ///   - ids: An array of strings representing the identifiers for which to retrieve key information.
-    /// - Throws: An error if the wallet is locked or if retrieving key information fails.
-    /// - Returns: An array of `KeyInfo` objects corresponding to the provided identifiers.
-    public func getKeyInfos(ids: [String]) throws -> [KeyInfo] {
-        return try walletCore.getKeyInfos(ids: ids)
-    }
-    
-    /// Checks if any keys are saved in the holder key manager.
-    /// Throws an error if the wallet is locked.
-    /// - Throws: WalletAPIError if the wallet is locked.
-    /// - Returns: A Boolean value indicating whether any keys are saved.
-    public func isAnyKeysSaved() throws -> Bool {
-        return try walletCore.isAnyKeysSaved()
-    }
-    
-    /// Changes the PIN for a specified wallet.
-    /// - Parameters:
-    ///   - id: The identifier for the wallet whose PIN is being changed.
-    ///   - oldPIN: The current PIN that needs to be replaced.
-    ///   - newPIN: The new PIN that will be set.
-    /// - Throws: An error if the PIN change fails, such as if the old PIN is incorrect.
-    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
-        try walletCore.changePin(id: id, oldPIN: oldPIN, newPIN: newPIN)
     }
 }
 

@@ -399,8 +399,6 @@ extension DIDManager
     /// nothing happens
     private func increaseVersionId(didDoc: inout DIDDocument)
     {
-//        guard var didDoc = didDoc else { return }
-        
         if !isSaved { return }
         
         let savedDoc = try! loadSavedDocument()

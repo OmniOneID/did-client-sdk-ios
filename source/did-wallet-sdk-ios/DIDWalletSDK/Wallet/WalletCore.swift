@@ -37,11 +37,7 @@ class WalletCore: WalletCoreImpl {
         WalletLogger.shared.debug("succeed create Wallet")
     }
     
-    public func isSavedKey(keyId: String) throws -> Bool
-    {
-        return try holderKeyManager.isKeySaved(id: keyId)
-    }
-    
+    //MARK: Wallet
     public func deleteWallet(deleteAll: Bool) throws
     {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
@@ -73,26 +69,21 @@ class WalletCore: WalletCoreImpl {
         }
     }
     
-    public func saveDidDocument(type: DidDocumentType) throws -> Void {
+    public func isExistWallet() -> Bool
+    {
+        WalletLogger.shared.debug("Is registered device key : \(deviceKeyManager.isAnyKeysSaved)")
+        WalletLogger.shared.debug("Is registered device DID : \(deviceDidManager.isSaved)")
+        
+        return deviceKeyManager.isAnyKeysSaved && deviceDidManager.isSaved
+    }
+    
+    //MARK: Key
+    public func isSavedKey(keyId: String) throws -> Bool
+    {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
-
-        if type == DidDocumentType.DeviceDidDocument {
-            try deviceDidManager.saveDocument()
-        } else {
-            try holderDidManager.saveDocument()
-        }
-    }
-    
-    public func isExistWallet() -> Bool {
-        
-        if !deviceKeyManager.isAnyKeysSaved && !deviceDidManager.isSaved {
-            WalletLogger.shared.debug("deviceKey not created")
-            return false
-        }
-        
-        return true
+        return try holderKeyManager.isKeySaved(id: keyId)
     }
     
     public func generateKey(passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Void {
@@ -120,6 +111,51 @@ class WalletCore: WalletCoreImpl {
         try holderKeyManager.deleteKeys(ids: [keyId])
     }
     
+    
+    public func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo] {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.getKeyInfos(keyType: keyType)
+    }
+    
+    public func getKeyInfos(ids: [String]) throws -> [KeyInfo] {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.getKeyInfos(ids: ids)
+    }
+    
+    public func isAnyKeysSaved() throws -> Bool {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return holderKeyManager.isAnyKeysSaved
+    }
+    
+    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        guard !id.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("id").getError()
+        }
+        guard !oldPIN.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("oldPIN").getError()
+        }
+        guard !newPIN.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("newPIN").getError()
+        }
+        
+        try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
+    }
+    
+    public func authenticatePin(id: String, pin: String) throws
+    {
+        try holderKeyManager.authenticatePin(id: id, pin: pin.data(using: .utf8)!)
+    }
+    
     public func sign(keyId: String, pin: Data? = nil, data: Data, type: DidDocumentType) throws -> Data {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -132,6 +168,14 @@ class WalletCore: WalletCoreImpl {
         }
     }
     
+    public func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: data, signature: signature)
+    }
+    
+    //MARK: DID Document
     public func createDeviceDidDocument() throws -> DIDDocument {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -263,15 +307,6 @@ class WalletCore: WalletCoreImpl {
         return holderDidDoc
     }
     
-    public func saveHolderDIDDocument() throws
-    {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        
-        try holderDidManager.saveDocument()
-    }
-    
     public func getDidDocument(type: DidDocumentType) throws -> DIDDocument {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -285,11 +320,16 @@ class WalletCore: WalletCoreImpl {
         }
     }
     
-    public func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool {
+    public func saveDidDocument(type: DidDocumentType) throws -> Void {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
-        return try holderKeyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: data, signature: signature)
+
+        if type == DidDocumentType.DeviceDidDocument {
+            try deviceDidManager.saveDocument()
+        } else {
+            try holderDidManager.saveDocument()
+        }
     }
     
     //MARK: Verifiable Credential
@@ -334,44 +374,6 @@ class WalletCore: WalletCoreImpl {
         return try vcManager.makePresentation(claimInfos: claimInfos, presentationInfo: presentationInfo)
     }
     
-    public func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo] {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        return try holderKeyManager.getKeyInfos(keyType: keyType)
-    }
-    
-    public func getKeyInfos(ids: [String]) throws -> [KeyInfo] {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        return try holderKeyManager.getKeyInfos(ids: ids)
-    }
-    
-    public func isAnyKeysSaved() throws -> Bool {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        return holderKeyManager.isAnyKeysSaved
-    }
-    
-    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }        
-        
-        guard !id.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("id").getError()
-        }
-        guard !oldPIN.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("oldPIN").getError()
-        }
-        guard !newPIN.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("newPIN").getError()
-        }
-        
-        try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
-    }
     
     //MARK: Zero-Knowledge Proof
     public func isAnyZKPCredentialsSaved() -> Bool {

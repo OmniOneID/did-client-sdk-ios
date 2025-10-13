@@ -45,9 +45,9 @@ class WalletService: WalletServiceImpl {
         }
         
         // Fetch and save CA (Certified App) information
-        try await self.fatchCaInfo(tasURL: tasURL)
+        try await self.fetchCaInfo(tasURL: tasURL)
         
-        WalletLogger.shared.debug("fatchCaInfo completed")
+        WalletLogger.shared.debug("fetchCaInfo completed")
         
         // Create a device key (device document)
         let deviceKey = try self.createDeviceDocument()
@@ -202,7 +202,7 @@ class WalletService: WalletServiceImpl {
         return (accE2e, encVp)
     }
     
-    private func fatchCaInfo(tasURL: String) async throws
+    private func fetchCaInfo(tasURL: String) async throws
     {
         let path : String = "\(tasURL)/list/api/v1/allowed-ca/list?wallet=org.omnione.did.sdk.wallet"
         

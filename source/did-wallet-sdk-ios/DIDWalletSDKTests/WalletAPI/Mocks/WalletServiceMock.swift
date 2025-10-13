@@ -112,7 +112,7 @@ class WalletServiceMock : WalletServiceImpl
         return (accE2e, encVp)
     }
     // TODO
-    func fatchCaInfo() async throws {
+    func fetchCaInfo() async throws {
         
     }
     
