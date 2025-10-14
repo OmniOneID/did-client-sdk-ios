@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ public protocol WalletLockManagerImpl {
     func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool
     func isRegLock() throws -> Bool
     func authenticateLock(passcode: String) throws -> Data?
+    func changeLock(oldPasscode: String, newPasscode: String) throws
 }
 
 public protocol WalletTokenImpl {
@@ -31,26 +32,36 @@ public protocol WalletTokenImpl {
 }
 
 public protocol WalletCoreImpl {
+    //MARK: Wallet
+    func deleteWallet(deleteAll: Bool) throws
+    func isExistWallet() -> Bool
+    
+    //MARK: Key
     func isSavedKey(keyId: String) throws -> Bool
-    func deleteWallet() throws -> Bool
-    func saveDidDocument(type: DidDocumentType) throws -> Void
-    func isExistWallet() throws -> Bool
     func generateKey(passcode: String?, keyId: String, algType: AlgorithmType, promptMsg: String?) throws -> Void
+    func deleteKey(keyId: String) throws
+    func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo]
+    func getKeyInfos(ids: [String]) throws -> [KeyInfo]
+    func isAnyKeysSaved() throws -> Bool
+    func changePin(id: String, oldPIN: String, newPIN: String) throws
+    func authenticatePin(id: String, pin: String) throws
     func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType) throws -> Data
+    func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool
+    
+    //MARK: DID Document
     func createDeviceDidDocument() throws -> DIDDocument
     func createHolderDidDocument() throws -> DIDDocument
+    func updateHolderDIDDocument() throws -> DIDDocument
     func getDidDocument(type: DidDocumentType) throws -> DIDDocument
-    func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool
+    func saveDidDocument(type: DidDocumentType) throws -> Void
+    
+    //MARK: Verifiable Credential
     func addCredential(credential: VerifiableCredential) throws -> Bool
     func deleteCredential(ids: [String]) throws -> Bool
     func getCredential(ids: [String]) throws -> [VerifiableCredential]
     func getAllCredentials() throws -> [VerifiableCredential]
     func isAnyCredentialsSaved() -> Bool
     func makePresentation(claimInfos: [ClaimInfo], presentationInfo: PresentationInfo) throws -> VerifiablePresentation
-    func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo]
-    func getKeyInfos(ids: [String]) throws -> [KeyInfo]
-    func isAnyKeysSaved() throws -> Bool
-    func changePin(id: String, oldPIN: String, newPIN: String) throws
     
     //MARK: Zero-Knowledge Proof
     func isAnyZKPCredentialsSaved() -> Bool
@@ -71,7 +82,7 @@ public protocol WalletCoreImpl {
 }
 
 public protocol WalletServiceImpl {
-    func deleteWallet() throws -> Bool
+    func deleteWallet(deleteAll : Bool) throws
     func createWallet(tasURL: String, walletURL: String) async throws -> Bool
     func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]?, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data)
     func requestZKProof(hWalletToken:String,

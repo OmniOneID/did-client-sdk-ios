@@ -1,5 +1,18 @@
 # Changelog
 
+## v2.0.1 (2025-10-14)
+
+### Highlights
+- Refactored core components including DIDManager, WalletAPI, and CoreDataManager  
+- Improved error handling and consistency across the SDK  
+- Added new APIs for DID document updates, key management, and authentication  
+- Enhanced communication layer with unified request handling and DELETE support  
+- Fixed incorrect key placement within DID Document
+
+### Important
+- Creating or updating a DID Document no longer triggers automatic save.  
+  You must explicitly call the save API to persist changes.
+
 ## v2.0.0 (2025-05-27)
 
 ### Integration

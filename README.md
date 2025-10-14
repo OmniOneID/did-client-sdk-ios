@@ -61,8 +61,6 @@ did-client-sdk-ios
 | source                  | SDK source code project                         |
 | docs                    | Documentation                                   |
 | ┖ api                   | API guide documentation                         |
-| ┖ design                | Design documentation                            |
-| sample                  | Samples and data                                |
 | README.md               | Overview and description of the project         |
 | CLA.md                  | Contributor License Agreement                   |
 | CHANGELOG.md            | Version-specific changes in the project         |

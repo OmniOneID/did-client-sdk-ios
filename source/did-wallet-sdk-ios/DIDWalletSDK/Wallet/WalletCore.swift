@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 
 import Foundation
-
-
 
 class WalletCore: WalletCoreImpl {
     
@@ -36,28 +34,26 @@ class WalletCore: WalletCoreImpl {
         self.vcManager = try! VCManager(fileName: "vc")
         self.zkpManager = try! ZKPManager(fileName: "zkp")
         
-        WalletLogger.shared.debug("secceed create Wallet")
+        WalletLogger.shared.debug("succeed create Wallet")
     }
     
-    public func isSavedKey(keyId: String) throws -> Bool {
-        if try holderKeyManager.isKeySaved(id: keyId) == false {
-            return false
-        }
-        
-        return true
-    }
-    
-    public func deleteWallet() throws -> Bool {
+    //MARK: Wallet
+    public func deleteWallet(deleteAll: Bool) throws
+    {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
 
-        if deviceDidManager.isSaved {
-            try deviceDidManager.deleteDocument()
+        if deleteAll
+        {
+            if deviceDidManager.isSaved {
+                try deviceDidManager.deleteDocument()
+            }
+            if deviceKeyManager.isAnyKeysSaved {
+                try deviceKeyManager.deleteAllKeys()
+            }
         }
-        if deviceKeyManager.isAnyKeysSaved {
-            try deviceKeyManager.deleteAllKeys()
-        }
+        
         if holderDidManager.isSaved {
             try holderDidManager.deleteDocument()
         }
@@ -71,33 +67,23 @@ class WalletCore: WalletCoreImpl {
         if zkpManager.isAnyCredentialsSaved {
             try zkpManager.removeAllCredentials()
         }
-        
-        return true
     }
     
-    public func saveDidDocument(type: DidDocumentType) throws -> Void {
+    public func isExistWallet() -> Bool
+    {
+        WalletLogger.shared.debug("Is registered device key : \(deviceKeyManager.isAnyKeysSaved)")
+        WalletLogger.shared.debug("Is registered device DID : \(deviceDidManager.isSaved)")
+        
+        return deviceKeyManager.isAnyKeysSaved && deviceDidManager.isSaved
+    }
+    
+    //MARK: Key
+    public func isSavedKey(keyId: String) throws -> Bool
+    {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
-
-        if type == DidDocumentType.DeviceDidDocument {
-            try deviceDidManager.saveDocument()
-        } else {
-            try holderDidManager.saveDocument()
-        }
-    }
-    
-    public func isExistWallet() throws -> Bool {
-//        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-//            throw WalletAPIError.lockedWallet.getError()
-//        }
-        
-        if !deviceKeyManager.isAnyKeysSaved && !deviceDidManager.isSaved {
-            WalletLogger.shared.debug("deviceKey not created")
-            return false
-        }
-        
-        return true
+        return try holderKeyManager.isKeySaved(id: keyId)
     }
     
     public func generateKey(passcode: String? = nil, keyId: String, algType: AlgorithmType, promptMsg: String? = nil) throws -> Void {
@@ -110,7 +96,7 @@ class WalletCore: WalletCoreImpl {
             let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .pin(value: (passcode?.data(using: .utf8))!))
             try holderKeyManager.generateKey(keyGenRequest: pinKeyRequest)
         } else if keyId == "bio" {
-            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: promptMsg ?? "please regist your biometrics")
+            let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .any, prompt: promptMsg ?? "please regist your biometrics")
             try holderKeyManager.generateKey(keyGenRequest: bioKeyRequest)
         }
         // 무인증 (keyagree)
@@ -118,6 +104,56 @@ class WalletCore: WalletCoreImpl {
             let keyagreeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
             try holderKeyManager.generateKey(keyGenRequest: keyagreeKeyRequest)
         }
+    }
+    
+    public func deleteKey(keyId: String) throws
+    {
+        try holderKeyManager.deleteKeys(ids: [keyId])
+    }
+    
+    
+    public func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo] {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.getKeyInfos(keyType: keyType)
+    }
+    
+    public func getKeyInfos(ids: [String]) throws -> [KeyInfo] {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.getKeyInfos(ids: ids)
+    }
+    
+    public func isAnyKeysSaved() throws -> Bool {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return holderKeyManager.isAnyKeysSaved
+    }
+    
+    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        guard !id.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("id").getError()
+        }
+        guard !oldPIN.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("oldPIN").getError()
+        }
+        guard !newPIN.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("newPIN").getError()
+        }
+        
+        try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
+    }
+    
+    public func authenticatePin(id: String, pin: String) throws
+    {
+        try holderKeyManager.authenticatePin(id: id, pin: pin.data(using: .utf8)!)
     }
     
     public func sign(keyId: String, pin: Data? = nil, data: Data, type: DidDocumentType) throws -> Data {
@@ -132,6 +168,14 @@ class WalletCore: WalletCoreImpl {
         }
     }
     
+    public func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: data, signature: signature)
+    }
+    
+    //MARK: DID Document
     public func createDeviceDidDocument() throws -> DIDDocument {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -140,30 +184,39 @@ class WalletCore: WalletCoreImpl {
         let did = try DIDManager.genDID(methodName: "omn")
         WalletLogger.shared.debug("DID String : \(did)")
         
-        if try deviceKeyManager.isKeySaved(id: "assert") == false {
-            let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "assert", methodType: .none)
-            try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device assert Key generate completed")
-        }
+        let assertKeyId   = "assert"
+        let keyagreeKeyId = "keyagree"
+        let authKeyId     = "auth"
         
-        if try deviceKeyManager.isKeySaved(id: "keyagree") == false {
-            let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "keyagree", methodType: .none)
-            try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device keyagree Key 생성 완료")
-        }
+        let keyIds = [assertKeyId, keyagreeKeyId, authKeyId]
         
-        if try deviceKeyManager.isKeySaved(id: "auth") == false {
-            let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "auth", methodType: .none)
-            try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device auth Key generate completed")
+        for keyId in keyIds
+        {
+            if try deviceKeyManager.isKeySaved(id: keyId) == false {
+                let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
+                try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
+                WalletLogger.shared.debug("device \(keyId) Key generate completed")
+            }
         }
-        
-        let keyInfo = try deviceKeyManager.getKeyInfos(ids: ["assert", "keyagree", "auth"])
         
         var keyInfos: [DIDKeyInfo] = .init()
-        keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[0], methodType: [.assertionMethod]))
-        keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.keyAgreement]))
-        keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[2], methodType: [.authentication]))
+        
+        loop : for keyInfo in try deviceKeyManager.getKeyInfos(ids: keyIds)
+        {
+            let methodType : DIDMethodType!
+            switch keyInfo.id
+            {
+            case assertKeyId:
+                methodType = .assertionMethod
+            case keyagreeKeyId:
+                methodType = .keyAgreement
+            case authKeyId:
+                methodType = .authentication
+            default:
+                break loop
+            }
+            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo, methodType: methodType))
+        }
         
         WalletLogger.shared.debug("keyInfos: \(keyInfos)")
         
@@ -183,18 +236,31 @@ class WalletCore: WalletCoreImpl {
         let did = try DIDManager.genDID(methodName: "omn")
         WalletLogger.shared.debug("DID String : \(did)")
         
+        let pinKeyId      = "pin"
+        let bioKeyId      = "bio"
+        let keyagreeKeyId = "keyagree"
         
-        var keyInfo: [KeyInfo]
+        var keyIds = [pinKeyId, keyagreeKeyId]
+        if try holderKeyManager.isKeySaved(id: bioKeyId)
+        {
+            keyIds.append(bioKeyId)
+        }
+        
         var keyInfos: [DIDKeyInfo] = .init()
-        if try holderKeyManager.isKeySaved(id: "bio") {
-            keyInfo = try holderKeyManager.getKeyInfos(ids: ["keyagree", "pin", "bio"])
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[0], methodType: [.keyAgreement]))
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.assertionMethod, .authentication]))
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[2], methodType: [.assertionMethod, .authentication]))
-        } else {
-            keyInfo = try holderKeyManager.getKeyInfos(ids: ["keyagree", "pin"])
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[0], methodType: [.keyAgreement]))
-            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.assertionMethod, .authentication]))
+        
+        loop : for keyInfo in try holderKeyManager.getKeyInfos(ids: keyIds)
+        {
+            let methodType : DIDMethodType!
+            switch keyInfo.id
+            {
+            case pinKeyId, bioKeyId:
+                methodType = [.assertionMethod, .authentication]
+            case keyagreeKeyId:
+                methodType = .keyAgreement
+            default:
+                break loop
+            }
+            keyInfos.append(DIDKeyInfo(keyInfo: keyInfo, methodType: methodType))
         }
         
         WalletLogger.shared.debug("keyInfos: \(keyInfos)")
@@ -205,7 +271,38 @@ class WalletCore: WalletCoreImpl {
         
         WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
-        try holderDidManager.saveDocument()
+        return holderDidDoc
+    }
+    
+    public func updateHolderDIDDocument() throws -> DIDDocument
+    {
+        holderDidManager.resetChanges()
+        
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock
+        {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        
+        let bioKeyId = "bio"
+        
+        if try holderKeyManager.isKeySaved(id: bioKeyId)
+        {
+            let keyInfo = try holderKeyManager.getKeyInfos(ids: [bioKeyId])
+            
+            let keyInfos : DIDKeyInfo = .init(keyInfo: keyInfo[0],
+                                              methodType: [.assertionMethod, .authentication])
+            WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+            
+            try holderDidManager.addVerificationMethod(keyInfo: keyInfos)
+        }
+        else
+        {
+            try holderDidManager.removeVerificationMethod(keyId: bioKeyId)
+        }
+            
+        let holderDidDoc = try holderDidManager.getDocument()
+        
+        WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
         return holderDidDoc
     }
@@ -223,11 +320,16 @@ class WalletCore: WalletCoreImpl {
         }
     }
     
-    public func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool {
+    public func saveDidDocument(type: DidDocumentType) throws -> Void {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
-        return try holderKeyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: data, signature: signature)
+
+        if type == DidDocumentType.DeviceDidDocument {
+            try deviceDidManager.saveDocument()
+        } else {
+            try holderDidManager.saveDocument()
+        }
     }
     
     //MARK: Verifiable Credential
@@ -272,44 +374,6 @@ class WalletCore: WalletCoreImpl {
         return try vcManager.makePresentation(claimInfos: claimInfos, presentationInfo: presentationInfo)
     }
     
-    public func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo] {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        return try holderKeyManager.getKeyInfos(keyType: keyType)
-    }
-    
-    public func getKeyInfos(ids: [String]) throws -> [KeyInfo] {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        return try holderKeyManager.getKeyInfos(ids: ids)
-    }
-    
-    public func isAnyKeysSaved() throws -> Bool {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }
-        return holderKeyManager.isAnyKeysSaved
-    }
-    
-    public func changePin(id: String, oldPIN: String, newPIN: String) throws {
-        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
-            throw WalletAPIError.lockedWallet.getError()
-        }        
-        
-        guard !id.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("id").getError()
-        }
-        guard !oldPIN.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("oldPIN").getError()
-        }
-        guard !newPIN.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("newPIN").getError()
-        }
-        
-        try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
-    }
     
     //MARK: Zero-Knowledge Proof
     public func isAnyZKPCredentialsSaved() -> Bool {

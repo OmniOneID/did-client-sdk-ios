@@ -19,13 +19,14 @@ iOS DIDManager API
 ==
 
 - Topic: DIDManager
-- Author: Woosang Kim
-- Date: 2024-08-28
-- Version: v1.0.0
+- Author: JooHyun Park
+- Date: 2025-09-09
+- Version: v2.0.1
 
-| Version | Date       | Change Details            |
-| ------- | ---------- | ------------------------- |
-| v1.0.0  | 2024-08-28 | Initial version           |
+| Version | Date       | Change Details                 |
+|---------|------------|--------------------------------|
+| v2.0.1  | 2025-09-09 | Add document versioning function |
+| v1.0.0  | 2024-08-28 | Initial version                |
 
 
 <div style="page-break-after: always;"></div>

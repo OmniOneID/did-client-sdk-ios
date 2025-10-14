@@ -20,12 +20,13 @@ iOS KeyManager API
 
 - Subject: KeyManager
 - Writer: 박주현
-- Date: 2024-08-28
-- Version: v1.0.0
+- Date: 2025-10-13
+- Version: v2.0.1
 
-| Version          | Date       | History                 |
-| ---------------- | ---------- | ------------------------|
-| v1.0.0           | 2024-08-28 | 초기 작성                 |
+| Version | Date       | History                |
+| -------- | ---------- | ---------------------- |
+| v2.0.1   | 2025-10-13 | AuthenticatePin 함수 추가 |
+| v1.0.0   | 2024-08-28 | 초기 작성               |
 
 
 <div style="page-break-after: always;"></div>
@@ -38,12 +39,12 @@ iOS KeyManager API
     - [3. IsKeySaved](#3-iskeysaved)
     - [4. GenerateKey](#4-generatekey)
     - [5. ChangePin](#5-changepin)
-    - [6. GetKeyInfos by Ids](#6-getkeyinfos-by-ids)
-    - [7. GetKeyInfos by VerifyAuthType](#7-getkeyinfos-by-verifyauthtype)
-    - [8. DeleteKeys](#8-deletekeys)
-    - [9. DeleteAllKeys](#9-deleteallkeys)
-    - [10. Sign](#10-sign)
-    - [11. Verify](#11-verify)
+    - [7. GetKeyInfos by Ids](#7-getkeyinfos-by-ids)
+    - [8. GetKeyInfos by VerifyAuthType](#8-getkeyinfos-by-verifyauthtype)
+    - [9. DeleteKeys](#9-deletekeys)
+    - [10. DeleteAllKeys](#10-deleteallkeys)
+    - [11. Sign](#11-sign)
+    - [12. Verify](#12-verify)
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
 - [Enumerators](#enumerators)
@@ -124,7 +125,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-public func isKeySaved(id : String) -> Bool
+func isKeySaved(id : String) -> Bool
 ```
 
 ### Parameters
@@ -161,7 +162,7 @@ if !keyManager.isKeySaved(id: "free")
 
 ```swift
 // Declaration in swift
-public func generateKey(keyGenRequest : KeyGenRequestProtocol) throws
+func generateKey(keyGenRequest : KeyGenRequestProtocol) throws
 ```
 
 ### Parameters
@@ -206,7 +207,7 @@ try keyManager.generateKey(keyGenRequest: bioKeyRequest)
 
 ```swift
 // Declaration in swift
-public func changePin(id : String, oldPin : Data, newPin : Data) throws
+func changePin(id : String, oldPin : Data, newPin : Data) throws
 ```
 
 ### Parameters
@@ -232,7 +233,42 @@ try keyManager.changePin(id: pinID, oldPin: oldPinData, newPin: newPinData)
 
 <br>
 
-## 6. GetKeyInfos by Ids
+
+## 6. AuthenticatePin
+
+### Description
+`walletPin인 키의 pin을 인증한다.`
+
+### Declaration
+
+```swift
+// Declaration in swift
+func authenticatePin(id: String, pin: Data) throws
+```
+
+### Parameters
+
+| Name | Type   | Description | **M/O** | **Note** |
+|------|--------|--------------|---------|----------|
+| id   | String | 키 이름       | M       |          |
+| pin  | Data   | 키의 Pin     | M       |          |
+
+### Returns
+
+Void
+
+### Usage
+```swift
+let keyManager = KeyManager(fileName: "MyWallet")
+
+let pinID = "pin"
+let pinData : Data = "password".data(using: .utf8)!
+try keyManager.authenticatePin(id: pinID, pin: pinData)
+```
+
+<br>
+
+## 7. GetKeyInfos by Ids
 
 ### Description
 `이름과 일치하는 하나 이상의 KeyInfo를 반환한다.`
@@ -242,7 +278,7 @@ try keyManager.changePin(id: pinID, oldPin: oldPinData, newPin: newPinData)
 ```swift
 // Declaration in swift
 @discardableResult
-public func getKeyInfos(ids : [String]) throws -> [KeyInfo]
+func getKeyInfos(ids : [String]) throws -> [KeyInfo]
 ```
 
 ### Parameters
@@ -265,7 +301,7 @@ let keyInfos = try keyManager.getKeyInfos(ids: ["pin", "bio"])
 
 <br>
 
-## 7. GetKeyInfos by VerifyAuthType
+## 8. GetKeyInfos by VerifyAuthType
 
 ### Description
 `조건과 일치하는 하나 이상의 KeyInfo을 반환한다.`
@@ -275,7 +311,7 @@ let keyInfos = try keyManager.getKeyInfos(ids: ["pin", "bio"])
 ```swift
 // Declaration in swift
 @discardableResult
-public func getKeyInfos(keyType : VerifyAuthType) throws -> [KeyInfo]
+func getKeyInfos(keyType : VerifyAuthType) throws -> [KeyInfo]
 ```
 
 ### Parameters
@@ -314,7 +350,7 @@ let andKeyInfos = try keyManager.getKeyInfos(keyType: [.and, .pin, .bio])
 
 <br>
 
-## 8. DeleteKeys
+## 9. DeleteKeys
 
 ### Description
 `이름과 일치하는 키를 삭제한다.`
@@ -323,7 +359,7 @@ let andKeyInfos = try keyManager.getKeyInfos(keyType: [.and, .pin, .bio])
 
 ```swift
 // Declaration in swift
-public func deleteKeys(ids : [String]) throws
+func deleteKeys(ids : [String]) throws
 ```
 
 ### Parameters
@@ -345,7 +381,7 @@ try keyManager.deleteKeys(ids: ["pin", "bio"])
 
 <br>
 
-## 9. DeleteAllKeys
+## 10. DeleteAllKeys
 
 ### Description
 `모든 키를 삭제한다.`
@@ -354,7 +390,7 @@ try keyManager.deleteKeys(ids: ["pin", "bio"])
 
 ```swift
 // Declaration in swift
-public func deleteAllKeys() throws
+func deleteAllKeys() throws
 ```
 
 ### Parameters
@@ -376,7 +412,7 @@ if keyManager.isAnyKeysSaved
 
 <br>
 
-## 10. Sign
+## 11. Sign
 
 ### Description
 `해시된 값을 서명한다.`
@@ -385,7 +421,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-public func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
+func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
 ```
 
 ### Parameters
@@ -420,7 +456,7 @@ let signature2 = try keyManager.sign(id: "pin", pin: pinData, digest: digest)
 
 <br>
 
-## 11. Verify
+## 12. Verify
 
 ### Description
 `서명값을 검증한다.`
@@ -429,7 +465,7 @@ let signature2 = try keyManager.sign(id: "pin", pin: pinData, digest: digest)
 
 ```swift
 // Declaration in swift
-public func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, signature : Data) throws -> Bool
+func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, signature : Data) throws -> Bool
 ```
 
 ### Parameters

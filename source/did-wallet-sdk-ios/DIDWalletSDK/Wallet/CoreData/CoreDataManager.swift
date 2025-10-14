@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,266 +17,266 @@
 import Foundation
 import CoreData
 
-class CoreDataManager {
+final class CoreDataManager {
     
-    public static let shared = CoreDataManager()
-    let identifier: String  = "org.omnione.did.sdk.wallet"
-    let model: String       = "WalletModel"
+    static let shared = CoreDataManager()
     
-    lazy var persistentContainer: NSPersistentContainer = {
-        
-        let messageKitBundle = Bundle(identifier: self.identifier)
-        let modelURL = messageKitBundle!.url(forResource: self.model, withExtension: "momd")!
-        let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)
-        let container = NSPersistentContainer(name: self.model, managedObjectModel: managedObjectModel!)
-        container.loadPersistentStores { (storeDescription, error) in
-        
-            if let err = error{
-                fatalError("Loading of store failed:\(err)")
-            }
-            WalletLogger.shared.debug("succeed")
+    private let identifier: String = "org.omnione.did.sdk.wallet"
+    private let modelName: String  = "WalletModel"
+    
+    // MARK: - Persistent Container
+    private(set) lazy var container: NSPersistentContainer = {
+        guard
+            let bundle = Bundle(identifier: identifier),
+            let modelURL = bundle.url(forResource: modelName, withExtension: "momd"),
+            let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
+        else {
+            fatalError("Failed to load Core Data model \(modelName) from bundle \(identifier)")
         }
+        
+        let container = NSPersistentContainer(name: modelName, managedObjectModel: managedObjectModel)
+        
+        // Stability & concurrency-friendly options
+        let desc = container.persistentStoreDescriptions.first ?? NSPersistentStoreDescription()
+        // WAL improves concurrency; safer under frequent writes
+        desc.setOption(["journal_mode": "wal"] as NSDictionary, forKey: NSSQLitePragmasOption)
+        // Keep for extensions/multi-process sync safety (optional but helpful)
+        desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        container.persistentStoreDescriptions = [desc]
+        
+        container.loadPersistentStores { _, error in
+            if let error { fatalError("Loading of store failed: \(error)") }
+            WalletLogger.shared.debug("persistent store load succeed")
+        }
+        
+        // View (main/UI) context: read/light edits only; auto-merge from writer
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.undoManager = nil
         
         return container
     }()
     
+    // MARK: - Contexts
+    
+    /// All writes MUST go through this writer context (serialized, background queue)
+    private lazy var writer: NSManagedObjectContext = {
+        let ctx = container.newBackgroundContext()
+        ctx.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
+        ctx.automaticallyMergesChangesFromParent = true
+        ctx.undoManager = nil
+        return ctx
+    }()
+    
+    // MARK: - Helpers
+    
+    /// Read on main/view context, synchronously (thread-safe)
+    @inline(__always)
+    private func read<T>(_ block: (NSManagedObjectContext) throws -> T) rethrows -> T {
+        try container.viewContext.performAndWait { try block(container.viewContext) }
+    }
+    
+    /// Write on the writer context and SAVE IMMEDIATELY (no coalescing)
+    /// Throws if save fails; also logs detailed Core Data errors.
+    @inline(__always)
+    private func writeImmediate(_ block: @escaping (NSManagedObjectContext) throws -> Void) throws {
+        try writer.performAndWait {
+            do {
+                try block(writer)
+                if writer.hasChanges {
+                    do {
+                        try writer.save() // immediate commit to disk
+                    } catch let e as NSError {
+                        logCoreDataError(e, ctx: writer)
+                        throw e
+                    }
+                }
+            } catch {
+                throw error
+            }
+        }
+    }
+    
+    /// Rich error logging to help pinpoint root causes when crashes/logs are vague
+    private func logCoreDataError(_ e: NSError, ctx: NSManagedObjectContext) {
+        WalletLogger.shared.debug("CD SAVE ERROR: domain=\(e.domain) code=\(e.code) info=\(e.userInfo)")
+        if e.domain == NSCocoaErrorDomain {
+            switch e.code {
+            case NSManagedObjectMergeError:
+                WalletLogger.shared.debug("Merge error (NSManagedObjectMergeError)")
+            case NSManagedObjectConstraintMergeError:
+                WalletLogger.shared.debug("Constraint merge error (likely unique constraint conflict)")
+                // For standard merge conflicts
+                if let mergeConflicts = e.userInfo[NSPersistentStoreSaveConflictsErrorKey] as? [NSMergeConflict] {
+                    for c in mergeConflicts {
+                        let oid = c.sourceObject.objectID
+                        WalletLogger.shared.debug("MergeConflict objectID=\(oid) persisted=\(String(describing: c.persistedSnapshot)) cached=\(String(describing: c.cachedSnapshot))")
+                    }
+                    // For unique-constraint conflicts (NSConstraintConflict)
+                } else if let constraintConflicts = e.userInfo[NSPersistentStoreSaveConflictsErrorKey] as? [NSConstraintConflict] {
+                    for c in constraintConflicts {
+                        let dbID = c.databaseObject?.objectID
+                        let ids = c.conflictingObjects.map { $0.objectID }
+                        WalletLogger.shared.debug("ConstraintConflict constraint=\(String(describing: c.constraint)) dbID=\(String(describing: dbID)) conflictingIDs=\(ids)")
+                    }
+                }
+            case NSPersistentStoreSaveError:
+                WalletLogger.shared.debug("Persistent store save error (NSPersistentStoreSaveError)")
+            case NSPersistentStoreTimeoutError:
+                WalletLogger.shared.debug("Persistent store timeout (possible DB lock)")
+            default:
+                break
+            }
+        }
+    }
+    
+    // MARK: - Ca APIs
+    
     @discardableResult
     public func insertCaPakage(pkgName: String) throws -> Bool {
-            
-        let context = persistentContainer.viewContext
-        let ca = NSEntityDescription.insertNewObject(forEntityName: "CaEntity", into: context) as! CaEntity
-        ca.idx = UUID().uuidString
-        ca.pkgName = pkgName
-        ca.createDate = Date.getUTC0Date(seconds: 0)
-        
-//        do {
-            if context.hasChanges {
-                try context.save()
-            }
-            WalletLogger.shared.debug("Ca saved succesfully")
-            WalletLogger.shared.debug("CaAppId \(String(describing: ca.idx)): \(String(describing: ca.pkgName)) \(String(describing: ca.createDate))")
-            return true
-            
-//        } catch let error {
-//            print("Failed to insert Ca: \(error.localizedDescription)")
-//        }
-//        return false
+        try writeImmediate { ctx in
+            let ca = CaEntity(context: ctx)
+            ca.idx = UUID().uuidString
+            ca.pkgName = pkgName
+            ca.createDate = Date.getUTC0Date(seconds: 0)
+        }
+        WalletLogger.shared.debug("Ca saved successfully")
+        return true
     }
     
     public func selectCaPakage() throws -> Ca? {
-            
-        let context = persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<CaEntity>(entityName: "CaEntity")
-        
-//        do {
-            let cas = try context.fetch(fetchRequest)
-            for (_, ca) in cas.enumerated() {
-                WalletLogger.shared.debug("CaAppId \(String(describing: ca.idx)): \(String(describing: ca.pkgName)) \(String(describing: ca.createDate))")
-                return Ca(idx: ca.idx!, createDate: ca.createDate!, pkgName: ca.pkgName!)
+        try read { ctx in
+            let req = NSFetchRequest<CaEntity>(entityName: "CaEntity")
+            req.fetchLimit = 1
+            if let ca = try ctx.fetch(req).first,
+               let idx = ca.idx, let pkg = ca.pkgName, let date = ca.createDate {
+                WalletLogger.shared.debug("CaAppId \(idx): \(pkg) \(date)")
+                return Ca(idx: idx, createDate: date, pkgName: pkg)
             }
-            
-//        } catch let fetchErr {
-//            print("Failed to fetch Person:",fetchErr)
-//        }
-//        
-        return nil
+            return nil
+        }
     }
     
     @discardableResult
     public func deleteCaPakage() throws -> Bool {
-        
-        let context = persistentContainer.viewContext
-        // 모든 데이터 요청
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "CaEntity")
-
-//        do {
-            let objects = try context.fetch(fetchRequest)
-            for case let object as NSManagedObject in objects {
-                context.delete(object) // 데이터 삭제
-            }
-            try context.performAndWait {
-                if context.hasChanges {
-                    try context.save() // 변경 사항 저장
-                }
-            }
-            return true
-//        } catch {
-//            print("Delete failed: \(error.localizedDescription)")
-//        }
-//        
-//        return false
+        try writeImmediate { ctx in
+            let req = NSFetchRequest<NSFetchRequestResult>(entityName: "CaEntity")
+            let objs = try ctx.fetch(req) as! [NSManagedObject]
+            objs.forEach { ctx.delete($0) }
+        }
+        return true
     }
     
+    // MARK: - Token APIs
+    
     @discardableResult
-    public func insertToken(walletId: String, hWalletToken: String, purpose: String, pkgName: String, nonce: String, pii: String) throws -> Bool {
-        try deleteToken()
-        let context = persistentContainer.viewContext
-        let token = NSEntityDescription.insertNewObject(forEntityName: "TokenEntity", into: context) as! TokenEntity
-        token.idx = UUID().uuidString
-        token.walletId = walletId
-        token.hWalletToken = hWalletToken
-        token.purpose = purpose
-        token.pkgName = pkgName
-        token.nonce = nonce
-        token.pii = pii
-        token.validUntil = Date.getUTC0Date(seconds: 60 * 30)
-        token.createDate = Date.getUTC0Date(seconds: 0)
-        
-//        do {
-        try context.performAndWait {
-            if context.hasChanges {
-                try context.save() // 변경 사항 저장
-            }
+    public func insertToken(walletId: String, hWalletToken: String, purpose: String,
+                            pkgName: String, nonce: String, pii: String) throws -> Bool {
+        // Delete old token(s), then insert new one atomically on writer
+        try writeImmediate { ctx in
+            let delReq = NSFetchRequest<NSFetchRequestResult>(entityName: "TokenEntity")
+            let olds = try ctx.fetch(delReq) as! [NSManagedObject]
+            olds.forEach { ctx.delete($0) }
+            
+            let token = TokenEntity(context: ctx)
+            token.idx = UUID().uuidString
+            token.walletId = walletId
+            token.hWalletToken = hWalletToken
+            token.purpose = purpose
+            token.pkgName = pkgName
+            token.nonce = nonce
+            token.pii = pii
+            token.validUntil = Date.getUTC0Date(seconds: 60 * 30)
+            token.createDate = Date.getUTC0Date(seconds: 0)
         }
-        WalletLogger.shared.debug("token saved succesfully")
-        WalletLogger.shared.debug("save Token idx: \(String(describing: token.idx)) pkgName: \(String(describing: token.pkgName)) walletId: \(String(describing: token.walletId)) hWalletToken: \(String(describing: token.hWalletToken)) nonce: \(String(describing: token.nonce)) pii: \(String(describing: token.pii)) validUntil:  \(String(describing: token.validUntil)) createDate: \(String(describing: token.createDate)) purpose: \(String(describing: token.purpose))")
+        WalletLogger.shared.debug("token saved successfully")
         return true
-//        } catch let error {
-//            print("Failed to insert token: \(error.localizedDescription)")
-//        }
-//        return false
     }
     
     public func selectToken() throws -> Token? {
-            
-        let context = persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<TokenEntity>(entityName: "TokenEntity")
-        
-//        do {
-            let tokens = try context.fetch(fetchRequest)
-            for (_, token) in tokens.enumerated() {
-                WalletLogger.shared.debug("select Token idx: \(String(describing: token.idx)) pkgName: \(String(describing: token.pkgName)) walletId: \(String(describing: token.walletId)) hWalletToken: \(String(describing: token.hWalletToken)) nonce: \(String(describing: token.nonce)) pii: \(String(describing: token.pii)) validUntil:  \(String(describing: token.validUntil)) createDate: \(String(describing: token.createDate)) purpose: \(String(describing: token.purpose))")
-                
-                return Token(idx: token.idx!, walletId: token.walletId!, hWalletToken: token.hWalletToken!, validUntil: token.validUntil!, purpose: token.purpose!, nonce: token.nonce!, pkgName: token.pkgName!, pii: token.pii!, createDate: token.createDate!)
+        try read { ctx in
+            let req = NSFetchRequest<TokenEntity>(entityName: "TokenEntity")
+            req.fetchLimit = 1
+            guard let t = try ctx.fetch(req).first,
+                  let idx = t.idx, let pkg = t.pkgName, let wid = t.walletId,
+                  let h = t.hWalletToken, let n = t.nonce, let p = t.pii,
+                  let vu = t.validUntil, let cd = t.createDate, let pur = t.purpose else {
+                return nil
             }
-            
-//        } catch let fetchErr {
-//            print("Failed to fetch Person:",fetchErr)
-//        }
-//        
-        return nil
+            WalletLogger.shared.debug("select Token idx: \(idx) pkgName: \(pkg) walletId: \(wid) hWalletToken: \(h) nonce: \(n) pii: \(p) validUntil: \(vu) createDate: \(cd) purpose: \(pur)")
+            return Token(idx: idx, walletId: wid, hWalletToken: h,
+                         validUntil: vu, purpose: pur, nonce: n, pkgName: pkg,
+                         pii: p, createDate: cd)
+        }
     }
     
     @discardableResult
     public func deleteToken() throws -> Bool {
-        
-        let context = persistentContainer.viewContext
-        // 모든 데이터 요청
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TokenEntity")
-        
-//        do {
-            let objects = try context.fetch(fetchRequest)
-            for case let object as NSManagedObject in objects {
-                context.delete(object) // 데이터 삭제
-            }
-            
-            try context.performAndWait {
-                if context.hasChanges {
-                    try context.save() // 변경 사항 저장
-                }
-            }
-                
-            return true
-//        } catch {
-//            // Replace this implementation with code to handle the error appropriately.
-//            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-//            let nserror = error as NSError
-//            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-//        }
-        
-//        return false
+        try writeImmediate { ctx in
+            let req = NSFetchRequest<NSFetchRequestResult>(entityName: "TokenEntity")
+            let objs = try ctx.fetch(req) as! [NSManagedObject]
+            objs.forEach { ctx.delete($0) }
+        }
+        return true
     }
+    
+    // MARK: - User APIs
     
     @discardableResult
     public func insertUser(finalEncKey: String, pii: String) throws -> Bool {
+        try writeImmediate { ctx in
+            // Clear existing
+            let delReq = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let olds = try ctx.fetch(delReq) as! [NSManagedObject]
+            olds.forEach { ctx.delete($0) }
             
-        try self.deleteUser()
-        
-        let context = persistentContainer.viewContext
-        let user = NSEntityDescription.insertNewObject(forEntityName: "UserEntity", into: context) as! UserEntity
-        user.idx = UUID().uuidString
-        user.finalEncKey = finalEncKey
-        user.pii = pii
-        user.createDate = Date.getUTC0Date(seconds: 0)
-        user.updateDate = Date.getUTC0Date(seconds: 0)
-        
-//        do {
-            if context.hasChanges {
-                try context.save()
-            }
-            WalletLogger.shared.debug("user saved succesfully")
-            WalletLogger.shared.debug("save User idx: \(String(describing: user.idx)) pii: \(String(describing: user.pii)) createDate: \(String(describing: user.createDate)) updateDate: \(String(describing: user.updateDate)) finalEncKey: \(String(describing: user.finalEncKey)) ")
-            return true
-//        } catch {
-//            print("Failed to insert user: \(error.localizedDescription)")
-//        }
-//        return false
+            let user = UserEntity(context: ctx)
+            user.idx = UUID().uuidString
+            user.finalEncKey = finalEncKey
+            user.pii = pii
+            user.createDate = Date.getUTC0Date(seconds: 0)
+            user.updateDate = Date.getUTC0Date(seconds: 0)
+        }
+        WalletLogger.shared.debug("user saved successfully")
+        return true
     }
     
     public func selectUser() throws -> User? {
-            
-        let context = persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<UserEntity>(entityName: "UserEntity")
-        
-//        do {
-            let users = try context.fetch(fetchRequest)
-            for (_, user) in users.enumerated() {
-                WalletLogger.shared.debug("select User idx: \(String(describing: user.idx)) pii: \(String(describing: user.pii)) createDate: \(String(describing: user.createDate)) updateDate: \(String(describing: user.updateDate)) finalEncKey: \(String(describing: user.finalEncKey))")
-                
-                return User(idx: user.idx ?? "", pii: user.pii ?? "", finalEncKey: user.finalEncKey ?? "", createDate: user.createDate ?? "", updateDate: user.updateDate ?? "")
-            }
-            
-//        } catch let fetchErr {
-//            print("Failed to select Person:",fetchErr)
-//        }
-//        
-        return nil
+        try read { ctx in
+            let req = NSFetchRequest<UserEntity>(entityName: "UserEntity")
+            req.fetchLimit = 1
+            guard let u = try ctx.fetch(req).first else { return nil }
+            return User(idx: u.idx ?? "",
+                        pii: u.pii ?? "",
+                        finalEncKey: u.finalEncKey ?? "",
+                        createDate: u.createDate ?? "",
+                        updateDate: u.updateDate ?? "")
+        }
     }
     
     @discardableResult
     public func updateUser(finalEncKey: String) throws -> Bool {
-
-        let context = persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<UserEntity>(entityName: "UserEntity")
-        fetchRequest.predicate = NSPredicate(format: "finalEncKey == %@", "")
-
-//        do {
-            let users = try context.fetch(fetchRequest)
-            
-            if let user = users.first {
+        try writeImmediate { ctx in
+            let req = NSFetchRequest<UserEntity>(entityName: "UserEntity")
+            // Keep original predicate semantics
+            req.predicate = NSPredicate(format: "finalEncKey == %@", "")
+            req.fetchLimit = 1
+            if let u = try ctx.fetch(req).first {
                 WalletLogger.shared.debug("updateUser finalEncKey: \(finalEncKey)")
-                user.finalEncKey = finalEncKey
+                u.finalEncKey = finalEncKey
+                u.updateDate = Date.getUTC0Date(seconds: 0)
             }
-            if context.hasChanges {
-                try context.save()
-            }
-            return true
-//        } catch {
-//            print("Failed to update finalCek value: \(error.localizedDescription)")
-//        }
-//        return false
+        }
+        return true
     }
     
     @discardableResult
     public func deleteUser() throws -> Bool {
-        
-        let context = persistentContainer.viewContext
-        // 모든 데이터 요청
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
-
-//        do {
-            let objects = try context.fetch(fetchRequest)
-            for case let object as NSManagedObject in objects {
-                context.delete(object) // 데이터 삭제
-            }
-            if context.hasChanges {
-                try context.save() // 변경 사항 저장
-            }
-            return true
-//        } catch {
-//            print("Delete failed: \(error.localizedDescription)")
-//        }
-//        
-//        return false
+        try writeImmediate { ctx in
+            let req = NSFetchRequest<NSFetchRequestResult>(entityName: "UserEntity")
+            let objs = try ctx.fetch(req) as! [NSManagedObject]
+            objs.forEach { ctx.delete($0) }
+        }
+        return true
     }
 }

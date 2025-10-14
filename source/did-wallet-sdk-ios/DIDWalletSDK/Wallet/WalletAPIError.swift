@@ -52,6 +52,8 @@ enum WalletAPIError: WalletAPIErrorProtocol {
     
     // Lock
     case lockedWallet
+    case newPasscodeEqualsOldPasscode
+    case notLockType
     
     // DB
     case insertQueryFail
@@ -108,6 +110,10 @@ enum WalletAPIError: WalletAPIErrorProtocol {
             // Lock
         case .lockedWallet:
             return ("05020", "Wallet is locked")
+        case .newPasscodeEqualsOldPasscode:
+            return ("05021", "Given new passcode is equal to old passcode")
+        case .notLockType:
+            return ("05022", "Wallet is not a lock-type")
             
             // DB
         case .insertQueryFail:
