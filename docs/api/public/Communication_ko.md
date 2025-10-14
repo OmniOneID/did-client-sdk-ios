@@ -33,7 +33,6 @@ iOS Communication API
 <div style="page-break-after: always;"></div>
 
 # 목차
-- [CommunicationClient](#communicationClient)
 - [APIs](#api-목록)
   - [1. doGet](#1-doget)
   - [2. doPost](#2-dopost)
@@ -42,19 +41,6 @@ iOS Communication API
   - [5. sendRequest](#5-sendrequest)
   - [6. sendRequest](#6-sendrequest)
 
-
-# CommunicationClient
-```swift
-public struct CommnunicationClient: CommnunicationProtocol {
-    public static func doGet(url: URL) async throws -> Data {...}
-    public static func doPost(url: URL, requestJsonData: Data) async throws -> Data {...}
-}
-extension CommnunicationClient : ZKPCommunicationProtocol
-{
-    public static func getZKPCredentialSchama(hostUrlString : String, id : String) async throws -> ZKPCredentialSchema
-    public static func getZKPCredentialDefinition(hostUrlString : String, id : String) async throws -> ZKPCredentialDefinition
-}
-```
 
 ## API 목록
 ### 1. doGet
