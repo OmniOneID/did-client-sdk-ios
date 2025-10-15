@@ -18,9 +18,13 @@ import Foundation
 @testable import DIDWalletSDK
 
 class WalletCoreMock: WalletCoreImpl {
+    func authenticatePin(id: String, pin: String) throws {
+        try holderKeyManager.authenticatePin(id: id, pin: pin.data(using: .utf8)!)
+    }
+    
     func deleteKey(keyId: String) throws
     {
-        ()
+        try holderKeyManager.deleteKeys(ids: [keyId])
     }
     
     func updateHolderDIDDocument() throws -> DIDWalletSDK.DIDDocument {
