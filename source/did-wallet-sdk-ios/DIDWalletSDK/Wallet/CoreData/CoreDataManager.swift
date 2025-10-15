@@ -259,7 +259,7 @@ final class CoreDataManager {
         try writeImmediate { ctx in
             let req = NSFetchRequest<UserEntity>(entityName: "UserEntity")
             // Keep original predicate semantics
-            req.predicate = NSPredicate(format: "finalEncKey == %@", "")
+//            req.predicate = NSPredicate(format: "finalEncKey == %@", "")
             req.fetchLimit = 1
             if let u = try ctx.fetch(req).first {
                 WalletLogger.shared.debug("updateUser finalEncKey: \(finalEncKey)")

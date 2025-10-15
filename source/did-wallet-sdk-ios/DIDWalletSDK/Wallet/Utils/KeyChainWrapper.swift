@@ -23,7 +23,7 @@ public struct KeyChainWrapper
     static public func saveKeyChain(cek: Data,
                                     passcode: String) throws -> Data {
         
-        try deleteItem()
+        deleteItem()
         
         WalletLogger.shared.debug("======[H] cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
         
@@ -82,7 +82,7 @@ public struct KeyChainWrapper
 
 extension KeyChainWrapper
 {
-    static func deleteItem() throws
+    static func deleteItem() //throws
     {
         let queryForDelete: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
@@ -93,10 +93,10 @@ extension KeyChainWrapper
         let status = SecItemDelete(queryForDelete as CFDictionary)
         WalletLogger.shared.debug("item delete status: \(status)")
         
-        if status != errSecSuccess
-        {
-            throw WalletAPIError.saveKeychainFail.getError()
-        }
+//        if status != errSecSuccess
+//        {
+//            throw WalletAPIError.saveKeychainFail.getError()
+//        }
     }
     
     static func saveItem(data: Data) throws
