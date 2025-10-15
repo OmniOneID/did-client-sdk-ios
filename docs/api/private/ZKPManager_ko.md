@@ -21,11 +21,11 @@ iOS ZKPManager API
 - Subject: ZKPManager
 - Writer: 박주현
 - Date: 2025-05-27
-- Version: v2.0.0
+- Version: v1.0.1
 
 | Version          | Date       | History                            |
 | ---------------- | ---------- | ---------------------------------- |
-| v2.0.0           | 2025-05-27 | isCredentialSaved 추가              |
+| v1.0.1           | 2025-05-27 | isCredentialSaved 추가              |
 | v1.0.0           | 2025-04-24 | 초기 작성                            |
 
 

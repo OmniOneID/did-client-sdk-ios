@@ -21,7 +21,7 @@ iOS Wallet API
 - Subject: WalletAPI
 - Writer: 박주현
 - Date: 2025-10-13
-- Version: v2.0.0
+- Version: v2.0.1
 
 | Version | Date       | History                               |
 | -------- | ---------- | -------------------------------------- |
