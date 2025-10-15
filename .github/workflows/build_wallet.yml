@@ -22,11 +22,30 @@ jobs:
             -project DIDWalletSDK.xcodeproj \
             -scheme DIDWalletSDK \
             -sdk iphonesimulator
-    - name: Test
+    - name: Pick any available iOS Simulator
+      run: |
+        DEVICE_ID=$(xcrun simctl list devices available -j \
+          | jq -r '.devices
+            | to_entries[]
+            | select(.key | contains("iOS"))
+            | .value[]
+            | select(.isAvailable==true)
+            | .udid' | head -n1)
+        if [ -z "$DEVICE_ID" ]; then
+          echo "No available iOS Simulator found"; exit 1
+        fi
+        echo "DEVICE_ID=$DEVICE_ID" >> $GITHUB_ENV
+    
+    - name: Boot simulator (if needed)
+      run: |
+        xcrun simctl boot "$DEVICE_ID" || true
+        xcrun simctl bootstatus "$DEVICE_ID" -b
+    
+    - name: Test (concrete device but not hardcoded)
       run: |
         cd source/did-wallet-sdk-ios
-          xcodebuild test \
-            -project DIDWalletSDK.xcodeproj \
-            -scheme DIDWalletSDKTests \
-            -destination 'generic/platform=iOS Simulator' \
-            -destination-timeout 120
+        xcodebuild test \
+          -project DIDWalletSDK.xcodeproj \
+          -scheme DIDWalletSDKTests \
+          -destination "id=$DEVICE_ID" \
+          -destination-timeout 120
