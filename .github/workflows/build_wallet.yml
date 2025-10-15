@@ -18,8 +18,15 @@ jobs:
     - name: Build
       run: |
         cd source/did-wallet-sdk-ios
-        xcodebuild build -project DIDWalletSDK.xcodeproj -scheme DIDWalletSDK -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest'
+          xcodebuild clean build \
+            -project DIDWalletSDK.xcodeproj \
+            -scheme DIDWalletSDK \
+            -sdk iphonesimulator
     - name: Test
       run: |
         cd source/did-wallet-sdk-ios
-        xcodebuild test -project DIDWalletSDK.xcodeproj -scheme DIDWalletSDKTests -destination 'platform=iOS Simulator,name=iPhone 15,OS=latest' -destination-timeout 120
+          xcodebuild test \
+            -project DIDWalletSDK.xcodeproj \
+            -scheme DIDWalletSDKTests \
+            -destination 'generic/platform=iOS Simulator' \
+            -destination-timeout 120
