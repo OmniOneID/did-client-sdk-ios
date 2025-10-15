@@ -1172,7 +1172,7 @@ try WalletAPI.shared.deleteKeyPair(
 
 ```swift
 // Declaration in swift
-public func authenticatePin(id: String, pin: Data) throws
+public func authenticatePin(id: String, pin: String) throws
 ```
 
 ### Parameters
@@ -1180,7 +1180,7 @@ public func authenticatePin(id: String, pin: Data) throws
 | Name | Type   | Description      | **M/O** | **Note** |
 |------|--------|------------------|---------|----------|
 | id   | String | Key name         | M       |          |
-| pin  | Data   | Pin of key       | M       |          |
+| pin  | String | Pin of key       | M       |          |
 
 ### Returns
 
