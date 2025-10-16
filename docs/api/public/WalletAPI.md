@@ -35,61 +35,53 @@ iOS Wallet API
 - [APIs](#api-list)
     - [1. Constructor](#1-constructor)
         - [1.1. shared](#11-shared)
-    - [2. Device Wallet](#2-device-wallet)
+    - [2. Wallet](#2-wallet)
         - [2.1. isExistWallet](#21-isexistwallet)
         - [2.2. createWallet](#22-createwallet)
         - [2.3. deleteWallet](#23-deletewallet)
-    - [3. Token](#3-token)
-        - [3.1. getSignedWalletInfo](#31-getsignedwalletinfo)
-        - [3.2. createWalletTokenSeed](#32-createwallettokenseed)
-        - [3.3. createNonceForWalletToken](#33-createnonceforwallettoken)
-    - [4. User Binding](#4-user-binding)
-        - [4.1. bindUser](#41-binduser)
-        - [4.2. unbindUser](#42-unbinduser)
-    - [5. Wallet Authentication](#5-wallet-authentication)
-        - [5.1. isLock](#51-islock)
-        - [5.2. registerLock](#52-registerlock)
-        - [5.3. authenticateLock](#53-authenticatelock)
-        - [5.4. changeLock](#54-changelock)
-    - [6. DID Auth](#6-did-auth)
-        - [6.1. getSignedDidAuth](#61-getsigneddidauth)
-    - [7. API for Protocol](#7-api-for-protocol)
-        - [7.1. createSignedDIDDoc](#71-createsigneddiddoc)
-        - [7.2. requestRegisterUser](#72-requestregisteruser)
-        - [7.3. requestUpdateUser](#73-requestupdateuser)
-        - [7.4. requestRestoreUser](#74-requestrestoreuser)
-        - [7.5. requestIssueVc](#75-requestissuevc)
-        - [7.6. requestRevokeVc](#76-requestrevokevc)
-    - [8. Holder Wallet](#8-holder-wallet)
-        - [8.1. createHolderDIDDocument](#81-createholderdiddocument)
-        - [8.2. updateHolderDIDDocument](#82-updateholderdiddocument)
-        - [8.3. saveHolderDIDDocument](#83-saveholderdiddocument)
-        - [8.4. getDidDocument](#84-getdiddocument)
-    - [9. Key Management](#9-key-management)
-        - [9.1. isAnyKeysSaved](#91-isanykeyssaved)
-        - [9.2. isSavedKey](#92-issavedkey)
-        - [9.3. generateKeyPair](#93-generatekeypair)
-        - [9.4. getKeyInfos(by KeyType)](#94-getkeyinfosby-keytype)
-        - [9.5. getKeyInfos(with Ids)](#95-getkeyinfoswith-ids)
-        - [9.6. changePin](#96-changepin)
-        - [9.7. deleteKeyPair](#97-deletekeypair)
-        - [9.8. authenticatePin](#98-authenticatepin)
-    - [10. Signature](#10-signature)
-        - [10.1. sign](#101-sign)
-        - [10.2. verify](#102-verify)
-    - [11. Verifiable Credential Management](#11-verifiable-credential-management)
-        - [11.1. isAnyCredentialsSaved](#111-isanycredentialssaved)
-        - [11.2. getCredentials](#112-getcredentials)
-        - [11.3. getAllCredentials](#113-getallcredentials)
-        - [11.4. deleteCredentials](#114-deletecredentials)
-        - [11.5. createEncVp](#115-createencvp)
-    - [12. Zero-Knowledge Proof Management](#12-zero-knowledge-proof-management)
-        - [12.1. isZKPCredentialSaved](#121-iszkpcredentialsaved)
-        - [12.2. getZKPCredentials](#122-getzkpcredentials)
-        - [12.3. getAllZKPCrentials](#123-getallzkpcrentials)
-        - [12.4. searchCredentials](#124-searchcredentials)
-        - [12.5. createEncZKProof](#125-createenczkproof)
-        - [12.6. deleteZKPCredentials](#126-deletezkpcredentials)
+        - [2.4. createWalletTokenSeed](#24-createwallettokenseed)
+        - [2.5. createNonceForWalletToken](#25-createnonceforwallettoken)
+        - [2.6. bindUser](#26-binduser)
+        - [2.7. unbindUser](#27-unbinduser)
+        - [2.8. requestRegisterUser](#28-requestregisteruser)
+        - [2.9. getSignedWalletInfo](#29-getsignedwalletinfo)
+    - [3. DIDKey)](#3-didkey)
+        - [3.1. createHolderDIDDocument](#31-createholderdiddocument)
+        - [3.2. createSignedDIDDoc](#32-createsigneddiddoc)
+        - [3.3. getDidDocument](#33-getdiddocument)
+        - [3.4. isAnyKeysSaved](#34-isanykeyssaved)
+        - [3.5. isSavedKey](#35-issavedkey)
+        - [3.6. generateKeyPair](#36-generatekeypair)
+        - [3.7. sign](#37-sign)
+        - [3.8. verify](#38-verify)
+        - [3.9. getSignedDidAuth](#39-getsigneddidauth)
+        - [3.10. updateHolderDIDDocument](#310-updateholderdiddocument)
+        - [3.11. saveHolderDIDDocument](#311-saveholderdiddocument)
+        - [3.12. deleteKeyPair](#312-deletekeypair)
+        - [3.13. requestUpdateUser](#313-requestupdateuser)
+        - [3.14. requestRestoreUser](#314-requestrestoreuser)
+    - [4. Credential)](#4-credential)
+        - [4.1. requestIssueVc](#41-requestissuevc)
+        - [4.2. requestRevokeVc](#42-requestrevokevc)
+        - [4.3. getAllCredentials](#43-getallcredentials)
+        - [4.4. getCredentials](#44-getcredentials)
+        - [4.5. deleteCredentials](#45-deletecredentials)
+        - [4.6. createEncVp](#46-createencvp)
+        - [4.7. isAnyCredentialsSaved](#47-isanycredentialssaved)
+    - [5. ZKP](#5-zkp)
+        - [5.1. createEncZKProof](#51-createenczkproof)
+        - [5.2. searchZKPCredentials](#52-searchzkpcredentials)
+        - [5.3. getAllZKPCredentials](#53-getallzkpcredentials)
+        - [5.4. isAnyZKPCredentialsSaved](#54-isanyzkpcredentialssaved)
+        - [5.5. isZKPCredentialSaved](#55-iszkpcredentialsaved)
+        - [5.6. getZKPCredentials](#56-getzkpcredentials)
+    - [6. SecurityAuth)](#6-securityauth)
+        - [6.1. registerLock](#61-registerlock)
+        - [6.2. authenticateLock](#62-authenticatelock)
+        - [6.3. isLock](#63-islock)
+        - [6.4. changePin](#64-changepin)
+        - [6.5. changeLock](#65-changelock)
+        - [6.6. authenticatePin](#66-authenticatepin)
 
 - [Enumerators](#enumerators)
     - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
@@ -137,7 +129,7 @@ WalletAPI.shared
 
 <br>
 
-## 2. Device Wallet
+## 2. Wallet
 
 ## 2.1. isExistWallet
 
@@ -228,40 +220,7 @@ let success = try WalletAPI.deleteWallet()
 
 <br>
 
-## 3. Token
-
-## 3.1. getSignedWalletInfo
-
-### Description
-`signed wallet information.`
-
-### Declaration
-
-```swift
-func getSignedWalletInfo(String hWalletToken) throws -> SignedWalletInfo
-```
-
-### Parameters
-
-| Name         | Type   | Description    | **M/O** | **Note** |
-|--------------|--------|----------------|---------|----------|
-| hWalletToken | String | Wallet Token   | M       |          |
-
-### Returns
-
-| Type             | Description                 | **M/O** | **Note**                                |
-|------------------|-----------------------------|---------|-----------------------------------------|
-| SignedWalletInfo | Signed WalletInfo object    | M       | [SignedWalletInfo](#5-signedwalletinfo) |
-
-### Usage
-
-```swift
-let signedInfo = try WalletAPI.shared.getSignedWalletInfo(hWalletToken: hWalletToken);
-```
-
-<br>
-
-## 3.2. createWalletTokenSeed
+## 2.4. createWalletTokenSeed
 
 ### Description
 `Generate a wallet token seed.`
@@ -294,7 +253,7 @@ let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, "or
 
 <br>
 
-## 3.3. createNonceForWalletToken
+## 2.5. createNonceForWalletToken
 
 ### Description
 `Generate a nonce for creating wallet tokens.`
@@ -326,9 +285,7 @@ let nonce = try WalletAPI.shared.createNonceForWalletToken(walletTokenData: wall
 
 <br>
 
-## 4. User Binding
-
-## 4.1. bindUser
+## 2.6. bindUser
 
 ### Description
 `Perform user personalization in Wallet.`
@@ -359,7 +316,7 @@ let success = try WalletAPI.shared.bindUser(hWalletToken: hWalletToken);
 
 <br>
 
-## 4.2. unbindUser
+## 2.7. unbindUser
 
 ### Description
 `Perform user depersonalization.`
@@ -390,202 +347,8 @@ let success = try WalletAPI.shared.unbindUser(hWalletToken: hWalletToken);
 
 <br>
 
-## 5. Wallet Authentication
 
-## 5.1. isLock
-
-### Description
-`Check the lock type of the wallet.`
-
-### Declaration
-
-```swift
-func isLock(hWalletToken: String) throws -> Bool
-```
-
-### Parameters
-
-| Name         | Type   | Description  | **M/O** | **Note** |
-|--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | M       |          |
-
-### Returns
-
-| Type | Description                     | **M/O** | **Note** |
-|------|---------------------------------|---------|----------|
-| Bool | Returns the wallet lock type.   | M       |          |
-
-### Usage
-
-```swift
-let isLocked = try WalletAPI.shared.isLock(hWalletToken: hWalletToken);
-```
-
-<br>
-
-## 5.2. registerLock
-
-### Description
-`Sets the lock status of the wallet.`
-
-### Declaration
-
-```swift
-func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool
-```
-
-### Parameters
-
-| Name         | Type   | Description                  | **M/O** | **Note** |
-|--------------|--------|------------------------------|---------|----------|
-| hWalletToken | String | Wallet Token                 | M       |          |
-| passcode     | String | Unlock PIN                   | M       |          |
-| isLock       | Bool   | Whether the lock is activated | M      |          |
-
-### Returns
-
-| Type | Description                                    | **M/O** | **Note** |
-| ---- | ---------------------------------------------- | ------- | -------- |
-| Bool | Returns whether the lock setup was successful. | M       |          |
-
-### Usage
-
-```swift
-let success = try WalletAPI.shared.registerLock(hWalletToken: hWalletToken, passcode:"123456", isLock: true);
-```
-
-<br>
-
-## 5.3. authenticateLock
-
-### Description
-`Perform authentication to unlock the wallet.`
-
-### Declaration
-
-```swift
-func authenticateLock(hWalletToken: String, passcode: String) throws -> Data?
-```
-
-### Parameters
-
-| Name         | Type   | Description  | **M/O** | **Note**                  |
-| ------------ | ------ | ------------ | ------- | ------------------------- |
-| hWalletToken | String | Wallet Token | M       |                           |
-| passcode     | String | Unlock PIN   | M       | PIN set when registerLock |
-
-### Returns
-
-Void
-
-### Usage
-
-```swift
-try WalletAPI.shared.authenticateLock(hWalletToken: hWalletToken, passcode: "123456");
-```
-
-<br>
-
-## 5.4. changeLock
-
-### Description
-`Changes the lock for the wallet`
-
-### Declaration
-
-```swift
-public func changeLock(oldPasscode: String, newPasscode: String) throws
-```
-
-### Parameters
-
-| Name          | Type   | Description              | **M/O** | **Note**                  |
-| ------------- | ------ | ------------------------ | ------- | ------------------------- |
-| oldPasscode   | String | Current set passcode     | M       |                           |
-| newPasscode   | String | passcode to be changed   | M       |                           |
-
-### Returns
-
-Void
-
-### Usage
-
-```swift
-try WalletAPI.shared.changeLock(oldPasscode: "123456", newPasscode: "987654");
-```
-
-<br>
-
-## 6. DID Auth
-
-## 6.1. getSignedDidAuth
-
-### Description
-`Perform DIDAuth signing.`
-
-### Declaration
-
-```swift
-func getSignedDIDAuth(hWalletToken: String, authNonce: String, didType: DidDocumentType, passcode: String ?= nil) throws -> DIDAuth
-```
-
-### Parameters
-
-| Name         | Type            | Description        | **M/O** | **Note** |
-| ------------ | --------------- | ------------------ | ------- | -------- |
-| hWalletToken | String          | Wallet Token       | M       |          |
-| authNonce    | String          | profile auth nonce | M       |          |
-| didType      | DIDDocumentType | did type           | M       |          |
-| passcode     | String          | user passcode      | M       |          |
-
-### Returns
-
-| Type            | Description                  | **M/O** | **Note** |
-|-----------------|-----------------------|---------|----------|
-| DIDAuth         | Signed DIDAuth object   | M       |[DIDAuth](#6-didauth)          |
-
-### Usage
-
-```swift
-let signedDIDAuth = try WalletAPI.shared.getSignedDIDAuth(hWalletToken: hWalletToken, authNonce: authNunce, didType: DidDocumentType.holderDIDDcument, passcode: passcode);
-```
-
-<br>
-
-## 7. API for Protocol
-
-## 7.1. createSignedDIDDoc
-
-### Description
-`Creates a signed user DID Document object.`
-
-### Declaration
-
-```swift
-func createSignedDIDDoc(hWalletToken: String, passcode: String) throws -> SignedDIDDoc
-```
-
-### Parameters
-
-| Name         | Type   | Description  | **M/O** | **Note** |
-|--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | M       |          |
-
-### Returns
-
-| Type        | Description                 | **M/O** | **Note**                    |
-|-------------|-----------------------------|---------|-----------------------------|
-| SignedDidDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
-
-### Usage
-
-```swift
-let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(hWalletToken: hWalletToken);
-```
-
-<br>
-
-## 7.2. requestRegisterUser
+## 2.8. requestRegisterUser
 
 ### Description
 `Request user registration.`
@@ -621,7 +384,452 @@ let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL
 
 <br>
 
-## 7.3. requestUpdateUser
+## 2.9. getSignedWalletInfo
+
+### Description
+`signed wallet information.`
+
+### Declaration
+
+```swift
+func getSignedWalletInfo(String hWalletToken) throws -> SignedWalletInfo
+```
+
+### Parameters
+
+| Name         | Type   | Description    | **M/O** | **Note** |
+|--------------|--------|----------------|---------|----------|
+| hWalletToken | String | Wallet Token   | M       |          |
+
+### Returns
+
+| Type             | Description                 | **M/O** | **Note**                                |
+|------------------|-----------------------------|---------|-----------------------------------------|
+| SignedWalletInfo | Signed WalletInfo object    | M       | [SignedWalletInfo](#5-signedwalletinfo) |
+
+### Usage
+
+```swift
+let signedInfo = try WalletAPI.shared.getSignedWalletInfo(hWalletToken: hWalletToken);
+```
+
+<br>
+
+## 3. DIDKey
+
+## 3.1. createHolderDIDDocument
+
+### Description
+```
+Create a user DID Document.
+
+After Finish the registration,
+Must call saveHolderDIDDocument
+```
+
+### Declaration
+
+```swift
+func createHolderDIDDocument(hWalletToken: String) throws -> DIDDocument
+```
+
+### Parameters
+
+| Name         | Type   | Description  | **M/O** | **Note** |
+|--------------|--------|--------------|---------|----------|
+| hWalletToken | String | Wallet Token | O       |          |
+
+### Returns
+
+| Type        | Description   | **M/O** | **Note** |
+|-------------|---------------|---------|----------|
+| DIDDocument | DID Document  | M       |          |
+
+### Usage
+
+```swift
+let didDoc = try WalletAPI.shared.createHolderDIDDocument(hWalletToken: hWalletToken);
+```
+
+<br>
+
+## 3.2. createSignedDIDDoc
+
+### Description
+`Creates a signed user DID Document object.`
+
+### Declaration
+
+```swift
+func createSignedDIDDoc(hWalletToken: String, passcode: String) throws -> SignedDIDDoc
+```
+
+### Parameters
+
+| Name         | Type   | Description  | **M/O** | **Note** |
+|--------------|--------|--------------|---------|----------|
+| hWalletToken | String | Wallet Token | M       |          |
+
+### Returns
+
+| Type        | Description                 | **M/O** | **Note**                    |
+|-------------|-----------------------------|---------|-----------------------------|
+| SignedDidDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
+
+### Usage
+
+```swift
+let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(hWalletToken: hWalletToken);
+```
+
+<br>
+
+## 3.3. getDidDocument
+
+### Description
+`Look up the DID Document.`
+
+### Declaration
+
+```swift
+func getDidDocument(type: DidDocumentType) throws -> DIDDocument
+```
+
+### Parameters
+
+| Name | Type | Description                          | **M/O** | **Note**              |
+|------|------|--------------------------------------|---------|-----------------------|
+| type | Enum | DeviceDidDocument, HolderDidDocumnet | M       | DIDDataModel reference |
+
+### Returns
+
+| Type         | Description                  | **M/O** | **Note** |
+|--------------|-----------------------|---------|----------|
+| DIDDocument  | DID Document       | M       |          |
+
+### Usage
+
+```swift
+let didDoc = try WalletAPI.shared.getDidDocument(type: .HolderDidDocumnet)
+```
+
+<br>
+
+## 3.4. isAnyKeysSaved
+
+### Description
+`Returns whether a key is stored.`
+
+### Declaration
+
+```swift
+public func isAnyKeysSaved() throws -> Bool
+```
+
+### Returns
+
+| Type | Description                                      | **M/O** | **Note** |
+|------|--------------------------------------------------|---------|----------|
+| Bool | `true` if any keys are saved, otherwise `false`. | M       |          |
+
+### Usage
+
+```swift
+let isAnyKey = try! WalletAPI.shared.isAnyKeysSaved()
+```
+
+<br>
+
+## 3.5. isSavedKey
+
+### Description
+```
+Checks whether a key pair with the given identifier is saved.
+Throws an error if the wallet is locked.
+
+This method verifies if the specified key ID exists in the wallet.
+```
+
+### Declaration
+
+```swift
+public func isSavedKey(keyId: String) throws -> Bool
+```
+
+### Parameters
+
+| Name  | Type   | Description                        | **M/O** | **Note** |
+|-------|--------|------------------------------------|---------|----------|
+| keyId | String | The identifier of the key to check | M       |          |
+
+
+### Returns
+
+| Type | Description                                    | **M/O** | **Note** |
+|------|------------------------------------------------|---------|----------|
+| Bool | `true` if the key is saved, otherwise `false`. | M       |          |
+
+### Usage
+
+```swift
+let hasKey = try WalletAPI.shared.isSavedKey(keyId: "pin"))
+if hasKey {
+    print("Key named pin is saved.")
+} else {
+    print("Key named pin is not saved.")
+}
+
+```
+
+<br>
+
+## 3.6. generateKeyPair
+
+### Description
+`Generate a PIN key pair for signing and store it in your Wallet.`
+
+### Declaration
+
+```swift
+func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: String, algType:AlgorithmType, promptMsg: String? = nil) throws -> Bool
+```
+
+### Parameters
+
+| Name         | Type          | Description                                | **M/O** | **Note**                              |
+|--------------|---------------|--------------------------------------------|---------|---------------------------------------|
+| hWalletToken | String        | Wallet Token                               | M       |                                       |
+| passCode     | String        | PIN for signing                            | M       | When generating a key for PIN signing |
+| keyId        | String        | PIN for ID                                 | M       |                                       |
+| algType      | AlgorithmType | Key algorithm type for signing             | M       |                                       |
+| promptMsg    | String        | Biometric authentication prompt message    | M       |                                       |
+
+### Returns
+
+Bool
+
+### Usage
+
+```swift
+let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, passcode:"123456", keyId:"pin", algType: AlgoritheType.secp256r1);
+
+
+let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, keyId:"bio", algType: AlgoritheType.secp256r1, promptMsg: "message");
+```
+
+<br>
+
+## 3.7. sign
+
+### Description
+`Signs the specified data using the private key associated with the given key ID.`
+
+### Declaration
+
+```swift
+@discardableResult
+public func sign(keyId: String,
+                 pin: Data? = nil,
+                 data: Data,
+                 type: DidDocumentType) throws -> Data
+
+```
+
+### Parameters
+
+| Parameter | Type            | Description                                      | **M/O** | **Note** |
+| --------- | --------------- | ------------------------------------------------ | ------- | -------- |
+| keyId     | String          | The ID of the key to use for signing             | M       |          |
+| pin       | Data            | The PIN for key decryption (optional)            | O       |          |
+| data      | Data            | The digest to sign                               | M       |          |
+| type      | DidDocumentType | The type of DID document associated with the key | M       |          |
+
+### Returns
+
+| Type | Description                                              | **M/O** | **Note** |
+| ---- | -------------------------------------------------------- | ------- | -------- |
+| Data | The signature generated using the specified key and data | M       |          |
+
+
+### Usage
+
+```swift
+let signature = try WalletAPI.shared.sign(
+    keyId: "key_identifier",
+    pin: pinData,
+    data: messageData,
+    type: .authentication
+)
+```
+
+<br>
+
+## 3.8. verify
+
+### Description
+`Verifies a signature using the specified public key, data, and signature.`
+
+### Declaration
+
+```swift
+public func verify(publicKey: Data,
+                   data: Data,
+                   signature: Data) throws -> Bool
+```
+
+### Parameters
+
+| Parameter | Type | Description                            | **M/O** | **Note** |
+| --------- | ---- | -------------------------------------- | ------- | -------- |
+| publicKey | Data | The public key to use for verification | M       |          |
+| data      | Data | The digest data to verify              | M       |          |
+| signature | Data | The signature to verify                | M       |          |
+
+### Returns
+
+| Type | Description                                               | **M/O** | **Note** |
+| ---- | --------------------------------------------------------- | ------- | -------- |
+| Bool | A boolean value indicating whether the signature is valid | M       |          |
+
+### Usage
+
+```swift
+let isValid = try WalletAPI.shared.verify(
+    publicKey: publicKeyData,
+    data: messageData,
+    signature: signatureData
+)
+print("Signature valid:", isValid)
+```
+
+<br>
+
+## 3.9. getSignedDidAuth
+
+### Description
+`Perform DIDAuth signing.`
+
+### Declaration
+
+```swift
+func getSignedDIDAuth(hWalletToken: String, authNonce: String, didType: DidDocumentType, passcode: String ?= nil) throws -> DIDAuth
+```
+
+### Parameters
+
+| Name         | Type            | Description        | **M/O** | **Note** |
+| ------------ | --------------- | ------------------ | ------- | -------- |
+| hWalletToken | String          | Wallet Token       | M       |          |
+| authNonce    | String          | profile auth nonce | M       |          |
+| didType      | DIDDocumentType | did type           | M       |          |
+| passcode     | String          | user passcode      | M       |          |
+
+### Returns
+
+| Type            | Description                  | **M/O** | **Note** |
+|-----------------|-----------------------|---------|----------|
+| DIDAuth         | Signed DIDAuth object   | M       |[DIDAuth](#6-didauth)          |
+
+### Usage
+
+```swift
+let signedDIDAuth = try WalletAPI.shared.getSignedDIDAuth(hWalletToken: hWalletToken, authNonce: authNunce, didType: DidDocumentType.holderDIDDcument, passcode: passcode);
+```
+
+<br>
+
+## 3.10. updateHolderDIDDocument
+
+### Description
+```
+Updates a DID document.
+
+After Finish the update,
+Must call saveHolderDIDDocument
+```
+
+### Declaration
+
+```swift
+public func updateHolderDIDDocument(hWalletToken: String) throws -> DIDDocument
+```
+
+### Parameters
+
+| Parameter    | Type   | Description                       | **M/O** | **Note** |
+| ------------ | ------ | --------------------------------- | ------- | -------- |
+| hWalletToken | String | The wallet token for verification | M       |          |
+
+
+### Returns
+
+| Type        | Description                                            | **M/O** | **Note** |
+| ----------- | ------------------------------------------------------ | ------- | -------- |
+| DIDDocument | A DIDDocument object representing the updated document | M       |          |
+
+
+### Usage
+
+```swift
+let didDocument = try WalletAPI.shared.updateHolderDIDDocument(
+    hWalletToken: "wallet_token_value"
+)
+```
+
+<br>
+
+## 3.11. saveHolderDIDDocument
+
+### Description
+`Saves the holder's DID document changes.`
+
+### Declaration
+
+```swift
+public func saveHolderDIDDocument() throws
+```
+
+### Usage
+
+```swift
+try WalletAPI.shared.saveHolderDIDDocument()
+```
+
+<br>
+
+## 3.12. deleteKeyPair
+
+### Description
+```
+Deletes a key pair associated with the given wallet token and key ID.
+This method removes the specified key pair from the wallet.
+```
+
+### Declaration
+
+```swift
+public func deleteKeyPair(hWalletToken: String, keyId: String) throws
+```
+
+### Parameters
+
+| Parameter    | Type   | Description                              | **M/O** | **Note** |
+| ------------ | ------ | ---------------------------------------- | ------- | -------- |
+| hWalletToken | String | The wallet token used for verification   | M       |          |
+| keyId        | String | The identifier of the key pair to delete | M       |          |
+
+### Usage
+
+```swift
+try WalletAPI.shared.deleteKeyPair(
+    hWalletToken: "wallet_token_value",
+    keyId: "key_identifier"
+)
+```
+
+<br>
+
+## 3.13. requestUpdateUser
 
 ### Description
 ```
@@ -672,7 +880,7 @@ let response = try await WalletAPI.shared.requestUpdateUser(
 
 <br>
 
-## 7.4. requestRestoreUser
+## 3.14. requestRestoreUser
 
 ### Description
 ```
@@ -721,7 +929,9 @@ let response = try await WalletAPI.shared.requestRestoreUser(
 
 <br>
 
-## 7.5. requestIssueVc
+## 4. Credential
+
+## 4.1. requestIssueVc
 
 ### Description
 `Request for issuance of VC.`
@@ -759,7 +969,7 @@ func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issu
 
 <br>
 
-## 7.6. requestRevokeVc
+## 4.2. requestRevokeVc
 
 ### Description
 `Request for VC revocation.`
@@ -805,518 +1015,38 @@ let revokeVc = try await WalletAPI.shared.requestRevokeVc(hWalletToken: self.hWa
 
 <br>
 
-## 8. Holder Wallet
-
-## 8.1. createHolderDIDDocument
+## 4.3. getAllCredentials
 
 ### Description
-```
-Create a user DID Document.
-
-After Finish the registration,
-Must call saveHolderDIDDocument
-```
+`Get all VCs stored in the Wallet.`
 
 ### Declaration
 
 ```swift
-func createHolderDIDDocument(hWalletToken: String) throws -> DIDDocument
+func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]?
 ```
 
 ### Parameters
 
 | Name         | Type   | Description  | **M/O** | **Note** |
 |--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | O       |          |
+| hWalletToken | String | Wallet Token | M       |          |
 
 ### Returns
 
-| Type        | Description   | **M/O** | **Note** |
-|-------------|---------------|---------|----------|
-| DIDDocument | DID Document  | M       |          |
+| Type                   | Description     | **M/O** | **Note** |
+|------------------------|-----------------|---------|----------|
+| [VerifiableCredential] | VC List Object  | M       |          |
 
 ### Usage
 
 ```swift
-let didDoc = try WalletAPI.shared.createHolderDIDDocument(hWalletToken: hWalletToken);
+let vcList = try WalletAPI.shared.getAllCredentials(hWalletToken: hWalletToken);
 ```
 
 <br>
 
-## 8.2. updateHolderDIDDocument
-
-### Description
-```
-Updates a DID document.
-
-After Finish the update,
-Must call saveHolderDIDDocument
-```
-
-### Declaration
-
-```swift
-public func updateHolderDIDDocument(hWalletToken: String) throws -> DIDDocument
-```
-
-### Parameters
-
-| Parameter    | Type   | Description                       | **M/O** | **Note** |
-| ------------ | ------ | --------------------------------- | ------- | -------- |
-| hWalletToken | String | The wallet token for verification | M       |          |
-
-
-### Returns
-
-| Type        | Description                                            | **M/O** | **Note** |
-| ----------- | ------------------------------------------------------ | ------- | -------- |
-| DIDDocument | A DIDDocument object representing the updated document | M       |          |
-
-
-### Usage
-
-```swift
-let didDocument = try WalletAPI.shared.updateHolderDIDDocument(
-    hWalletToken: "wallet_token_value"
-)
-```
-
-<br>
-
-## 8.3. saveHolderDIDDocument
-
-### Description
-`Saves the holder's DID document changes.`
-
-### Declaration
-
-```swift
-public func saveHolderDIDDocument() throws
-```
-
-### Usage
-
-```swift
-try WalletAPI.shared.saveHolderDIDDocument()
-```
-
-<br>
-
-## 8.4. getDidDocument
-
-### Description
-`Look up the DID Document.`
-
-### Declaration
-
-```swift
-func getDidDocument(type: DidDocumentType) throws -> DIDDocument
-```
-
-### Parameters
-
-| Name | Type | Description                          | **M/O** | **Note**              |
-|------|------|--------------------------------------|---------|-----------------------|
-| type | Enum | DeviceDidDocument, HolderDidDocumnet | M       | DIDDataModel reference |
-
-### Returns
-
-| Type         | Description                  | **M/O** | **Note** |
-|--------------|-----------------------|---------|----------|
-| DIDDocument  | DID Document       | M       |          |
-
-### Usage
-
-```swift
-let didDoc = try WalletAPI.shared.getDidDocument(type: .HolderDidDocumnet)
-```
-
-<br>
-
-## 9. Key Management
-
-## 9.1. isAnyKeysSaved
-
-### Description
-`Returns whether a key is stored.`
-
-### Declaration
-
-```swift
-public func isAnyKeysSaved() throws -> Bool
-```
-
-### Returns
-
-| Type | Description                                      | **M/O** | **Note** |
-|------|--------------------------------------------------|---------|----------|
-| Bool | `true` if any keys are saved, otherwise `false`. | M       |          |
-
-### Usage
-
-```swift
-let isAnyKey = try! WalletAPI.shared.isAnyKeysSaved()
-```
-
-<br>
-
-## 9.2. isSavedKey
-
-### Description
-```
-Checks whether a key pair with the given identifier is saved.
-Throws an error if the wallet is locked.
-
-This method verifies if the specified key ID exists in the wallet.
-```
-
-### Declaration
-
-```swift
-public func isSavedKey(keyId: String) throws -> Bool
-```
-
-### Parameters
-
-| Name  | Type   | Description                        | **M/O** | **Note** |
-|-------|--------|------------------------------------|---------|----------|
-| keyId | String | The identifier of the key to check | M       |          |
-
-
-### Returns
-
-| Type | Description                                    | **M/O** | **Note** |
-|------|------------------------------------------------|---------|----------|
-| Bool | `true` if the key is saved, otherwise `false`. | M       |          |
-
-### Usage
-
-```swift
-let hasKey = try WalletAPI.shared.isSavedKey(keyId: "pin"))
-if hasKey {
-    print("Key named pin is saved.")
-} else {
-    print("Key named pin is not saved.")
-}
-
-```
-
-<br>
-
-## 9.3. generateKeyPair
-
-### Description
-`Generate a PIN key pair for signing and store it in your Wallet.`
-
-### Declaration
-
-```swift
-func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: String, algType:AlgorithmType, promptMsg: String? = nil) throws -> Bool
-```
-
-### Parameters
-
-| Name         | Type          | Description                                | **M/O** | **Note**                              |
-|--------------|---------------|--------------------------------------------|---------|---------------------------------------|
-| hWalletToken | String        | Wallet Token                               | M       |                                       |
-| passCode     | String        | PIN for signing                            | M       | When generating a key for PIN signing |
-| keyId        | String        | PIN for ID                                 | M       |                                       |
-| algType      | AlgorithmType | Key algorithm type for signing             | M       |                                       |
-| promptMsg    | String        | Biometric authentication prompt message    | M       |                                       |
-
-### Returns
-
-Bool
-
-### Usage
-
-```swift
-let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, passcode:"123456", keyId:"pin", algType: AlgoritheType.secp256r1);
-
-
-let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, keyId:"bio", algType: AlgoritheType.secp256r1, promptMsg: "message");
-```
-
-<br>
-
-## 9.4. getKeyInfos(by KeyType)
-
-### Description
-`Retrieves saved key information.`
-
-### Declaration
-
-```swift
-func getKeyInfos(keyType: VerifyAuthType) throws -> [KeyInfo]
-```
-
-### Parameters
-
-| Name        | Type           | Description           | **M/O** | **Note** |
-|-------------|----------------|-----------------------|---------|----------|
-| keyType     | VerifyAuthType | Wallet Token          | M       |          |
-
-### Returns
-
-| Type     | Description       | **M/O** | **Note** |
-|----------|-------------------|---------|----------|
-| KeyInfo  | array[KeyInfo]    | M       |          |
-
-### Usage
-
-```swift
-let keyInfos = try holderKey.getKeyInfos(keyType: [.free, .pin])
-```
-
-<br>
-
-## 9.5. getKeyInfos(with Ids)
-
-### Description
-`Retrieves saved key information.`
-
-### Declaration
-
-```swift
-public func getKeyInfos(ids: [String]) throws -> [KeyInfo]
-```
-
-### Parameters
-
-| Name        | Type           | Description                 | **M/O** | **Note** |
-|-------------|----------------|-----------------------------|---------|----------|
-| ids         | array[String]  | key id array                | M       |          |
-
-### Returns
-
-| Type      | Description       | **M/O** | **Note** |
-|-----------|-------------------|---------|----------|
-| KeyInfos  | array[String]     | M       |      |
-
-### Usage
-
-```swift
-let keyInfos = try holderKey.getKeyInfos(ids: ["free", "pin"])
-```
-
-<br>
-
-## 9.6. changePin
-
-### Description
-`Change PIN for signing`
-
-### Declaration
-
-```swift
-public func changePIN(id: String, oldPIN: String, newPIN: String) throws
-```
-
-### Parameters
-
-| Name   | Type   | Description   | **M/O** | **Note** |
-| ------ | ------ | ------------- | ------- | -------- |
-| id     | String | key ID for signing | M       |          |
-| oldPIN | String | old PIN      | M       |          |
-| newPIN | String | new PIN    | M       |          |
-
-### Returns
-
-
-### Usage
-
-```swift
-try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
-```
-
-<br>
-
-## 9.7. deleteKeyPair
-
-### Description
-```
-Deletes a key pair associated with the given wallet token and key ID.
-This method removes the specified key pair from the wallet.
-```
-
-### Declaration
-
-```swift
-public func deleteKeyPair(hWalletToken: String, keyId: String) throws
-```
-
-### Parameters
-
-| Parameter    | Type   | Description                              | **M/O** | **Note** |
-| ------------ | ------ | ---------------------------------------- | ------- | -------- |
-| hWalletToken | String | The wallet token used for verification   | M       |          |
-| keyId        | String | The identifier of the key pair to delete | M       |          |
-
-### Usage
-
-```swift
-try WalletAPI.shared.deleteKeyPair(
-    hWalletToken: "wallet_token_value",
-    keyId: "key_identifier"
-)
-```
-
-<br>
-
-## 9.8. authenticatePin
-
-### Description
-`Authenticates pin of the key which is walletPin`
-
-### Declaration
-
-```swift
-// Declaration in swift
-public func authenticatePin(id: String, pin: String) throws
-```
-
-### Parameters
-
-| Name | Type   | Description      | **M/O** | **Note** |
-|------|--------|------------------|---------|----------|
-| id   | String | Key name         | M       |          |
-| pin  | String | Pin of key       | M       |          |
-
-### Returns
-
-Void
-
-### Usage
-```swift
-let pinID = "pin"
-let pin = "password"
-try WalletAPI.shared.authenticatePin(id: pinID, pin: pin)
-```
-
-<br>
-
-## 10. Signature
-
-## 10.1. sign
-
-### Description
-`Signs the specified data using the private key associated with the given key ID.`
-
-### Declaration
-
-```swift
-@discardableResult
-public func sign(keyId: String,
-                 pin: Data? = nil,
-                 data: Data,
-                 type: DidDocumentType) throws -> Data
-
-```
-
-### Parameters
-
-| Parameter | Type            | Description                                      | **M/O** | **Note** |
-| --------- | --------------- | ------------------------------------------------ | ------- | -------- |
-| keyId     | String          | The ID of the key to use for signing             | M       |          |
-| pin       | Data            | The PIN for key decryption (optional)            | O       |          |
-| data      | Data            | The digest to sign                               | M       |          |
-| type      | DidDocumentType | The type of DID document associated with the key | M       |          |
-
-### Returns
-
-| Type | Description                                              | **M/O** | **Note** |
-| ---- | -------------------------------------------------------- | ------- | -------- |
-| Data | The signature generated using the specified key and data | M       |          |
-
-
-### Usage
-
-```swift
-let signature = try WalletAPI.shared.sign(
-    keyId: "key_identifier",
-    pin: pinData,
-    data: messageData,
-    type: .authentication
-)
-```
-
-<br>
-
-## 10.2. verify
-
-### Description
-`Verifies a signature using the specified public key, data, and signature.`
-
-### Declaration
-
-```swift
-public func verify(publicKey: Data,
-                   data: Data,
-                   signature: Data) throws -> Bool
-```
-
-### Parameters
-
-| Parameter | Type | Description                            | **M/O** | **Note** |
-| --------- | ---- | -------------------------------------- | ------- | -------- |
-| publicKey | Data | The public key to use for verification | M       |          |
-| data      | Data | The digest data to verify              | M       |          |
-| signature | Data | The signature to verify                | M       |          |
-
-### Returns
-
-| Type | Description                                               | **M/O** | **Note** |
-| ---- | --------------------------------------------------------- | ------- | -------- |
-| Bool | A boolean value indicating whether the signature is valid | M       |          |
-
-### Usage
-
-```swift
-let isValid = try WalletAPI.shared.verify(
-    publicKey: publicKeyData,
-    data: messageData,
-    signature: signatureData
-)
-print("Signature valid:", isValid)
-```
-
-<br>
-
-## 11. Verifiable Credential Management
-
-## 11.1. isAnyCredentialsSaved
-
-
-### Description
-`Checks whether any credentials are saved in the wallet.`
-
-### Declaration
-
-```swift
-public var isAnyCredentialsSaved: Bool
-
-```
-
-### Returns
-
-| Type | Description                                                   | **M/O** | **Note** |
-| ---- | ------------------------------------------------------------- | ------- | -------- |
-| Bool | `true` if at least one credential is saved, otherwise `false` | M       |          |
-
-
-### Usage
-
-```swift
-if WalletAPI.shared.isAnyCredentialsSaved {
-    print("At least one credential is saved.")
-} else {
-    print("No credentials saved.")
-}
-```
-
-<br>
-
-## 11.2. getCredentials
+## 4.4. getCredentials
 
 ### Description
 `Query a specific VC.`
@@ -1348,38 +1078,7 @@ let vcList = try WalletAPI.shared.getCredentials(hWalletToken: hWalletToken, ids
 
 <br>
 
-## 11.3. getAllCredentials
-
-### Description
-`Get all VCs stored in the Wallet.`
-
-### Declaration
-
-```swift
-func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]?
-```
-
-### Parameters
-
-| Name         | Type   | Description  | **M/O** | **Note** |
-|--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | M       |          |
-
-### Returns
-
-| Type                   | Description     | **M/O** | **Note** |
-|------------------------|-----------------|---------|----------|
-| [VerifiableCredential] | VC List Object  | M       |          |
-
-### Usage
-
-```swift
-let vcList = try WalletAPI.shared.getAllCredentials(hWalletToken: hWalletToken);
-```
-
-<br>
-
-## 11.4. deleteCredentials
+## 4.5. deleteCredentials
 
 ### Description
 `Delete a specific VC.`
@@ -1408,7 +1107,7 @@ let result = try WalletAPI.shared.deleteCredentials(hWalletToken: hWalletToken, 
 
 <br>
 
-## 11.5. createEncVp
+## 4.6. createEncVp
 
 ### Description
 `Generate encrypted VP and accE2e.`
@@ -1444,127 +1143,40 @@ func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierP
 
 <br>
 
-## 12. Zero-Knowledge Proof Management
-## 12.1. isZKPCredentialSaved
+## 4.7. isAnyCredentialsSaved
 
 ### Description
-`Checks whether a ZKP credential with the given ID is stored.`
+`Checks whether any credentials are saved in the wallet.`
 
 ### Declaration
 
 ```swift
-func isZKPCredentialSaved(id: String) -> Bool
+public var isAnyCredentialsSaved: Bool
+
 ```
-
-### Parameters
-
-| Name | Type   | Description         | **M/O** | **Note** |
-| ---- | ------ | ------------------- | ------- | -------- |
-| id   | String | Credential ID       | M       |          |
 
 ### Returns
 
-| Type | Description                     | **M/O** | **Note**                                |
-| ---- | ------------------------------- | ------- | ---------------------------------------- |
-| Bool | Whether the credential is saved | M       | `true`: saved<br>`false`: not saved     |
+| Type | Description                                                   | **M/O** | **Note** |
+| ---- | ------------------------------------------------------------- | ------- | -------- |
+| Bool | `true` if at least one credential is saved, otherwise `false` | M       |          |
 
 
-<br>
-
-## 12.2. getZKPCredentials
-
-### Description
-`Retrieves the specified ZKP credentials from the wallet using the provided wallet token.`
-
-### Declaration
+### Usage
 
 ```swift
-func getZKPCredentials(hWalletToken: String, ids: [String]) throws -> [ZKPCredential]
+if WalletAPI.shared.isAnyCredentialsSaved {
+    print("At least one credential is saved.")
+} else {
+    print("No credentials saved.")
+}
 ```
-
-### Parameters
-
-| Name         | Type     | Description                             | **M/O** | **Note**                        |
-| ------------ | -------- | --------------------------------------- | ------- | ------------------------------- |
-| hWalletToken | String   | The token associated with the wallet    | M       | Throws if token is not verified |
-| ids          | [String] | Array of credential IDs to retrieve     | M       |                                 |
-
-### Returns
-
-| Type            | Description                                  | **M/O** | **Note**                      |
-| --------------- | -------------------------------------------- | ------- | ----------------------------- |
-| [ZKPCredential] | List of retrieved ZKP credential objects      | M       | Each object contains VC info  |
-
-### Throws
-
-- `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
-
-
 
 <br>
 
-## 12.3. getAllZKPCrentials
+## 5. ZKP
 
-### Description  
-`Retrieves all ZKP credentials stored in the wallet using the provided wallet token.`
-
-### Declaration
-
-```swift
-func getAllZKPCrentials(hWalletToken: String) throws -> [ZKPCredential]?
-```
-
-### Parameters
-
-| Name         | Type   | Description                          | **M/O** | **Note**                        |
-| ------------ | ------ | ------------------------------------ | ------- | ------------------------------- |
-| hWalletToken | String | The token associated with the wallet | M       | Throws if token is not verified |
-
-### Returns
-
-| Type              | Description                                    | **M/O** | **Note**                               |
-| ----------------- | ---------------------------------------------- | ------- | -------------------------------------- |
-| [ZKPCredential]?  | List of all stored ZKP credentials (optional) | O       | Returns `nil` if no credentials exist  |
-
-### Throws
-
-- `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
-
-
-<br>
-
-## 12.4. searchCredentials
-
-### Description  
-`Searches for credentials that satisfy the given proof request.`
-
-### Declaration
-
-```swift
-func searchCredentials(hWalletToken: String, proofRequest: ProofRequest) throws -> AvailableReferent
-```
-
-### Parameters
-
-| Name         | Type         | Description                                    | **M/O** | **Note**                        |
-| ------------ | ------------ | ---------------------------------------------- | ------- | ------------------------------- |
-| hWalletToken | String       | The token associated with the wallet           | M       | Throws if token is not verified |
-| proofRequest | ProofRequest | The proof request with required attributes     | M       | Includes attributes/predicates  |
-
-### Returns
-
-| Type              | Description                                              | **M/O** | **Note**                              |
-| ----------------- | -------------------------------------------------------- | ------- | ------------------------------------- |
-| AvailableReferent | Contains referents matching credentials for the request | M       | Includes matched credential references |
-
-### Throws
-
-(No explicit errors listed, may vary by implementation)
-
-
-<br>
-
-## 12.5. createEncZKProof
+## 5.1. createEncZKProof
 
 ### Description  
 `Generates a zero-knowledge proof, encrypts it, and returns it along with end-to-end encryption (E2E) parameters.`
@@ -1599,15 +1211,133 @@ func createEncZKProof(hWalletToken: String, selectedReferents: [UserReferent], p
 
 <br>
 
-## 12.6. deleteZKPCredentials
+## 5.2. searchZKPCredentials
 
-### Description
-`Revokes the specified ZKP credentials from the wallet using the provided wallet token.`
+### Description  
+`Searches for ZKP credentials that satisfy the given proof request.`
 
 ### Declaration
 
 ```swift
-func deleteZKPCredentials(hWalletToken: String, ids: [String]) throws -> Bool
+func searchZKPCredentials(hWalletToken: String, proofRequest: ProofRequest) throws -> AvailableReferent
+```
+
+### Parameters
+
+| Name         | Type         | Description                                    | **M/O** | **Note**                        |
+| ------------ | ------------ | ---------------------------------------------- | ------- | ------------------------------- |
+| hWalletToken | String       | The token associated with the wallet           | M       | Throws if token is not verified |
+| proofRequest | ProofRequest | The proof request with required attributes     | M       | Includes attributes/predicates  |
+
+### Returns
+
+| Type              | Description                                              | **M/O** | **Note**                              |
+| ----------------- | -------------------------------------------------------- | ------- | ------------------------------------- |
+| AvailableReferent | Contains referents matching credentials for the request | M       | Includes matched credential references |
+
+### Throws
+
+(No explicit errors listed, may vary by implementation)
+
+
+<br>
+
+## 5.3. getAllZKPCredentials
+
+### Description  
+`Retrieves all ZKP credentials stored in the wallet using the provided wallet token.`
+
+### Declaration
+
+```swift
+func getAllZKPCredentials(hWalletToken: String) throws -> [ZKPCredential]?
+```
+
+### Parameters
+
+| Name         | Type   | Description                          | **M/O** | **Note**                        |
+| ------------ | ------ | ------------------------------------ | ------- | ------------------------------- |
+| hWalletToken | String | The token associated with the wallet | M       | Throws if token is not verified |
+
+### Returns
+
+| Type              | Description                                    | **M/O** | **Note**                               |
+| ----------------- | ---------------------------------------------- | ------- | -------------------------------------- |
+| [ZKPCredential]?  | List of all stored ZKP credentials (optional) | O       | Returns `nil` if no credentials exist  |
+
+### Throws
+
+- `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
+
+
+<br>
+
+## 5.4. isAnyZKPCredentialsSaved
+
+### Description
+`Checks whether any ZKP credentials are saved in the wallet.`
+
+### Declaration
+
+```swift
+public var isAnyZKPCredentialsSaved: Bool
+
+```
+
+### Returns
+
+| Type | Description                                                       | **M/O** | **Note** |
+| ---- | ----------------------------------------------------------------- | ------- | -------- |
+| Bool | `true` if at least one ZKP credential is saved, otherwise `false` | M       |          |
+
+
+### Usage
+
+```swift
+if WalletAPI.shared.isAnyZKPCredentialsSaved {
+    print("At least one ZKP credential is saved.")
+} else {
+    print("No ZKP credentials saved.")
+}
+```
+
+<br>
+
+## 5.5. isZKPCredentialSaved
+
+### Description
+`Checks whether a ZKP credential with the given ID is stored.`
+
+### Declaration
+
+```swift
+func isZKPCredentialSaved(id: String) -> Bool
+```
+
+### Parameters
+
+| Name | Type   | Description         | **M/O** | **Note** |
+| ---- | ------ | ------------------- | ------- | -------- |
+| id   | String | Credential ID       | M       |          |
+
+### Returns
+
+| Type | Description                     | **M/O** | **Note**                                |
+| ---- | ------------------------------- | ------- | ---------------------------------------- |
+| Bool | Whether the credential is saved | M       | `true`: saved<br>`false`: not saved     |
+
+
+<br>
+
+## 5.6. getZKPCredentials
+
+### Description
+`Retrieves the specified ZKP credentials from the wallet using the provided wallet token.`
+
+### Declaration
+
+```swift
+func getZKPCredentials(hWalletToken: String, ids: [String]) throws -> [ZKPCredential]
 ```
 
 ### Parameters
@@ -1615,18 +1345,206 @@ func deleteZKPCredentials(hWalletToken: String, ids: [String]) throws -> Bool
 | Name         | Type     | Description                             | **M/O** | **Note**                        |
 | ------------ | -------- | --------------------------------------- | ------- | ------------------------------- |
 | hWalletToken | String   | The token associated with the wallet    | M       | Throws if token is not verified |
-| ids          | [String] | Array of credential IDs to be revoked   | M       |                                 |
+| ids          | [String] | Array of credential IDs to retrieve     | M       |                                 |
 
 ### Returns
 
-| Type | Description                         | **M/O** | **Note**                       |
-| ---- | ----------------------------------- | ------- | ------------------------------ |
-| Bool | Whether credentials were revoked    | M       | `true`: success, `false`: fail |
+| Type            | Description                                  | **M/O** | **Note**                      |
+| --------------- | -------------------------------------------- | ------- | ----------------------------- |
+| [ZKPCredential] | List of retrieved ZKP credential objects      | M       | Each object contains VC info  |
 
 ### Throws
 
 - `WalletApiError(VERIFY_TOKEN_FAIL)`: If the wallet token verification fails
 
+<br>
+
+## 6. SecurityAuth
+
+## 6.1. registerLock
+
+### Description
+`Sets the lock status of the wallet.`
+
+### Declaration
+
+```swift
+func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool
+```
+
+### Parameters
+
+| Name         | Type   | Description                  | **M/O** | **Note** |
+|--------------|--------|------------------------------|---------|----------|
+| hWalletToken | String | Wallet Token                 | M       |          |
+| passcode     | String | Unlock PIN                   | M       |          |
+| isLock       | Bool   | Whether the lock is activated | M      |          |
+
+### Returns
+
+| Type | Description                                    | **M/O** | **Note** |
+| ---- | ---------------------------------------------- | ------- | -------- |
+| Bool | Returns whether the lock setup was successful. | M       |          |
+
+### Usage
+
+```swift
+let success = try WalletAPI.shared.registerLock(hWalletToken: hWalletToken, passcode:"123456", isLock: true);
+```
+
+<br>
+
+## 6.2. authenticateLock
+
+### Description
+`Perform authentication to unlock the wallet.`
+
+### Declaration
+
+```swift
+func authenticateLock(hWalletToken: String, passcode: String) throws -> Data?
+```
+
+### Parameters
+
+| Name         | Type   | Description  | **M/O** | **Note**                  |
+| ------------ | ------ | ------------ | ------- | ------------------------- |
+| hWalletToken | String | Wallet Token | M       |                           |
+| passcode     | String | Unlock PIN   | M       | PIN set when registerLock |
+
+### Returns
+
+Void
+
+### Usage
+
+```swift
+try WalletAPI.shared.authenticateLock(hWalletToken: hWalletToken, passcode: "123456");
+```
+
+<br>
+
+## 6.3. isLock
+
+### Description
+`Check the lock type of the wallet.`
+
+### Declaration
+
+```swift
+func isLock(hWalletToken: String) throws -> Bool
+```
+
+### Parameters
+
+| Name         | Type   | Description  | **M/O** | **Note** |
+|--------------|--------|--------------|---------|----------|
+| hWalletToken | String | Wallet Token | M       |          |
+
+### Returns
+
+| Type | Description                     | **M/O** | **Note** |
+|------|---------------------------------|---------|----------|
+| Bool | Returns the wallet lock type.   | M       |          |
+
+### Usage
+
+```swift
+let isLocked = try WalletAPI.shared.isLock(hWalletToken: hWalletToken);
+```
+
+<br>
+
+## 6.4. changePin
+
+### Description
+`Change PIN for signing`
+
+### Declaration
+
+```swift
+public func changePIN(id: String, oldPIN: String, newPIN: String) throws
+```
+
+### Parameters
+
+| Name   | Type   | Description   | **M/O** | **Note** |
+| ------ | ------ | ------------- | ------- | -------- |
+| id     | String | key ID for signing | M       |          |
+| oldPIN | String | old PIN      | M       |          |
+| newPIN | String | new PIN    | M       |          |
+
+### Returns
+
+N/A
+
+### Usage
+
+```swift
+try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
+```
+
+<br>
+
+## 6.5. changeLock
+
+### Description
+`Changes the lock for the wallet`
+
+### Declaration
+
+```swift
+public func changeLock(oldPasscode: String, newPasscode: String) throws
+```
+
+### Parameters
+
+| Name          | Type   | Description              | **M/O** | **Note**                  |
+| ------------- | ------ | ------------------------ | ------- | ------------------------- |
+| oldPasscode   | String | Current set passcode     | M       |                           |
+| newPasscode   | String | passcode to be changed   | M       |                           |
+
+### Returns
+
+Void
+
+### Usage
+
+```swift
+try WalletAPI.shared.changeLock(oldPasscode: "123456", newPasscode: "987654");
+```
+
+<br>
+
+## 6.6. authenticatePin
+
+### Description
+`Authenticates pin of the key which is walletPin`
+
+### Declaration
+
+```swift
+// Declaration in swift
+public func authenticatePin(id: String, pin: String) throws
+```
+
+### Parameters
+
+| Name | Type   | Description      | **M/O** | **Note** |
+|------|--------|------------------|---------|----------|
+| id   | String | Key name         | M       |          |
+| pin  | String | Pin of key       | M       |          |
+
+### Returns
+
+Void
+
+### Usage
+```swift
+let pinID = "pin"
+let pin = "password"
+try WalletAPI.shared.authenticatePin(id: pinID, pin: pin)
+```
 
 <br>
 
