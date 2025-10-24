@@ -10,6 +10,12 @@ let package = Package(
     products: [
         .library(name: "DIDWalletSDK", targets: ["DIDWalletSDK"])
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/apple/swift-collections.git",
+            from: "1.1.4"
+        )
+    ],
     targets: [
 
         .binaryTarget(
@@ -32,7 +38,8 @@ let package = Package(
         .target(
             name: "DIDWalletSDK",
             dependencies: [
-                "OpenSSLWrapper"
+                "OpenSSLWrapper",
+                .product(name: "Collections", package: "swift-collections")
             ],
             path: "source/did-wallet-sdk-ios/DIDWalletSDK",
             exclude: [
