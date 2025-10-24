@@ -17,12 +17,6 @@ let package = Package(
         )
     ],
     targets: [
-
-        .binaryTarget(
-            name: "OpenSSL",
-            path: "source/did-wallet-sdk-ios/DIDWalletSDK/Framework/openssl.xcframework"
-        ),
-
         .target(
             name: "OpenSSLWrapper",
             dependencies: [
