@@ -19,9 +19,6 @@ let package = Package(
     targets: [
         .target(
             name: "OpenSSLWrapper",
-            dependencies: [
-                "OpenSSL"
-            ],
             path: "source/did-wallet-sdk-ios/DIDWalletSDK/Core/SubComponent/Bridging",
             publicHeadersPath: ".",
             cSettings: [
