@@ -17,21 +17,33 @@
 import Foundation
 import CoreData
 
+enum SDKBundle
+{
+    public static var resource: Bundle {
+            #if SWIFT_PACKAGE
+            return .module
+            #else
+            return Bundle(for: CoreDataManager.self)
+            #endif
+        }
+}
+
 final class CoreDataManager {
     
     static let shared = CoreDataManager()
     
-    private let identifier: String = "org.omnione.did.sdk.wallet"
+//    private let identifier: String = "org.omnione.did.sdk.wallet"
     private let modelName: String  = "WalletModel"
     
     // MARK: - Persistent Container
     private(set) lazy var container: NSPersistentContainer = {
         guard
-            let bundle = Bundle(identifier: identifier),
-            let modelURL = bundle.url(forResource: modelName, withExtension: "momd"),
+//            let bundle = Bundle(identifier: identifier),
+//            let modelURL = bundle.url(forResource: modelName, withExtension: "momd"),
+            let modelURL = SDKBundle.resource.url(forResource: modelName, withExtension: "momd"),
             let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)
         else {
-            fatalError("Failed to load Core Data model \(modelName) from bundle \(identifier)")
+            fatalError("Failed to load Core Data model WalletModel from bundle \(SDKBundle.resource.bundleIdentifier ?? "unknown")")
         }
         
         let container = NSPersistentContainer(name: modelName, managedObjectModel: managedObjectModel)
