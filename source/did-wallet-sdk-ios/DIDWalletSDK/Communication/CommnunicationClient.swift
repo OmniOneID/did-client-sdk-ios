@@ -227,7 +227,7 @@ extension CommunicationClient
         guard let url = URL(string: urlString)
         else
         {
-            throw CommunicationAPIError.invaildParameter.getError()
+            throw CommunicationAPIError.incorrectURLconnection.getError()
         }
         
         var request = URLRequest(url: url)
