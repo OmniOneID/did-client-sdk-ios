@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ final class DIDWalletSDKTests: XCTestCase {
             do {
                 try self.walletAPI.deleteWallet(deleteAll: true)
             } catch {
-                print("testDeleteWallet error: \(error)")
+                print("testDeleteWallet error: \(error.localizedDescription)")
             }
         }
     }
@@ -80,12 +80,10 @@ final class DIDWalletSDKTests: XCTestCase {
                 let isCreateWallet = try await self.walletAPI.createWallet(tasURL: "test", walletURL: "test")
                 assert(isCreateWallet)
             } catch {
-                print("testCreateWallet error: \(error)")
+                print("testCreateWallet error: \(error.localizedDescription)")
             }
         }
     }
-    
-    
     
     // Personalization (unlock/ unlock)
 //    func testBindUserWithLockUnlock() throws {
@@ -113,8 +111,8 @@ final class DIDWalletSDKTests: XCTestCase {
 //                
 //                XCTAssertNil(cek)
 //                
-//            } catch let error as WalletAPIError {
-//                print("testBindUser error: \(error)")
+//            } catch {
+//                print("testBindUser error: \(error.localizedDescription)")
 //            }
 //        }
 //    }
@@ -137,8 +135,8 @@ final class DIDWalletSDKTests: XCTestCase {
                 let result = try walletAPI.bindUser(hWalletToken: hWalletToken)
                 
                 assert(result, "bind user fail")
-            } catch let error as WalletAPIError {
-                print("testBindUser error: \(error)")
+            } catch {
+                print("testBindUser error: \(error.localizedDescription)")
             }
         }
     }
@@ -175,8 +173,8 @@ final class DIDWalletSDKTests: XCTestCase {
 //
 //            print("success requestRegisterUser")
 //            
-//        } catch let error as WalletAPIError {
-//            print("testRegisterUser error: \(error)")
+//        } catch {
+//            print("testRegisterUser error: \(error.localizedDescription)")
 //        }
 //    }
     
@@ -250,10 +248,8 @@ final class DIDWalletSDKTests: XCTestCase {
 //            
 //            _ = try await walletAPI.requestIssueVc(tasURL: "NONE", hWalletToken: hWalletToken, didAuth: didAuth!, issuerProfile: issueProfile, refId: "refId", serverToken: "serverToken", APIGatewayURL: "NONE")
 //            
-//        } catch let error as WalletAPIError {
-//            print("testIssueCredential error: \(error)")
 //        } catch {
-//            print("testIssueCredential error: \(error)")
+//            print("testIssueCredential error: \(error.localizedDescription)")
 //        }
     }
     
@@ -295,10 +291,8 @@ final class DIDWalletSDKTests: XCTestCase {
 //                }
 //                
 //                _ = try await walletAPI.createEncVp(hWalletToken: hWalletToken, claimInfos: claimInfos, verifierProfile: verifierProfile, APIGatewayURL: "NONE", passcode: "123456")
-//            } catch let error as WalletAPIError {
-//                print("testSubmitCredential error: \(error)")
 //            } catch {
-//                print("testSubmitCredential error: \(error)")
+//                print("testSubmitCredential error: \(error.localizedDescription)")
 //            }
 //        }
 //        
@@ -635,34 +629,18 @@ final class DIDWalletSDKTests: XCTestCase {
 //                        do {
 //                            try await RestoreUserProtocol.shared.process(passcode: passcode)
 //
-//                        } catch let error as WalletSDKError {
-//                            print("error code: \(error.code), message: \(error.message)")
-//                            PopupUtils.showAlertPopup(title: error.code, content: error.message, VC: self)
-//                        } catch let error as WalletCoreError {
-//                            print("error code: \(error.code), message: \(error.message)")
-//                            PopupUtils.showAlertPopup(title: error.code, content: error.message, VC: self)
-//                        } catch let error as CommunicationSDKError {
-//                            print("error code: \(error.code), message: \(error.message)")
-//                            PopupUtils.showAlertPopup(title: error.code, content: error.message, VC: self)
 //                        } catch {
-//                            print("error: \(error)")
+//                            print("error: \(error.localizedDescription)")
+//                            PopupUtils.showAlertPopup(title: "Error", content: error.localizedDescription, VC: self)
 //                        }
 //                    }
 //                }
 //                pinVC.cancelButtonCompleteClosure = { }
 //                DispatchQueue.main.async { self.present(pinVC, animated: false, completion: nil) }
 //
-//            } catch let error as WalletSDKError {
-//                print("error code: \(error.code), message: \(error.message)")
-//                PopupUtils.showAlertPopup(title: error.code, content: error.message, VC: self)
-//            } catch let error as WalletCoreError {
-//                print("error code: \(error.code), message: \(error.message)")
-//                PopupUtils.showAlertPopup(title: error.code, content: error.message, VC: self)
-//            } catch let error as CommunicationSDKError {
-//                print("error code: \(error.code), message: \(error.message)")
-//                PopupUtils.showAlertPopup(title: error.code, content: error.message, VC: self)
 //            } catch {
-//                print("error: \(error)")
+//                print("error: \(error.localizedDescription)")
+//                PopupUtils.showAlertPopup(title: "Error", content: error.localizedDescription, VC: self)
 //            }
 //        }
 //    }
@@ -693,3 +671,4 @@ final class DIDWalletSDKTests: XCTestCase {
 //        }
 //    }
 }
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,5 +45,21 @@ extension SecKey {
         }
         
         return try pubKeyData.toCompressedRepresentationFromRawPublicKey()
+    }
+    
+    /// get uncompressed public key data from SecKey
+    /// - Returns: Uncompressed public key data
+    func toUncompressedPublicKeyData() throws -> Data
+    {
+        var error: Unmanaged<CFError>?
+        
+        guard let pubKeyData = SecKeyCopyExternalRepresentation(self,
+                                                                &error) as? Data
+        else
+        {
+            throw SecureEnclaveError.publicKeyRepresentation(detail: error!.toError()).getError()
+        }
+        
+        return pubKeyData
     }
 }

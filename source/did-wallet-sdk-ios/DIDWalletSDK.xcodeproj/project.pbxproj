@@ -104,6 +104,8 @@
 		C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */; };
 		C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */; };
 		C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D32DDF261B00A67DA3 /* CredInfo.swift */; };
+		C96F353F2EBAEDDE007BCE1F /* P256V.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96F353E2EBAEDC3007BCE1F /* P256V.swift */; };
+		C96F35412EBB37BB007BCE1F /* PublicKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */; };
 		C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A5D2C91887400DE37D1 /* CoreData.framework */; };
 		C97A625D2EC32BC100F3789D /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C97A625C2EC32BC100F3789D /* LICENSE.md */; };
 		C97A625F2EC32BCA00F3789D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = C97A625E2EC32BCA00F3789D /* LICENSE.txt */; };
@@ -119,7 +121,6 @@
 		C98D25EA2DB09DF700B2E84D /* WalletCoreCommonError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25DA2DB09DF700B2E84D /* WalletCoreCommonError.swift */; };
 		C98D25EB2DB09DF700B2E84D /* SecureEnclaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25CA2DB09DF700B2E84D /* SecureEnclaveManager.swift */; };
 		C98D25EC2DB09DF700B2E84D /* KeyManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25DB2DB09DF700B2E84D /* KeyManagerError.swift */; };
-		C98D25ED2DB09DF700B2E84D /* OpenSSLWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = C98D25CC2DB09DF700B2E84D /* OpenSSLWrapper.m */; };
 		C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C92DB09DF700B2E84D /* Secp256R1Manager.swift */; };
 		C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C82DB09DF700B2E84D /* StorageManager.swift */; };
 		C98D25F02DB09DF700B2E84D /* VCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C52DB09DF700B2E84D /* VCManager.swift */; };
@@ -130,13 +131,11 @@
 		C98D25F52DB09DF700B2E84D /* KeyManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25D22DB09DF700B2E84D /* KeyManagerProtocol.swift */; };
 		C98D25F62DB09DF700B2E84D /* DIDManagerDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25D62DB09DF700B2E84D /* DIDManagerDataModel.swift */; };
 		C98D25F72DB09DF700B2E84D /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C32DB09DF700B2E84D /* KeyManager.swift */; };
-		C98D25F82DB09DF700B2E84D /* OpenSSLWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = C98D25CB2DB09DF700B2E84D /* OpenSSLWrapper.h */; };
 		C98D25FA2DB0A10700B2E84D /* SecKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25F92DB0A10700B2E84D /* SecKey+Extension.swift */; };
 		C98D25FF2DB0A5DE00B2E84D /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FB2DB0A5DE00B2E84D /* Date+Extension.swift */; };
 		C98D26002DB0A5DE00B2E84D /* CFError+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FC2DB0A5DE00B2E84D /* CFError+Extension.swift */; };
 		C98D26012DB0A5DE00B2E84D /* PrivateKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */; };
 		C98D26022DB0A5DE00B2E84D /* Error+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */; };
-		C98D26052DB0A62B00B2E84D /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = C98D26032DB0A62B00B2E84D /* openssl.xcframework */; };
 		C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */; };
 		C9CF5DAE2DAF41540078DFFA /* CommnunicationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */; };
 		C9CF5DAF2DAF41540078DFFA /* CommnunicationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */; };
@@ -356,6 +355,8 @@
 		C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredDefVO.swift; sourceTree = "<group>"; };
 		C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredSchemaVO.swift; sourceTree = "<group>"; };
 		C96061D32DDF261B00A67DA3 /* CredInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredInfo.swift; sourceTree = "<group>"; };
+		C96F353E2EBAEDC3007BCE1F /* P256V.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = P256V.swift; sourceTree = "<group>"; };
+		C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PublicKey+Extension.swift"; sourceTree = "<group>"; };
 		C9712A5D2C91887400DE37D1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		C97A625C2EC32BC100F3789D /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		C97A625E2EC32BCA00F3789D /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
@@ -367,9 +368,6 @@
 		C98D25C82DB09DF700B2E84D /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		C98D25C92DB09DF700B2E84D /* Secp256R1Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Secp256R1Manager.swift; sourceTree = "<group>"; };
 		C98D25CA2DB09DF700B2E84D /* SecureEnclaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureEnclaveManager.swift; sourceTree = "<group>"; };
-		C98D25CB2DB09DF700B2E84D /* OpenSSLWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenSSLWrapper.h; sourceTree = "<group>"; };
-		C98D25CC2DB09DF700B2E84D /* OpenSSLWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OpenSSLWrapper.m; sourceTree = "<group>"; };
-		C98D25CD2DB09DF700B2E84D /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		C98D25D02DB09DF700B2E84D /* WalletCoreEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCoreEnums.swift; sourceTree = "<group>"; };
 		C98D25D22DB09DF700B2E84D /* KeyManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagerProtocol.swift; sourceTree = "<group>"; };
 		C98D25D32DB09DF700B2E84D /* StorageManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManagerProtocol.swift; sourceTree = "<group>"; };
@@ -389,7 +387,6 @@
 		C98D25FC2DB0A5DE00B2E84D /* CFError+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CFError+Extension.swift"; sourceTree = "<group>"; };
 		C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+Extension.swift"; sourceTree = "<group>"; };
 		C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrivateKey+Extension.swift"; sourceTree = "<group>"; };
-		C98D26032DB0A62B00B2E84D /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = openssl.xcframework; sourceTree = "<group>"; };
 		C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationClient.swift; sourceTree = "<group>"; };
 		C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationProtocol.swift; sourceTree = "<group>"; };
 		C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunicationAPIError.swift; sourceTree = "<group>"; };
@@ -490,7 +487,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */,
-				C98D26052DB0A62B00B2E84D /* openssl.xcframework in Frameworks */,
 				C9EB1A8E2DB772CF00D152EE /* OrderedCollections in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,7 +524,6 @@
 				C9F415062DAE60F900C04A1A /* Communication */,
 				C9CF5DB42DAF700B0078DFFA /* Extension */,
 				C90D3B942DAFA5FF00292BFD /* PropertyWrapper */,
-				C98D26042DB0A62B00B2E84D /* Framework */,
 				7CA9828B2C85CEBA00EDF367 /* DIDWalletSDK.h */,
 			);
 			path = DIDWalletSDK;
@@ -801,23 +796,13 @@
 			path = MainComponent;
 			sourceTree = "<group>";
 		};
-		C98D25CE2DB09DF700B2E84D /* Bridging */ = {
-			isa = PBXGroup;
-			children = (
-				C98D25CB2DB09DF700B2E84D /* OpenSSLWrapper.h */,
-				C98D25CC2DB09DF700B2E84D /* OpenSSLWrapper.m */,
-				C98D25CD2DB09DF700B2E84D /* module.modulemap */,
-			);
-			path = Bridging;
-			sourceTree = "<group>";
-		};
 		C98D25CF2DB09DF700B2E84D /* SubComponent */ = {
 			isa = PBXGroup;
 			children = (
+				C96F353E2EBAEDC3007BCE1F /* P256V.swift */,
 				C98D25C82DB09DF700B2E84D /* StorageManager.swift */,
 				C98D25C92DB09DF700B2E84D /* Secp256R1Manager.swift */,
 				C98D25CA2DB09DF700B2E84D /* SecureEnclaveManager.swift */,
-				C98D25CE2DB09DF700B2E84D /* Bridging */,
 			);
 			path = SubComponent;
 			sourceTree = "<group>";
@@ -866,14 +851,6 @@
 			path = Error;
 			sourceTree = "<group>";
 		};
-		C98D26042DB0A62B00B2E84D /* Framework */ = {
-			isa = PBXGroup;
-			children = (
-				C98D26032DB0A62B00B2E84D /* openssl.xcframework */,
-			);
-			path = Framework;
-			sourceTree = "<group>";
-		};
 		C9CF5DB02DAF41600078DFFA /* WalletAPI */ = {
 			isa = PBXGroup;
 			children = (
@@ -898,6 +875,7 @@
 				C98D25FC2DB0A5DE00B2E84D /* CFError+Extension.swift */,
 				C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */,
 				C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */,
+				C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -1170,7 +1148,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7CA982A62C85CEBA00EDF367 /* DIDWalletSDK.h in Headers */,
-				C98D25F82DB09DF700B2E84D /* OpenSSLWrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1348,6 +1325,7 @@
 				C9EB199E2DB75F1900D152EE /* Subtraction.swift in Sources */,
 				C9EB199F2DB75F1900D152EE /* Exponentiation.swift in Sources */,
 				C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */,
+				C96F353F2EBAEDDE007BCE1F /* P256V.swift in Sources */,
 				C9EB19A02DB75F1900D152EE /* GCD.swift in Sources */,
 				C9EB19A12DB75F1900D152EE /* Bitwise Ops.swift in Sources */,
 				C9EB19A22DB75F1900D152EE /* Data Conversion.swift in Sources */,
@@ -1360,6 +1338,7 @@
 				C9EB19A82DB75F1900D152EE /* Prime Test.swift in Sources */,
 				C9EB19A92DB75F1900D152EE /* Addition.swift in Sources */,
 				C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */,
+				C96F35412EBB37BB007BCE1F /* PublicKey+Extension.swift in Sources */,
 				C9EB19AA2DB75F1900D152EE /* Floating Point Conversion.swift in Sources */,
 				C9EB19AB2DB75F1900D152EE /* Division.swift in Sources */,
 				C9EB19AC2DB75F1900D152EE /* Writer.swift in Sources */,
@@ -1389,7 +1368,6 @@
 				C98D25EB2DB09DF700B2E84D /* SecureEnclaveManager.swift in Sources */,
 				C9EB19B42DB760A600D152EE /* BigInt+String.swift in Sources */,
 				C98D25EC2DB09DF700B2E84D /* KeyManagerError.swift in Sources */,
-				C98D25ED2DB09DF700B2E84D /* OpenSSLWrapper.m in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,
 				C98D25F02DB09DF700B2E84D /* VCManager.swift in Sources */,
