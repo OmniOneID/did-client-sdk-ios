@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ enum SignableError : WalletCoreErrorProcotol
     case invalidPublicKey
     case invalidPrivateKey
     case notDerivedKeyFromPrivateKey
-    case failToConvertCompactRepresentation
+    case failToConvertCompactRepresentation(detail : Error)
     case createSignature(detail : Error)
     case verifySignatureFailed(detail : Error)
     
@@ -37,8 +37,8 @@ enum SignableError : WalletCoreErrorProcotol
         case .notDerivedKeyFromPrivateKey:
             return ("11102", "Private and public keys are not pair")
             //Signature(112xx)
-        case .failToConvertCompactRepresentation:
-            return ("11200", "Converting failed to compact representation")
+        case .failToConvertCompactRepresentation(let detail):
+            return ("11200", "Converting failed to compact representation : \(detail)")
         case .createSignature(let detail):
             return ("11201", "Signing failed : \(detail)")
         case .verifySignatureFailed(let detail):

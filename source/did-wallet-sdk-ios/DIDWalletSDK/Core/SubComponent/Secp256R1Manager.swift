@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 
 import Foundation
 import CryptoKit
-@_implementationOnly import OpenSSLWrapper
-
 
 struct Secp256R1Manager : SignableProtocol
 {
@@ -79,16 +77,17 @@ struct Secp256R1Manager : SignableProtocol
             throw E.createSignature(detail: error).getError()
         }
         
-        let derivedPublicKey = try signingKey.derivePublicKeyData()
-        
-        guard let signature = OpenSSLWrapper.toCompactRepresentation(fromX962Signature: signed.derRepresentation,
-                                                                     digest: digest,
-                                                                     publicKey: derivedPublicKey)
-        else
+        do
         {
-            throw E.failToConvertCompactRepresentation.getError()
+            let signature = try P256V.convertToCompactRepresentation(x962Signature: signed.derRepresentation,
+                                                                     digest: digest,
+                                                                     uncompressedPublicKey: signingKey.publicKey.x963Representation)
+            return signature
         }
-        return signature
+        catch
+        {
+            throw E.failToConvertCompactRepresentation(detail: error).getError()
+        }
     }
     
     func verify(publicKey : Data, digest : Data, signature : Data) throws -> Bool
@@ -113,9 +112,9 @@ struct Secp256R1Manager : SignableProtocol
         
         do
         {
-            return try OpenSSLWrapper.verify(signature, 
-                                             digest: digest,
-                                             publicKey: publicKey)
+            return try P256V.verify(signature: signature,
+                                    digest: digest,
+                                    compressedPublicKey: publicKey)
         }
         catch
         {
