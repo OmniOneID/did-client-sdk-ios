@@ -17,6 +17,10 @@
     
 import Foundation
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 struct ZKPConstants
 {
     static let masterSecretKey   : String = "masterSecret"

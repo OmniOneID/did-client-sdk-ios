@@ -18,6 +18,10 @@
 import Foundation
 import OrderedCollections
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 struct KeyPairVerifier
 {
     static func verify(publicKey : CredentialPrimaryPublicKey, keyProof : KeyCorrectnessProof) throws -> Bool

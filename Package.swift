@@ -11,7 +11,9 @@ let package = Package(
         .library(name: "DIDWalletSDK", targets: ["DIDWalletSDK"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.4")
+        .package(url: "https://github.com/apple/swift-collections.git", exact: "1.1.4"),
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.5.1"),
+        .package(url: "https://github.com/rnapier/RNJSON.git", branch: "main")
     ],
     targets: [
         .binaryTarget(
@@ -40,11 +42,14 @@ let package = Package(
             name: "DIDWalletSDK",
             dependencies: [
                 "OpenSSLWrapper",
-                .product(name: "Collections", package: "swift-collections")
+                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "BigInt", package: "BigInt"),
+                .product(name: "RNJSON", package: "RNJSON")
             ],
             path: "source/did-wallet-sdk-ios/DIDWalletSDK",
             exclude: [
                 "Framework",
+                "OpenSource",
                 "DIDWalletSDK.h",
                 "Core/SubComponent/Bridging"
             ],
