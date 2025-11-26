@@ -95,7 +95,11 @@ did-client-sdk-ios
 
 1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDWalletSDK.xcframework` 파일을 복사합니다.
 2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
+3. 프레임워크를 `Embed & Sign`으로 설정합니다.
+
+## Swift Package 적용 방법
+
+적용방법은 [여기](source/did-wallet-sdk-ios/README_ko.md)에서 확인할 수 있습니다.
 
 ## API 참조
 

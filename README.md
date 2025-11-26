@@ -97,7 +97,11 @@ Libraries can be found in the [releases folder](source/release).
 
 1. Copy the `DIDWalletSDK.xcframework` file to the framework directory of the app project.
 2. Add the framework to the app project dependencies.
-3. Set the framework to `Embeded & Sign`.
+3. Set the framework to `Embed & Sign`.
+
+## Swift Package Integration
+
+Application method can be found [here](source/did-wallet-sdk-ios/README.md)
 
 ## API Reference
 
