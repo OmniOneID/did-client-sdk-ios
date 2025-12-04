@@ -66,7 +66,7 @@ After QA approval, manage the complete version control of all modules in a separ
    
    - Example:
 
-   ## Release Note V2.0.1.0
+   ## Release Note V2.0.0.0
 
    | Repository         | Version         | Changelog                   | Release                    |
    | ------------------ | --------------- | --------------------------- | --------------------------- |
