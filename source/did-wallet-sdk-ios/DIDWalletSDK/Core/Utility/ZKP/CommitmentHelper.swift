@@ -17,6 +17,10 @@
     
 import Foundation
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 struct CommitmentHelper
 {
 //    Pedersen Commitment Scheme

@@ -17,6 +17,10 @@
     
 import Foundation
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 extension BigInt
 {
     var decimalString: BigIntString

@@ -13,6 +13,10 @@
 - Creating or updating a DID Document no longer triggers automatic save.  
   You must explicitly call the save API to persist changes.
 
+### New Features
+- Added Swift Package Manager (SPM) support for seamless integration in Swift and Xcode projects.
+
+
 ## v2.0.0 (2025-05-27)
 
 ### Integration

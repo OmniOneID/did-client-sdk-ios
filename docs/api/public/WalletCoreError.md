@@ -21,12 +21,12 @@ iOS WalletCoreError
 - Topic: WalletCoreError
 - Author: JooHyun Park
 - Date: 2025-09-09
-- Version: v2.0.1
+- Version: v1.0.2
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
-| v2.0.1           | 2025-09-09 | Fixed DID-related error  |
-| v2.0.0           | 2025-04-28 | Add ZKP Error            |
+| v1.0.2           | 2025-09-09 | Fixed DID-related error  |
+| v1.0.1           | 2025-04-28 | Add ZKP Error            |
 | v1.0.0           | 2024-08-28 | Initial version          |
 
 <div style="page-break-after: always;"></div>

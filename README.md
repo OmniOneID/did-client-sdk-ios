@@ -9,13 +9,19 @@ This repository provides an SDK for developing an iOS mobile wallet.
 ## Folder Structure
 ```
 did-client-sdk-ios
+├── CHANGELOG.md
 ├── CLA.md
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
+├── dependencies-license.md
+├── LICENSE
 ├── MAINTAINERS.md
+├── Package.resolved
+├── Package.swift
 ├── README.md
 ├── README_ko.md
 ├── RELEASE-PROCESS.md
+├── SECURITY.md
 ├── docs
 │   └── api
 │       ├── README.md
@@ -52,7 +58,9 @@ did-client-sdk-ios
     │   ├── README_ko.md
     │   └── build_xcframework.sh
     └── release
-        └── did-wallet-sdk-ios-2.0.0
+        ├── did-wallet-sdk-ios-2.0.0
+        │   └── DIDWalletSDK.xcframework
+        └── did-wallet-sdk-ios-2.0.1
             └── DIDWalletSDK.xcframework
 ```
 
@@ -77,7 +85,7 @@ did-client-sdk-ios
 |------------------|-----------------------------|
 | OS               | iOS                         |
 | Language         | Swift 5.8                   |
-| IDE              | Xcode 16.2                  |
+| IDE              | Xcode 26.0.1                |
 | Compatibility    | iOS 15.0 and higher         |
 | Test Environment | iPhone 15 (17.5) Simulator  |
 
@@ -89,7 +97,11 @@ Libraries can be found in the [releases folder](source/release).
 
 1. Copy the `DIDWalletSDK.xcframework` file to the framework directory of the app project.
 2. Add the framework to the app project dependencies.
-3. Set the framework to `Embeded & Sign`.
+3. Set the framework to `Embed & Sign`.
+
+## Swift Package Integration
+
+Application method can be found [here](source/did-wallet-sdk-ios/README.md)
 
 ## API Reference
 

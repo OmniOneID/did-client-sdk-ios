@@ -21,11 +21,11 @@ iOS KeyManager API
 - Subject: KeyManager
 - Writer: 박주현
 - Date: 2025-10-13
-- Version: v2.0.1
+- Version: v1.0.1
 
 | Version | Date       | History                |
 | -------- | ---------- | ---------------------- |
-| v2.0.1   | 2025-10-13 | AuthenticatePin 함수 추가 |
+| v1.0.1   | 2025-10-13 | AuthenticatePin 함수 추가 |
 | v1.0.0   | 2024-08-28 | 초기 작성               |
 
 

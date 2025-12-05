@@ -224,7 +224,13 @@ extension CommunicationClient
             throw CommunicationAPIError.invaildParameter.getError()
         }
         
-        var request = URLRequest(url: URL(string: urlString)!)
+        guard let url = URL(string: urlString)
+        else
+        {
+            throw CommunicationAPIError.incorrectURLconnection.getError()
+        }
+        
+        var request = URLRequest(url: url)
         request.timeoutInterval = Self.defaultTimeoutInterval
         for (key, value) in headerFields
         {

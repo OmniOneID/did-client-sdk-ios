@@ -9,13 +9,19 @@ iOS Client SDK Repository에 오신 것을 환영합니다. <br>
 ## 폴더 구조
 ```
 did-client-sdk-ios
+├── CHANGELOG.md
 ├── CLA.md
 ├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
+├── dependencies-license.md
+├── LICENSE
 ├── MAINTAINERS.md
+├── Package.resolved
+├── Package.swift
 ├── README.md
 ├── README_ko.md
 ├── RELEASE-PROCESS.md
+├── SECURITY.md
 ├── docs
 │   └── api
 │       ├── README.md
@@ -45,14 +51,16 @@ did-client-sdk-ios
 │           ├── VCManager_ko.md
 │           ├── ZKPManager.md
 │           └── ZKPManager_ko.md
-└── source
+└── source  
     ├── did-wallet-sdk-ios
     │   ├── DIDWalletSDK.xcodeproj
-    │   ├── README_ko.md
     │   ├── README.md
+    │   ├── README_ko.md
     │   └── build_xcframework.sh
     └── release
-        └── did-wallet-sdk-ios-2.0.0
+        ├── did-wallet-sdk-ios-2.0.0
+        │   └── DIDWalletSDK.xcframework
+        └── did-wallet-sdk-ios-2.0.1
             └── DIDWalletSDK.xcframework
 ```
 
@@ -77,7 +85,7 @@ did-client-sdk-ios
 |-------------------|-----------------------------|
 | OS                | iOS                         |
 | Language          | Swift 5.8                   |
-| IDE               | Xcode 16.2                  |
+| IDE               | Xcode 26.0.1                |
 | Compatibility     | iOS 15.0 이상                |
 | Test Environment  | iPhone 15 (17.5) 시뮬레이터   |
 
@@ -87,7 +95,11 @@ did-client-sdk-ios
 
 1. 앱 프로젝트의 프레임워크 디렉토리에 `DIDWalletSDK.xcframework` 파일을 복사합니다.
 2. 앱 프로젝트 의존성에 프레임워크를 추가합니다.
-3. 프레임워크를 `Embeded & Sign`으로 설정합니다.
+3. 프레임워크를 `Embed & Sign`으로 설정합니다.
+
+## Swift Package 적용 방법
+
+적용방법은 [여기](source/did-wallet-sdk-ios/README_ko.md)에서 확인할 수 있습니다.
 
 ## API 참조
 

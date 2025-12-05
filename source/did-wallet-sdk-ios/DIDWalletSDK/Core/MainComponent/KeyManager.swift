@@ -588,6 +588,8 @@ fileprivate extension KeyManager
     {
         var error: NSError?
         let context : LAContext = .init()
+        //Avoid showing the Passcode input UI
+        context.localizedFallbackTitle = ""
         context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                   error: &error)
         
