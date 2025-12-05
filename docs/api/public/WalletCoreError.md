@@ -20,12 +20,13 @@ iOS WalletCoreError
 
 - Topic: WalletCoreError
 - Author: JooHyun Park
-- Date: 2025-04-28
-- Version: v2.0.0
+- Date: 2025-09-09
+- Version: v1.0.2
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
-| v2.0.0           | 2025-04-28 | Add ZKP Error            |
+| v1.0.2           | 2025-09-09 | Fixed DID-related error  |
+| v1.0.1           | 2025-04-28 | Add ZKP Error            |
 | v1.0.0           | 2024-08-28 | Initial version          |
 
 <div style="page-break-after: always;"></div>
@@ -45,15 +46,15 @@ iOS WalletCoreError
     - [3.1. Generate random(011xx)](#31-generate-random011xx)
     - [3.2. Create document(012xx)](#32-create-document012xx)
     - [3.3. Edit document(013xx)](#33-edit-document013xx)
-    - [3.4. ETC.(019xx)](#34-etc019xx)
+    - [3.4. DID Document(014xx)](#34-did-document014xx)
   - [4. VCManager](#4-vcmanager)
   - [5. ZKPManager](#5-zkpmanager)
     - [5.1. ZKPCommon(041xx)](#51-zkpcommon)
-    - [5.2. MasterSecret(042xx)](52-mastersecret)
-    - [5.3. IssueCredential(043xx)](53-issuecredential)
-    - [5.4. GetCredential(044xx)](54-getcredential)
-    - [5.5. SearchCredentials(045xx)](55-searchcredential)
-    - [5.6. Proof(046xx)](56-proof)
+    - [5.2. MasterSecret(042xx)](#52-mastersecret)
+    - [5.3. IssueCredential(043xx)](#53-issuecredential)
+    - [5.4. GetCredential(044xx)](#54-getcredential)
+    - [5.5. SearchCredentials(045xx)](#55-searchcredential)
+    - [5.6. Proof(046xx)](#56-proof)
   - [6. StorageManager](#6-storagemanager)
     - [6.1. Save(101xx)](#61-save101xx)
     - [6.2. Update(102xx)](#62-update102xx)
@@ -165,29 +166,29 @@ public struct WalletCoreError: Error {
 
 ### 3.2. Create document(012xx)
 
-| Error Code   | Error Message                        | Description                       | Action Required                       |
-|--------------|--------------------------------------|-----------------------------------|---------------------------------------|
-| MSDKWLT01200 | Document is already exists        | -                                 | Do not call this function when already DID document file saved |
+| Error Code   | Error Message                 | Description | Action Required                                                |
+|--------------|--------------------------------|-------------|----------------------------------------------------------------|
+| MSDKWLT01200 | The document already exists    | -           | Do not call this function when already DID document file saved |
 
 <br>
 
 ### 3.3. Edit document(013xx)
 
-| Error Code   | Error Message                        | Description                       | Action Required                       |
-|--------------|--------------------------------------|-----------------------------------|---------------------------------------|
-| MSDKWLT01300 | Duplicate key id exists in verification method   | -                     | Check key id to add in verification method. Do not add duplicate key id |
-| MSDKWLT01301 | Not found key id in verification method          | -                     | Check key id to remove in verification method. It must remove key id that exist in verification method |
-| MSDKWLT01302 | Duplicate service id exists in service           | -                     | Check service id to add in service. Do not add duplicate service id |
-| MSDKWLT01303 | Not found service id in service                  | -                     | Check service id to remove in service. It must remove service id that exist in service |
-| MSDKWLT01304 | Don't call 'resetChanges' if no document saved   | -                     | - |
+| Error Code   | Error Message                                   | Description | Action Required                                                                                   |
+|--------------|-------------------------------------------------|-------------|--------------------------------------------------------------------------------------------------|
+| MSDKWLT01300 | Duplicate key id exists in verification method  | -           | Check key id to add in verification method. Do not add duplicate key id                          |
+| MSDKWLT01301 | Not found key id in verification method         | -           | Check key id to remove in verification method. It must remove key id that exist in verification method |
+| MSDKWLT01302 | Duplicate service id exists in service          | -           | Check service id to add in service. Do not add duplicate service id                              |
+| MSDKWLT01303 | Not found service id in service                 | -           | Check service id to remove in service. It must remove service id that exist in service           |
 
 <br>
 
-### 3.4. ETC.(019xx)
+### 3.4. DID Document(014xx)
 
-| Error Code   | Error Message                        | Description                       | Action Required                       |
-|--------------|--------------------------------------|-----------------------------------|---------------------------------------|
-| MSDKWLT01900 | Unexpected condition occurred        | -                                 | - |
+| Error Code   | Error Message                             | Description | Action Required |
+|--------------|-------------------------------------------|-------------|-----------------|
+| MSDKWLT01400 | The stored DID document could not be found | -           | -               |
+
 
 <br>
 

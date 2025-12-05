@@ -18,6 +18,19 @@ import Foundation
 @testable import DIDWalletSDK
 
 class WalletCoreMock: WalletCoreImpl {
+    func authenticatePin(id: String, pin: String) throws {
+        try holderKeyManager.authenticatePin(id: id, pin: pin.data(using: .utf8)!)
+    }
+    
+    func deleteKey(keyId: String) throws
+    {
+        try holderKeyManager.deleteKeys(ids: [keyId])
+    }
+    
+    func updateHolderDIDDocument() throws -> DIDWalletSDK.DIDDocument {
+        return try DIDDocument(from: "{\"@context\":[\"https://www.w3.org/ns/did/v1\"],\"assertionMethod\":[\"pin\",\"bio\"],\"authentication\":[\"pin\",\"bio\"],\"controller\":\"did:omn:tas\",\"created\":\"2024-08-26T08:37:04Z\",\"deactivated\":false,\"id\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"keyAgreement\":[\"keyagree\"],\"updated\":\"2024-08-26T08:37:04Z\",\"verificationMethod\":[{\"authType\":1,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"keyagree\",\"publicKeyMultibase\":\"z28MaU2yv21wAFi97rj8LC9wuJJaZJZ5bsxWtDvEjDUn9a\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":2,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"pin\",\"publicKeyMultibase\":\"z25yWffgpPpHd9GiZUxaVRhjGj82fnaGWL55xdNdnTduFJ\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":4,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"bio\",\"publicKeyMultibase\":\"zv52y8JMgwQYY2vucXbZQqG5eVMGNhndDV6g2jfdjgoNq\",\"type\":\"Secp256r1VerificationKey2018\"}],\"versionId\":\"1\"}")
+    }
+    
     func isAnyZKPCredentialsSaved() -> Bool {
         return true
     }
@@ -74,7 +87,7 @@ class WalletCoreMock: WalletCoreImpl {
         self.holderDidManager = try! DIDManager(fileName: "holder")
         self.vcManager = try! VCManager(fileName: "vc")
         
-        WalletLogger.shared.debug("secceed create Wallet")
+        WalletLogger.shared.debug("succeed create Wallet")
     }
     
     public func isSavedKey(keyId: String) throws -> Bool {
@@ -85,16 +98,19 @@ class WalletCoreMock: WalletCoreImpl {
         return true
     }
     
-    public func deleteWallet() throws -> Bool {
+    public func deleteWallet(deleteAll: Bool) throws
+    {
         if try WalletLockManager().isRegLock() && WalletLockManagerMock.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
-
-        if deviceDidManager.isSaved {
-            try deviceDidManager.deleteDocument()
-        }
-        if deviceKeyManager.isAnyKeysSaved {
-            try deviceKeyManager.deleteAllKeys()
+        if deleteAll
+        {        
+            if deviceDidManager.isSaved {
+                try deviceDidManager.deleteDocument()
+            }
+            if deviceKeyManager.isAnyKeysSaved {
+                try deviceKeyManager.deleteAllKeys()
+            }
         }
         if holderDidManager.isSaved {
             try holderDidManager.deleteDocument()
@@ -106,7 +122,6 @@ class WalletCoreMock: WalletCoreImpl {
         if vcManager.isAnyCredentialsSaved {
             try vcManager.deleteAllCredentials()
         }
-        return true
     }
     
     public func saveDidDocument(type: DidDocumentType) throws -> Void {

@@ -17,6 +17,10 @@
     
 import Foundation
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 struct CredentialRequestHelper
 {
     static func generateCredentialRequest(credentialPublicKey : CredentialPrimaryPublicKey,

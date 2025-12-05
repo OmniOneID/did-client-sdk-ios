@@ -16,10 +16,6 @@
 
 import Foundation
 
-
-
-
-
 class WalletToken: WalletTokenImpl {
     
     private let walletCore: WalletCoreImpl
@@ -60,8 +56,8 @@ class WalletToken: WalletTokenImpl {
                 WalletLogger.shared.debug("verify success")
                 isPurpose = true
             } else {
-//                WalletLogger.shared.debug("input purpose: \(purpose.value)")
-//                WalletLogger.shared.debug("saved purpose: \(token.purpose)")
+                //                WalletLogger.shared.debug("input purpose: \(purpose.value)")
+                //                WalletLogger.shared.debug("saved purpose: \(token.purpose)")
             }
         }
         
@@ -91,7 +87,7 @@ class WalletToken: WalletTokenImpl {
         
         let hexNonce = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: nonce)
         let seed = WalletTokenSeed(purpose: purpose, pkgName: pkgName, nonce: hexNonce, validUntil: Date.getUTC0Date(seconds: 0), userId: userId)
-                       
+        
         return seed
     }
     
@@ -103,7 +99,7 @@ class WalletToken: WalletTokenImpl {
         guard let walletTokenData = walletTokenData else {
             throw WalletAPIError.verifyParameterFail("walletTokenData").getError()
         }
-           
+        
         guard !APIGatewayURL.isEmpty else {
             throw WalletAPIError.verifyParameterFail("APIGatewayURL").getError()
         }
@@ -122,9 +118,9 @@ class WalletToken: WalletTokenImpl {
         try await self.verifyCertVcRef(roleType: roleType, providerDID: walletTokenData.provider.did, providerURL: walletTokenData.provider.certVcRef, APIGatewayURL: APIGatewayURL)
         
         // get CAS DIDDoc
-        let casDidDocData = try await CommunicationClient.doGet(url: URL(string: APIGatewayURL+"/api-gateway/api/v1/did-doc?did=" + walletTokenData.provider.did)!)
-        let _casDidDoc = try DIDDocVO(from: casDidDocData)
-        
+        let path = "\(APIGatewayURL)/api-gateway/api/v1/did-doc?did=\(walletTokenData.provider.did)"
+        let _casDidDoc : DIDDocVO = try await CommunicationClient.sendRequest(urlString: path,
+                                                                              httpMethod: .GET)
         
         let casDidDoc = try DIDDocument(from: try MultibaseUtils.decode(encoded: _casDidDoc.didDoc))
         
@@ -133,7 +129,7 @@ class WalletToken: WalletTokenImpl {
                 let pubKey = try MultibaseUtils.decode(encoded: method.publicKeyMultibase)
                 let signature = try MultibaseUtils.decode(encoded: (tempWalletTokenData.proof?.proofValue!)!)
                 tempWalletTokenData.proof?.proofValue = nil
-//                walletTokenData.proof.proofValueList = nil
+                //                walletTokenData.proof.proofValueList = nil
                 let digest = DigestUtils.getDigest(source: try tempWalletTokenData.toJsonData(), digestEnum: .sha256)
                 let result = try self.walletCore.verify(publicKey: pubKey, data: digest, signature: signature)
                 WalletLogger.shared.debug("result: \(result)")
@@ -150,12 +146,12 @@ class WalletToken: WalletTokenImpl {
         let purpose = WalletTokenPurpose(purpose: walletTokenData.seed.purpose)
         
         if let walletId = Properties.getWalletId(),
-            try CoreDataManager.shared.insertToken(walletId: walletId,
-                                              hWalletToken: hWalletToken,
-                                              purpose: purpose.purposeCode.value,
-                                              pkgName: walletTokenData.seed.pkgName,
-                                              nonce: walletTokenData.seed.nonce,
-                                              pii: walletTokenData.sha256_pii) {
+           try CoreDataManager.shared.insertToken(walletId: walletId,
+                                                  hWalletToken: hWalletToken,
+                                                  purpose: purpose.purposeCode.value,
+                                                  pkgName: walletTokenData.seed.pkgName,
+                                                  nonce: walletTokenData.seed.nonce,
+                                                  pii: walletTokenData.sha256_pii) {
             return resultNonce
         }
         WalletLogger.shared.debug("bindUser selectToken fail")
@@ -184,18 +180,19 @@ class WalletToken: WalletTokenImpl {
         // get certVC
         WalletLogger.shared.debug("verifyCertVc(WalletUtil)")
         
-        let certVcData = try await CommunicationClient.doGet(url: URL(string: providerURL)!)
-        var certVc = try VerifiableCredential.init(from: certVcData)
+        var certVc : VerifiableCredential = try await CommunicationClient.sendRequest(urlString: providerURL,
+                                                                                      httpMethod: .GET)
         
         // compare did
         if providerDID != certVc.credentialSubject.id {
-//            throw WalletAPIError.init(errorCode: WalletErrorCodeEnum.didMatchFail)
+            //            throw WalletAPIError.init(errorCode: WalletErrorCodeEnum.didMatchFail)
             throw WalletAPIError.didMatchFail.getError()
         }
         
         // get CAS DIDDoc
-        let didDocData = try await CommunicationClient.doGet(url: URL(string: APIGatewayURL+"/api-gateway/api/v1/did-doc?did=" + certVc.issuer.id)!)
-        let _didDoc = try DIDDocVO(from: didDocData)
+        let path = "\(APIGatewayURL)/api-gateway/api/v1/did-doc?did=\(certVc.issuer.id)"
+        let _didDoc : DIDDocVO = try await CommunicationClient.sendRequest(urlString: path,
+                                                                           httpMethod: .GET)
         
         
         let didDoc = try DIDDocument(from: try MultibaseUtils.decode(encoded: _didDoc.didDoc))
@@ -204,9 +201,9 @@ class WalletToken: WalletTokenImpl {
         
         // compare rule
         let schemaUrl = certVc.credentialSchema.id
-        let schemaData = try await CommunicationClient.doGet(url: URL(string: schemaUrl)!)
         
-        let vcSchema = try VCSchema.init(from: schemaData)
+        let vcSchema : VCSchema = try await CommunicationClient.sendRequest(urlString: schemaUrl,
+                                                                            httpMethod: .GET)
         let vcSchemaClaims = vcSchema.credentialSubject.claims
         
         let certVcClaims = certVc.credentialSubject.claims
@@ -231,7 +228,7 @@ class WalletToken: WalletTokenImpl {
         if !isExistValue {
             throw WalletAPIError.roleMatchFail.getError()
         }
-                
+        
         // verify vc certification
         for method in didDoc.verificationMethod {
             if method.id == "assert" {

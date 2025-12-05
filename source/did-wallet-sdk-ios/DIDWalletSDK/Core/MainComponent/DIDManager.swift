@@ -82,7 +82,7 @@ struct DIDManager {
     ///   - service: Service information of DID document
     public mutating func createDocument(did: String, keyInfos: [DIDKeyInfo], controller: String?, service: [DIDDocument.Service]?) throws {
         if isSaved {
-            throw E.documentIsAlreadyExists.getError()
+            throw E.documentAlreadyExists.getError()
         }
         
         if did.isEmpty {
@@ -126,15 +126,15 @@ struct DIDManager {
     /// If the "temporary DIDDocument object" is nil, returns the stored DID document.
     /// - Returns: DID document object
     func getDocument() throws -> DIDDocument {
-        if let didDoc = didDoc {
+        
+        
+        if var didDoc = didDoc {
+            increaseVersionId(didDoc: &didDoc)
+            
             return didDoc
         }
         
-        if isSaved, let savedDidDoc = try storageManager.getAllItems().first?.item {
-            return savedDidDoc
-        }
-        
-        throw E.unexpectedCondition.getError()
+        return try loadSavedDocument()
     }
     
     /// Replaces the "temporary DIDDocument object" with the input object.
@@ -286,18 +286,13 @@ struct DIDManager {
     }
     
     /// To reset changes, the "Temporary DIDDocument object" is initialized to nil.
-    /// An error occurs if there is no saved DID document file. In other words, it can only be used when a saved DID document file exists.
-    public mutating func resetChanges() throws {
-        if !isSaved {
-            throw E.dontCallResetChangesIfNoDocumentSaved.getError()
-        }
-        
+    public mutating func resetChanges() {
         didDoc = nil
     }
-    
-    
-    //MARK: - Private methods
-    
+}
+//MARK: - Private methods
+extension DIDManager
+{
     /// Adds public key information to the "DIDDocument object" inputted.
     /// - Parameters:
     ///   - didDoc: The pointer of "DIDDocument object" variable to add information of public key
@@ -385,7 +380,7 @@ struct DIDManager {
     /// Check if "Temporary DIDDocument Object" is editable status.
     private mutating func prepareToEditDocument() throws {
         if didDoc == nil, !isSaved {
-            throw E.unexpectedCondition.getError()
+            throw E.notFoundDocument.getError()
         }
         
         if didDoc == nil {
@@ -399,4 +394,26 @@ struct DIDManager {
         didDoc.updated = Date.getUTC0Date(seconds: 0)
     }
     
+    /// Increase the document's version by saved one
+    /// If the document didn't saved,
+    /// nothing happens
+    private func increaseVersionId(didDoc: inout DIDDocument)
+    {
+        if !isSaved { return }
+        
+        let savedDoc = try! loadSavedDocument()
+        
+        var versionId = Int(savedDoc.versionId)!
+        versionId += 1
+        didDoc.versionId = String(versionId)
+    }
+    
+    /// Load saved document
+    private func loadSavedDocument() throws -> DIDDocument {
+        if isSaved, let savedDidDoc = try storageManager.getAllItems().first?.item {
+            return savedDidDoc
+        }
+        
+        throw E.notFoundDocument.getError()
+    }
 }

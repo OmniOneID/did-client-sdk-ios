@@ -23,3 +23,6 @@ public typealias BigIntStringDictionary = [String : BigIntString]
 public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
 
 public typealias CaptionString = String
+
+public let defaultHttpHeaderFields : StringDictionary = ["Content-Type" : "application/json;charset=utf-8",
+                                                        "Accept": "application/json"]

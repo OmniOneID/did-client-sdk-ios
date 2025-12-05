@@ -17,6 +17,10 @@
     
 import Foundation
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 public struct AttributeValue : Jsonable
 {
     public              let encoded : BigIntString
