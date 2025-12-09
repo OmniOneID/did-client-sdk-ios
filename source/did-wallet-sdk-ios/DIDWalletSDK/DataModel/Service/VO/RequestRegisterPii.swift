@@ -20,13 +20,15 @@ public struct RetrieveKyc: Jsonable {
     public var id: String
     public var txId: String
     public var serverToken: String
-    public var kycTxId: String
+    public var kycTxId: String?
+    public var kycToken : String?
     
-    public init(id: String, txId: String, serverToken: String, kycTxId: String) {
+    public init(id: String, txId: String, serverToken: String, kycTxId: String?, kycToken : String?) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
         self.kycTxId = kycTxId
+        self.kycToken = kycToken
     }
 }
 

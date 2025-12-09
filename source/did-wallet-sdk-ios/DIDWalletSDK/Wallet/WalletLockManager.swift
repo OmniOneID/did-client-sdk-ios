@@ -30,7 +30,10 @@ class WalletLockManager: WalletLockManagerImpl {
     @discardableResult
     func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool {
         if isLock {
-            let finalEncCek = try KeyChainWrapper().saveKeyChain(passcode: passcode)
+            // Contents Encrypting Key
+            let cek = try CryptoUtils.generateNonce(size: 32)
+            let finalEncCek = try KeyChainWrapper.saveKeyChain(cek: cek,
+                                                               passcode: passcode)
             WalletLogger.shared.debug("updateUser result \(try CoreDataManager.shared.updateUser(finalEncKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek)))")
             WalletLockManager.isLock = false
         } else {
@@ -54,8 +57,34 @@ class WalletLockManager: WalletLockManagerImpl {
     @discardableResult
     func authenticateLock(passcode: String) throws -> Data? {
         let finalEncCek = try MultibaseUtils.decode(encoded: CoreDataManager.shared.selectUser()!.finalEncKey)
-        let result = try KeyChainWrapper().matching(passcode: passcode, finalEncCek: finalEncCek)
-        WalletLockManager.isLock = false
+        let result = try KeyChainWrapper.matching(passcode: passcode,
+                                                  finalEncCek: finalEncCek)
+        
+        WalletLockManager.isLock = (result == nil)
         return result
+    }
+    
+    func changeLock(oldPasscode: String, newPasscode: String) throws
+    {
+        if try !isRegLock()
+        {
+            throw WalletAPIError.notLockType.getError()
+        }
+        
+        if oldPasscode == newPasscode
+        {
+            throw WalletAPIError.newPasscodeEqualsOldPasscode.getError()
+        }
+        
+        guard let cek = try authenticateLock(passcode: oldPasscode)
+        else
+        {
+            throw WalletAPIError.incorrectPasscode.getError()
+        }
+        
+        let finalEncCek = try KeyChainWrapper.saveKeyChain(cek: cek,
+                                                           passcode: newPasscode)
+        
+        WalletLogger.shared.debug("updateUser result \(try CoreDataManager.shared.updateUser(finalEncKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek)))")
     }
 }

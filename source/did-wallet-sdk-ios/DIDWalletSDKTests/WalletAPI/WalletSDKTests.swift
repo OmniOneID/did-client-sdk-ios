@@ -65,7 +65,7 @@ final class DIDWalletSDKTests: XCTestCase {
         // Mock
         Task { @MainActor in
             do {
-                try self.walletAPI.deleteWallet()
+                try self.walletAPI.deleteWallet(deleteAll: true)
             } catch {
                 print("testDeleteWallet error: \(error)")
             }

@@ -18,13 +18,39 @@ import Foundation
 @testable import DIDWalletSDK
 
 class WalletLockManagerMock: WalletLockManagerImpl {
+    func changeLock(oldPasscode: String, newPasscode: String) throws {
+        if try !isRegLock()
+        {
+            throw WalletAPIError.notLockType.getError()
+        }
+        
+        if oldPasscode == newPasscode
+        {
+            throw WalletAPIError.newPasscodeEqualsOldPasscode.getError()
+        }
+        
+        guard let cek = try authenticateLock(passcode: oldPasscode)
+        else
+        {
+            throw WalletAPIError.incorrectPasscode.getError()
+        }
+        
+        let finalEncCek = try KeyChainWrapper.saveKeyChain(cek: cek,
+                                                           passcode: newPasscode)
+        
+        MockData.shared.userMock.setFinalEncKey(MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek))
+    }
+    
     
     // wallet status
     internal static var isLock: Bool = true
     
     func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool {
         if isLock {
-            let finalEncCek = try KeyChainWrapper().saveKeyChain(passcode: passcode)
+            
+            let cek = try CryptoUtils.generateNonce(size: 32)
+            let finalEncCek = try KeyChainWrapper.saveKeyChain(cek: cek,
+                                                               passcode: passcode)
             
             MockData.shared.userMock.setFinalEncKey(MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek))
             WalletLockManagerMock.isLock = false
@@ -47,8 +73,10 @@ class WalletLockManagerMock: WalletLockManagerImpl {
     
     func authenticateLock(passcode: String) throws -> Data? {
         let finalEncCek = try MultibaseUtils.decode(encoded: MockData.shared.getUserMock().finalEncKey)
-        let result = try KeyChainWrapper().matching(passcode: passcode, finalEncCek: finalEncCek)
-        WalletLockManagerMock.isLock = false
+        let result = try KeyChainWrapper.matching(passcode: passcode,
+                                                  finalEncCek: finalEncCek)
+        
+        WalletLockManagerMock.isLock = (result == nil)
         return result
     }
 }

@@ -23,8 +23,9 @@ iOS WalletAPIError
 - Date: 2024-10-18
 - Version: v1.0.0
 
-| Version          | Date       | Changes                  |
-| ---------------- | ---------- | ------------------------ |
+| Version | Date       | Changes                  |
+| --------| ---------- | ------------------------ |
+| v2.0.1  | 2025-10-01 | Add lock-related error   |
 | v1.0.0  | 2024-10-18 | Initial version          |
 
 <div style="page-break-after: always;"></div>
@@ -102,9 +103,11 @@ public struct WalletSDKError: Error {
 
 ## 3. Lock
 
-| Error Code   | Error Message                        | Description                       | Action Required                   |
-|--------------|--------------------------------------|-----------------------------------|-----------------------------------|
-| MSDKWLT05020 | Wallet is locked                     | Wallet access is restricted       | Unlock the wallet                 |
+| Error Code   | Error Message                               | Description                                                      | Action Required             |
+|--------------|---------------------------------------------|------------------------------------------------------------------|-----------------------------|
+| MSDKWLT05020 | Wallet is locked                            | Wallet access is restricted                                      | Unlock the wallet           |
+| MSDKWLT05021 | Given new passcode is equal to old passcode | The passcode to be changed is the same as the existing passcode. | Use another new passcode    |
+| MSDKWLT05022 | Wallet is not a lock-type                   | Wallet is not a lock-type                                        | Set the wallet to lock-type |
 
 <br>
 

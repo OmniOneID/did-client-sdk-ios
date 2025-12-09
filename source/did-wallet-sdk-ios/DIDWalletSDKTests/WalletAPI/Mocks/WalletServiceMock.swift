@@ -35,8 +35,9 @@ class WalletServiceMock : WalletServiceImpl
         return _RequestUpdateDidDoc(txId: "txid")
     }
     // TODO
-    func deleteWallet() throws -> Bool {
-        return true
+    func deleteWallet(deleteAll: Bool) throws
+    {
+        ()
     }
     
     func createWallet(tasURL: String, walletURL: String) async throws -> Bool {
@@ -111,7 +112,7 @@ class WalletServiceMock : WalletServiceImpl
         return (accE2e, encVp)
     }
     // TODO
-    func fatchCaInfo() async throws {
+    func fetchCaInfo() async throws {
         
     }
     
