@@ -54,6 +54,8 @@ class WalletCore: WalletCoreImpl {
             }
         }
         
+        holderDidManager.resetChanges()
+        
         if holderDidManager.isSaved {
             try holderDidManager.deleteDocument()
         }

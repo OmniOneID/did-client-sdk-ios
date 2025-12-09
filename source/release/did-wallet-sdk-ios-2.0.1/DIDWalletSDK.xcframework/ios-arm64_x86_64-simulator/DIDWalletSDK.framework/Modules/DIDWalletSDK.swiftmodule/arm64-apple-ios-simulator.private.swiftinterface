@@ -2990,98 +2990,87 @@ extension DIDWalletSDK.WalletAPI {
   @discardableResult
   public func createWallet(tasURL: Swift.String, walletURL: Swift.String) async throws -> Swift.Bool
   public func deleteWallet(deleteAll: Swift.Bool) throws
-}
-extension DIDWalletSDK.WalletAPI {
-  public func getSignedWalletInfo() throws -> DIDWalletSDK.SignedWalletInfo
   @discardableResult
   public func createWalletTokenSeed(purpose: DIDWalletSDK.WalletTokenPurposeEnum, pkgName: Swift.String, userId: Swift.String) throws -> DIDWalletSDK.WalletTokenSeed
   public func createNonceForWalletToken(walletTokenData: DIDWalletSDK.WalletTokenData, APIGatewayURL: Swift.String) async throws -> Swift.String
-}
-extension DIDWalletSDK.WalletAPI {
   @discardableResult
   public func bindUser(hWalletToken: Swift.String) throws -> Swift.Bool
   @discardableResult
   public func unbindUser(hWalletToken: Swift.String) throws -> Swift.Bool
-}
-extension DIDWalletSDK.WalletAPI {
-  public func isLock() throws -> Swift.Bool
-  public func registerLock(hWalletToken: Swift.String, passcode: Swift.String, isLock: Swift.Bool) throws -> Swift.Bool
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func authenticateLock(passcode: Swift.String) throws -> Foundation.Data?
-  #endif
-  public func changeLock(oldPasscode: Swift.String, newPasscode: Swift.String) throws
-}
-extension DIDWalletSDK.WalletAPI {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func getSignedDidAuth(authNonce: Swift.String, passcode: Swift.String? = nil) throws -> DIDWalletSDK.DIDAuth
-  #endif
-}
-extension DIDWalletSDK.WalletAPI {
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func createSignedDIDDoc(passcode: Swift.String? = nil) throws -> DIDWalletSDK.SignedDIDDoc
-  #endif
   public func requestRegisterUser(tasURL: Swift.String, txId: Swift.String, hWalletToken: Swift.String, serverToken: Swift.String, signedDIDDoc: DIDWalletSDK.SignedDIDDoc) async throws -> DIDWalletSDK._RequestRegisterUser
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func requestUpdateUser(tasURL: Swift.String, txId: Swift.String, hWalletToken: Swift.String, serverToken: Swift.String, didAuth: DIDWalletSDK.DIDAuth?, signedDIDDoc: DIDWalletSDK.SignedDIDDoc?) async throws -> DIDWalletSDK._RequestUpdateDidDoc
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func requestRestoreUser(tasURL: Swift.String, txId: Swift.String, hWalletToken: Swift.String, serverToken: Swift.String, didAuth: DIDWalletSDK.DIDAuth?) async throws -> DIDWalletSDK._RequestRestoreDidDoc
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func requestIssueVc(tasURL: Swift.String, hWalletToken: Swift.String, didAuth: DIDWalletSDK.DIDAuth, issuerProfile: DIDWalletSDK._RequestIssueProfile, refId: Swift.String, serverToken: Swift.String, APIGatewayURL: Swift.String) async throws -> (Swift.String, DIDWalletSDK._RequestIssueVc?)
-  #endif
-  #if compiler(>=5.3) && $NonescapableTypes
-  public func requestRevokeVc(hWalletToken: Swift.String, tasURL: Swift.String, authType: DIDWalletSDK.VerifyAuthType, vcId: Swift.String, issuerNonce: Swift.String, txId: Swift.String, serverToken: Swift.String, passcode: Swift.String? = nil) async throws -> DIDWalletSDK._RequestRevokeVc
-  #endif
+  public func getSignedWalletInfo() throws -> DIDWalletSDK.SignedWalletInfo
 }
 extension DIDWalletSDK.WalletAPI {
   @discardableResult
   public func createHolderDIDDocument(hWalletToken: Swift.String) throws -> DIDWalletSDK.DIDDocument
-  public func updateHolderDIDDocument(hWalletToken: Swift.String) throws -> DIDWalletSDK.DIDDocument
-  public func saveHolderDIDDocument() throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func createSignedDIDDoc(passcode: Swift.String? = nil) throws -> DIDWalletSDK.SignedDIDDoc
+  #endif
   public func getDidDocument(type: DIDWalletSDK.DidDocumentType) throws -> DIDWalletSDK.DIDDocument
-}
-extension DIDWalletSDK.WalletAPI {
   public func isAnyKeysSaved() throws -> Swift.Bool
   public func isSavedKey(keyId: Swift.String) throws -> Swift.Bool
   #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   public func generateKeyPair(hWalletToken: Swift.String, passcode: Swift.String? = nil, keyId: Swift.String, algType: DIDWalletSDK.AlgorithmType, promptMsg: Swift.String? = nil) throws -> Swift.Bool
   #endif
-  public func getKeyInfos(keyType: DIDWalletSDK.VerifyAuthType) throws -> [DIDWalletSDK.KeyInfo]
-  public func getKeyInfos(ids: [Swift.String]) throws -> [DIDWalletSDK.KeyInfo]
-  public func changePin(id: Swift.String, oldPIN: Swift.String, newPIN: Swift.String) throws
-  public func deleteKeyPair(hWalletToken: Swift.String, keyId: Swift.String) throws
-  public func authenticatePin(id: Swift.String, pin: Swift.String) throws
-}
-extension DIDWalletSDK.WalletAPI {
   #if compiler(>=5.3) && $NonescapableTypes
   @discardableResult
   public func sign(keyId: Swift.String, pin: Foundation.Data? = nil, data: Foundation.Data, type: DIDWalletSDK.DidDocumentType) throws -> Foundation.Data
   #endif
   public func verify(publicKey: Foundation.Data, data: Foundation.Data, signature: Foundation.Data) throws -> Swift.Bool
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getSignedDidAuth(authNonce: Swift.String, passcode: Swift.String? = nil) throws -> DIDWalletSDK.DIDAuth
+  #endif
+  public func updateHolderDIDDocument(hWalletToken: Swift.String) throws -> DIDWalletSDK.DIDDocument
+  public func saveHolderDIDDocument() throws
+  public func deleteKeyPair(hWalletToken: Swift.String, keyId: Swift.String) throws
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func requestUpdateUser(tasURL: Swift.String, txId: Swift.String, hWalletToken: Swift.String, serverToken: Swift.String, didAuth: DIDWalletSDK.DIDAuth?, signedDIDDoc: DIDWalletSDK.SignedDIDDoc?) async throws -> DIDWalletSDK._RequestUpdateDidDoc
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func requestRestoreUser(tasURL: Swift.String, txId: Swift.String, hWalletToken: Swift.String, serverToken: Swift.String, didAuth: DIDWalletSDK.DIDAuth?) async throws -> DIDWalletSDK._RequestRestoreDidDoc
+  #endif
 }
 extension DIDWalletSDK.WalletAPI {
-  public var isAnyCredentialsSaved: Swift.Bool {
-    get
-  }
-  public func getCredentials(hWalletToken: Swift.String, ids: [Swift.String]) throws -> [DIDWalletSDK.VerifiableCredential]
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func requestIssueVc(tasURL: Swift.String, hWalletToken: Swift.String, didAuth: DIDWalletSDK.DIDAuth, issuerProfile: DIDWalletSDK._RequestIssueProfile, refId: Swift.String, serverToken: Swift.String, APIGatewayURL: Swift.String) async throws -> (Swift.String, DIDWalletSDK._RequestIssueVc?)
+  #endif
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func requestRevokeVc(hWalletToken: Swift.String, tasURL: Swift.String, authType: DIDWalletSDK.VerifyAuthType, vcId: Swift.String, issuerNonce: Swift.String, txId: Swift.String, serverToken: Swift.String, passcode: Swift.String? = nil) async throws -> DIDWalletSDK._RequestRevokeVc
+  #endif
   #if compiler(>=5.3) && $NonescapableTypes
   public func getAllCredentials(hWalletToken: Swift.String) throws -> [DIDWalletSDK.VerifiableCredential]?
   #endif
+  public func getCredentials(hWalletToken: Swift.String, ids: [Swift.String]) throws -> [DIDWalletSDK.VerifiableCredential]
   public func deleteCredentials(hWalletToken: Swift.String, ids: [Swift.String]) throws -> Swift.Bool
   #if compiler(>=5.3) && $NonescapableTypes
   public func createEncVp(hWalletToken: Swift.String, claimInfos: [DIDWalletSDK.ClaimInfo]? = nil, verifierProfile: DIDWalletSDK._RequestProfile, APIGatewayURL: Swift.String, passcode: Swift.String? = nil) async throws -> (DIDWalletSDK.AccE2e, Foundation.Data)
   #endif
+  public var isAnyCredentialsSaved: Swift.Bool {
+    get
+  }
 }
 extension DIDWalletSDK.WalletAPI {
+  public func createEncZKProof(hWalletToken: Swift.String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile, APIGatewayURL: Swift.String) async throws -> (DIDWalletSDK.AccE2e, Foundation.Data)
+  public func searchZKPCredentials(hWalletToken: Swift.String, proofRequest: DIDWalletSDK.ProofRequest) throws -> DIDWalletSDK.AvailableReferent
+  #if compiler(>=5.3) && $NonescapableTypes
+  public func getAllZKPCredentials(hWalletToken: Swift.String) throws -> [DIDWalletSDK.ZKPCredential]?
+  #endif
+  public var isAnyZKPCredentialsSaved: Swift.Bool {
+    get
+  }
   public func isZKPCredentialSaved(id: Swift.String) -> Swift.Bool
   public func getZKPCredentials(hWalletToken: Swift.String, ids: [Swift.String]) throws -> [DIDWalletSDK.ZKPCredential]
+}
+extension DIDWalletSDK.WalletAPI {
+  public func registerLock(hWalletToken: Swift.String, passcode: Swift.String, isLock: Swift.Bool) throws -> Swift.Bool
   #if compiler(>=5.3) && $NonescapableTypes
-  public func getAllZKPCrentials(hWalletToken: Swift.String) throws -> [DIDWalletSDK.ZKPCredential]?
+  public func authenticateLock(passcode: Swift.String) throws -> Foundation.Data?
   #endif
-  public func searchCredentials(hWalletToken: Swift.String, proofRequest: DIDWalletSDK.ProofRequest) throws -> DIDWalletSDK.AvailableReferent
-  public func createEncZKProof(hWalletToken: Swift.String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile, APIGatewayURL: Swift.String) async throws -> (DIDWalletSDK.AccE2e, Foundation.Data)
+  public func isLock() throws -> Swift.Bool
+  public func changePin(id: Swift.String, oldPIN: Swift.String, newPIN: Swift.String) throws
+  public func changeLock(oldPasscode: Swift.String, newPasscode: Swift.String) throws
+  public func authenticatePin(id: Swift.String, pin: Swift.String) throws
 }
 public typealias BigIntString = Swift.String
 public typealias StringDictionary = [Swift.String : Swift.String]

@@ -17,7 +17,7 @@
 <br>
 
 **RNJSON**
-RNJSON(0.1)
+RNJSON(main)
 (https://github.com/rnapier/RNJSON)
 
 <br>

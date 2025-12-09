@@ -16,6 +16,10 @@
 
 import Foundation
 
+#if SWIFT_PACKAGE
+    import RNJSON
+#endif
+
 struct AnyCodingKey: CodingKey {
     
     let stringValue: String

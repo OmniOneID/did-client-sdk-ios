@@ -18,6 +18,10 @@
 import Foundation
 import OrderedCollections
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 class ChallengeBuilder
 {
     private var storedData : Data = .init()

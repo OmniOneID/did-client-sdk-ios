@@ -17,6 +17,10 @@
 
 import Foundation
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 struct BigIntUtil {
     
     static let maxIterations : Int = 1000

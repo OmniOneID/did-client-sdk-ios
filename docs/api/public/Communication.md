@@ -21,12 +21,12 @@ iOS Communication API
 - Subject: Communication
 - Author: JooHyun Park
 - Date: 2025-09-09
-- Version: v2.0.1
+- Version: v1.0.2
 
 | Version | Date       | Changes                  |
 | ------- | ---------- | ------------------------ |
-| v2.0.1  | 2025-09-09 | Add new communication API |
-| v2.0.0  | 2025-05-23 | Add ZKP API              |
+| v1.0.2  | 2025-09-09 | Add new communication API |
+| v1.0.1  | 2025-05-23 | Add ZKP API              |
 | v1.0.0  | 2024-10-18 | Initial version          |
 
 

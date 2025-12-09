@@ -21,11 +21,11 @@ iOS DataModel
 - Subject: DataModel
 - Writer: 박주현
 - Date: 2025-05-27
-- Version: v2.0.0
+- Version: v1.0.1
 
 | Version          | Date       | History                 |
 | ---------------- | ---------- | ------------------------|
-| v2.0.0           | 2025-05-27 | ZKP 관련 모델 추가         |
+| v1.0.1           | 2025-05-27 | ZKP 관련 모델 추가         |
 | v1.0.0           | 2024-08-28 | 초기 작성                 |
 
 
