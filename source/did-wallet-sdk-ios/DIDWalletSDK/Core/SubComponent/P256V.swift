@@ -18,6 +18,10 @@
 import Foundation
 import CryptoKit
 
+#if SWIFT_PACKAGE
+    import BigInt
+#endif
+
 enum P256V
 {
     // secp256r1 parameters
