@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.0.2 (2025-12-19)
+
+### Changed
+- Removed the dependency on OpenSSL and replaced it with an internal cryptographic implementation.
+
+
 ## v2.0.1 (2025-10-14)
 
 ### Highlights

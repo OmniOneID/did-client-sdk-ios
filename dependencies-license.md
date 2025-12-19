@@ -4,18 +4,6 @@
 
 <br>
 
-**OpenSSL**  
-`OpenSSL(v1.1.1n)`  
-(https://github.com/openssl/openssl)
-
-<br>
-
-**OpenSSL-for-iPhone**  
-`OpenSSL-for-iPhone`  
-(https://github.com/x2on/OpenSSL-for-iPhone)
-
-<br>
-
 **RNJSON**
 RNJSON(main)
 (https://github.com/rnapier/RNJSON)

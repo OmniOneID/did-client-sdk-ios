@@ -60,7 +60,9 @@ did-client-sdk-ios
     └── release
         ├── did-wallet-sdk-ios-2.0.0
         │   └── DIDWalletSDK.xcframework
-        └── did-wallet-sdk-ios-2.0.1
+        ├── did-wallet-sdk-ios-2.0.1
+        │   └── DIDWalletSDK.xcframework
+        └── did-wallet-sdk-ios-2.0.2
             └── DIDWalletSDK.xcframework
 ```
 
