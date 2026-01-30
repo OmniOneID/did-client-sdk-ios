@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -468,10 +468,32 @@ extension WalletAPI : ICredentialService
     /// Returns: (AccE2e, Data) - Returns a tuple containing the AccE2e object with encryption data and the encrypted VP.
     ///
     /// Throws: Errors can be thrown for cryptographic failures, data encoding issues, or network communication problems.
-    public func createEncVp(hWalletToken:String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data)
+    public func createEncVp(hWalletToken:String, claimInfos: [ClaimInfo], verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data)
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
         return try await walletService.requestVp(hWalletToken: hWalletToken, claimInfos: claimInfos, verifierProfile: verifierProfile, APIGatewayURL: APIGatewayURL, passcode: passcode)
+    }
+    
+    public func createVp(
+        hWalletToken:String,
+        claimInfos: [ClaimInfo],
+        passcode: String? = nil,
+        verifierNonce: String,
+        challenge: OIDV4VPChallenge? = nil
+    ) throws -> VerifiablePresentation
+    {
+        try self.walletToken.verifyWalletToken(
+            hWalletToken: hWalletToken,
+            purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP]
+        )
+        
+        return try walletService.createVp(
+            hWalletToken: hWalletToken,
+            claimInfos: claimInfos,
+            passcode: passcode,
+            verifierNonce: verifierNonce,
+            challenge: challenge
+        )
     }
     
     /// Checks whether any credentials are saved in the wallet.

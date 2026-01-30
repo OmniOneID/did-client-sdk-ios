@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,7 +84,22 @@ public protocol WalletCoreImpl {
 public protocol WalletServiceImpl {
     func deleteWallet(deleteAll : Bool) throws
     func createWallet(tasURL: String, walletURL: String) async throws -> Bool
-    func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]?, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data)
+    
+    func requestVp(hWalletToken: String,
+                   claimInfos: [ClaimInfo],
+                   verifierProfile: _RequestProfile?,
+                   APIGatewayURL: String,
+                   passcode: String?
+    ) async throws -> (AccE2e, Data)
+    
+    func createVp(
+        hWalletToken: String,
+        claimInfos: [ClaimInfo],
+        passcode: String?,
+        verifierNonce: String,
+        challenge: OIDV4VPChallenge?
+    ) throws -> VerifiablePresentation
+    
     func requestZKProof(hWalletToken:String,
                         selectedReferents : [UserReferent],
                         proofParam : ZKProofParam,

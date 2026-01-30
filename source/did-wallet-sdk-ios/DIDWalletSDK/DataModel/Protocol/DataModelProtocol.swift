@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,6 +155,12 @@ public protocol ProofsContainer : Jsonable
 {
     var proof  : Proof? { get set }
     var proofs : [Proof]? { get set }
+}
+
+public protocol VPProofsContainer : Jsonable
+{
+    var proof  : VPProof? { get set }
+    var proofs : [VPProof]? { get set }
 }
 
 /// Convertible to AlgorithmType protocol

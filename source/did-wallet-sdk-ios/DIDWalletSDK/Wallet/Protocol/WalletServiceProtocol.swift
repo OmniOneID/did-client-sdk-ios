@@ -1,6 +1,6 @@
 //
 /*
- * Copyright 2025 OmniOne.
+ * Copyright 2025-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ protocol ICredentialService
     func deleteCredentials(hWalletToken: String,
                            ids: [String]) throws -> Bool
     func createEncVp(hWalletToken:String,
-                     claimInfos: [ClaimInfo]?,
+                     claimInfos: [ClaimInfo],
                      verifierProfile: _RequestProfile,
                      APIGatewayURL: String,
                      passcode: String?) async throws -> (AccE2e, Data)

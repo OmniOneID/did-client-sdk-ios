@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,11 @@ struct VCManager {
     ///   - claimInfos: VC information to use for creating VP
     ///   - presentationInfo: Meta information to use for VP creation
     /// - Returns: VP object
-    func makePresentation(claimInfos: [ClaimInfo], presentationInfo: PresentationInfo) throws -> VerifiablePresentation {
+    func makePresentation(
+        claimInfos: [ClaimInfo],
+        presentationInfo: PresentationInfo
+    ) throws -> VerifiablePresentation
+    {
         if claimInfos.isEmpty {
             throw C.invalidParameter(code: .vcManager, name: "claimInfos").getError()
         }
@@ -104,7 +108,20 @@ struct VCManager {
         var credentialsToPresent: [VerifiableCredential] = .init()
         
         for credential in credentials {
+            
             let claimCodes = claimInfos.filter({ $0.credentialId == credential.id }).first!.claimCodes
+            
+            if claimCodes.isEmpty
+            {
+                var tempCredential = credential
+                var tempProof = credential.proof
+                tempProof.proofValueList = nil
+                
+                tempCredential.proof = tempProof
+                
+                credentialsToPresent.append(tempCredential)
+                continue
+            }
             
             if Set(claimCodes).count != claimCodes.count {
                 throw C.duplicateParameter(code: .vcManager, name: "claimInfos.claimCodes").getError()
@@ -144,7 +161,11 @@ struct VCManager {
             credentialsToPresent.append(tempCredential)
         }
         
-        return VerifiablePresentation(holder: presentationInfo.holder, validFrom: presentationInfo.validFrom, validUntil: presentationInfo.validUntil, verifierNonce: presentationInfo.verifierNonce, verifiableCredential: credentialsToPresent)
+        return VerifiablePresentation(holder: presentationInfo.holder,
+                                      validFrom: presentationInfo.validFrom,
+                                      validUntil: presentationInfo.validUntil,
+                                      verifierNonce: presentationInfo.verifierNonce,
+                                      verifiableCredential: credentialsToPresent)
     }
     
 }

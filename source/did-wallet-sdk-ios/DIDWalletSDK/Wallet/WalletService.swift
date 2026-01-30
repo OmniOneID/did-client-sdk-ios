@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,11 +59,11 @@ class WalletService: WalletServiceImpl {
         return try await self.requestRegisterWallet(tasURL: tasURL, walletURL: walletURL, ownerDidDoc: deviceKey)
     }
     
-    public func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data) {
+    public func requestVp(hWalletToken: String, claimInfos: [ClaimInfo], verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data) {
         
-        guard !hWalletToken.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("hWalletToken").getError()
-        }
+//        guard !hWalletToken.isEmpty else {
+//            throw WalletAPIError.verifyParameterFail("hWalletToken").getError()
+//        }
         guard let verifierProfile = verifierProfile else {
             throw WalletAPIError.verifyParameterFail("verifierProfile").getError()
         }
@@ -99,30 +99,39 @@ class WalletService: WalletServiceImpl {
         let source = try DigestUtils.getDigest(source: accE2e.toJsonData(), digestEnum: DigestEnum.sha256)
         let signature = try WalletAPI.shared.sign(keyId: "keyagree", data: source, type: DidDocumentType.HolderDidDocumnet)
         accE2e.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature)
-        let presentationInfo = PresentationInfo(holder: holderDidDoc.id,
-                                                validFrom: Date.getUTC0Date(seconds: 0),
-                                                validUntil: Date.getUTC0Date(seconds: 5000),
-                                                verifierNonce: verifierProfile.profile.profile.process.verifierNonce)
         
-        var vp = try walletCore.makePresentation(claimInfos:claimInfos!,
-                                                 presentationInfo: presentationInfo)
         
-        let authType = passcode != nil ? "#pin" : "#bio"
-        WalletLogger.shared.debug("vp: \(try vp.toJson())")
-        let vpProof = Proof(created: Date.getUTC0Date(seconds: 0),
-                            proofPurpose: ProofPurpose.assertionMethod,
-                            verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
-                            type: ProofType.secp256r1Signature2018)
-        vp.proof = vpProof
-        let vpSource = try DigestUtils.getDigest(source: vp.toJsonData(), digestEnum: DigestEnum.sha256)
+//        let presentationInfo = PresentationInfo(holder: holderDidDoc.id,
+//                                                validFrom: Date.getUTC0Date(seconds: 0),
+//                                                validUntil: Date.getUTC0Date(seconds: 5000),
+//                                                verifierNonce: verifierProfile.profile.profile.process.verifierNonce)
+//        
+//        var vp = try walletCore.makePresentation(claimInfos:claimInfos!,
+//                                                 presentationInfo: presentationInfo)
+//        
+//        let authType = passcode != nil ? "#pin" : "#bio"
+//        WalletLogger.shared.debug("vp: \(try vp.toJson())")
+//        let vpProof = VPProof(created: Date.getUTC0Date(seconds: 0),
+//                            proofPurpose: ProofPurpose.assertionMethod,
+//                            verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
+//                            type: ProofType.secp256r1Signature2018)
+//        vp.proof = vpProof
+//        let vpSource = try DigestUtils.getDigest(source: vp.toJsonData(), digestEnum: DigestEnum.sha256)
+//        
+//        let vpSignature: Data?
+//        if passcode != nil {
+//            vpSignature = try walletCore.sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: vpSource, type: DidDocumentType.HolderDidDocumnet)
+//        } else {
+//            vpSignature = try walletCore.sign(keyId: "bio", pin: nil, data: vpSource, type: DidDocumentType.HolderDidDocumnet)
+//        }
+//        vp.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: vpSignature!)
         
-        let vpSignature: Data?
-        if passcode != nil {
-            vpSignature = try walletCore.sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: vpSource, type: DidDocumentType.HolderDidDocumnet)
-        } else {
-            vpSignature = try walletCore.sign(keyId: "bio", pin: nil, data: vpSource, type: DidDocumentType.HolderDidDocumnet)
-        }
-        vp.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: vpSignature!)
+        let vp = try createVp(
+            hWalletToken: hWalletToken,
+            claimInfos: claimInfos,
+            passcode: passcode,
+            verifierNonce: verifierProfile.profile.profile.process.verifierNonce
+        )
         let serverNonce = try MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.verifierNonce)
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
@@ -135,6 +144,51 @@ class WalletService: WalletServiceImpl {
                                             key: clientMergedSharedSecret,
                                             iv: iv)
         return (accE2e, encVp)
+    }
+    
+    func createVp(hWalletToken: String,
+                  claimInfos: [ClaimInfo],
+                  passcode: String?,
+                  verifierNonce: String,
+                  challenge: OIDV4VPChallenge? = nil) throws -> VerifiablePresentation
+    {
+        guard !hWalletToken.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("hWalletToken").getError()
+        }
+        
+        let holderDidDoc = try WalletAPI.shared.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
+        
+        let presentationInfo = PresentationInfo(holder: holderDidDoc.id,
+                                                validFrom: Date.getUTC0Date(seconds: 0),
+                                                validUntil: Date.getUTC0Date(seconds: 5000),
+                                                verifierNonce: verifierNonce)
+        
+        var vp = try walletCore.makePresentation(claimInfos:claimInfos,
+                                                 presentationInfo: presentationInfo)
+        
+        let authType = passcode != nil ? "#pin" : "#bio"
+        WalletLogger.shared.debug("vp: \(try vp.toJson())")
+        let vpProof = VPProof(
+            created: Date.getUTC0Date(seconds: 0),
+            proofPurpose: ProofPurpose.assertionMethod,
+            verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
+            type: ProofType.secp256r1Signature2018,
+            domain: challenge?.challenge,
+            challenge: challenge?.challenge
+        )
+        
+        vp.proof = vpProof
+        let vpSource = try DigestUtils.getDigest(source: vp.toJsonData(), digestEnum: DigestEnum.sha256)
+        
+        let vpSignature: Data?
+        if passcode != nil {
+            vpSignature = try walletCore.sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: vpSource, type: DidDocumentType.HolderDidDocumnet)
+        } else {
+            vpSignature = try walletCore.sign(keyId: "bio", pin: nil, data: vpSource, type: DidDocumentType.HolderDidDocumnet)
+        }
+        vp.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: vpSignature!)
+        
+        return vp
     }
     
     public func requestZKProof(hWalletToken:String,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,23 @@
  */
 
 import Foundation
+
+public protocol OID4VPProofProtocol : Jsonable
+{
+    var domain    : String? { get set }
+    var challenge : String? { get set }
+}
+
+public struct OIDV4VPChallenge : OID4VPProofProtocol
+{
+    public var domain: String?
+    public var challenge: String?
+}
+
+public protocol IssuerProofProtocol : Jsonable
+{
+    var proofValueList    : [String]? { get set }
+}
 
 /// Owner proof
 public struct Proof : ProofProtocol
@@ -44,8 +61,44 @@ public struct Proof : ProofProtocol
     }
 }
 
+public struct VPProof : ProofProtocol, OID4VPProofProtocol
+{
+    /// Created datetime
+    @UTCDatetime public var created: String
+    /// Proof purpose
+    public var proofPurpose: ProofPurpose
+    /// Key URL used for Proof Signature
+    public var verificationMethod: String
+    /// Proof type
+    public var type: ProofType
+    /// Signature value
+    public var proofValue: String?
+    
+    public var domain: String?
+    
+    public var challenge: String?
+    
+    
+    public init(created: String,
+                proofPurpose: ProofPurpose,
+                verificationMethod: String,
+                type: ProofType,
+                proofValue: String? = nil,
+                domain: String? = nil,
+                challenge: String? = nil)
+    {
+        self.created = created
+        self.proofPurpose = proofPurpose
+        self.verificationMethod = verificationMethod
+        self.type = type
+        self.proofValue = proofValue
+        self.domain = domain
+        self.challenge = challenge
+    }
+}
+
 /// Issuer proof
-public struct VCProof : ProofProtocol, Jsonable
+public struct VCProof : ProofProtocol, IssuerProofProtocol
 {
     /// Created datetime
     @UTCDatetime public var created: String
@@ -76,97 +129,97 @@ public struct VCProof : ProofProtocol, Jsonable
     }
 }
 
-//MARK: - Extension
-
-extension Proof : Codable
-{
-    enum CodingKeys : String, CodingKey
-    {
-        case created,
-             proofPurpose,
-             verificationMethod,
-             type,
-             proofValue
-    }
-    
-    public func encode(to encoder: Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(created,
-                             forKey: .created)
-        try container.encode(proofPurpose,
-                             forKey: .proofPurpose)
-        try container.encode(verificationMethod,
-                             forKey: .verificationMethod)
-        try container.encode(type,
-                             forKey: .type)
-        try container.encodeIfPresent(proofValue,
-                                      forKey: .proofValue)
-    }
-    
-    public init(from decoder: Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        created             = try container.decode(String.self,
-                                                   forKey: .created)
-        proofPurpose        = try container.decode(ProofPurpose.self,
-                                                   forKey: .proofPurpose)
-        verificationMethod  = try container.decode(String.self,
-                                                   forKey: .verificationMethod)
-        type                = try container.decode(ProofType.self,
-                                                   forKey: .type)
-        proofValue          = try container.decodeIfPresent(String.self,
-                                                            forKey: .proofValue)
-    }
-}
-
-extension VCProof : Codable
-{
-    enum CodingKeys : String, CodingKey
-    {
-        case created,
-             proofPurpose,
-             verificationMethod,
-             type,
-             proofValue,
-             proofValueList
-    }
-    
-    public func encode(to encoder: Encoder) throws
-    {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        try container.encode(created,
-                             forKey: .created)
-        try container.encode(proofPurpose,
-                             forKey: .proofPurpose)
-        try container.encode(verificationMethod,
-                             forKey: .verificationMethod)
-        try container.encode(type,
-                             forKey: .type)
-        try container.encodeIfPresent(proofValue,
-                                      forKey: .proofValue)
-        try container.encodeIfPresent(proofValueList,
-                                      forKey: .proofValueList)
-    }
-    
-    public init(from decoder: Decoder) throws
-    {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        created             = try container.decode(String.self,
-                                                   forKey: .created)
-        proofPurpose        = try container.decode(ProofPurpose.self,
-                                                   forKey: .proofPurpose)
-        verificationMethod  = try container.decode(String.self,
-                                                   forKey: .verificationMethod)
-        type                = try container.decode(ProofType.self,
-                                                   forKey: .type)
-        proofValue          = try container.decodeIfPresent(String.self,
-                                                            forKey: .proofValue)
-        proofValueList      = try container.decodeIfPresent([String].self,
-                                                            forKey: .proofValueList)
-    }
-}
+////MARK: - Extension
+//
+//extension Proof : Codable
+//{
+//    enum CodingKeys : String, CodingKey
+//    {
+//        case created,
+//             proofPurpose,
+//             verificationMethod,
+//             type,
+//             proofValue
+//    }
+//    
+//    public func encode(to encoder: Encoder) throws
+//    {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//        
+//        try container.encode(created,
+//                             forKey: .created)
+//        try container.encode(proofPurpose,
+//                             forKey: .proofPurpose)
+//        try container.encode(verificationMethod,
+//                             forKey: .verificationMethod)
+//        try container.encode(type,
+//                             forKey: .type)
+//        try container.encodeIfPresent(proofValue,
+//                                      forKey: .proofValue)
+//    }
+//    
+//    public init(from decoder: Decoder) throws
+//    {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        
+//        created             = try container.decode(String.self,
+//                                                   forKey: .created)
+//        proofPurpose        = try container.decode(ProofPurpose.self,
+//                                                   forKey: .proofPurpose)
+//        verificationMethod  = try container.decode(String.self,
+//                                                   forKey: .verificationMethod)
+//        type                = try container.decode(ProofType.self,
+//                                                   forKey: .type)
+//        proofValue          = try container.decodeIfPresent(String.self,
+//                                                            forKey: .proofValue)
+//    }
+//}
+//
+//extension VCProof : Codable
+//{
+//    enum CodingKeys : String, CodingKey
+//    {
+//        case created,
+//             proofPurpose,
+//             verificationMethod,
+//             type,
+//             proofValue,
+//             proofValueList
+//    }
+//    
+//    public func encode(to encoder: Encoder) throws
+//    {
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//        
+//        try container.encode(created,
+//                             forKey: .created)
+//        try container.encode(proofPurpose,
+//                             forKey: .proofPurpose)
+//        try container.encode(verificationMethod,
+//                             forKey: .verificationMethod)
+//        try container.encode(type,
+//                             forKey: .type)
+//        try container.encodeIfPresent(proofValue,
+//                                      forKey: .proofValue)
+//        try container.encodeIfPresent(proofValueList,
+//                                      forKey: .proofValueList)
+//    }
+//    
+//    public init(from decoder: Decoder) throws
+//    {
+//        let container = try decoder.container(keyedBy: CodingKeys.self)
+//        
+//        created             = try container.decode(String.self,
+//                                                   forKey: .created)
+//        proofPurpose        = try container.decode(ProofPurpose.self,
+//                                                   forKey: .proofPurpose)
+//        verificationMethod  = try container.decode(String.self,
+//                                                   forKey: .verificationMethod)
+//        type                = try container.decode(ProofType.self,
+//                                                   forKey: .type)
+//        proofValue          = try container.decodeIfPresent(String.self,
+//                                                            forKey: .proofValue)
+//        proofValueList      = try container.decodeIfPresent([String].self,
+//                                                            forKey: .proofValueList)
+//    }
+//}
