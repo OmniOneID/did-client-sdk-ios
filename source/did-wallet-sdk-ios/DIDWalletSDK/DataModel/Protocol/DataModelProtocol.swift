@@ -207,5 +207,51 @@ extension ConvertibleFromAlgorithmType
 }
 
 
+//MARK: - Loopable
+
+public protocol Loopable : Hashable
+{
+    var allProperties: [String: Any] { get }
+    static func == (lhs : Self, rhs : Self) -> Bool
+}
+
+extension Loopable {
+    public var allProperties: [String: Any]
+    {
+        var result = [String: Any]()
+        Mirror(reflecting: self).children.forEach { child in
+            if let property = child.label {
+                result[property] = child.value
+            }
+        }
+        return result
+    }
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.hashedValue() == rhs.hashedValue()
+    }
+    
+    func hashedValue() -> Int
+    {
+        var hasher: Hasher = .init()
+        self.hash(into: &hasher)
+        let hashed = hasher.finalize()
+        
+        return hashed
+    }
+    
+    public func hash(into hasher: inout Hasher)
+    {
+        let properties = allProperties
+        for key in properties.keys.sorted() {
+            
+            if let h = properties[key] as? AnyHashable {
+                let cover = "\(h)"
+                hasher.combine(cover)
+            }
+        }
+    }
+}
+
 //MARK: Misc
 let emptyString : String = ""
