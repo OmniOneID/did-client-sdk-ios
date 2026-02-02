@@ -26,6 +26,11 @@ public struct OIDV4VPChallenge : OID4VPProofProtocol
 {
     public var domain: String?
     public var challenge: String?
+    
+    public init(domain: String, challenge: String) {
+        self.domain = domain
+        self.challenge = challenge
+    }
 }
 
 public protocol IssuerProofProtocol : Jsonable
