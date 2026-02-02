@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,12 @@ public struct Option: Jsonable {
     public var allowUserInit: Bool
     public var allowIssuerInit: Bool
     public var delegatedIssuance: Bool
+}
+
+public enum VCIssuanceMode: String, Codable
+{
+    case DIRECT
+    case PROXY
 }
 
 public struct VCPlan: Jsonable
@@ -45,6 +51,9 @@ public struct VCPlan: Jsonable
     public var manager: String
     
     public var credentialDefinition : VCPlan.CredentialDefinition?
+    
+    public var issuanceMode: VCIssuanceMode?
+    public var endpoints : [String]?
     
     public init(vcPlanId: String, name: String, description: String, url: String? = nil, logo: LogoImage? = nil, validFrom: String? = nil, validUntil: String? = nil, tags: [String]? = nil, credentialSchema: IssueProfile.Profile.CredentialSchema, option: Option, delegate: String? = nil, allowedIssuers: [String]? = nil, manager: String, credentialDefinition : VCPlan.CredentialDefinition?)
     {

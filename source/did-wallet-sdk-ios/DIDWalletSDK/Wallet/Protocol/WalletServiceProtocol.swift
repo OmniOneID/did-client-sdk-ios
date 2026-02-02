@@ -80,12 +80,12 @@ protocol IDIDKeyService
 
 protocol ICredentialService
 {
-    func requestIssueVc(tasURL: String,
+    func requestIssueVc(url: String,
                         hWalletToken: String,
                         didAuth: DIDAuth,
                         issuerProfile: _RequestIssueProfile,
                         refId: String,
-                        serverToken: String,
+                        serverToken: String?,
                         APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
     func requestRevokeVc(hWalletToken:String,
                          tasURL: String,

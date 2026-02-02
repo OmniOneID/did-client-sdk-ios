@@ -558,9 +558,9 @@ class WalletService: WalletServiceImpl {
         return didAuth
     }
     
-    public func requestIssueVc(tasURL: String, didAuth: DIDAuth?, issuerProfile: _RequestIssueProfile?, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?) {
+    public func requestIssueVc(url: String, didAuth: DIDAuth?, issuerProfile: _RequestIssueProfile?, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?) {
         
-        guard !tasURL.isEmpty else {
+        guard !url.isEmpty else {
             throw WalletAPIError.verifyParameterFail("tasURL").getError()
         }
         guard let didAuth = didAuth else {
@@ -572,9 +572,9 @@ class WalletService: WalletServiceImpl {
         guard !refId.isEmpty else {
             throw WalletAPIError.verifyParameterFail("refId").getError()
         }
-        guard !serverToken.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("serverToken").getError()
-        }
+//        guard !serverToken.isEmpty else {
+//            throw WalletAPIError.verifyParameterFail("serverToken").getError()
+//        }
         guard !APIGatewayURL.isEmpty else {
             throw WalletAPIError.verifyParameterFail("APIGatewayURL").getError()
         }
@@ -648,7 +648,7 @@ class WalletService: WalletServiceImpl {
                                        accE2e: accE2e,
                                        encReqVc: multiEncReqVc)
         
-        let decodedResponse : _RequestIssueVc = try await CommunicationClient.sendRequest(urlString: tasURL,
+        let decodedResponse : _RequestIssueVc = try await CommunicationClient.sendRequest(urlString: url,
                                                                                           requestJsonable: parameter)
         
         let envVc = try MultibaseUtils.decode(encoded: decodedResponse.e2e.encVc)

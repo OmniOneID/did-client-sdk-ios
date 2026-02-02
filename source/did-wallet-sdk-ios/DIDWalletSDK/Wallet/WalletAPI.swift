@@ -359,7 +359,7 @@ extension WalletAPI : ICredentialService
 {
     /// Request issue Credential with the given parameters.
     ///- Parameters:
-    ///  - tasURL: The TAS URL for the request.
+    ///  - url: The URL for the request.
     ///  - hWalletToken: The wallet token for authentication.
     ///  - didAuth: The DID authentication object.
     ///  - issuerProfile: The issuer profile for the request.
@@ -370,10 +370,10 @@ extension WalletAPI : ICredentialService
     ///  A tuple containing a string and an optional request issue view controller.
     /// - Throws:
     ///  An error if verification of the wallet token fails.
-    public func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issuerProfile: _RequestIssueProfile, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
+    public func requestIssueVc(url: String, hWalletToken: String, didAuth: DIDAuth, issuerProfile: _RequestIssueProfile, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.ISSUE_VC])
-        return try await walletService.requestIssueVc(tasURL: tasURL, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: serverToken, APIGatewayURL: APIGatewayURL)
+        return try await walletService.requestIssueVc(url: url, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: serverToken, APIGatewayURL: APIGatewayURL)
     }
     
     /// This function handles the process of revoking a verifiable credential (VC) by generating and signing a
