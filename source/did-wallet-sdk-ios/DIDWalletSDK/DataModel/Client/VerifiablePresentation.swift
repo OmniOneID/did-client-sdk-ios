@@ -17,7 +17,7 @@
 import Foundation
 
 /// A List of VCs signed with subject signatures, hereafter VP
-public struct VerifiablePresentation : Jsonable, VPProofsContainer, Identifiable, Loopable
+public struct VerifiablePresentation : Jsonable, VPProofsContainer, Identifiable
 {
     /// JSON-LD context
     public var context              : [String]
