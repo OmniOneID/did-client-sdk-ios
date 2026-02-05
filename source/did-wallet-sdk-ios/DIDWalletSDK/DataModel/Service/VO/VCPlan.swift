@@ -54,24 +54,4 @@ public struct VCPlan: Jsonable
     
     public var issuanceMode: VCIssuanceMode?
     public var endpoints : [String]?
-    
-    public init(vcPlanId: String, name: String, description: String, url: String? = nil, logo: LogoImage? = nil, validFrom: String? = nil, validUntil: String? = nil, tags: [String]? = nil, credentialSchema: IssueProfile.Profile.CredentialSchema, option: Option, delegate: String? = nil, allowedIssuers: [String]? = nil, manager: String, credentialDefinition : VCPlan.CredentialDefinition?)
-    {
-        self.vcPlanId = vcPlanId
-        self.name = name
-        self.description = description
-        self.url = url
-        self.logo = logo
-        self.validFrom = validFrom
-        self.validUntil = validUntil
-        self.tags = tags
-        self.credentialSchema = credentialSchema
-        self.option = option
-        self.delegate = delegate
-        self.allowedIssuers = allowedIssuers
-        self.manager = manager
-        
-        self.credentialDefinition = credentialDefinition
-    }
-    
 }

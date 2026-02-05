@@ -173,7 +173,7 @@ class WalletService: WalletServiceImpl {
             proofPurpose: ProofPurpose.assertionMethod,
             verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
             type: ProofType.secp256r1Signature2018,
-            domain: challenge?.challenge,
+            domain: challenge?.domain,
             challenge: challenge?.challenge
         )
         
