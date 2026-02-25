@@ -120,6 +120,6 @@ public protocol WalletServiceImpl {
     
     func getSignedDidAuth(authNonce: String, passcode: String?) throws -> DIDAuth
     func requestIssueVc(url: String, didAuth: DIDAuth?, issuerProfile: _RequestIssueProfile?, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
-    func requestRevokeVc(tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String?) async throws -> _RequestRevokeVc
+    func requestRevokeVc(url: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String?) async throws -> _RequestRevokeVc
     func getSignedWalletInfo() throws -> SignedWalletInfo
 }

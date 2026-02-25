@@ -88,12 +88,12 @@ protocol ICredentialService
                         serverToken: String?,
                         APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
     func requestRevokeVc(hWalletToken:String,
-                         tasURL: String,
+                         url: String,
                          authType: VerifyAuthType,
                          vcId: String,
                          issuerNonce: String,
                          txId: String,
-                         serverToken: String,
+                         serverToken: String?,
                          passcode: String?) async throws -> _RequestRevokeVc
     func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]?
     func getCredentials(hWalletToken: String,

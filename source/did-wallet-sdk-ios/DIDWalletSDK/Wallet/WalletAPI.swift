@@ -382,7 +382,7 @@ extension WalletAPI : ICredentialService
     ///
     /// - Parameters:
     ///   - hWalletToken: The wallet token for authentication.
-    ///   - tasURL: String - The URL of the server where the revocation request is sent.
+    ///   - url: String - The URL of the server where the revocation request is sent.
     ///   - authType: VerifyAuthType - The type of authentication used (e.g., biometrics, passcode).
     ///   - vcId: String - The ID of the verifiable credential to be revoked.
     ///   - issuerNonce: String - A nonce value provided by the issuer to ensure the request is valid.
@@ -394,10 +394,10 @@ extension WalletAPI : ICredentialService
     /// - Returns: _RequestRevokeVc - A structured object containing the server's response to the revocation request.
     ///
     /// Throws: Various errors related to cryptographic operations, server communication, or data encoding failures.
-    public func requestRevokeVc(hWalletToken:String, tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String? = nil) async throws -> _RequestRevokeVc
+    public func requestRevokeVc(hWalletToken:String, url: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String? = nil) async throws -> _RequestRevokeVc
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.REMOVE_VC])
-        return try await walletService.requestRevokeVc(tasURL: tasURL, authType: authType, vcId: vcId, issuerNonce: issuerNonce, txId: txId, serverToken: serverToken, passcode: passcode)
+        return try await walletService.requestRevokeVc(url: url, authType: authType, vcId: vcId, issuerNonce: issuerNonce, txId: txId, serverToken: serverToken, passcode: passcode)
     }
     
     /// Retrieves all verifiable credentials stored in the wallet using the provided wallet token.

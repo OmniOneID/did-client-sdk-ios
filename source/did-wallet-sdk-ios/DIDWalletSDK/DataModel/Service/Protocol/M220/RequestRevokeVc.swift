@@ -19,10 +19,10 @@ import Foundation
 public struct RequestRevokeVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var request: ReqRevokeVc
     
-    public init(id: String, txId: String, serverToken: String, request: ReqRevokeVc) {
+    public init(id: String, txId: String, serverToken: String?, request: ReqRevokeVc) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken

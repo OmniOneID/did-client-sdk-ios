@@ -726,14 +726,11 @@ class WalletService: WalletServiceImpl {
         return (vc.id, decodedResponse)
     }
     
-    public func requestRevokeVc(tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce:String, txId: String, serverToken: String, passcode: String? = nil) async throws -> _RequestRevokeVc {
+    public func requestRevokeVc(url: String, authType: VerifyAuthType, vcId: String, issuerNonce:String, txId: String, serverToken: String?, passcode: String? = nil) async throws -> _RequestRevokeVc {
         
-        guard !tasURL.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("tasURL").getError()
+        guard !url.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("url").getError()
         }
-        //        guard let authType = authType else {
-        //            throw WalletAPIError.verifyParameterFail("authType").getError()
-        //        }
         guard !vcId.isEmpty else {
             throw WalletAPIError.verifyParameterFail("vcId").getError()
         }
@@ -743,9 +740,7 @@ class WalletService: WalletServiceImpl {
         guard !txId.isEmpty else {
             throw WalletAPIError.verifyParameterFail("txId").getError()
         }
-        guard !serverToken.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("serverToken").getError()
-        }
+       
         
         let holderDidDoc = try WalletAPI.shared.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
         let authType = passcode != nil ? "#pin" : "#bio"
@@ -771,7 +766,7 @@ class WalletService: WalletServiceImpl {
                                              serverToken: serverToken,
                                              request: reqRevokeVc)
         
-        return try await CommunicationClient.sendRequest(urlString: tasURL,
+        return try await CommunicationClient.sendRequest(urlString: url,
                                                          requestJsonable: parameter)
     }
     
