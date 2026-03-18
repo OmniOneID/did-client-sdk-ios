@@ -172,7 +172,7 @@ extension CommunicationClient
     /// - Throws: An error if the request fails, the URL is invalid,  the server returns an error response or if decoding the response fails.
     public static func sendRequest<T : Jsonable>(urlString : String,
                                                  httpMethod : HTTPMethod = .POST,
-                                                 headerFields : StringDictionary = defaultHttpHeaderFields,
+                                                 headerFields : StringDictionary = DefaultHttpHeaderFields,
                                                  requestJsonable : Jsonable? = nil) async throws -> T
     {
         let jsonData : Data? = (requestJsonable != nil)
@@ -213,7 +213,7 @@ extension CommunicationClient
     /// - Throws: An error if the request fails, the URL is invalid, or the server returns an error response.
     public static func sendRequest(urlString : String,
                                    httpMethod : HTTPMethod = .POST,
-                                   headerFields : StringDictionary = defaultHttpHeaderFields,
+                                   headerFields : StringDictionary = DefaultHttpHeaderFields,
                                    requestJsonData : Data? = nil) async throws -> (Data, Int)
     {
         WalletLogger.shared.debug("\n************** requestUrl: \(urlString) **************")

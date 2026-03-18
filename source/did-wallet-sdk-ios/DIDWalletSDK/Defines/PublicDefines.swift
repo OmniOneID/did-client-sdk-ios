@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-    
+   
+import Foundation
 
 public typealias BigIntString = String
 public typealias StringDictionary = [String : String]
@@ -24,5 +25,8 @@ public typealias RequestedAttrDictionary = [String : ZKProof.RequestedAttribute]
 
 public typealias CaptionString = String
 
-public let defaultHttpHeaderFields : StringDictionary = ["Content-Type" : "application/json;charset=utf-8",
-                                                        "Accept": "application/json"]
+public let DefaultHttpHeaderFields : StringDictionary = [
+    "Content-Type"    : "application/json;charset=utf-8",
+    "Accept"          : "application/json",
+    "Accept-Language" : Locale.preferredLanguages.first ?? "en-US"
+]
