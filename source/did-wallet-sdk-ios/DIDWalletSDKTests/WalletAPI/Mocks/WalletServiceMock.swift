@@ -20,16 +20,22 @@ import Foundation
 
 class WalletServiceMock : WalletServiceImpl
 {
-    //TODO: future
-    func requestZKProof(hWalletToken: String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile?, APIGatewayURL: String) async throws -> (DIDWalletSDK.AccE2e, Data) {
-        return (DIDWalletSDK.AccE2e.init(publicKey: "", iv: ""), Data())
-    }
-    
     private let walletCore: WalletCoreImpl
     
     public init(_ walletCore: WalletCoreImpl) {
         self.walletCore = walletCore
     }
+    
+    func createVp(hWalletToken: String, claimInfos: [DIDWalletSDK.ClaimInfo], passcode: String?, verifierNonce: String, challenge: DIDWalletSDK.OIDV4VPChallenge?) throws -> DIDWalletSDK.VerifiablePresentation {
+        return .init(context: [], id: "", type: [], holder: "", validFrom: "", validUntil: "", verifierNonce: "", verifiableCredential: [])
+    }
+    
+    //TODO: future
+    func requestZKProof(hWalletToken: String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile?, APIGatewayURL: String) async throws -> (DIDWalletSDK.AccE2e, Data) {
+        return (DIDWalletSDK.AccE2e.init(publicKey: "", iv: ""), Data())
+    }
+    
+    
     // TODO
     func requestUpdateUser(tasURL: String, txId: String, serverToken: String, didAuth: DIDAuth?, signedDIDDoc: SignedDIDDoc?) async throws -> _RequestUpdateDidDoc {
         return _RequestUpdateDidDoc(txId: "txid")
@@ -49,7 +55,7 @@ class WalletServiceMock : WalletServiceImpl
         return true
     }
     
-    func requestVp(hWalletToken: String, claimInfos: [ClaimInfo]?, verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data) {
+    func requestVp(hWalletToken: String, claimInfos: [ClaimInfo], verifierProfile: _RequestProfile?, APIGatewayURL: String, passcode: String?) async throws -> (AccE2e, Data) {
         
         let holderDidDoc = try WalletAPI.shared.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
 
@@ -74,15 +80,15 @@ class WalletServiceMock : WalletServiceImpl
                                                 validUntil: Date.getUTC0Date(seconds: 5000),
                                                 verifierNonce: verifierProfile!.profile.profile.process.verifierNonce)
 
-        var vp = try walletCore.makePresentation(claimInfos:claimInfos!,
+        var vp = try walletCore.makePresentation(claimInfos:claimInfos,
                                                  presentationInfo: presentationInfo)
         
         let authType = passcode != nil ? "#pin" : "#bio"
         print("vp: \(try vp.toJson())")
-        let vpProof = Proof(created: Date.getUTC0Date(seconds: 0),
-                            proofPurpose: ProofPurpose.assertionMethod,
-                            verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
-                            type: ProofType.secp256r1Signature2018)
+        let vpProof = VPProof(created: Date.getUTC0Date(seconds: 0),
+                              proofPurpose: ProofPurpose.assertionMethod,
+                              verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
+                              type: ProofType.secp256r1Signature2018)
         vp.proof = vpProof
         let vpSource = try DigestUtils.getDigest(source: vp.toJsonData(), digestEnum: DigestEnum.sha256)
         
@@ -288,7 +294,8 @@ class WalletServiceMock : WalletServiceImpl
         return didAuth
     }
     
-    func requestIssueVc(tasURL: String, didAuth: DIDAuth?, issuerProfile: _RequestIssueProfile?, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?) {
+    func requestIssueVc(url: String, didAuth: DIDWalletSDK.DIDAuth?, issuerProfile: DIDWalletSDK._RequestIssueProfile?, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, DIDWalletSDK._RequestIssueVc?)
+    {
     
         let holderDidDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
         let proof = Proof(created: Date.getUTC0Date(seconds: 0),
@@ -379,7 +386,7 @@ class WalletServiceMock : WalletServiceImpl
         return (vc.id, decodedResponse)
     }
     // TODO
-    func requestRevokeVc(tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String?) async throws -> _RequestRevokeVc {
+    func requestRevokeVc(url: String, authType: DIDWalletSDK.VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String?) async throws -> DIDWalletSDK._RequestRevokeVc{
         return try _RequestRevokeVc(from: Data())
     }
     // TODO
