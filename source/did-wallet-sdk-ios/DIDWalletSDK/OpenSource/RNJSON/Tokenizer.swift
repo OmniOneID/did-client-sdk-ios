@@ -9,7 +9,8 @@ import Foundation
 
 // TODO: Track token locations in order to provide better error messages
 
-public protocol JSONToken {
+public protocol JSONToken : Sendable
+{
     var data: Data { get }
     var possiblyTruncated: Bool { get }
     var isIgnored: Bool { get }
