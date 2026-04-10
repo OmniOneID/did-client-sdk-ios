@@ -31,8 +31,8 @@ final class DIDWalletSDKTests: XCTestCase {
     
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        WalletLogger.shared.setLogLevel(.debug)
-        WalletLogger.shared.setEnable(true)
+        WalletLogger.setLogLevel(.debug)
+        WalletLogger.setEnable(true)
         
         self.walletCoreMock = WalletCoreMock()
         self.walletServiceMock = WalletServiceMock(walletCoreMock)
@@ -40,7 +40,7 @@ final class DIDWalletSDKTests: XCTestCase {
         self.lockManagerMock = WalletLockManagerMock()
         
         for child in Mirror(reflecting: walletAPI).children {
-            WalletLogger.shared.debug("WalletAPI child: \(child)")
+            WalletLogger.debug("WalletAPI child: \(child)")
             if child.label == "walletService" {
                 walletAPI.walletService = self.walletServiceMock
             } else if child.label == "walletToken" {

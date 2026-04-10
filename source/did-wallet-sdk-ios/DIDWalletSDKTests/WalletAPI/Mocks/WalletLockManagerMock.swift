@@ -62,7 +62,7 @@ class WalletLockManagerMock: WalletLockManagerImpl {
     
     func isRegLock() throws -> Bool {
         let user = MockData.shared.getUserMock()
-        WalletLogger.shared.debug("user.finalEncKey: \(user.finalEncKey)")
+        WalletLogger.debug("user.finalEncKey: \(user.finalEncKey)")
         
         if user.finalEncKey != "" {
             return true

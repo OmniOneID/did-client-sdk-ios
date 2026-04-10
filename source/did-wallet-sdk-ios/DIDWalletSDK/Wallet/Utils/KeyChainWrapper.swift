@@ -25,7 +25,7 @@ public struct KeyChainWrapper
         
         deleteItem()
         
-        WalletLogger.shared.debug("======[H] cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
+        WalletLogger.debug("======[H] cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
         
         try saveItem(data: cek)
         
@@ -40,19 +40,19 @@ public struct KeyChainWrapper
                                              key: key,
                                              iv: iv)
         
-        WalletLogger.shared.debug("======[H] encCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: encCek))")
+        WalletLogger.debug("======[H] encCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: encCek))")
         
         let finalEncCek = try SecureEncryptor.encrypt(plainData: encCek)
-        WalletLogger.shared.debug("======[H] finalEncCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: finalEncCek))")
+        WalletLogger.debug("======[H] finalEncCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: finalEncCek))")
         return finalEncCek
     }
      
     static public func matching(passcode: String, finalEncCek: Data) throws -> Data? {
         
-        WalletLogger.shared.debug("======[H] finalEncCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: finalEncCek))")
+        WalletLogger.debug("======[H] finalEncCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: finalEncCek))")
         
         let encCek = try SecureEncryptor.decrypt(cipherData: finalEncCek)
-        WalletLogger.shared.debug("======[H] encCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: encCek))")
+        WalletLogger.debug("======[H] encCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: encCek))")
         
         let walletId = Properties.getWalletId()?.data(using: .utf8)
         
@@ -64,18 +64,18 @@ public struct KeyChainWrapper
                                                               padding: .pkcs5),
                                              key: key,
                                              iv: iv)
-        WalletLogger.shared.debug("======[H] decCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: decCek))")
+        WalletLogger.debug("======[H] decCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: decCek))")
         
         let cek = try getItem()
-        WalletLogger.shared.debug("======[H] load cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
+        WalletLogger.debug("======[H] load cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
         
         if cek != decCek
         {
-            WalletLogger.shared.debug("incorrect passcode")
+            WalletLogger.debug("incorrect passcode")
             return nil
         }
         
-        WalletLogger.shared.debug("correct passcode")
+        WalletLogger.debug("correct passcode")
         return cek
     }
 }
@@ -91,7 +91,7 @@ extension KeyChainWrapper
         
         // Delete a saved keychain service item
         let status = SecItemDelete(queryForDelete as CFDictionary)
-        WalletLogger.shared.debug("item delete status: \(status)")
+        WalletLogger.debug("item delete status: \(status)")
         
 //        if status != errSecSuccess
 //        {
@@ -116,7 +116,7 @@ extension KeyChainWrapper
         ]
         
         let status = SecItemAdd(query as CFDictionary, nil)
-        WalletLogger.shared.debug("item add status : \(status)")
+        WalletLogger.debug("item add status : \(status)")
         
         if status != errSecSuccess
         {
@@ -135,7 +135,7 @@ extension KeyChainWrapper
         ]
         
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
-        WalletLogger.shared.debug("item matching status : \(status)")
+        WalletLogger.debug("item matching status : \(status)")
         // need to throw
         
         let data = dataTypeRef as! Data
@@ -152,11 +152,11 @@ extension KeyChainWrapper
         let saltSource = DigestUtils.getDigest(source: saltData,
                                                digestEnum: DigestEnum.sha384)
         
-        WalletLogger.shared.debug("saltSource len: \(saltSource.count)")
+        WalletLogger.debug("saltSource len: \(saltSource.count)")
         // walletID -> 48byte (32 salt, 16 iv)
         let (saltData, ivData) = WalletUtil.splitData(data: saltSource)!
-        WalletLogger.shared.debug("saltData len: \(saltData.count)")
-        WalletLogger.shared.debug("ivData len: \(ivData.count)")
+        WalletLogger.debug("saltData len: \(saltData.count)")
+        WalletLogger.debug("ivData len: \(ivData.count)")
         
 
         let kek = try CryptoUtils.pbkdf2(password: passcode.data(using: .utf8)!,
@@ -164,7 +164,7 @@ extension KeyChainWrapper
                                          iterations: 2048,
                                          derivedKeyLength: 32)
         
-        WalletLogger.shared.debug("======[H] kek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: kek))")
+        WalletLogger.debug("======[H] kek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: kek))")
         
         return (kek, ivData)
     }

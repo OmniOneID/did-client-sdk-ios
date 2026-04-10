@@ -24,56 +24,57 @@ public enum WalletLogLevel: String {
     case error = "ERROR"
 }
 
-public class WalletLogger {
+public enum WalletLogger {
     
-    public static let shared = WalletLogger()
+    private static var logLevel: WalletLogLevel = .debug
+    private static var onOff: Bool = false
     
-    private var logLevel: WalletLogLevel = .debug
-    private var onOff: Bool = false
+    // MARK: - Config
     
-    private init() {}
-    
-    public func setEnable(_ onOff: Bool) {
+    public static func setEnable(_ onOff: Bool) {
         self.onOff = onOff
     }
     
-    public func setLogLevel(_ level: WalletLogLevel) {
+    public static func setLogLevel(_ level: WalletLogLevel) {
         self.logLevel = level
     }
     
-    // Log methods
-    public func debug(_ message: String, function: String = #function) {
+    // MARK: - Log Methods
+    
+    public static func debug(_ message: String, function: String = #function) {
         log(message, level: .debug, function: function)
     }
     
-    public func info(_ message: String, function: String = #function) {
+    public static func info(_ message: String, function: String = #function) {
         log(message, level: .info, function: function)
     }
     
-    public func warning(_ message: String, function: String = #function) {
+    public static func warning(_ message: String, function: String = #function) {
         log(message, level: .warning, function: function)
     }
     
-    public func verbose(_ message: String, function: String = #function) {
+    public static func verbose(_ message: String, function: String = #function) {
         log(message, level: .verbose, function: function)
     }
     
-    public func error(_ message: String, function: String = #function) {
+    public static func error(_ message: String, function: String = #function) {
         log(message, level: .error, function: function)
     }
     
+    // MARK: - Private
     
-    // Private log function
-    private func log(_ message: String, level: WalletLogLevel, function: String) {
-        if self.onOff == false { return }
+    private static func log(_ message: String, level: WalletLogLevel, function: String) {
+        guard onOff else { return }
         guard shouldLog(level: level) else { return }
         print("▶️[\(level.rawValue)]◀️ \(function): \(message)")
     }
     
-    private func shouldLog(level: WalletLogLevel) -> Bool {
+    private static func shouldLog(level: WalletLogLevel) -> Bool {
         let levels: [WalletLogLevel] = [.verbose, .debug, .info, .warning, .error]
-        guard let currentIndex = levels.firstIndex(of: logLevel) else { return false }
-        guard let levelIndex = levels.firstIndex(of: level) else { return false }
+        guard let currentIndex = levels.firstIndex(of: logLevel),
+              let levelIndex = levels.firstIndex(of: level) else {
+            return false
+        }
         return levelIndex >= currentIndex
     }
 }

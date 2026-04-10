@@ -38,14 +38,14 @@ class WalletToken: WalletTokenImpl {
         var isPurpose = false
         
         guard let token = try CoreDataManager.shared.selectToken() else {
-            WalletLogger.shared.debug("db verify fail")
+            WalletLogger.debug("db verify fail")
             throw WalletAPIError.selectQueryFail.getError()
         }
         
         if hWalletToken != token.hWalletToken {
-            WalletLogger.shared.debug("hWalletToken fail")
-            WalletLogger.shared.debug("input hWalletToken: \(hWalletToken)")
-            WalletLogger.shared.debug("saved hWalletToken: \(token.hWalletToken)")
+            WalletLogger.debug("hWalletToken fail")
+            WalletLogger.debug("input hWalletToken: \(hWalletToken)")
+            WalletLogger.debug("saved hWalletToken: \(token.hWalletToken)")
             throw WalletAPIError.verifyTokenFail.getError()
         }
         
@@ -53,16 +53,16 @@ class WalletToken: WalletTokenImpl {
         
         for purpose in purposes {
             if purpose.value == token.purpose {
-                WalletLogger.shared.debug("verify success")
+                WalletLogger.debug("verify success")
                 isPurpose = true
             } else {
-                //                WalletLogger.shared.debug("input purpose: \(purpose.value)")
-                //                WalletLogger.shared.debug("saved purpose: \(token.purpose)")
+                //                WalletLogger.debug("input purpose: \(purpose.value)")
+                //                WalletLogger.debug("saved purpose: \(token.purpose)")
             }
         }
         
         if !isPurpose {
-            WalletLogger.shared.debug("verify fail")
+            WalletLogger.debug("verify fail")
             throw WalletAPIError.verifyTokenFail.getError()
         }
     }
@@ -132,15 +132,15 @@ class WalletToken: WalletTokenImpl {
                 //                walletTokenData.proof.proofValueList = nil
                 let digest = DigestUtils.getDigest(source: try tempWalletTokenData.toJsonData(), digestEnum: .sha256)
                 let result = try self.walletCore.verify(publicKey: pubKey, data: digest, signature: signature)
-                WalletLogger.shared.debug("result: \(result)")
+                WalletLogger.debug("result: \(result)")
                 guard result else {
                     throw WalletAPIError.verifyCertVCFail.getError()
                 }
             }
         }
         
-        WalletLogger.shared.debug("sdk hWalletToken \(hWalletToken)")
-        WalletLogger.shared.debug("walletId: \(Properties.getWalletId() ?? "not found wallet id")")
+        WalletLogger.debug("sdk hWalletToken \(hWalletToken)")
+        WalletLogger.debug("walletId: \(Properties.getWalletId() ?? "not found wallet id")")
         
         // verify certVcRef
         let purpose = WalletTokenPurpose(purpose: walletTokenData.seed.purpose)
@@ -154,7 +154,7 @@ class WalletToken: WalletTokenImpl {
                                                   pii: walletTokenData.sha256_pii) {
             return resultNonce
         }
-        WalletLogger.shared.debug("bindUser selectToken fail")
+        WalletLogger.debug("bindUser selectToken fail")
         throw WalletAPIError.insertQueryFail.getError()
     }
     
@@ -178,7 +178,7 @@ class WalletToken: WalletTokenImpl {
         
         // _createNonceForWalletToken
         // get certVC
-        WalletLogger.shared.debug("verifyCertVc(WalletUtil)")
+        WalletLogger.debug("verifyCertVc(WalletUtil)")
         
         var certVc : VerifiableCredential = try await CommunicationClient.sendRequest(urlString: providerURL,
                                                                                       httpMethod: .GET)
@@ -197,7 +197,7 @@ class WalletToken: WalletTokenImpl {
         
         let didDoc = try DIDDocument(from: try MultibaseUtils.decode(encoded: _didDoc.didDoc))
         
-        WalletLogger.shared.debug("didDoc: \(try didDoc.toJson(isPretty: true))")
+        WalletLogger.debug("didDoc: \(try didDoc.toJson(isPretty: true))")
         
         // compare rule
         let schemaUrl = certVc.credentialSchema.id
@@ -215,7 +215,7 @@ class WalletToken: WalletTokenImpl {
                 if "role" == item.caption {
                     for certVcClaim in certVcClaims {
                         if certVcClaim.caption == item.caption {
-                            WalletLogger.shared.debug("rawValue: \(roleType.rawValue)")
+                            WalletLogger.debug("rawValue: \(roleType.rawValue)")
                             if roleType.rawValue == certVcClaim.value {
                                 isExistValue = true
                             }
@@ -238,7 +238,7 @@ class WalletToken: WalletTokenImpl {
                 certVc.proof.proofValueList = nil
                 let digest = DigestUtils.getDigest(source: try certVc.toJsonData(), digestEnum: .sha256)
                 let result = try self.walletCore.verify(publicKey: pubKey, data: digest, signature: signature)
-                WalletLogger.shared.debug("verifyCertVcRef result: \(result)")
+                WalletLogger.debug("verifyCertVcRef result: \(result)")
                 guard result else {
                     throw WalletAPIError.verifyCertVCFail.getError()
                 }

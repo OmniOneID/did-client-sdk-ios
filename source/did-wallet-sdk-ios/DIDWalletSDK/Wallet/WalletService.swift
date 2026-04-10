@@ -47,13 +47,13 @@ class WalletService: WalletServiceImpl {
         // Fetch and save CA (Certified App) information
         try await self.fetchCaInfo(tasURL: tasURL)
         
-        WalletLogger.shared.debug("fetchCaInfo completed")
+        WalletLogger.debug("fetchCaInfo completed")
         
         // Create a device key (device document)
         let deviceKey = try self.createDeviceDocument()
-        WalletLogger.shared.debug("deviceKey completed")
+        WalletLogger.debug("deviceKey completed")
         
-        WalletLogger.shared.debug("deviceKey: \(try deviceKey.toJson(isPretty: true))")
+        WalletLogger.debug("deviceKey: \(try deviceKey.toJson(isPretty: true))")
         
         // Register the wallet using the provided URLs and the generated device key
         return try await self.requestRegisterWallet(tasURL: tasURL, walletURL: walletURL, ownerDidDoc: deviceKey)
@@ -110,7 +110,7 @@ class WalletService: WalletServiceImpl {
 //                                                 presentationInfo: presentationInfo)
 //        
 //        let authType = passcode != nil ? "#pin" : "#bio"
-//        WalletLogger.shared.debug("vp: \(try vp.toJson())")
+//        WalletLogger.debug("vp: \(try vp.toJson())")
 //        let vpProof = VPProof(created: Date.getUTC0Date(seconds: 0),
 //                            proofPurpose: ProofPurpose.assertionMethod,
 //                            verificationMethod: holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + authType,
@@ -167,7 +167,7 @@ class WalletService: WalletServiceImpl {
                                                  presentationInfo: presentationInfo)
         
         let authType = passcode != nil ? "#pin" : "#bio"
-        WalletLogger.shared.debug("vp: \(try vp.toJson())")
+        WalletLogger.debug("vp: \(try vp.toJson())")
         let vpProof = VPProof(
             created: Date.getUTC0Date(seconds: 0),
             proofPurpose: ProofPurpose.assertionMethod,
@@ -276,9 +276,9 @@ class WalletService: WalletServiceImpl {
     public func createSignedDIDDoc(passcode: String? = nil) throws -> SignedDIDDoc {
         
         let deviceDidDoc = try walletCore.getDidDocument(type: DidDocumentType.DeviceDidDocument)
-        WalletLogger.shared.debug("saved deviceDidDoc: \(try deviceDidDoc.toJson())")
+        WalletLogger.debug("saved deviceDidDoc: \(try deviceDidDoc.toJson())")
         var holderDidDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
-        WalletLogger.shared.debug("saved holderDidDoc: \(try holderDidDoc.toJson())")
+        WalletLogger.debug("saved holderDidDoc: \(try holderDidDoc.toJson())")
         let wallet = Wallet(id: Properties.getWalletId()!, did: deviceDidDoc.id)
         let nonce =  try CryptoUtils.generateNonce(size: 16)
         let hexNonce = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: nonce)
@@ -292,7 +292,7 @@ class WalletService: WalletServiceImpl {
             
             holderDidDoc.proof = pinProof
             let firstSource = try DigestUtils.getDigest(source: holderDidDoc.toJsonData(), digestEnum: DigestEnum.sha256)
-            WalletLogger.shared.debug("assert holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
+            WalletLogger.debug("assert holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
             
             let pinSignature = try walletCore.sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: firstSource, type: DidDocumentType.HolderDidDocumnet)
             holderDidDoc.proof = nil
@@ -309,7 +309,7 @@ class WalletService: WalletServiceImpl {
             holderDidDoc.proof = bioProof
             let secondSource = try DigestUtils.getDigest(source: holderDidDoc.toJsonData(), digestEnum: DigestEnum.sha256)
             
-            WalletLogger.shared.debug("auth holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
+            WalletLogger.debug("auth holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
             let bioSignature = try walletCore.sign(keyId: "bio", pin: nil, data: secondSource, type: DidDocumentType.HolderDidDocumnet)
             // (core func)
             holderDidDoc.proof = nil
@@ -318,7 +318,7 @@ class WalletService: WalletServiceImpl {
             
         }
         holderDidDoc.proofs = proofArry
-        WalletLogger.shared.debug("final holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
+        WalletLogger.debug("final holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
         let ownerDIDDoc = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: try holderDidDoc.toJsonData())
         // deviceKey
         let proof = Proof(created: Date.getUTC0Date(seconds: 0),
@@ -330,7 +330,7 @@ class WalletService: WalletServiceImpl {
         let source = try DigestUtils.getDigest(source: signedDidDoc.toJsonData(), digestEnum: DigestEnum.sha256)
         let signature = try walletCore.sign(keyId: "assert", pin: nil, data: source, type: DidDocumentType.DeviceDidDocument)
         signedDidDoc.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature)
-        WalletLogger.shared.debug("signed holderDidDoc Str: \(try signedDidDoc.toJson(isPretty: true))")
+        WalletLogger.debug("signed holderDidDoc Str: \(try signedDidDoc.toJson(isPretty: true))")
         return signedDidDoc
     }
     
@@ -354,7 +354,7 @@ class WalletService: WalletServiceImpl {
         case "keyagree":
             proofPurposeEnum = ProofPurpose.keyAgreement
         default:
-            WalletLogger.shared.debug("proofPurpose: \(proofPurpose)")
+            WalletLogger.debug("proofPurpose: \(proofPurpose)")
         }
         
         didDoc.proof = Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: proofPurposeEnum!, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#"+proofPurpose, type: ProofType.secp256r1Signature2018)
@@ -370,7 +370,7 @@ class WalletService: WalletServiceImpl {
         var assertProof = Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: ProofPurpose.assertionMethod, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#assert", type: ProofType.secp256r1Signature2018)
         didDoc.proof = assertProof
         let assertSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
-        WalletLogger.shared.debug("assert didDoc Str: \(try didDoc.toJson())")
+        WalletLogger.debug("assert didDoc Str: \(try didDoc.toJson())")
         let assertSignature = try walletCore.sign(keyId: "assert", pin: nil, data: assertSource, type: DidDocumentType.DeviceDidDocument)
         didDoc.proof = nil
         assertProof.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: assertSignature)
@@ -381,14 +381,14 @@ class WalletService: WalletServiceImpl {
         didDoc.proof = authProof
         let authSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
         
-        WalletLogger.shared.debug("auth didDoc Str: \(try didDoc.toJson())")
+        WalletLogger.debug("auth didDoc Str: \(try didDoc.toJson())")
         let authSignature = try walletCore.sign(keyId: "auth", pin: nil, data: authSource, type: DidDocumentType.DeviceDidDocument)
         // (core func)
         didDoc.proof = nil
         authProof.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: authSignature)
         proofArry.append(authProof)
         didDoc.proofs = proofArry
-        WalletLogger.shared.debug("fianl didDoc Str: \(try didDoc.toJson())")
+        WalletLogger.debug("fianl didDoc Str: \(try didDoc.toJson())")
         return didDoc
     }
     
@@ -417,7 +417,7 @@ class WalletService: WalletServiceImpl {
                                                                          requestJsonable: reqAttDidDoc)
         
         Properties.setWalletId(id: attDIDDoc.walletId)
-        WalletLogger.shared.debug("saved walletId")
+        WalletLogger.debug("saved walletId")
         try walletCore.saveDidDocument(type: DidDocumentType.DeviceDidDocument)
         return true
     }
@@ -425,11 +425,11 @@ class WalletService: WalletServiceImpl {
     public func bindUser() throws -> Bool {
         
         if let token = try CoreDataManager.shared.selectToken() {
-            WalletLogger.shared.debug("bindUser verifyWalletToken reg success")
+            WalletLogger.debug("bindUser verifyWalletToken reg success")
             try CoreDataManager.shared.insertUser(finalEncKey: "", pii: token.pii)
             return true
         } else {
-            WalletLogger.shared.debug("bindUser selectToken fail")
+            WalletLogger.debug("bindUser selectToken fail")
             throw WalletAPIError.selectQueryFail.getError()
         }
     }
@@ -625,7 +625,7 @@ class WalletService: WalletServiceImpl {
             reqVC.credentialRequest = container.credentialRequest
         }
         
-        WalletLogger.shared.debug("reqVc: \(try reqVC.toJson(isPretty: true))")
+        WalletLogger.debug("reqVc: \(try reqVC.toJson(isPretty: true))")
         let serverNonce = try MultibaseUtils.decode(encoded: issuerProfile.profile.profile.process.issuerNonce)
         // generate sessionk ey
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
@@ -676,7 +676,7 @@ class WalletService: WalletServiceImpl {
         
         let issuerDIDDocJson = try MultibaseUtils.decode(encoded: didDoc.didDoc)
         let issuerDIDDoc = try DIDDocument.init(from: issuerDIDDocJson)
-        WalletLogger.shared.debug("issuerDIDDoc: \(try issuerDIDDoc.toJson(isPretty: true))")
+        WalletLogger.debug("issuerDIDDoc: \(try issuerDIDDoc.toJson(isPretty: true))")
         
         let tempProofValue = vc.proof.proofValue
         let tempProofValueList = vc.proof.proofValueList
@@ -690,7 +690,7 @@ class WalletService: WalletServiceImpl {
                 vc.proof.proofValueList = nil
                 let digest = DigestUtils.getDigest(source: try vc.toJsonData(), digestEnum: .sha256)
                 let result = try walletCore.verify(publicKey: pubKey, data: digest, signature: signature)
-                WalletLogger.shared.debug("result: \(result)")
+                WalletLogger.debug("result: \(result)")
                 guard result else {
                     throw WalletAPIError.verifyCertVCFail.getError()
                 }
@@ -702,8 +702,8 @@ class WalletService: WalletServiceImpl {
             for v in vcs {
                 if v.credentialSchema.id == vc.credentialSchema.id {
                     let vcId = v.id
-                    WalletLogger.shared.debug("v.credentialSchema.id: \(v.credentialSchema.id)")
-                    WalletLogger.shared.debug("vc.credentialSchema.id: \(vc.credentialSchema.id)")
+                    WalletLogger.debug("v.credentialSchema.id: \(v.credentialSchema.id)")
+                    WalletLogger.debug("vc.credentialSchema.id: \(vc.credentialSchema.id)")
                     _ = try walletCore.deleteCredential(ids: [vcId])
                     
                     if walletCore.isZKPCredentialSaved(id: vcId)
@@ -719,7 +719,7 @@ class WalletService: WalletServiceImpl {
         vc.proof.proofValue = tempProofValue
         vc.proof.proofValueList = tempProofValueList
         
-        WalletLogger.shared.debug("vc!!!!!: \(try vc.toJson(isPretty: true))")
+        WalletLogger.debug("vc!!!!!: \(try vc.toJson(isPretty: true))")
         
         _ = try walletCore.addCredential(credential: vc)
         
@@ -784,7 +784,7 @@ class WalletService: WalletServiceImpl {
         let hexNonce = MultibaseUtils.encode(type: MultibaseType.base58BTC, data:nonce)
         var signedWalletInfo = SignedWalletInfo(wallet: wallet, nonce: hexNonce, proof: proof)
         
-        WalletLogger.shared.debug("signedWalletInfo: \(try signedWalletInfo.toJson())")
+        WalletLogger.debug("signedWalletInfo: \(try signedWalletInfo.toJson())")
         let source = try DigestUtils.getDigest(source: signedWalletInfo.toJsonData(), digestEnum: DigestEnum.sha256)
         let signature = try walletCore.sign(keyId: "assert", pin: nil, data: source, type: DidDocumentType.DeviceDidDocument)
         signedWalletInfo.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature)

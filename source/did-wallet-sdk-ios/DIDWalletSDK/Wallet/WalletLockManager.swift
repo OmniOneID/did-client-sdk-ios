@@ -34,7 +34,7 @@ class WalletLockManager: WalletLockManagerImpl {
             let cek = try CryptoUtils.generateNonce(size: 32)
             let finalEncCek = try KeyChainWrapper.saveKeyChain(cek: cek,
                                                                passcode: passcode)
-            WalletLogger.shared.debug("updateUser result \(try CoreDataManager.shared.updateUser(finalEncKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek)))")
+            WalletLogger.debug("updateUser result \(try CoreDataManager.shared.updateUser(finalEncKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek)))")
             WalletLockManager.isLock = false
         } else {
             try CoreDataManager.shared.updateUser(finalEncKey: "")
@@ -47,7 +47,7 @@ class WalletLockManager: WalletLockManagerImpl {
     @discardableResult
     func isRegLock() throws -> Bool {
         if let user = try CoreDataManager.shared.selectUser() {
-            WalletLogger.shared.debug("user.finalEncKey: \(user.finalEncKey)")
+            WalletLogger.debug("user.finalEncKey: \(user.finalEncKey)")
             if user.finalEncKey != "" {
                 return true
             }
@@ -85,6 +85,6 @@ class WalletLockManager: WalletLockManagerImpl {
         let finalEncCek = try KeyChainWrapper.saveKeyChain(cek: cek,
                                                            passcode: newPasscode)
         
-        WalletLogger.shared.debug("updateUser result \(try CoreDataManager.shared.updateUser(finalEncKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek)))")
+        WalletLogger.debug("updateUser result \(try CoreDataManager.shared.updateUser(finalEncKey: MultibaseUtils.encode(type: MultibaseType.base58BTC, data: finalEncCek)))")
     }
 }

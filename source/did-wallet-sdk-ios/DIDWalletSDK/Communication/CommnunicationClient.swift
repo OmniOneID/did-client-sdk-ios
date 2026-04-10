@@ -35,7 +35,7 @@ public struct CommunicationClient: CommunicationProtocol {
     @available(*, deprecated, message: "This API will be deprecated in the future. Use`sendRequest` instead.")
     public static func doGet(url: URL) async throws -> Data {
         
-        WalletLogger.shared.debug("\n************** requestUrl: \(url.absoluteString) **************")
+        WalletLogger.debug("\n************** requestUrl: \(url.absoluteString) **************")
         
         guard !url.absoluteString.isEmpty else {
             throw CommunicationAPIError.invaildParameter.getError()
@@ -51,8 +51,8 @@ public struct CommunicationClient: CommunicationProtocol {
             
             let (data, response) = try await URLSession.shared.data(for: request)
             
-            WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
-            WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
+            WalletLogger.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
+            WalletLogger.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
             
             guard (response as? HTTPURLResponse)?.statusCode == 200
             else
@@ -79,8 +79,8 @@ public struct CommunicationClient: CommunicationProtocol {
     @available(*, deprecated, message: "This API will be deprecated in the future. Use`sendRequest` instead.")
     public static func doPost(url: URL, requestJsonData: Data) async throws -> Data {
         
-        WalletLogger.shared.debug("\n************** requestUrl: \(url.absoluteString) **************")
-        WalletLogger.shared.debug("requestData Json: \(String(data: requestJsonData, encoding:.utf8)!)")
+        WalletLogger.debug("\n************** requestUrl: \(url.absoluteString) **************")
+        WalletLogger.debug("requestData Json: \(String(data: requestJsonData, encoding:.utf8)!)")
         
         guard !url.absoluteString.isEmpty else {
             throw CommunicationAPIError.invaildParameter.getError()
@@ -100,8 +100,8 @@ public struct CommunicationClient: CommunicationProtocol {
             
             let (data, response) = try await URLSession.shared.data(for: request)
             
-            WalletLogger.shared.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
-            WalletLogger.shared.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
+            WalletLogger.debug("statusCode: \(String(describing: (response as? HTTPURLResponse)?.statusCode))")
+            WalletLogger.debug("resultData: \(String(describing: String(data: data, encoding: .utf8)))\n")
             
             guard (response as? HTTPURLResponse)?.statusCode == 200
             else
@@ -216,7 +216,7 @@ extension CommunicationClient
                                    headerFields : StringDictionary = DefaultHttpHeaderFields,
                                    requestJsonData : Data? = nil) async throws -> (Data, Int)
     {
-        WalletLogger.shared.debug("\n************** requestUrl: \(urlString) **************")
+        WalletLogger.debug("\n************** requestUrl: \(urlString) **************")
         
         guard !urlString.isEmpty
         else
@@ -266,8 +266,8 @@ extension CommunicationClient
         
         let statusCode = httpResponse.statusCode
         
-        WalletLogger.shared.debug("statusCode: \(String(describing: statusCode))")
-        WalletLogger.shared.debug("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
+        WalletLogger.debug("statusCode: \(String(describing: statusCode))")
+        WalletLogger.debug("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
         
         return (data, statusCode)
     }

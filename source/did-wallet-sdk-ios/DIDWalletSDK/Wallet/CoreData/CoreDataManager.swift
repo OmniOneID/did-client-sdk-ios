@@ -58,7 +58,7 @@ final class CoreDataManager {
         
         container.loadPersistentStores { _, error in
             if let error { fatalError("Loading of store failed: \(error)") }
-            WalletLogger.shared.debug("persistent store load succeed")
+            WalletLogger.debug("persistent store load succeed")
         }
         
         // View (main/UI) context: read/light edits only; auto-merge from writer
@@ -111,31 +111,31 @@ final class CoreDataManager {
     
     /// Rich error logging to help pinpoint root causes when crashes/logs are vague
     private func logCoreDataError(_ e: NSError, ctx: NSManagedObjectContext) {
-        WalletLogger.shared.debug("CD SAVE ERROR: domain=\(e.domain) code=\(e.code) info=\(e.userInfo)")
+        WalletLogger.debug("CD SAVE ERROR: domain=\(e.domain) code=\(e.code) info=\(e.userInfo)")
         if e.domain == NSCocoaErrorDomain {
             switch e.code {
             case NSManagedObjectMergeError:
-                WalletLogger.shared.debug("Merge error (NSManagedObjectMergeError)")
+                WalletLogger.debug("Merge error (NSManagedObjectMergeError)")
             case NSManagedObjectConstraintMergeError:
-                WalletLogger.shared.debug("Constraint merge error (likely unique constraint conflict)")
+                WalletLogger.debug("Constraint merge error (likely unique constraint conflict)")
                 // For standard merge conflicts
                 if let mergeConflicts = e.userInfo[NSPersistentStoreSaveConflictsErrorKey] as? [NSMergeConflict] {
                     for c in mergeConflicts {
                         let oid = c.sourceObject.objectID
-                        WalletLogger.shared.debug("MergeConflict objectID=\(oid) persisted=\(String(describing: c.persistedSnapshot)) cached=\(String(describing: c.cachedSnapshot))")
+                        WalletLogger.debug("MergeConflict objectID=\(oid) persisted=\(String(describing: c.persistedSnapshot)) cached=\(String(describing: c.cachedSnapshot))")
                     }
                     // For unique-constraint conflicts (NSConstraintConflict)
                 } else if let constraintConflicts = e.userInfo[NSPersistentStoreSaveConflictsErrorKey] as? [NSConstraintConflict] {
                     for c in constraintConflicts {
                         let dbID = c.databaseObject?.objectID
                         let ids = c.conflictingObjects.map { $0.objectID }
-                        WalletLogger.shared.debug("ConstraintConflict constraint=\(String(describing: c.constraint)) dbID=\(String(describing: dbID)) conflictingIDs=\(ids)")
+                        WalletLogger.debug("ConstraintConflict constraint=\(String(describing: c.constraint)) dbID=\(String(describing: dbID)) conflictingIDs=\(ids)")
                     }
                 }
             case NSPersistentStoreSaveError:
-                WalletLogger.shared.debug("Persistent store save error (NSPersistentStoreSaveError)")
+                WalletLogger.debug("Persistent store save error (NSPersistentStoreSaveError)")
             case NSPersistentStoreTimeoutError:
-                WalletLogger.shared.debug("Persistent store timeout (possible DB lock)")
+                WalletLogger.debug("Persistent store timeout (possible DB lock)")
             default:
                 break
             }
@@ -152,7 +152,7 @@ final class CoreDataManager {
             ca.pkgName = pkgName
             ca.createDate = Date.getUTC0Date(seconds: 0)
         }
-        WalletLogger.shared.debug("Ca saved successfully")
+        WalletLogger.debug("Ca saved successfully")
         return true
     }
     
@@ -162,7 +162,7 @@ final class CoreDataManager {
             req.fetchLimit = 1
             if let ca = try ctx.fetch(req).first,
                let idx = ca.idx, let pkg = ca.pkgName, let date = ca.createDate {
-                WalletLogger.shared.debug("CaAppId \(idx): \(pkg) \(date)")
+                WalletLogger.debug("CaAppId \(idx): \(pkg) \(date)")
                 return Ca(idx: idx, createDate: date, pkgName: pkg)
             }
             return nil
@@ -201,7 +201,7 @@ final class CoreDataManager {
             token.validUntil = Date.getUTC0Date(seconds: 60 * 30)
             token.createDate = Date.getUTC0Date(seconds: 0)
         }
-        WalletLogger.shared.debug("token saved successfully")
+        WalletLogger.debug("token saved successfully")
         return true
     }
     
@@ -215,7 +215,7 @@ final class CoreDataManager {
                   let vu = t.validUntil, let cd = t.createDate, let pur = t.purpose else {
                 return nil
             }
-            WalletLogger.shared.debug("select Token idx: \(idx) pkgName: \(pkg) walletId: \(wid) hWalletToken: \(h) nonce: \(n) pii: \(p) validUntil: \(vu) createDate: \(cd) purpose: \(pur)")
+            WalletLogger.debug("select Token idx: \(idx) pkgName: \(pkg) walletId: \(wid) hWalletToken: \(h) nonce: \(n) pii: \(p) validUntil: \(vu) createDate: \(cd) purpose: \(pur)")
             return Token(idx: idx, walletId: wid, hWalletToken: h,
                          validUntil: vu, purpose: pur, nonce: n, pkgName: pkg,
                          pii: p, createDate: cd)
@@ -249,7 +249,7 @@ final class CoreDataManager {
             user.createDate = Date.getUTC0Date(seconds: 0)
             user.updateDate = Date.getUTC0Date(seconds: 0)
         }
-        WalletLogger.shared.debug("user saved successfully")
+        WalletLogger.debug("user saved successfully")
         return true
     }
     
@@ -274,7 +274,7 @@ final class CoreDataManager {
 //            req.predicate = NSPredicate(format: "finalEncKey == %@", "")
             req.fetchLimit = 1
             if let u = try ctx.fetch(req).first {
-                WalletLogger.shared.debug("updateUser finalEncKey: \(finalEncKey)")
+                WalletLogger.debug("updateUser finalEncKey: \(finalEncKey)")
                 u.finalEncKey = finalEncKey
                 u.updateDate = Date.getUTC0Date(seconds: 0)
             }

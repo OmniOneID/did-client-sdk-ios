@@ -34,7 +34,7 @@ class WalletCore: WalletCoreImpl {
         self.vcManager = try! VCManager(fileName: "vc")
         self.zkpManager = try! ZKPManager(fileName: "zkp")
         
-        WalletLogger.shared.debug("succeed create Wallet")
+        WalletLogger.debug("succeed create Wallet")
     }
     
     //MARK: Wallet
@@ -73,8 +73,8 @@ class WalletCore: WalletCoreImpl {
     
     public func isExistWallet() -> Bool
     {
-        WalletLogger.shared.debug("Is registered device key : \(deviceKeyManager.isAnyKeysSaved)")
-        WalletLogger.shared.debug("Is registered device DID : \(deviceDidManager.isSaved)")
+        WalletLogger.debug("Is registered device key : \(deviceKeyManager.isAnyKeysSaved)")
+        WalletLogger.debug("Is registered device DID : \(deviceDidManager.isSaved)")
         
         return deviceKeyManager.isAnyKeysSaved && deviceDidManager.isSaved
     }
@@ -184,7 +184,7 @@ class WalletCore: WalletCoreImpl {
         }
 
         let did = try DIDManager.genDID(methodName: "omn")
-        WalletLogger.shared.debug("DID String : \(did)")
+        WalletLogger.debug("DID String : \(did)")
         
         let assertKeyId   = "assert"
         let keyagreeKeyId = "keyagree"
@@ -197,7 +197,7 @@ class WalletCore: WalletCoreImpl {
             if try deviceKeyManager.isKeySaved(id: keyId) == false {
                 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
                 try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-                WalletLogger.shared.debug("device \(keyId) Key generate completed")
+                WalletLogger.debug("device \(keyId) Key generate completed")
             }
         }
         
@@ -220,12 +220,12 @@ class WalletCore: WalletCoreImpl {
             keyInfos.append(DIDKeyInfo(keyInfo: keyInfo, methodType: methodType))
         }
         
-        WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+        WalletLogger.debug("keyInfos: \(keyInfos)")
         
         try deviceDidManager.createDocument(did: did, keyInfos: keyInfos, controller: "did:omn:tas", service: nil)
         
         let deviceDidDoc = try deviceDidManager.getDocument()
-        WalletLogger.shared.debug("deviceDidDoc: \(try deviceDidDoc.toJson())")
+        WalletLogger.debug("deviceDidDoc: \(try deviceDidDoc.toJson())")
         //        try deviceDidManager.saveDocument()
         return deviceDidDoc
     }
@@ -236,7 +236,7 @@ class WalletCore: WalletCoreImpl {
         }
         
         let did = try DIDManager.genDID(methodName: "omn")
-        WalletLogger.shared.debug("DID String : \(did)")
+        WalletLogger.debug("DID String : \(did)")
         
         let pinKeyId      = "pin"
         let bioKeyId      = "bio"
@@ -265,13 +265,13 @@ class WalletCore: WalletCoreImpl {
             keyInfos.append(DIDKeyInfo(keyInfo: keyInfo, methodType: methodType))
         }
         
-        WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+        WalletLogger.debug("keyInfos: \(keyInfos)")
         
         try holderDidManager.createDocument(did: did, keyInfos: keyInfos, controller: "did:omn:tas", service: nil)
         
         let holderDidDoc = try holderDidManager.getDocument()
         
-        WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
+        WalletLogger.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
         return holderDidDoc
     }
@@ -293,7 +293,7 @@ class WalletCore: WalletCoreImpl {
             
             let keyInfos : DIDKeyInfo = .init(keyInfo: keyInfo[0],
                                               methodType: [.assertionMethod, .authentication])
-            WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+            WalletLogger.debug("keyInfos: \(keyInfos)")
             
             try holderDidManager.addVerificationMethod(keyInfo: keyInfos)
         }
@@ -304,7 +304,7 @@ class WalletCore: WalletCoreImpl {
             
         let holderDidDoc = try holderDidManager.getDocument()
         
-        WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
+        WalletLogger.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
         return holderDidDoc
     }

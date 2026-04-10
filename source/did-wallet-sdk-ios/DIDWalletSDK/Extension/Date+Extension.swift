@@ -46,7 +46,7 @@ extension Date {
     
     public static func checkValidation(dateString : String) throws
     {
-        WalletLogger.shared.debug("dateString: \(dateString)")
+        WalletLogger.debug("dateString: \(dateString)")
         
         let dateFormatter = getDateFormatter()
         
@@ -61,12 +61,12 @@ extension Date {
         
         let today = utcDateFormatter.date(from: utcDateString)!
         
-        WalletLogger.shared.debug("today: \(today)")
-        WalletLogger.shared.debug("untilDate: \(targetDate)")
+        WalletLogger.debug("today: \(today)")
+        WalletLogger.debug("untilDate: \(targetDate)")
         
         if today >= targetDate
         {
-            WalletLogger.shared.debug("isValidUntil fail")
+            WalletLogger.debug("isValidUntil fail")
             throw WalletAPIError.verifyTokenFail.getError()
         }
     }

@@ -87,7 +87,7 @@ class WalletCoreMock: WalletCoreImpl {
         self.holderDidManager = try! DIDManager(fileName: "holder")
         self.vcManager = try! VCManager(fileName: "vc")
         
-        WalletLogger.shared.debug("succeed create Wallet")
+        WalletLogger.debug("succeed create Wallet")
     }
     
     public func isSavedKey(keyId: String) throws -> Bool {
@@ -139,7 +139,7 @@ class WalletCoreMock: WalletCoreImpl {
     public func isExistWallet() -> Bool {
         
         if !deviceKeyManager.isAnyKeysSaved && !deviceDidManager.isSaved {
-            WalletLogger.shared.debug("deviceKey not created")
+            WalletLogger.debug("deviceKey not created")
             return false
         }
         
@@ -185,24 +185,24 @@ class WalletCoreMock: WalletCoreImpl {
         }
 
         let did = try DIDManager.genDID(methodName: "omn")
-        WalletLogger.shared.debug("DID String : \(did)")
+        WalletLogger.debug("DID String : \(did)")
         
         if try deviceKeyManager.isKeySaved(id: "assert") == false {
             let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "assert", methodType: .none)
             try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device assert Key 생성 완료")
+            WalletLogger.debug("device assert Key 생성 완료")
         }
         
         if try deviceKeyManager.isKeySaved(id: "keyagree") == false {
             let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "keyagree", methodType: .none)
             try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device keyagree Key 생성 완료")
+            WalletLogger.debug("device keyagree Key 생성 완료")
         }
         
         if try deviceKeyManager.isKeySaved(id: "auth") == false {
             let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "auth", methodType: .none)
             try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.shared.debug("device auth Key 생성 완료")
+            WalletLogger.debug("device auth Key 생성 완료")
         }
         
         let keyInfo = try deviceKeyManager.getKeyInfos(ids: ["assert", "keyagree", "auth"])
@@ -212,12 +212,12 @@ class WalletCoreMock: WalletCoreImpl {
         keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.keyAgreement]))
         keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[2], methodType: [.authentication]))
         
-        WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+        WalletLogger.debug("keyInfos: \(keyInfos)")
         
         try deviceDidManager.createDocument(did: did, keyInfos: keyInfos, controller: "did:omn:tas", service: nil)
         
         let deviceDidDoc = try deviceDidManager.getDocument()
-        WalletLogger.shared.debug("deviceDidDoc: \(try deviceDidDoc.toJson())")
+        WalletLogger.debug("deviceDidDoc: \(try deviceDidDoc.toJson())")
         //        try deviceDidManager.saveDocument()
         return deviceDidDoc
     }
@@ -228,7 +228,7 @@ class WalletCoreMock: WalletCoreImpl {
         }
         
         let did = try DIDManager.genDID(methodName: "omn")
-        WalletLogger.shared.debug("DID String : \(did)")
+        WalletLogger.debug("DID String : \(did)")
         
         
         var keyInfo: [KeyInfo]
@@ -244,12 +244,12 @@ class WalletCoreMock: WalletCoreImpl {
             keyInfos.append(DIDKeyInfo(keyInfo: keyInfo[1], methodType: [.assertionMethod, .authentication]))
         }
         
-        WalletLogger.shared.debug("keyInfos: \(keyInfos)")
+        WalletLogger.debug("keyInfos: \(keyInfos)")
         
         try holderDidManager.createDocument(did: did, keyInfos: keyInfos, controller: "did:omn:tas", service: nil)
         
         let holderDidDoc = try holderDidManager.getDocument()
-        WalletLogger.shared.debug("holderDidDoc: \(try holderDidDoc.toJson())")
+        WalletLogger.debug("holderDidDoc: \(try holderDidDoc.toJson())")
         
         try holderDidManager.saveDocument()
         

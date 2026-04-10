@@ -127,12 +127,12 @@ class WalletServiceMock : WalletServiceImpl
 //        let deviceDidDoc = try DIDDocument(from: "{\"@context\":[\"https://www.w3.org/ns/did/v1\"],\"assertionMethod\":[\"assert\"],\"authentication\":[\"auth\"],\"controller\":\"did:omn:tas\",\"created\":\"2024-08-26T08:03:54Z\",\"deactivated\":false,\"id\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"keyAgreement\":[\"keyagree\"],\"updated\":\"2024-08-26T08:03:54Z\",\"verificationMethod\":[{\"authType\":1,\"controller\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"id\":\"assert\",\"publicKeyMultibase\":\"zgb1nZK5suXBQcLZkp16kBRoxEVDZLbyKKyFnEgcrrjYz\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":1,\"controller\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"id\":\"keyagree\",\"publicKeyMultibase\":\"zwsgd3wB68xRbyMMg9feHp4ygtaMfy5BB5s5qCiesCVoy\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":1,\"controller\":\"did:omn:2dmrJGpFpiRACcjg9MQYw2pn4VZZ\",\"id\":\"auth\",\"publicKeyMultibase\":\"z2Am6tznjCHXFeni3XoYgDStY9L7d92GctvE2W3Y1pHHgJ\",\"type\":\"Secp256r1VerificationKey2018\"}],\"versionId\":\"1\"}")
            
         let deviceDidDoc = try walletCore.getDidDocument(type: DidDocumentType.DeviceDidDocument)
-        WalletLogger.shared.debug("saved deviceDidDoc: \(try deviceDidDoc.toJson(isPretty: true))")
+        WalletLogger.debug("saved deviceDidDoc: \(try deviceDidDoc.toJson(isPretty: true))")
         
 //        var holderDidDoc = try DIDDocument(from: "{\"@context\":[\"https://www.w3.org/ns/did/v1\"],\"assertionMethod\":[\"pin\",\"bio\"],\"authentication\":[\"pin\",\"bio\"],\"controller\":\"did:omn:tas\",\"created\":\"2024-08-26T08:37:04Z\",\"deactivated\":false,\"id\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"keyAgreement\":[\"keyagree\"],\"updated\":\"2024-08-26T08:37:04Z\",\"verificationMethod\":[{\"authType\":1,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"keyagree\",\"publicKeyMultibase\":\"z28MaU2yv21wAFi97rj8LC9wuJJaZJZ5bsxWtDvEjDUn9a\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":2,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"pin\",\"publicKeyMultibase\":\"z25yWffgpPpHd9GiZUxaVRhjGj82fnaGWL55xdNdnTduFJ\",\"type\":\"Secp256r1VerificationKey2018\"},{\"authType\":4,\"controller\":\"did:omn:2VhHke4Hqzev8jNXaxMRgGWcUXZi\",\"id\":\"bio\",\"publicKeyMultibase\":\"zv52y8JMgwQYY2vucXbZQqG5eVMGNhndDV6g2jfdjgoNq\",\"type\":\"Secp256r1VerificationKey2018\"}],\"versionId\":\"1\"}")
         
         var holderDidDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
-        WalletLogger.shared.debug("saved holderDidDoc: \(try holderDidDoc.toJson(isPretty: true))")
+        WalletLogger.debug("saved holderDidDoc: \(try holderDidDoc.toJson(isPretty: true))")
         
         let wallet = Wallet(id: "walletId", did: deviceDidDoc.id)
         let nonce =  try CryptoUtils.generateNonce(size: 16)
@@ -148,7 +148,7 @@ class WalletServiceMock : WalletServiceImpl
             
             holderDidDoc.proof = pinProof
             let firstSource = try DigestUtils.getDigest(source: holderDidDoc.toJsonData(), digestEnum: DigestEnum.sha256)
-            WalletLogger.shared.debug("assert holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
+            WalletLogger.debug("assert holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
             
             let pinSignature = try walletCore.sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: firstSource, type: DidDocumentType.HolderDidDocumnet)
             holderDidDoc.proof = nil
@@ -165,7 +165,7 @@ class WalletServiceMock : WalletServiceImpl
             holderDidDoc.proof = bioProof
             let secondSource = try DigestUtils.getDigest(source: holderDidDoc.toJsonData(), digestEnum: DigestEnum.sha256)
             
-            WalletLogger.shared.debug("auth holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
+            WalletLogger.debug("auth holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
             let bioSignature = try walletCore.sign(keyId: "bio", pin: nil, data: secondSource, type: DidDocumentType.HolderDidDocumnet)
             // (core func)
             holderDidDoc.proof = nil
@@ -176,7 +176,7 @@ class WalletServiceMock : WalletServiceImpl
         }
         
         holderDidDoc.proofs = proofArry
-        WalletLogger.shared.debug("final holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
+        WalletLogger.debug("final holderDidDoc Str: \(try holderDidDoc.toJson(isPretty: true))")
         
         let ownerDIDDoc = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: try holderDidDoc.toJsonData())
         
@@ -193,7 +193,7 @@ class WalletServiceMock : WalletServiceImpl
         let signature = try walletCore.sign(keyId: "assert", pin: nil, data: source, type: DidDocumentType.DeviceDidDocument)
         
         signedDIDDoc.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature)
-        WalletLogger.shared.debug("signed holderDidDoc Str: \(try signedDIDDoc.toJson(isPretty: true))")
+        WalletLogger.debug("signed holderDidDoc Str: \(try signedDIDDoc.toJson(isPretty: true))")
         return signedDIDDoc
         
 
@@ -211,7 +211,7 @@ class WalletServiceMock : WalletServiceImpl
         var assertProof = Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: ProofPurpose.assertionMethod, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#assert", type: ProofType.secp256r1Signature2018)
         didDoc.proof = assertProof
         let assertSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
-        WalletLogger.shared.debug("assert didDoc Str: \(try didDoc.toJson())")
+        WalletLogger.debug("assert didDoc Str: \(try didDoc.toJson())")
         let assertSignature = try walletCore.sign(keyId: "assert", pin: nil, data: assertSource, type: DidDocumentType.DeviceDidDocument)
         didDoc.proof = nil
         assertProof.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: assertSignature)
@@ -222,7 +222,7 @@ class WalletServiceMock : WalletServiceImpl
         didDoc.proof = authProof
         let authSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
 
-        WalletLogger.shared.debug("auth didDoc Str: \(try didDoc.toJson())")
+        WalletLogger.debug("auth didDoc Str: \(try didDoc.toJson())")
         let authSignature = try walletCore.sign(keyId: "auth", pin: nil, data: authSource, type: DidDocumentType.DeviceDidDocument)
         // (core func)
         didDoc.proof = nil
@@ -232,7 +232,7 @@ class WalletServiceMock : WalletServiceImpl
         
         didDoc.proofs = proofArry
         
-        WalletLogger.shared.debug("fianl didDoc Str: \(try didDoc.toJson())")
+        WalletLogger.debug("fianl didDoc Str: \(try didDoc.toJson())")
         return didDoc
     }
     // TODO
@@ -244,12 +244,12 @@ class WalletServiceMock : WalletServiceImpl
         
         
         if let token = MockData.shared.getTokenMock() {
-            WalletLogger.shared.debug("bindUser verifyWalletToken reg success")
+            WalletLogger.debug("bindUser verifyWalletToken reg success")
             // 최초 유저 등록 시 finalEncKey값 존재하지 않음 (PIN 입력 후 매핑 됨)
             MockData.shared.setUserMock(user: UserMock(idx: "id", pii: token.pii, finalEncKey: "", createDate: "2024-08-23T11:40:03.566877Z", updateDate: "2050-08-23T12:10:02Z"))
             return true
         } else {
-            WalletLogger.shared.debug("bindUser selectToken fail")
+            WalletLogger.debug("bindUser selectToken fail")
             throw WalletAPIError.selectQueryFail.getError()
         }
     }
@@ -325,7 +325,7 @@ class WalletServiceMock : WalletServiceImpl
         let reqVcProfile = ReqVcProfile(id: issuerProfile!.profile.id, issuerNonce: issuerProfile!.profile.profile.process.issuerNonce)
         
         let reqVC = ReqVC(refId: refId, profile: reqVcProfile)
-        WalletLogger.shared.debug("reqVc: \(try reqVC.toJson(isPretty: true))")
+        WalletLogger.debug("reqVc: \(try reqVC.toJson(isPretty: true))")
         
         let serverNonce = try MultibaseUtils.decode(encoded: issuerProfile!.profile.profile.process.issuerNonce)
         
@@ -368,8 +368,8 @@ class WalletServiceMock : WalletServiceImpl
             let vcs = try walletCore.getAllCredentials()
             for v in vcs {
                 if v.credentialSchema.id == vc.credentialSchema.id {
-                    WalletLogger.shared.debug("v.credentialSchema.id: \(v.credentialSchema.id)")
-                    WalletLogger.shared.debug("vc.credentialSchema.id: \(vc.credentialSchema.id)")
+                    WalletLogger.debug("v.credentialSchema.id: \(v.credentialSchema.id)")
+                    WalletLogger.debug("vc.credentialSchema.id: \(vc.credentialSchema.id)")
                     _ = try walletCore.deleteCredential(ids: [v.id])
                 }
             }
