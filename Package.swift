@@ -15,41 +15,16 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.5.1"),
     ],
     targets: [
-        .binaryTarget(
-            name: "OpenSSL",
-            path: "source/did-wallet-sdk-ios/DIDWalletSDK/Framework/openssl.xcframework"
-        ),
-
-        .target(
-            name: "OpenSSLWrapper",
-            dependencies: ["OpenSSL"],
-            path: "source/did-wallet-sdk-ios/DIDWalletSDK/Core/SubComponent/Bridging",
-            publicHeadersPath: ".",
-            cSettings: [
-                .headerSearchPath(
-                    "../../../Framework/openssl.xcframework/ios-arm64/openssl.framework/Headers",
-                    .when(platforms: [.iOS])
-                ),
-                .headerSearchPath(
-                    "../../../Framework/openssl.xcframework/ios-arm64_x86_64-simulator/openssl.framework/Headers",
-                    .when(platforms: [.iOS])
-                ),
-            ]
-        ),
-
         .target(
             name: "DIDWalletSDK",
             dependencies: [
-                "OpenSSLWrapper",
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "BigInt", package: "BigInt"),
             ],
             path: "source/did-wallet-sdk-ios/DIDWalletSDK",
             exclude: [
-                "Framework",
                 "OpenSource/BigInt",
-                "DIDWalletSDK.h",
-                "Core/SubComponent/Bridging"
+                "DIDWalletSDK.h"
             ],
             resources: [
                 .process("Wallet/CoreData/WalletModel.xcdatamodeld")

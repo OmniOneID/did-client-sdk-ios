@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,99 @@
 
 import Foundation
 
-/// TBD
 @propertyWrapper
-public struct UTCDatetime {
-//    private let regEx : String = "[0-9a-zA-Z_\\-\\.]+"
-    private var value : String
-    public var wrappedValue : String
-    {
-        get{ self.value }
-        set{ self.value = newValue }
+public struct UTCDatetime: Codable
+{
+    // ISO 8601: yyyy-MM-dd'T'HH:mm:ss(.fraction)?(Z)?
+    private static let regEx =
+        #"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,9})?(Z)?$"#
+
+    private var value: String
+
+    public var wrappedValue: String {
+        get { value }
+        set {
+            precondition(
+                newValue.matches(regEx: Self.regEx),
+                "\(newValue) does not match the regex \(Self.regEx)"
+            )
+            value = newValue
+        }
     }
-    
-    public init(wrappedValue : String)
-    {
-//        precondition(wrappedValue.matches(regEx: regEx))
+
+    public init(wrappedValue: String) {
+        precondition(
+            wrappedValue.matches(regEx: Self.regEx),
+            "\(wrappedValue) does not match the regex \(Self.regEx)"
+        )
         self.value = wrappedValue
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let decoded = try container.decode(String.self)
+
+        guard decoded.matches(regEx: Self.regEx) else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid UTCDatetime: \(decoded)"
+            )
+        }
+
+        self.value = decoded
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
     }
 }
 
-/// TBD
+
 @propertyWrapper
-public struct DIDVersionId {
-    private let regEx : String = "[0-9]+"
+public struct DIDVersionId : Codable
+{
+    private static let regEx : String = "^[0-9]+$"
     private var value : String
 
     public var wrappedValue : String
     {
         get{ self.value }
         set{
-            precondition(newValue.matches(regEx: regEx), "\(regEx) does not match the regex")
+            precondition(
+                newValue.matches(regEx: Self.regEx),
+                "\(newValue) does not match the regex \(Self.regEx)"
+            )
             self.value = newValue
         }
     }
     
     public init(wrappedValue : String)
     {
-        precondition(wrappedValue.matches(regEx: regEx), "\(regEx) does not match the regex")
+        precondition(
+            wrappedValue.matches(regEx: Self.regEx),
+            "\(wrappedValue) does not match the regex \(Self.regEx)"
+        )
         self.value = wrappedValue
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let decoded = try container.decode(String.self)
+
+        guard decoded.matches(regEx: Self.regEx) else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid DIDVersionId: \(decoded)"
+            )
+        }
+
+        self.value = decoded
+    }
+
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ import Foundation
 public struct RequestIssueVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var didAuth: DIDAuth
     public var accE2e: AccE2e
     public var encReqVc: String
     
-    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
+    public init(id: String, txId: String, serverToken: String?, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken

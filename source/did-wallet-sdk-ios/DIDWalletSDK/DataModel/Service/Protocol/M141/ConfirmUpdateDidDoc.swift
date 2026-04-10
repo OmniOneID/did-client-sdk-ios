@@ -19,9 +19,9 @@ import Foundation
 public struct ConfirmUpdateDidDoc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     
-    public init(id: String, txId: String, serverToken: String) {
+    public init(id: String, txId: String, serverToken: String?) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken

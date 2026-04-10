@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import Foundation
 
 /// A List of VCs signed with subject signatures, hereafter VP
-public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
+public struct VerifiablePresentation : Jsonable, VPProofsContainer, Identifiable
 {
     /// JSON-LD context
     public var context              : [String]
@@ -36,9 +36,9 @@ public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
     /// List of VC
     public var verifiableCredential : [VerifiableCredential]
     /// Owner proof
-    public var proof                : Proof?
-    /// List of owner proof 
-    public var proofs               : [Proof]?
+    public var proof                : VPProof?
+    /// List of owner proof
+    public var proofs               : [VPProof]?
 }
 
 //MARK: - Extension
@@ -142,9 +142,9 @@ extension VerifiablePresentation : Codable
                                                     forKey: .verifierNonce)
         verifiableCredential = try container.decode([VerifiableCredential].self,
                                                     forKey: .verifiableCredential)
-        proof                = try container.decodeIfPresent(Proof.self,
+        proof                = try container.decodeIfPresent(VPProof.self,
                                                              forKey: .proof)
-        proofs               = try container.decodeIfPresent([Proof].self,
+        proofs               = try container.decodeIfPresent([VPProof].self,
                                                              forKey: .proofs)
     }
 }

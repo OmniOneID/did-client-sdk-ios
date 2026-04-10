@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 import Foundation
 import Security
-@_implementationOnly import OpenSSLWrapper
 
 //MARK: Life-cycle
 struct SecureEnclaveManager
@@ -62,7 +61,7 @@ struct SecureEnclaveManager
         return compressedPubKeyData
     }
     
-    static func isKeySaved(group: String, 
+    static func isKeySaved(group: String,
                            identifier: String? = nil) -> Bool
     {
         if group.isEmpty
@@ -138,7 +137,7 @@ struct SecureEnclaveManager
 //MARK: Signable
 extension SecureEnclaveManager
 {
-    static func sign(group: String, 
+    static func sign(group: String,
                      identifier: String,
                      digest : Data) throws -> Data
     {
@@ -184,20 +183,22 @@ extension SecureEnclaveManager
         }
         
         let publicKey = try keyPair.toPublicKey()
-        let compressedPubKeyData = try publicKey.toCompressedPublicKeyData()
+        let uncompressedPubKeyData = try publicKey.toUncompressedPublicKeyData()
         
-        guard let signature = OpenSSLWrapper.toCompactRepresentation(fromX962Signature: signed,
-                                                                     digest: digest,
-                                                                     publicKey: compressedPubKeyData)
-        else
+        do
         {
-            throw SignableError.failToConvertCompactRepresentation.getError()
+            let signature = try P256V.convertToCompactRepresentation(x962Signature: signed,
+                                                                     digest: digest,
+                                                                     uncompressedPublicKey: uncompressedPubKeyData)
+            return signature
         }
-        
-        return signature
+        catch
+        {
+            throw SignableError.failToConvertCompactRepresentation(detail: error).getError()
+        }
     }
     
-    static func verify(publicKey : Data, 
+    static func verify(publicKey : Data,
                        digest : Data,
                        signature : Data) throws -> Bool
     {

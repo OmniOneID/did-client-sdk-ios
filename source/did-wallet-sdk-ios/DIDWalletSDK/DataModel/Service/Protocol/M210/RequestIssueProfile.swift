@@ -19,8 +19,8 @@ import Foundation
 public struct RequestIssueProfile: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
-    public init(id: String, txId: String, serverToken: String) {
+    public var serverToken: String?
+    public init(id: String, txId: String, serverToken: String? = nil) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken

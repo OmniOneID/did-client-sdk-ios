@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -359,7 +359,7 @@ extension WalletAPI : ICredentialService
 {
     /// Request issue Credential with the given parameters.
     ///- Parameters:
-    ///  - tasURL: The TAS URL for the request.
+    ///  - url: The URL for the request.
     ///  - hWalletToken: The wallet token for authentication.
     ///  - didAuth: The DID authentication object.
     ///  - issuerProfile: The issuer profile for the request.
@@ -370,10 +370,10 @@ extension WalletAPI : ICredentialService
     ///  A tuple containing a string and an optional request issue view controller.
     /// - Throws:
     ///  An error if verification of the wallet token fails.
-    public func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issuerProfile: _RequestIssueProfile, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
+    public func requestIssueVc(url: String, hWalletToken: String, didAuth: DIDAuth, issuerProfile: _RequestIssueProfile, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.ISSUE_VC])
-        return try await walletService.requestIssueVc(tasURL: tasURL, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: serverToken, APIGatewayURL: APIGatewayURL)
+        return try await walletService.requestIssueVc(url: url, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: serverToken, APIGatewayURL: APIGatewayURL)
     }
     
     /// This function handles the process of revoking a verifiable credential (VC) by generating and signing a
@@ -382,7 +382,7 @@ extension WalletAPI : ICredentialService
     ///
     /// - Parameters:
     ///   - hWalletToken: The wallet token for authentication.
-    ///   - tasURL: String - The URL of the server where the revocation request is sent.
+    ///   - url: String - The URL of the server where the revocation request is sent.
     ///   - authType: VerifyAuthType - The type of authentication used (e.g., biometrics, passcode).
     ///   - vcId: String - The ID of the verifiable credential to be revoked.
     ///   - issuerNonce: String - A nonce value provided by the issuer to ensure the request is valid.
@@ -394,10 +394,10 @@ extension WalletAPI : ICredentialService
     /// - Returns: _RequestRevokeVc - A structured object containing the server's response to the revocation request.
     ///
     /// Throws: Various errors related to cryptographic operations, server communication, or data encoding failures.
-    public func requestRevokeVc(hWalletToken:String, tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String? = nil) async throws -> _RequestRevokeVc
+    public func requestRevokeVc(hWalletToken:String, url: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String? = nil) async throws -> _RequestRevokeVc
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.REMOVE_VC])
-        return try await walletService.requestRevokeVc(tasURL: tasURL, authType: authType, vcId: vcId, issuerNonce: issuerNonce, txId: txId, serverToken: serverToken, passcode: passcode)
+        return try await walletService.requestRevokeVc(url: url, authType: authType, vcId: vcId, issuerNonce: issuerNonce, txId: txId, serverToken: serverToken, passcode: passcode)
     }
     
     /// Retrieves all verifiable credentials stored in the wallet using the provided wallet token.
@@ -468,10 +468,32 @@ extension WalletAPI : ICredentialService
     /// Returns: (AccE2e, Data) - Returns a tuple containing the AccE2e object with encryption data and the encrypted VP.
     ///
     /// Throws: Errors can be thrown for cryptographic failures, data encoding issues, or network communication problems.
-    public func createEncVp(hWalletToken:String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data)
+    public func createEncVp(hWalletToken:String, claimInfos: [ClaimInfo], verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data)
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken, purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
         return try await walletService.requestVp(hWalletToken: hWalletToken, claimInfos: claimInfos, verifierProfile: verifierProfile, APIGatewayURL: APIGatewayURL, passcode: passcode)
+    }
+    
+    public func createVp(
+        hWalletToken:String,
+        claimInfos: [ClaimInfo],
+        passcode: String? = nil,
+        verifierNonce: String,
+        challenge: OIDV4VPChallenge? = nil
+    ) throws -> VerifiablePresentation
+    {
+        try self.walletToken.verifyWalletToken(
+            hWalletToken: hWalletToken,
+            purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP]
+        )
+        
+        return try walletService.createVp(
+            hWalletToken: hWalletToken,
+            claimInfos: claimInfos,
+            passcode: passcode,
+            verifierNonce: verifierNonce,
+            challenge: challenge
+        )
     }
     
     /// Checks whether any credentials are saved in the wallet.

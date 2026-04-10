@@ -19,10 +19,10 @@ import Foundation
 public struct ConfirmIssueVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var vcId: String
     
-    public init(id: String, txId: String, serverToken: String, vcId: String) {
+    public init(id: String, txId: String, serverToken: String? = nil, vcId: String) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken

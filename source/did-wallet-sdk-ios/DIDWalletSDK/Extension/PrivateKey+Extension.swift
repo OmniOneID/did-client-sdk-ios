@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2025 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,7 @@ extension P256.Signing.PrivateKey
     func derivePublicKeyData() throws -> Data
     {
         let publicKey = self.publicKey
-        if #available(iOS 16.0, *)
-        {
-            return publicKey.compressedRepresentation
-        }
-        else
-        {
-            return try publicKey.x963Representation.toCompressedRepresentationFromRawPublicKey()
-        }
+        return try publicKey.toCompressedData()
     }
 }
 
