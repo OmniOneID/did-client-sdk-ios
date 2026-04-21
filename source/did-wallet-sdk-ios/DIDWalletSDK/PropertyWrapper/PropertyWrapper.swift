@@ -112,3 +112,72 @@ public struct DIDVersionId : Codable
         try container.encode(value)
     }
 }
+
+@propertyWrapper
+public struct ValidURL : Codable
+{
+    private var value: String
+
+    public var wrappedValue: String {
+        get { value }
+        set {
+            precondition(
+                URL(string: newValue) != nil,
+                "\(wrappedValue) is not valid URL."
+            )
+            value = newValue
+        }
+    }
+
+//    var projectedValue: URL? {
+//        URL(string: value)
+//    }
+
+    public init(wrappedValue: String) {
+        precondition(
+            URL(string: wrappedValue) != nil,
+            "\(wrappedValue) is not valid URL."
+        )
+        self.value = wrappedValue
+    }
+    
+    private static func isValid(_ string: String) -> Bool {
+        guard let url = URL(string: string),
+              url.scheme != nil,
+              url.host != nil else {
+            return false
+        }
+        return true
+    }
+    
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let string = try container.decode(String.self)
+        
+        guard Self.isValid(string) else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Invalid URL string: \(string)"
+            )
+        }
+        
+        self.value = string
+    }
+    
+    // MARK: - Encodable
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
+    }
+}
+
+extension ValidURL
+{
+    func appendingPath(_ component: String) -> String
+    {
+        URL(string: wrappedValue)!
+            .appendingPathComponent(component)
+            .absoluteString
+    }
+}

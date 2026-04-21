@@ -30,3 +30,9 @@ public let DefaultHttpHeaderFields : StringDictionary = [
     "Accept"          : "application/json",
     "Accept-Language" : Locale.preferredLanguages.first ?? "en-US"
 ]
+
+public let XWWWFormHttpHeaderFields : StringDictionary = [
+    "Content-Type"    : "application/x-www-form-urlencoded",
+    "Accept"          : "application/json",
+    "Accept-Language" : Locale.preferredLanguages.first ?? "en-US"
+]

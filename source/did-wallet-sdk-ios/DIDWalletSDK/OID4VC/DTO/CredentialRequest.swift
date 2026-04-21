@@ -1,5 +1,6 @@
+//
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+    
 import Foundation
 
-public class Properties {
+struct CredentialRequest: Jsonable, FromSnake
+{
+    var credentialConfigurationId: String?
+    var credentialIdentifier: String?
+    var proofs: Proofs
     
-    static let defaults = UserDefaults(suiteName: "properties") ?? .standard
-    
-    public static func getWalletId() -> String? {
-        
-        let result: String? = defaults.string(forKey: "walletId")
-        return result
-    }
-    
-    public static func setWalletId(id: String) {
-        defaults.setValue(id, forKey: "walletId")
-        UserDefaults.standard.synchronize()
+    struct Proofs: Jsonable, FromSnake
+    {
+        var diVp: [String]?
+        var jwt: [String]?
+        var attestation: [String]?
     }
 }

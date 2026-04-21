@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,42 @@ extension Encodable {
     func equals<T>(other: T) throws -> Bool where T: Encodable {
         let jsonEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-        
+
         let lh = try jsonEncoder.encode(self).sha256()
         let rh = try jsonEncoder.encode(other).sha256()
-        
+
         return lh == rh
+    }
+}
+
+extension Encodable
+{
+    func toFormData() throws -> Data {
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(self)
+        let json = try JSONSerialization.jsonObject(with: data)
+
+        guard let dict = json as? [String: Any] else {
+            //TODO: Error
+            throw NSError(domain: "FormEncoding", code: -1)
+        }
+
+        var components = URLComponents()
+        components.queryItems = dict.map { key, value in
+            let stringValue: String
+
+            if JSONSerialization.isValidJSONObject(value),
+                let data = try? JSONSerialization.data(withJSONObject: value),
+                let jsonString = String(data: data, encoding: .utf8)
+            {
+                stringValue = jsonString
+            } else {
+                stringValue = "\(value)"
+            }
+
+            return URLQueryItem(name: key, value: stringValue)
+        }
+
+        return components.percentEncodedQuery?.data(using: .utf8) ?? Data()
     }
 }

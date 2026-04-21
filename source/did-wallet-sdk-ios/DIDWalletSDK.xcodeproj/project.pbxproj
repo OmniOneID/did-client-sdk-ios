@@ -100,10 +100,27 @@
 		C90D3C212DAFA66C00292BFD /* DataModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C202DAFA66C00292BFD /* DataModelTests.swift */; };
 		C90D3C232DAFAC0800292BFD /* DataModelEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */; };
 		C90D3C252DAFAF6200292BFD /* OptionSet+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */; };
+		C91A34182F88DC7000F20388 /* DCQLPathProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34152F88DC7000F20388 /* DCQLPathProcessor.swift */; };
+		C91A34192F88DC7000F20388 /* DCQLQueryValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34172F88DC7000F20388 /* DCQLQueryValidator.swift */; };
+		C91A341A2F88DC7000F20388 /* DCQLQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34162F88DC7000F20388 /* DCQLQuery.swift */; };
+		C91A341B2F88DC7000F20388 /* DCQLCredentialMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34142F88DC7000F20388 /* DCQLCredentialMatcher.swift */; };
+		C91A341E2F88DCAC00F20388 /* AnyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A341D2F88DCAB00F20388 /* AnyJSON.swift */; };
+		C91A34212F88E08A00F20388 /* AuthorizationDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34202F88E08600F20388 /* AuthorizationDetails.swift */; };
+		C91A34232F88E0B500F20388 /* CredentialOfferRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34222F88E0B300F20388 /* CredentialOfferRequest.swift */; };
+		C91A34252F88E0F300F20388 /* CredentialOfferResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34242F88E0EF00F20388 /* CredentialOfferResponse.swift */; };
+		C91A34272F88E17200F20388 /* CredentialRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34262F88E16D00F20388 /* CredentialRequest.swift */; };
+		C91A34292F88E1E300F20388 /* CredentialResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34282F88E1E100F20388 /* CredentialResponse.swift */; };
+		C91A342B2F88E21E00F20388 /* IssuerMetadataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A342A2F88E21D00F20388 /* IssuerMetadataResponse.swift */; };
+		C91A342E2F88E55E00F20388 /* JSON+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A342D2F88E55500F20388 /* JSON+Extension.swift */; };
+		C91A34312F88E5E900F20388 /* SDJWT.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34302F88E5E800F20388 /* SDJWT.swift */; };
+		C91A34332F88EFE400F20388 /* JWK.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34322F88EFDD00F20388 /* JWK.swift */; };
+		C91A34362F88F84E00F20388 /* TokenRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34352F88F84A00F20388 /* TokenRequest.swift */; };
+		C91A34382F88F88D00F20388 /* TokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34372F88F88D00F20388 /* TokenResponse.swift */; };
 		C95C41482E6562CD00DBD01F /* ResponseTxId.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C41472E6562C800DBD01F /* ResponseTxId.swift */; };
 		C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */; };
 		C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */; };
 		C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D32DDF261B00A67DA3 /* CredInfo.swift */; };
+		C96586272F970A56001B7846 /* OID4VPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96586262F970A51001B7846 /* OID4VPProtocol.swift */; };
 		C96F353F2EBAEDDE007BCE1F /* P256V.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96F353E2EBAEDC3007BCE1F /* P256V.swift */; };
 		C96F35412EBB37BB007BCE1F /* PublicKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */; };
 		C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A5D2C91887400DE37D1 /* CoreData.framework */; };
@@ -155,6 +172,7 @@
 		C9CF5DD92DAF7C090078DFFA /* DigestUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */; };
 		C9CF5DDA2DAF7C090078DFFA /* CryptoUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD62DAF7C090078DFFA /* CryptoUtilsTests.swift */; };
 		C9CF5DDB2DAF7C090078DFFA /* MultibaseUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD72DAF7C090078DFFA /* MultibaseUtilsTests.swift */; };
+		C9D383292F8CEF5D008A5CD0 /* OID4VCIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D383282F8CEF54008A5CD0 /* OID4VCIProtocol.swift */; };
 		C9EB19952DB75F1900D152EE /* Words and Bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19932DB75F1900D152EE /* Words and Bits.swift */; };
 		C9EB19962DB75F1900D152EE /* Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19822DB75F1900D152EE /* Codable.swift */; };
 		C9EB19972DB75F1900D152EE /* Square Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198F2DB75F1900D152EE /* Square Root.swift */; };
@@ -351,10 +369,27 @@
 		C90D3C202DAFA66C00292BFD /* DataModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelTests.swift; sourceTree = "<group>"; };
 		C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelEnums.swift; sourceTree = "<group>"; };
 		C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptionSet+Extension.swift"; sourceTree = "<group>"; };
+		C91A34142F88DC7000F20388 /* DCQLCredentialMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLCredentialMatcher.swift; sourceTree = "<group>"; };
+		C91A34152F88DC7000F20388 /* DCQLPathProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLPathProcessor.swift; sourceTree = "<group>"; };
+		C91A34162F88DC7000F20388 /* DCQLQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLQuery.swift; sourceTree = "<group>"; };
+		C91A34172F88DC7000F20388 /* DCQLQueryValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLQueryValidator.swift; sourceTree = "<group>"; };
+		C91A341D2F88DCAB00F20388 /* AnyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyJSON.swift; sourceTree = "<group>"; };
+		C91A34202F88E08600F20388 /* AuthorizationDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationDetails.swift; sourceTree = "<group>"; };
+		C91A34222F88E0B300F20388 /* CredentialOfferRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialOfferRequest.swift; sourceTree = "<group>"; };
+		C91A34242F88E0EF00F20388 /* CredentialOfferResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialOfferResponse.swift; sourceTree = "<group>"; };
+		C91A34262F88E16D00F20388 /* CredentialRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialRequest.swift; sourceTree = "<group>"; };
+		C91A34282F88E1E100F20388 /* CredentialResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialResponse.swift; sourceTree = "<group>"; };
+		C91A342A2F88E21D00F20388 /* IssuerMetadataResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerMetadataResponse.swift; sourceTree = "<group>"; };
+		C91A342D2F88E55500F20388 /* JSON+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSON+Extension.swift"; sourceTree = "<group>"; };
+		C91A34302F88E5E800F20388 /* SDJWT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWT.swift; sourceTree = "<group>"; };
+		C91A34322F88EFDD00F20388 /* JWK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWK.swift; sourceTree = "<group>"; };
+		C91A34352F88F84A00F20388 /* TokenRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenRequest.swift; sourceTree = "<group>"; };
+		C91A34372F88F88D00F20388 /* TokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenResponse.swift; sourceTree = "<group>"; };
 		C95C41472E6562C800DBD01F /* ResponseTxId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTxId.swift; sourceTree = "<group>"; };
 		C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredDefVO.swift; sourceTree = "<group>"; };
 		C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredSchemaVO.swift; sourceTree = "<group>"; };
 		C96061D32DDF261B00A67DA3 /* CredInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredInfo.swift; sourceTree = "<group>"; };
+		C96586262F970A51001B7846 /* OID4VPProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPProtocol.swift; sourceTree = "<group>"; };
 		C96F353E2EBAEDC3007BCE1F /* P256V.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = P256V.swift; sourceTree = "<group>"; };
 		C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PublicKey+Extension.swift"; sourceTree = "<group>"; };
 		C9712A5D2C91887400DE37D1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -406,6 +441,7 @@
 		C9CF5DD62DAF7C090078DFFA /* CryptoUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoUtilsTests.swift; sourceTree = "<group>"; };
 		C9CF5DD72DAF7C090078DFFA /* MultibaseUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultibaseUtilsTests.swift; sourceTree = "<group>"; };
 		C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigestUtilsTests.swift; sourceTree = "<group>"; };
+		C9D383282F8CEF54008A5CD0 /* OID4VCIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCIProtocol.swift; sourceTree = "<group>"; };
 		C9EB19782DB75F1900D152EE /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		C9EB19792DB75F1900D152EE /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		C9EB197A2DB75F1900D152EE /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
@@ -515,6 +551,7 @@
 		7CA9828F2C85CEBA00EDF367 /* DIDWalletSDK */ = {
 			isa = PBXGroup;
 			children = (
+				C91A34122F88D7E700F20388 /* OID4VC */,
 				C9EB19B02DB7605100D152EE /* Defines */,
 				C9EB19772DB75EFF00D152EE /* OpenSource */,
 				C9F414F22DAE5D7700C04A1A /* Wallet */,
@@ -760,6 +797,61 @@
 			path = DataModel;
 			sourceTree = "<group>";
 		};
+		C91A34122F88D7E700F20388 /* OID4VC */ = {
+			isa = PBXGroup;
+			children = (
+				C9D382122F8CEE5E008A5CD0 /* Protocol */,
+				C91A342F2F88E5E100F20388 /* Model */,
+				C91A341F2F88DEA300F20388 /* DTO */,
+				C91A341C2F88DC9D00F20388 /* Common */,
+				C91A34132F88D7F300F20388 /* DCQL */,
+			);
+			path = OID4VC;
+			sourceTree = "<group>";
+		};
+		C91A34132F88D7F300F20388 /* DCQL */ = {
+			isa = PBXGroup;
+			children = (
+				C91A34142F88DC7000F20388 /* DCQLCredentialMatcher.swift */,
+				C91A34152F88DC7000F20388 /* DCQLPathProcessor.swift */,
+				C91A34162F88DC7000F20388 /* DCQLQuery.swift */,
+				C91A34172F88DC7000F20388 /* DCQLQueryValidator.swift */,
+			);
+			path = DCQL;
+			sourceTree = "<group>";
+		};
+		C91A341C2F88DC9D00F20388 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				C91A34322F88EFDD00F20388 /* JWK.swift */,
+				C91A341D2F88DCAB00F20388 /* AnyJSON.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		C91A341F2F88DEA300F20388 /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+				C91A34372F88F88D00F20388 /* TokenResponse.swift */,
+				C91A34352F88F84A00F20388 /* TokenRequest.swift */,
+				C91A342A2F88E21D00F20388 /* IssuerMetadataResponse.swift */,
+				C91A34282F88E1E100F20388 /* CredentialResponse.swift */,
+				C91A34262F88E16D00F20388 /* CredentialRequest.swift */,
+				C91A34242F88E0EF00F20388 /* CredentialOfferResponse.swift */,
+				C91A34222F88E0B300F20388 /* CredentialOfferRequest.swift */,
+				C91A34202F88E08600F20388 /* AuthorizationDetails.swift */,
+			);
+			path = DTO;
+			sourceTree = "<group>";
+		};
+		C91A342F2F88E5E100F20388 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C91A34302F88E5E800F20388 /* SDJWT.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		C94CDF3E2DAFB27D005FA89F /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -863,6 +955,7 @@
 		C9CF5DB42DAF700B0078DFFA /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				C91A342D2F88E55500F20388 /* JSON+Extension.swift */,
 				C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */,
 				C9EB19B32DB760A600D152EE /* BigInt+String.swift */,
 				C90D3B922DAF909C00292BFD /* Digest+Extension.swift */,
@@ -939,6 +1032,15 @@
 				C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		C9D382122F8CEE5E008A5CD0 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				C96586262F970A51001B7846 /* OID4VPProtocol.swift */,
+				C9D383282F8CEF54008A5CD0 /* OID4VCIProtocol.swift */,
+			);
+			path = Protocol;
 			sourceTree = "<group>";
 		};
 		C9EB19772DB75EFF00D152EE /* OpenSource */ = {
@@ -1305,6 +1407,7 @@
 				C9CF5DB92DAF7A250078DFFA /* MultibaseUtils.swift in Sources */,
 				C9CF5DBA2DAF7A250078DFFA /* CryptoUtils.swift in Sources */,
 				C9CF5DBB2DAF7A250078DFFA /* DigestUtils.swift in Sources */,
+				C91A342B2F88E21E00F20388 /* IssuerMetadataResponse.swift in Sources */,
 				7CA982A42C85CEBA00EDF367 /* WalletLogger.swift in Sources */,
 				7CA9829C2C85CEBA00EDF367 /* Properties.swift in Sources */,
 				C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */,
@@ -1312,6 +1415,7 @@
 				C9CF5DAE2DAF41540078DFFA /* CommnunicationClient.swift in Sources */,
 				C9EB19952DB75F1900D152EE /* Words and Bits.swift in Sources */,
 				C9EB1A8A2DB7714C00D152EE /* CredentialValues.swift in Sources */,
+				C91A34232F88E0B500F20388 /* CredentialOfferRequest.swift in Sources */,
 				C9EB1A8B2DB7714C00D152EE /* AttributeValue.swift in Sources */,
 				C9EB19962DB75F1900D152EE /* Codable.swift in Sources */,
 				C9EB19972DB75F1900D152EE /* Square Root.swift in Sources */,
@@ -1329,6 +1433,7 @@
 				C9EB19A02DB75F1900D152EE /* GCD.swift in Sources */,
 				C9EB19A12DB75F1900D152EE /* Bitwise Ops.swift in Sources */,
 				C9EB19A22DB75F1900D152EE /* Data Conversion.swift in Sources */,
+				C91A341E2F88DCAC00F20388 /* AnyJSON.swift in Sources */,
 				C9EB19A32DB75F1900D152EE /* Comparable.swift in Sources */,
 				C9EB19A42DB75F1900D152EE /* BigInt.swift in Sources */,
 				C9EB19A52DB75F1900D152EE /* Random.swift in Sources */,
@@ -1336,10 +1441,13 @@
 				C9EB19A72DB75F1900D152EE /* Integer Conversion.swift in Sources */,
 				C98BAF462E9F77AC00CED7CA /* WalletServiceProtocol.swift in Sources */,
 				C9EB19A82DB75F1900D152EE /* Prime Test.swift in Sources */,
+				C91A34332F88EFE400F20388 /* JWK.swift in Sources */,
+				C91A342E2F88E55E00F20388 /* JSON+Extension.swift in Sources */,
 				C9EB19A92DB75F1900D152EE /* Addition.swift in Sources */,
 				C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */,
 				C96F35412EBB37BB007BCE1F /* PublicKey+Extension.swift in Sources */,
 				C9EB19AA2DB75F1900D152EE /* Floating Point Conversion.swift in Sources */,
+				C91A34382F88F88D00F20388 /* TokenResponse.swift in Sources */,
 				C9EB19AB2DB75F1900D152EE /* Division.swift in Sources */,
 				C9EB19AC2DB75F1900D152EE /* Writer.swift in Sources */,
 				C9EB19AD2DB75F1900D152EE /* String Conversion.swift in Sources */,
@@ -1365,9 +1473,15 @@
 				C9EB19E82DB7636000D152EE /* ZKPCredentialRequest.swift in Sources */,
 				C98D25E92DB09DF700B2E84D /* SecureEnclaveError.swift in Sources */,
 				C98D25EA2DB09DF700B2E84D /* WalletCoreCommonError.swift in Sources */,
+				C96586272F970A56001B7846 /* OID4VPProtocol.swift in Sources */,
 				C98D25EB2DB09DF700B2E84D /* SecureEnclaveManager.swift in Sources */,
 				C9EB19B42DB760A600D152EE /* BigInt+String.swift in Sources */,
 				C98D25EC2DB09DF700B2E84D /* KeyManagerError.swift in Sources */,
+				C91A34182F88DC7000F20388 /* DCQLPathProcessor.swift in Sources */,
+				C9D383292F8CEF5D008A5CD0 /* OID4VCIProtocol.swift in Sources */,
+				C91A34192F88DC7000F20388 /* DCQLQueryValidator.swift in Sources */,
+				C91A341A2F88DC7000F20388 /* DCQLQuery.swift in Sources */,
+				C91A341B2F88DC7000F20388 /* DCQLCredentialMatcher.swift in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,
 				C98D25F02DB09DF700B2E84D /* VCManager.swift in Sources */,
@@ -1385,6 +1499,7 @@
 				C9CF5DCB2DAF7BDF0078DFFA /* UtilityError.swift in Sources */,
 				C9CF5DCC2DAF7BDF0078DFFA /* CryptoUtilsError.swift in Sources */,
 				C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */,
+				C91A34362F88F84E00F20388 /* TokenRequest.swift in Sources */,
 				C90D3BDE2DAFA61400292BFD /* RequestUpdateDidDoc.swift in Sources */,
 				C90D3BDF2DAFA61400292BFD /* VCSchema.swift in Sources */,
 				C90D3BE02DAFA61400292BFD /* OfferTypeEnum.swift in Sources */,
@@ -1409,6 +1524,7 @@
 				C90D3BF32DAFA61400292BFD /* ServerTokenPurposeEnum.swift in Sources */,
 				C90D3BF42DAFA61400292BFD /* AttestedDIDDoc.swift in Sources */,
 				C90D3BF52DAFA61400292BFD /* WalletTokenSeed.swift in Sources */,
+				C91A34272F88E17200F20388 /* CredentialRequest.swift in Sources */,
 				C90D3BF62DAFA61400292BFD /* RequestRegisterUser.swift in Sources */,
 				C90D3BF72DAFA61400292BFD /* ConfirmRevokeVc.swift in Sources */,
 				C9EB19B62DB760CE00D152EE /* ZKPConstants.swift in Sources */,
@@ -1429,6 +1545,7 @@
 				C90D3C062DAFA61400292BFD /* DidDocumentType.swift in Sources */,
 				C90D3C1E2DAFA64C00292BFD /* DataModelProtocol.swift in Sources */,
 				C90D3C072DAFA61400292BFD /* Wallet.swift in Sources */,
+				C91A34252F88E0F300F20388 /* CredentialOfferResponse.swift in Sources */,
 				C90D3C082DAFA61400292BFD /* RequestRestoreDidDoc.swift in Sources */,
 				C90D3C092DAFA61400292BFD /* ServerTokenData.swift in Sources */,
 				C90D3C0A2DAFA61400292BFD /* RequestAttestedAppInfo.swift in Sources */,
@@ -1464,6 +1581,7 @@
 				C9EB19C52DB7618700D152EE /* ProofInitiator.swift in Sources */,
 				C9EB19C62DB7618700D152EE /* CommitmentHelper.swift in Sources */,
 				C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */,
+				C91A34212F88E08A00F20388 /* AuthorizationDetails.swift in Sources */,
 				C9EB19C72DB7618700D152EE /* CredentialRequestHelper.swift in Sources */,
 				C9EB19C82DB7618700D152EE /* BigIntUtil.swift in Sources */,
 				C9EB19C92DB7618700D152EE /* ChallengeBuilder.swift in Sources */,
@@ -1474,6 +1592,7 @@
 				7CA982A02C85CEBA00EDF367 /* WalletAPI.swift in Sources */,
 				C9EB19B22DB7605B00D152EE /* PublicDefines.swift in Sources */,
 				7CA9829D2C85CEBA00EDF367 /* WalletUtil.swift in Sources */,
+				C91A34292F88E1E300F20388 /* CredentialResponse.swift in Sources */,
 				C98D25FA2DB0A10700B2E84D /* SecKey+Extension.swift in Sources */,
 				7CA9829E2C85CEBA00EDF367 /* WalletLockManager.swift in Sources */,
 				C9F414ED2DAE5D6A00C04A1A /* CoreDataManager.swift in Sources */,
@@ -1481,6 +1600,7 @@
 				C9F414EF2DAE5D6A00C04A1A /* WalletModel.xcdatamodeld in Sources */,
 				C9F414F02DAE5D6A00C04A1A /* User.swift in Sources */,
 				C9F414F12DAE5D6A00C04A1A /* Token.swift in Sources */,
+				C91A34312F88E5E900F20388 /* SDJWT.swift in Sources */,
 				7CA982A72C85CEBA00EDF367 /* WalletService.swift in Sources */,
 				7CA982A22C85CEBA00EDF367 /* WalletCore.swift in Sources */,
 				7CA982A92C85CEBA00EDF367 /* WalletToken.swift in Sources */,

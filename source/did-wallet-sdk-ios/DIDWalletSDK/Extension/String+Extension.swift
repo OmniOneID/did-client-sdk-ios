@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,5 +116,20 @@ extension String {
             return stringData.sha256().hexString()
         }
         return ""
+    }
+}
+
+extension String
+{
+    
+    func getCount(of word: String) -> Int {
+        guard !word.isEmpty else { return 0 }
+        var count = 0
+        var searchRange: Range<String.Index>? = startIndex..<endIndex
+        while let range = self.range(of: word, range: searchRange) {
+            count += 1
+            searchRange = range.upperBound..<endIndex
+        }
+        return count
     }
 }

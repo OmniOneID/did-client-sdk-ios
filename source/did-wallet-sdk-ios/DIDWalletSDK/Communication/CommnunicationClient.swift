@@ -271,4 +271,78 @@ extension CommunicationClient
         
         return (data, statusCode)
     }
+    
+    public static func sendPostUrlencoded<T : Jsonable>(
+        urlString : String,
+        headerFields : StringDictionary = XWWWFormHttpHeaderFields,
+        requestJsonable : Jsonable
+    ) async throws -> T
+    {
+        let jsonData : Data = try requestJsonable.toFormData()
+        
+        let (resultData, statusCode) = try await sendPostUrlencoded(
+            urlString: urlString,
+            headerFields: headerFields,
+            requestJsonData: jsonData
+        )
+        
+        if statusCode == 200
+        {
+            return try .init(from: resultData)
+        }
+        else
+        {
+            if let errorString = String(data: resultData, encoding: .utf8)
+            {
+                throw CommunicationAPIError.serverFail(errorString).getError()
+            }
+            throw CommunicationAPIError.unknown.getError()
+        }
+    }
+    
+    
+    public static func sendPostUrlencoded(urlString : String,
+                                          headerFields : StringDictionary = XWWWFormHttpHeaderFields,
+                                          requestJsonData : Data) async throws -> (Data, Int)
+    {
+        WalletLogger.debug("\n************** requestUrl: \(urlString) **************")
+        
+        guard !urlString.isEmpty
+        else
+        {
+            throw CommunicationAPIError.invaildParameter.getError()
+        }
+        
+        guard let url = URL(string: urlString)
+        else
+        {
+            throw CommunicationAPIError.incorrectURLconnection.getError()
+        }
+        
+        var request = URLRequest(url: url)
+        request.timeoutInterval = Self.defaultTimeoutInterval
+        for (key, value) in headerFields
+        {
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+        
+        request.httpMethod = HTTPMethod.POST.rawValue
+        
+        request.httpBody = requestJsonData
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse
+        else
+        {
+            throw CommunicationAPIError.unknown.getError()
+        }
+        
+        let statusCode = httpResponse.statusCode
+        
+        WalletLogger.debug("statusCode: \(String(describing: statusCode))")
+        WalletLogger.debug("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
+        
+        return (data, statusCode)
+    }
 }

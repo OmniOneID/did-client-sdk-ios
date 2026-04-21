@@ -1,6 +1,6 @@
 //
 /*
- * Copyright 2025 OmniOne.
+ * Copyright 2025-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,5 +31,20 @@ extension P256.Signing.PublicKey
         {
             return try publicKey.x963Representation.toCompressedRepresentationFromRawPublicKey()
         }
+    }
+    
+    func getPublicKeyJwk() -> JWK {
+        let x963Data = self.x963Representation
+        let x = x963Data.subdata(in: 1..<33)
+        let y = x963Data.subdata(in: 33..<65)
+        
+        let jwk : JWK = .init(
+            kty: "EC",
+            crv: "P-256",
+            x: x.base64URLEncoded,
+            y: y.base64URLEncoded
+        )
+        
+        return jwk
     }
 }
