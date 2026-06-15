@@ -61,7 +61,7 @@ enum SigningAlg: Codable {
 // MARK: - Credential Configuration (Main Expanded Model)
 struct CredentialConfiguration: Jsonable, FromSnake
 {
-    let format: String
+    let format: SupportedFormat //String
     let scope: String?
     let cryptographicBindingMethodsSupported: [String]?
     let credentialSigningAlgValuesSupported: [SigningAlg]?
@@ -104,4 +104,36 @@ struct ClaimDetail: Jsonable, FromSnake
     let mandatory: Bool?
     let path: [String]?
     let valueType: String?
+}
+
+enum SupportedFormat: Jsonable, Equatable
+{
+    case sdjwt
+    case mdoc
+    case unknown(String)
+    
+    
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        switch value {
+        case "dc+sd-jwt":
+            self = .sdjwt
+        case "mso_mdoc":
+            self = .mdoc
+        default:
+            self = .unknown(value)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .sdjwt:
+            try container.encode("dc+sd-jwt")
+        case .mdoc:
+            try container.encode("mso_mdoc")
+        case .unknown(let value):
+            try container.encode(value)
+        }
+    }
 }

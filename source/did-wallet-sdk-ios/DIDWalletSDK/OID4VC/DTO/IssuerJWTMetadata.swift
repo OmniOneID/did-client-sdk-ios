@@ -17,16 +17,13 @@
     
 import Foundation
 
-struct CredentialRequest: Jsonable, FromSnake
+struct IssuerJWTMetadata: Jsonable
 {
-    var credentialConfigurationId: String?
-    var credentialIdentifier: String?
-    var proofs: Proofs
+    let issuer: String
+    let jwks: JWKS
     
-    struct Proofs: Jsonable
+    struct JWKS: Jsonable
     {
-        var diVp: [String]?
-        var jwt: [String]?
-        var attestation: [String]?
+        let keys: [JWK]
     }
 }

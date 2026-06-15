@@ -133,3 +133,15 @@ extension String
         return count
     }
 }
+
+
+extension String {
+    func formURLEncoded() -> String {
+        var allowed = CharacterSet.alphanumerics
+        allowed.insert(charactersIn: "-._*")
+
+        return self
+            .addingPercentEncoding(withAllowedCharacters: allowed)?
+            .replacingOccurrences(of: " ", with: "+") ?? self
+    }
+}

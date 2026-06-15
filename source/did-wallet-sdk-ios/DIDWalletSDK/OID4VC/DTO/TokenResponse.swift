@@ -17,7 +17,7 @@
     
 import Foundation
 
-struct TokenResponse: Jsonable, FromSnake
+public struct TokenResponse: Jsonable, FromSnake
 {
     let accessToken: String
     let tokenType: String

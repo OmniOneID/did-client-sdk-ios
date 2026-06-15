@@ -19,9 +19,100 @@ import Foundation
 
 struct JWK: Jsonable
 {
-    var kty : String
-    var crv : String
+    var alg : Algorithm?
+    var kid : String?
+    var crv : Curve      = .p256
+    var kty : KeyType    = .ec
     var x   : String
     var y   : String
+
+    enum Algorithm: Jsonable, Equatable
+    {
+        case es256
+        case unknown(String)
+    }
+
+    enum Curve: Jsonable, Equatable
+    {
+        case p256
+        case unknown(String)
+    }
+
+    enum KeyType: Jsonable, Equatable
+    {
+        case ec
+        case unknown(String)
+    }
 }
+
+
+extension JWK.KeyType
+{
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        switch value {
+        case "EC":
+            self = .ec
+        default:
+            self = .unknown(value)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .ec:
+            try container.encode("EC")
+        case .unknown(let value):
+            try container.encode(value)
+        }
+    }
+}
+
+extension JWK.Curve
+{
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        switch value {
+        case "P-256":
+            self = .p256
+        default:
+            self = .unknown(value)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .p256:
+            try container.encode("P-256")
+        case .unknown(let value):
+            try container.encode(value)
+        }
+    }
+}
+
+extension JWK.Algorithm
+{
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        switch value {
+        case "ES256":
+            self = .es256
+        default:
+            self = .unknown(value)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .es256:
+            try container.encode("ES256")
+        case .unknown(let value):
+            try container.encode(value)
+        }
+    }
+}
+
 

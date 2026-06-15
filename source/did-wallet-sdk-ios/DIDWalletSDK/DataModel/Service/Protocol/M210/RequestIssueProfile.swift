@@ -20,10 +20,12 @@ public struct RequestIssueProfile: Jsonable {
     public var id: String
     public var txId: String
     public var serverToken: String?
-    public init(id: String, txId: String, serverToken: String? = nil) {
+    public var userId: String?
+    public init(id: String, txId: String, serverToken: String? = nil, userId: String? = nil) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
+        self.userId = userId
     }
 }
 

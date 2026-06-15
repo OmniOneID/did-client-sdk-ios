@@ -28,11 +28,10 @@ extension Encodable {
     }
 }
 
-extension Encodable
+extension Jsonable
 {
     func toFormData() throws -> Data {
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(self)
+        let data = try self.toJsonData()
         let json = try JSONSerialization.jsonObject(with: data)
 
         guard let dict = json as? [String: Any] else {
@@ -40,22 +39,21 @@ extension Encodable
             throw NSError(domain: "FormEncoding", code: -1)
         }
 
-        var components = URLComponents()
-        components.queryItems = dict.map { key, value in
+        let body = dict.map { key, value -> String in
             let stringValue: String
 
             if JSONSerialization.isValidJSONObject(value),
-                let data = try? JSONSerialization.data(withJSONObject: value),
-                let jsonString = String(data: data, encoding: .utf8)
-            {
+               let data = try? JSONSerialization.data(withJSONObject: value),
+               let jsonString = String(data: data, encoding: .utf8) {
                 stringValue = jsonString
             } else {
                 stringValue = "\(value)"
             }
 
-            return URLQueryItem(name: key, value: stringValue)
+            return "\(key.formURLEncoded())=\(stringValue.formURLEncoded())"
         }
+        .joined(separator: "&")
 
-        return components.percentEncodedQuery?.data(using: .utf8) ?? Data()
+        return body.data(using: .utf8) ?? Data()
     }
 }

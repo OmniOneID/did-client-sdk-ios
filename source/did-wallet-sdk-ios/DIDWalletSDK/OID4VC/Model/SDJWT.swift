@@ -66,6 +66,16 @@ public struct SDJWT: Jsonable {
         }
         return jwt
     }
+    
+    public func getSignSource() -> (String, String)
+    {
+        var separated = credentialJwt.components(separatedBy: ".")
+        
+        let signature = separated.popLast()!
+        let source = separated.joined(separator: ".")
+        
+        return (source, signature)
+    }
 }
 
 /// A structure representing a disclosure within an SD-JWT.

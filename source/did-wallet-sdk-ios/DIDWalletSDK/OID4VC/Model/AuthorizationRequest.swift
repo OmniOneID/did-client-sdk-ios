@@ -17,16 +17,17 @@
     
 import Foundation
 
-struct CredentialRequest: Jsonable, FromSnake
+public struct AuthorizationRequest : Jsonable, FromSnake
 {
-    var credentialConfigurationId: String?
-    var credentialIdentifier: String?
-    var proofs: Proofs
+    let responseUri: String
+    let nonce: String
+    let state: String
+    let clientId: String
     
-    struct Proofs: Jsonable
-    {
-        var diVp: [String]?
-        var jwt: [String]?
-        var attestation: [String]?
-    }
+    let responseType: String
+    let responseMode: String
+    let dcqlQuery: DCQLQuery
+    
+    let clientMetadata: [String: AnyJSON]
+    let iat : Int
 }

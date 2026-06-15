@@ -14,112 +14,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-    
+
 import Foundation
 
-public struct DCQLQuery: Jsonable {
+public struct DCQLQuery: Jsonable, FromSnake
+{
     public var credentials: [CredentialQuery]?
     public var credentialSets: [CredentialSet]?
     public var transactionData: [[String: AnyJSON]]?
 
-    enum CodingKeys: String, CodingKey {
-        case credentials
-        case credentialSets = "credential_sets"
-        case transactionData = "transaction_data"
-    }
-
-    public init(credentials: [CredentialQuery]? = nil,
-                credentialSets: [CredentialSet]? = nil,
-                transactionData: [[String: AnyJSON]]? = nil) {
-        self.credentials = credentials
-        self.credentialSets = credentialSets
-        self.transactionData = transactionData
-    }
-
     // MARK: Nested models
 
-    public struct CredentialQuery: Codable {
+    public struct CredentialQuery: Jsonable, FromSnake
+    {
         public var id: String?
         public var format: String?
         public var meta: [String: AnyJSON]?
         public var claims: [ClaimQuery]?
+        /// Per OID4VP spec: claim_sets is an array of arrays of claim query IDs.
+        /// Each inner array references claim IDs defined in the 'claims' array.
+        /// Example: [["a", "b"], ["a", "b", "c"]]
         public var claimSets: [ClaimSet]?
+        public var trustedAuthorities: [TrustedAuthority]?
         public var purpose: String?
+        /// If true, the Wallet MAY return multiple credentials for this query.
+        /// Defaults to false (exactly one credential expected).
+        public var multiple: Bool?
         public var requireCryptographicHolderBinding: Bool?
 
-        enum CodingKeys: String, CodingKey {
-            case id
-            case format
-            case meta
-            case claims
-            case claimSets = "claim_sets"
-            case purpose
-            case requireCryptographicHolderBinding = "require_cryptographic_holder_binding"
-        }
-
-        public init(id: String? = nil,
-                    format: String? = nil,
-                    meta: [String: AnyJSON]? = nil,
-                    claims: [ClaimQuery]? = nil,
-                    claimSets: [ClaimSet]? = nil,
-                    purpose: String? = nil,
-                    requireCryptographicHolderBinding: Bool? = nil) {
-            self.id = id
-            self.format = format
-            self.meta = meta
-            self.claims = claims
-            self.claimSets = claimSets
-            self.purpose = purpose
-            self.requireCryptographicHolderBinding = requireCryptographicHolderBinding
-        }
     }
 
-    public struct ClaimQuery: Codable {
+    public struct ClaimQuery: Jsonable, FromSnake
+    {
         public var id: String?
+        /// For JSON-based credentials (SD-JWT, W3C VC): path to the claim.
+        /// Not used for mdoc format.
         public var path: [DCQLPathElement]?
+        /// For mdoc credentials: the namespace of the claim.
+        /// e.g., "org.iso.18013.5.1"
+        public var namespace: String?
+        /// For mdoc credentials: the name of the claim within the namespace.
+        /// e.g., "family_name"
+        public var claimName: String?
         public var purpose: String?
         public var values: [AnyJSON]?
         public var value: AnyJSON?
         public var max: AnyJSON?
         public var min: AnyJSON?
 
-        enum CodingKeys: String, CodingKey {
-            case id
-            case path
-            case purpose
-            case values
-            case value
-            case max
-            case min
-        }
-
-        public init(id: String? = nil,
-                    path: [DCQLPathElement]? = nil,
-                    purpose: String? = nil,
-                    values: [AnyJSON]? = nil,
-                    value: AnyJSON? = nil,
-                    max: AnyJSON? = nil,
-                    min: AnyJSON? = nil) {
-            self.id = id
-            self.path = path
-            self.purpose = purpose
-            self.values = values
-            self.value = value
-            self.max = max
-            self.min = min
-        }
     }
 
-    public struct ClaimSet: Codable {
+    /// Trusted authority for credential issuer validation.
+    /// Per OID4VP spec section 6.1.1.
+    public struct TrustedAuthority: Jsonable, FromSnake {
+        /// Type of authority validation.
+        /// Allowed values: "aki", "etsi_tl", "openid_federation", "x509_san_dns", "x509_san_uri"
+        public var type: String?
+        public var values: [String]?
+    }
+
+    public struct ClaimSet: Jsonable, FromSnake {
         public var id: String?
         public var claims: [ClaimQuery]?
         public var purpose: String?
-
-        enum CodingKeys: String, CodingKey {
-            case id
-            case claims
-            case purpose
-        }
 
         public init(id: String? = nil, claims: [ClaimQuery]? = nil, purpose: String? = nil) {
             self.id = id
@@ -127,22 +84,13 @@ public struct DCQLQuery: Jsonable {
             self.purpose = purpose
         }
     }
-
-    public struct CredentialSet: Codable {
+    
+    public struct CredentialSet: Jsonable, FromSnake {
         public var id: String?
         public var options: [[String]]?
+        /// Per OID4VP spec: whether at least one option must be satisfied.
+        /// Defaults to true if not specified.
+        public var required: Bool?
         public var purpose: String?
-
-        enum CodingKeys: String, CodingKey {
-            case id
-            case options
-            case purpose
-        }
-
-        public init(id: String? = nil, options: [[String]]? = nil, purpose: String? = nil) {
-            self.id = id
-            self.options = options
-            self.purpose = purpose
-        }
     }
 }

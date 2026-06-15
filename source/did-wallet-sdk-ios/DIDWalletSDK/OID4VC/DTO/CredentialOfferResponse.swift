@@ -17,53 +17,104 @@
     
 import Foundation
 
-struct CredentialOfferResponse: Jsonable, FromSnake
+public struct CredentialOfferResponse: Jsonable, FromSnake
 {
-    @ValidURL var credentialIssuer: String
+    var credentialIssuer: String
     var credentialConfigurationIds: [String]?
     var grants: Grants
-}
-
-struct Grants: Jsonable
-{
-    let preAuthorizedCode: PreAuthorizedCode?
-    let authorizationCode: AuthorizationCode?
-
-    enum CodingKeys: String, CodingKey
+    
+    public struct Grants: Jsonable
     {
-        case preAuthorizedCode = "urn:ietf:params:oauth:grant-type:pre-authorized_code"
-        case authorizationCode = "authorization_code"
+        let preAuthorizedCode: PreAuthorizedCode?
+        let authorizationCode: AuthorizationCode?
+        
+        public struct PreAuthorizedCode: Jsonable
+        {
+            let preAuthorizedCode: String
+            let txCode: TxCode?
+            
+            public struct TxCode: Jsonable
+            {
+                let inputMode: String?
+                let length: Int?
+                let description: String?
+            }
+        }
+        
+        public struct AuthorizationCode: Jsonable
+        {
+            let issuerState: String?
+        }
     }
 }
 
-struct PreAuthorizedCode: Jsonable
+extension CredentialOfferResponse.Grants
 {
-    let preAuthorizedCode: String
-    let txCode: TxCode?
+    private static let preAuthKey  = AnyCodingKey(stringValue: "urn:ietf:params:oauth:grant-type:pre-authorized_code")!
+    private static let preAuthConvertedKey  = AnyCodingKey(stringValue: "urn:ietf:params:oauth:grant-type:pre-authorizedCode")!
 
-    enum CodingKeys: String, CodingKey
-    {
-        case preAuthorizedCode = "pre-authorized_code"
-        case txCode = "tx_code"
+    private static let authCodeKey = AnyCodingKey(stringValue: "authorization_code")!
+    private static let authCodeConvertedKey = AnyCodingKey(stringValue: "authorizationCode")!
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: AnyCodingKey.self)
+        
+        self.preAuthorizedCode =
+        try container.decodeIfPresent(PreAuthorizedCode.self, forKey: Self.preAuthKey)
+        ?? container.decodeIfPresent(PreAuthorizedCode.self, forKey: Self.preAuthConvertedKey)
+        
+        self.authorizationCode =
+        try container.decodeIfPresent(AuthorizationCode.self, forKey: Self.authCodeKey)
+        ?? container.decodeIfPresent(AuthorizationCode.self, forKey: Self.authCodeConvertedKey)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: AnyCodingKey.self)
+        
+        try container.encodeIfPresent(
+            preAuthorizedCode,
+            forKey: Self.preAuthKey
+        )
+        
+        try container.encodeIfPresent(
+            authorizationCode,
+            forKey: Self.authCodeKey
+        )
     }
 }
 
-struct TxCode: Jsonable, FromSnake
+extension CredentialOfferResponse.Grants.PreAuthorizedCode
 {
-    let inputMode: String?
-    let length: Int?
-    let description: String?
-}
+    private static let preAuthorizedCodeKey = AnyCodingKey(stringValue: "pre-authorized_code")!
+    private static let preAuthorizedCodeConvertedKey = AnyCodingKey(stringValue: "pre-authorizedCode")!
 
-struct AuthorizationCode: Jsonable, FromSnake
-{
-    let issuerState: String?
-}
-
-struct TestCredentialOfferResponse: Jsonable, FromSnake
-{
-    let credentialIssuer: String
-    let credentialConfigurationIds: [String]?
-    let grants: Grants
-    let txCode: String
+    private static let txCodeKey            = AnyCodingKey(stringValue: "tx_code")!
+    private static let txCodeConvertedKey            = AnyCodingKey(stringValue: "txCode")!
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: AnyCodingKey.self)
+        
+        self.preAuthorizedCode =
+        try container.decodeIfPresent(String.self, forKey: Self.preAuthorizedCodeKey)
+        ?? container.decode(String.self, forKey: Self.preAuthorizedCodeConvertedKey)
+        
+        self.txCode =
+        try container.decodeIfPresent(TxCode.self, forKey: Self.txCodeKey)
+        ?? container.decodeIfPresent(TxCode.self, forKey: Self.txCodeConvertedKey)
+    }
+    
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: AnyCodingKey.self)
+        
+        try container.encode(
+            preAuthorizedCode,
+            forKey: Self.preAuthorizedCodeKey
+        )
+        
+        try container.encodeIfPresent(
+            txCode,
+            forKey: Self.txCodeKey
+        )
+    }
 }

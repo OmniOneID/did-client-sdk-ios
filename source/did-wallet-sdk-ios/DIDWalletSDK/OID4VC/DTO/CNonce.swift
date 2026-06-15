@@ -15,18 +15,7 @@
  * limitations under the License.
  */
     
-import Foundation
-
-struct CredentialRequest: Jsonable, FromSnake
+struct CNonce : Jsonable, FromSnake
 {
-    var credentialConfigurationId: String?
-    var credentialIdentifier: String?
-    var proofs: Proofs
-    
-    struct Proofs: Jsonable
-    {
-        var diVp: [String]?
-        var jwt: [String]?
-        var attestation: [String]?
-    }
+    let cNonce: String
 }
