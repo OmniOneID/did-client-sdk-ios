@@ -137,6 +137,7 @@ class WalletService: WalletServiceImpl {
         print("keyPair.privateKey-\(keyPair.privateKey.hexString())")
         print("keyPair.publicKey-\(keyPair.publicKey.hexString())")
         print("serverNonce-\(serverNonce.hexString())")
+        print("verifierProfile.profile.profile.process.reqE2e.publicKey-\(verifierProfile.profile.profile.process.reqE2e.publicKey)")
         
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
