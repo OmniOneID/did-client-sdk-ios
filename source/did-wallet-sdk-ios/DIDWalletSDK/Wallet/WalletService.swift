@@ -133,11 +133,20 @@ class WalletService: WalletServiceImpl {
             verifierNonce: verifierProfile.profile.profile.process.verifierNonce
         )
         let serverNonce = try MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.verifierNonce)
+        
+        print("keyPair.privateKey-\(keyPair.privateKey.hexString())")
+        print("keyPair.publicKey-\(keyPair.publicKey.hexString())")
+        print("serverNonce-\(serverNonce.hexString())")
+        
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
                                                            publicKey: MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.reqE2e.publicKey))
         
+        print("sessKey-\(sessKey.hexString())")
+        
         let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: cipher)
+        
+        print("clientMergedSharedSecret-\(clientMergedSharedSecret.hexString())")
         let encVp = try CryptoUtils.encrypt(plain: vp.toJsonData(),
                                             info: CipherInfo(cipherType: cipher,
                                                              padding: padding),
