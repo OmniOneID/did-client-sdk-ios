@@ -132,22 +132,14 @@ class WalletService: WalletServiceImpl {
             passcode: passcode,
             verifierNonce: verifierProfile.profile.profile.process.verifierNonce
         )
-        let serverNonce = try MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.verifierNonce)
-        
-        print("keyPair.privateKey-\(keyPair.privateKey.hexString())")
-        print("keyPair.publicKey-\(keyPair.publicKey.hexString())")
-        print("serverNonce-\(serverNonce.hexString())")
-        print("verifierProfile.profile.profile.process.reqE2e.publicKey-\(verifierProfile.profile.profile.process.reqE2e.publicKey)")
+        let serverNonce = try MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.reqE2e.nonce)
         
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
                                                            publicKey: MultibaseUtils.decode(encoded: verifierProfile.profile.profile.process.reqE2e.publicKey))
         
-        print("sessKey-\(sessKey.hexString())")
-        
         let clientMergedSharedSecret = WalletUtil.mergeSharedSecretAndNonce(sharedSecret: sessKey, nonce: serverNonce, symmetricCipherType: cipher)
         
-        print("clientMergedSharedSecret-\(clientMergedSharedSecret.hexString())")
         let encVp = try CryptoUtils.encrypt(plain: vp.toJsonData(),
                                             info: CipherInfo(cipherType: cipher,
                                                              padding: padding),
@@ -636,7 +628,7 @@ class WalletService: WalletServiceImpl {
         }
         
         WalletLogger.debug("reqVc: \(try reqVC.toJson(isPretty: true))")
-        let serverNonce = try MultibaseUtils.decode(encoded: issuerProfile.profile.profile.process.issuerNonce)
+        let serverNonce = try MultibaseUtils.decode(encoded: issuerProfile.profile.profile.process.reqE2e.nonce)
         // generate sessionk ey
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
                                                            privateKey: keyPair.privateKey,
