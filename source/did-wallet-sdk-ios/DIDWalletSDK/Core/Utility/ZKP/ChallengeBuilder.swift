@@ -19,7 +19,7 @@ import Foundation
 import OrderedCollections
 
 #if SWIFT_PACKAGE
-    import BigInt
+    import BigIntKit
 #endif
 
 class ChallengeBuilder

@@ -12,14 +12,23 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-collections.git", exact: "1.1.4"),
-        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.5.1"),
     ],
     targets: [
+        // Vendored attaswift/BigInt 5.5.1 prebuilt in Release as a binary
+        // framework, so SPM consumers building in Debug (-Onone) still get
+        // optimized big-integer arithmetic (the P-256 / ZKP hot path).
+        // Module is BigIntKit (not BigInt) to dodge the module==type name
+        // collision; the exported types are still BigInt / BigUInt.
+        // Rebuild with source/did-wallet-sdk-ios/build_bigint_xcframework.sh.
+        .binaryTarget(
+            name: "BigIntKit",
+            path: "source/did-wallet-sdk-ios/Frameworks/BigIntKit.xcframework"
+        ),
         .target(
             name: "DIDWalletSDK",
             dependencies: [
                 .product(name: "Collections", package: "swift-collections"),
-                .product(name: "BigInt", package: "BigInt"),
+                "BigIntKit",
             ],
             path: "source/did-wallet-sdk-ios/DIDWalletSDK",
             exclude: [

@@ -18,7 +18,7 @@
 import Foundation
 
 #if SWIFT_PACKAGE
-    import BigInt
+    import BigIntKit
 #endif
 
 extension BigInt
