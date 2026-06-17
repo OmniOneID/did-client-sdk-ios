@@ -48,7 +48,54 @@ public enum DCQLPathElement: Codable, Hashable {
 
 
 
+/// Identifier of a DCQL credential query (`CredentialQuery.id`), used as the key
+/// of a presentation submission and the `vp_token` map sent to the verifier.
+public typealias ClientID = String
+
 public enum DCQLCredentialMatcher {
+
+    /// Matches stored credentials against a DCQL query by credential schema id.
+    ///
+    /// For each `CredentialQuery`, the credentials whose `credentialSchema.id` is listed in the
+    /// query's `meta["credential_schema_id_values"]` are collected and returned as `ClaimInfo`
+    /// entries keyed by the query id. `claimCodes` is left empty (= disclose all claims); per-claim
+    /// selective disclosure based on `query.claims` is not yet implemented.
+    /// - Parameters:
+    ///   - credentials: Stored credentials to match (provided by the caller).
+    ///   - queries: The `credentials` array of the DCQL query.
+    /// - Returns: Map of query id -> matched `ClaimInfo` list. Queries with no match are omitted.
+    public static func getMatchedMetadata(
+        credentials: [VerifiableCredential],
+        queries: [DCQLQuery.CredentialQuery]
+    ) -> [ClientID: [ClaimInfo]] {
+
+        var infos: [ClientID: [ClaimInfo]] = [:]
+
+        for query in queries {
+            guard let id = query.id,
+                  let meta = query.meta,
+                  let schemaIDs = meta["credential_schema_id_values"]?.asArray
+            else {
+                continue
+            }
+
+            let schemas = schemaIDs.compactMap { $0.asString }
+            let matched = credentials.filter { schemas.contains($0.credentialSchema.id) }
+
+            if matched.isEmpty {
+                continue
+            }
+
+            if query.claims != nil {
+                //TODO: per-claim selective disclosure — map DCQL claim queries to VC claim codes.
+            }
+
+            // Include every matched credential (claimCodes empty = all claims).
+            infos[id] = matched.map { ClaimInfo(credentialId: $0.id, claimCodes: []) }
+        }
+
+        return infos
+    }
 
     public static func matchesFormat(requiredFormat: String?) -> Bool {
         guard let requiredFormat = requiredFormat else { return true }

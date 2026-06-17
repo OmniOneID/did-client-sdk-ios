@@ -19,15 +19,15 @@ import Foundation
 
 public struct AuthorizationRequest : Jsonable, FromSnake
 {
-    let responseUri: String
-    let nonce: String
-    let state: String
-    let clientId: String
+    public let responseUri: String
+    public let nonce: String
+    public let state: String
+    public let clientId: String
     
-    let responseType: String
-    let responseMode: String
-    let dcqlQuery: DCQLQuery
+    public let responseType: String
+    public let responseMode: String
+    public let dcqlQuery: DCQLQuery
     
-    let clientMetadata: [String: AnyJSON]
-    let iat : Int
+    public let clientMetadata: [String: AnyJSON]
+    public let iat : Int
 }

@@ -31,35 +31,97 @@ public struct OID4VPProtocol
                 .value
         else
         {
-            //TODO: Invalid Request URI format.
-            throw NSError(domain: "Invalid Request URI format.", code: 0)
+            throw OID4VPError.invalidRequestURI
         }
-        
+
         let (encodedData, statusCode) = try await CommunicationClient.sendRequest(
             urlString: requestURI,
             httpMethod: .GET
         )
-        
+
         if statusCode != 200
         {
-            //TODO: Failed to get JWS
-            throw NSError(domain: "Failed to get JWS", code: 0)
+            throw OID4VPError.failedToFetchJWS
         }
         let jws = JWS(from: String(data: encodedData, encoding: .utf8)!)
         if try jws.verify() == false
         {
-            //TODO: Failed to get JWS
-            throw NSError(domain: "Failed to verify JWS", code: 0)
+            throw OID4VPError.failedToVerifyJWS
         }
-        
+
         return try jws.getPayload()
-        
+
     }
-    
-    
-    public static func findEligibleSubmittables(authRequest : AuthorizationRequest)
+
+    /// Finds which stored credentials satisfy the presentation request's DCQL query.
+    ///
+    /// The credentials are supplied by the caller (e.g. `WalletAPI.getAllCredentials`); this layer
+    /// is stateless and holds no wallet token. The returned map keys are DCQL query ids and the
+    /// values are `ClaimInfo` lists ready to pass to `WalletAPI.createVp`. VP creation and
+    /// submission to the verifier are the caller's responsibility.
+    /// - Parameters:
+    ///   - authRequest: The parsed authorization request (from `getAuthorizationRequest`).
+    ///   - credentials: The holder's stored credentials.
+    /// - Returns: Map of DCQL query id -> matched `ClaimInfo` list.
+    /// - Throws: `OID4VPError.invalidDCQLQuery` if the query is invalid,
+    ///           `OID4VPError.noEligibleCredentials` if nothing matches.
+    public static func findEligibleSubmittables(
+        authRequest: AuthorizationRequest,
+        credentials: [VerifiableCredential]
+    ) throws -> [ClientID: [ClaimInfo]]
     {
-        
+        let validation = DCQLQueryValidator.validate(authRequest.dcqlQuery)
+        if !validation.isValid()
+        {
+            throw OID4VPError.invalidDCQLQuery(validation.errors.joined(separator: "; "))
+        }
+
+        guard let queries = authRequest.dcqlQuery.credentials
+        else
+        {
+            throw OID4VPError.invalidDCQLQuery("missing 'credentials' in DCQL query")
+        }
+
+        let infos = DCQLCredentialMatcher.getMatchedMetadata(credentials: credentials, queries: queries)
+
+        if infos.isEmpty
+        {
+            throw OID4VPError.noEligibleCredentials
+        }
+
+        return infos
     }
-    
+
+}
+
+/// Errors thrown by the OID4VP (OpenID for Verifiable Presentations) flow.
+public enum OID4VPError: Error, LocalizedError
+{
+    /// The presentation request URI is missing or malformed.
+    case invalidRequestURI
+    /// Fetching the signed authorization request (JWS) failed.
+    case failedToFetchJWS
+    /// The authorization request JWS signature could not be verified.
+    case failedToVerifyJWS
+    /// The DCQL query in the authorization request is invalid. Carries the validation summary.
+    case invalidDCQLQuery(String)
+    /// No stored credential satisfies the authorization request.
+    case noEligibleCredentials
+
+    public var errorDescription: String?
+    {
+        switch self
+        {
+        case .invalidRequestURI:
+            return "Invalid request URI format."
+        case .failedToFetchJWS:
+            return "Failed to fetch the authorization request JWS."
+        case .failedToVerifyJWS:
+            return "Failed to verify the authorization request JWS."
+        case .invalidDCQLQuery(let detail):
+            return "Invalid DCQL query: \(detail)"
+        case .noEligibleCredentials:
+            return "No credentials available for submission."
+        }
+    }
 }

@@ -59,10 +59,13 @@ You can integrate the SDK directly into your Xcode project without manually copy
 <br>
 
 ## Optimization
-There is an optimization issue related to BigInt when using ZKP-related functions.
-- This is not an issue when using `DIDWalletSDK.xcframework`.
-- When referencing and using the `DIDWalletSDK` project, there is a delay in all APIs that perform ZKP-related operations.
-- To resolve this issue, the `Build Configuration` should be changed to `Release`.
+The BigInt-heavy P-256 / ZKP operations are shipped prebuilt in Release as a
+binary framework (`BigIntKit`).
+- SPM source references no longer incur the big-integer slowdown in Debug —
+  no `Build Configuration` change is required.
+- `DIDWalletSDK.xcframework` remains fully optimized.
+- Note: the SDK target itself still compiles in your app's build configuration,
+  so very heavy ZKP flows may retain minor Debug overhead.
 
 <br>
 

@@ -60,10 +60,13 @@ XCFramework를 수동으로 복사하지 않아도 Xcode에서 직접 패키지�
 <br>
 
 ## 최적화
-ZKP 관련 기능 사용 시 BigInt 관련 최적화 이슈가 있습니다.
-- `DIDWalletSDK.xcframework` 사용 시에는 문제가 발생하지 않습니다.
-- `DIDWalletSDK` 프로젝트를 직접 참조하여 사용할 경우, ZKP 관련 연산을 수행하는 모든 API에서 지연이 발생할 수 있습니다.
-- 해당 문제를 해결하려면 `Build Configuration`을 `Release`로 변경해야 합니다.
+BigInt 비중이 큰 P-256 / ZKP 연산은 Release로 미리 빌드된 바이너리 프레임워크
+(`BigIntKit`)로 제공됩니다.
+- SPM으로 소스를 참조해도 Debug에서 큰 정수 연산 지연이 발생하지 않습니다 —
+  `Build Configuration`을 변경할 필요가 없습니다.
+- `DIDWalletSDK.xcframework`는 그대로 완전히 최적화되어 있습니다.
+- 참고: SDK 타깃 자체는 앱의 빌드 구성으로 컴파일되므로, 매우 무거운 ZKP
+  흐름에는 약간의 Debug 오버헤드가 남을 수 있습니다.
 
 <br>
 
