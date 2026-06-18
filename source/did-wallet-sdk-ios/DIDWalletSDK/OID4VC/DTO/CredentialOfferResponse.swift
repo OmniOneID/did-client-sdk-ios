@@ -19,31 +19,31 @@ import Foundation
 
 public struct CredentialOfferResponse: Jsonable, FromSnake
 {
-    var credentialIssuer: String
-    var credentialConfigurationIds: [String]?
-    var grants: Grants
+    public var credentialIssuer: String
+    public var credentialConfigurationIds: [String]?
+    public var grants: Grants
     
     public struct Grants: Jsonable
     {
-        let preAuthorizedCode: PreAuthorizedCode?
-        let authorizationCode: AuthorizationCode?
+        public let preAuthorizedCode: PreAuthorizedCode?
+        public let authorizationCode: AuthorizationCode?
         
         public struct PreAuthorizedCode: Jsonable
         {
-            let preAuthorizedCode: String
-            let txCode: TxCode?
+            public let preAuthorizedCode: String
+            public let txCode: TxCode?
             
             public struct TxCode: Jsonable
             {
-                let inputMode: String?
-                let length: Int?
-                let description: String?
+                public let inputMode: String?
+                public let length: Int?
+                public let description: String?
             }
         }
         
         public struct AuthorizationCode: Jsonable
         {
-            let issuerState: String?
+            public let issuerState: String?
         }
     }
 }
