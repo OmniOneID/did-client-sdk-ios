@@ -19,7 +19,7 @@ import Foundation
 
 struct TokenRequest: Jsonable, FromSnake
 {
-    var clientId: String    = "oid4vci-ios-opendid"
+    var clientId: String    = "oid4vci-ios"/*"oid4vci-ios-opendid"*/
     var grantType: String   = "urn:ietf:params:oauth:grant-type:pre-authorized_code"
     var preAuthorizedCode: String
     var txCode: String?
