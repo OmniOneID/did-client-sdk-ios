@@ -92,6 +92,50 @@ public struct OID4VPProtocol
         return infos
     }
 
+    /// Multi-format variant: matches caller-supplied credentials (already parsed to
+    /// `ParsedCredential` via `DCQLCredentialMatcher.parseCredential` or adapter `from`) against the
+    /// request's DCQL query (format + meta + trusted_authorities + claims/claim_sets). Each entry's
+    /// `id` is echoed back as `ClaimInfo.credentialId`. `claimCodes` empty = disclose all claims.
+    public static func findEligibleSubmittables(
+        authRequest: AuthorizationRequest,
+        parsedCredentials: [(id: String, credential: ParsedCredential)]
+    ) throws -> [ClientID: [ClaimInfo]]
+    {
+        let validation = DCQLQueryValidator.validate(authRequest.dcqlQuery)
+        if !validation.isValid()
+        {
+            throw OID4VPError.invalidDCQLQuery(validation.errors.joined(separator: "; "))
+        }
+
+        guard let queries = authRequest.dcqlQuery.credentials
+        else
+        {
+            throw OID4VPError.invalidDCQLQuery("missing 'credentials' in DCQL query")
+        }
+
+        let infos = DCQLCredentialMatcher.getMatchedSubmittables(parsedCredentials: parsedCredentials,
+                                                                 queries: queries)
+        if infos.isEmpty
+        {
+            throw OID4VPError.noEligibleCredentials
+        }
+        return infos
+    }
+
+    /// Convenience over the `ParsedCredential` variant: parses raw multi-format credentials
+    /// (SD-JWT compact, opendid_vc JSON, …) via the adapter registry, then matches.
+    public static func findEligibleSubmittables(
+        authRequest: AuthorizationRequest,
+        rawCredentials: [(id: String, raw: String, format: String?)]
+    ) throws -> [ClientID: [ClaimInfo]]
+    {
+        let parsed: [(id: String, credential: ParsedCredential)] = try rawCredentials.map {
+            (id: $0.id,
+             credential: try DCQLCredentialMatcher.parseCredential(rawCredential: $0.raw, format: $0.format))
+        }
+        return try findEligibleSubmittables(authRequest: authRequest, parsedCredentials: parsed)
+    }
+
 }
 
 /// Errors thrown by the OID4VP (OpenID for Verifiable Presentations) flow.

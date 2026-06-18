@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-    
+
 import Foundation
 import CryptoKit
 
@@ -31,31 +31,29 @@ public struct OID4VCIProtocol
                 .value
         else
         {
-            //TODO: Invalid Credential Offer URI format.
-            throw NSError(domain: "Invalid Credential Offer URI format.", code: 0)
+            throw OID4VCIError.invalidCredentialOfferURI
         }
-        
+
         let offer: CredentialOfferResponse = try await CommunicationClient.sendRequest(
             urlString: offerUriValue,
             httpMethod: .GET
         )
-        
+
         guard let configIds = offer.credentialConfigurationIds, configIds.isEmpty == false
         else
         {
-            //TODO: No issuable Credential ID in Offer.
-            throw NSError(domain: "No issuable Credential ID in Offer.", code: 0)
+            throw OID4VCIError.noIssuableCredential
         }
-        
+
         return offer
     }
-    
+
     public enum AuthorizationGrantType
     {
         case preAuthorizedCode
         case authorizationCode
     }
-    
+
     public static func checkGrantType(
         offer : CredentialOfferResponse
     ) throws -> AuthorizationGrantType
@@ -64,8 +62,7 @@ public struct OID4VCIProtocol
         {
             if preAuth.preAuthorizedCode.isEmpty
             {
-                //TODO: Pre-Authorized Code not in Offer.
-                throw NSError(domain: "Pre-Authorized Code not in Offer.", code: 0)
+                throw OID4VCIError.preAuthorizedCodeNotFound
             }
             return .preAuthorizedCode
         }
@@ -75,27 +72,25 @@ public struct OID4VCIProtocol
         }
         else
         {
-            //TODO: Unsupported grant type
-            throw NSError(domain: "Unsupported grant type", code: 0)
+            throw OID4VCIError.unsupportedGrantType
         }
     }
-    
+
     public static func getTokenByPreAuthrizedCode(
         pinCode: String,
         offer: CredentialOfferResponse
     ) async throws -> TokenResponse
     {
-        
+
         if case try checkGrantType(offer: offer) = .authorizationCode
         {
-            //TODO: Unsupported grant type
-            throw NSError(domain: "Unsupported grant type", code: 0)
+            throw OID4VCIError.unsupportedGrantType
         }
-        
+
         let meta = try await getMeta(host: offer.credentialIssuer)
-        
+
         @ValidURL var endPoint : String
-        
+
         if let authServers = meta.authorizationServers, authServers.isEmpty == false
         {
             endPoint = authServers.first!
@@ -108,100 +103,121 @@ public struct OID4VCIProtocol
         {
             endPoint = offer.credentialIssuer
         }
-        
+
         let tokenEndpoint = try await getCredentialRequestURL(url: endPoint)
-        
+
         guard let configIds = offer.credentialConfigurationIds, configIds.isEmpty == false
         else
         {
-            //TODO: No issuable Credential ID in Offer.
-            throw NSError(domain: "No issuable Credential ID in Offer.", code: 0)
+            throw OID4VCIError.noIssuableCredential
         }
-        
+
         let authDetailsArray = configIds.map {
             return AuthorizationDetails(
                 credentialConfigurationId: $0,
                 credentialIdentifiers: nil
             )
         }
-        
+
         let tokenRequest = TokenRequest(
 //            grantType: "urn:ietf:params:oauth:grant-type:pre-authorized_code",
             preAuthorizedCode: offer.grants.preAuthorizedCode!.preAuthorizedCode,
             txCode: pinCode,
             authorizationDetails: authDetailsArray
         )
-        
-//        let authHeaderValue = "Basic b2lkNHZjaS1jbGllbnQ6c2VjcmV0"
-//        var headers: [String: String] = [:]
-//        headers["Authorization"] = authHeaderValue
-//        headers.merge(XWWWFormHttpHeaderFields) { current, _ in current }
-        
+
+        let authHeaderValue = "Basic b2lkNHZjaS1jbGllbnQ6c2VjcmV0"
+        var headers: [String: String] = [:]
+        headers["Authorization"] = authHeaderValue
+        headers.merge(XWWWFormHttpHeaderFields) { current, _ in current }
+
         let response : TokenResponse = try await CommunicationClient.sendPostUrlencoded(
             urlString: tokenEndpoint,
-//            headerFields: headers,
+            headerFields: headers,
             requestJsonable: tokenRequest
         )
 
         return response
     }
-    
+
+    /// Requests, verifies and stores a credential.
+    ///
+    /// The key-binding proof JWT is signed with the holder wallet key: the PIN key when `password`
+    /// is supplied, the biometric key otherwise (mirroring the VP signing path in `WalletService`).
+    /// On success the issued credential is persisted via `IssuedCredentialManager` and returned.
+    /// - Parameters:
+    ///   - offer: The credential offer (from `getCredentialOffer`).
+    ///   - tokenResponse: The access token response (from `getTokenByPreAuthrizedCode`).
+    ///   - selectedConfigId: The chosen `credential_configuration_id`.
+    ///   - selectedCredentialID: The chosen `credential_identifier`, when the issuer uses identifiers.
+    ///   - password: The wallet PIN. When `nil`, the biometric key is used.
+    /// - Returns: The stored `IssuedCredential`.
+    @discardableResult
     public static func processIssuing(
         offer : CredentialOfferResponse,
         tokenResponse : TokenResponse,
         selectedConfigId: String,
-        selectedCredentialID: String?
-    ) async throws
+        selectedCredentialID: String?,
+        password: String? = nil
+    ) async throws -> IssuedCredential
     {
         let meta = try await getMeta(host: offer.credentialIssuer)
-        
+
         guard let credentialConfig = meta.credentialConfigurationsSupported[selectedConfigId]
         else
         {
-            //TODO: Unavailable ConfigId
-            throw NSError(domain: "Unavailable ConfigId", code: 0)
+            throw OID4VCIError.unavailableConfigId(selectedConfigId)
         }
-        
+
         if case .unknown(let value) = credentialConfig.format
         {
-            //TODO: Unsupported format
-            throw NSError(domain: "This format \(value) is not supported", code: 0)
+            throw OID4VCIError.unsupportedFormat(value)
         }
-        
-        
-        //TODO: Signing key
-        let pkcs8PrivateKey = "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgmMOV8LmitIOKQCynSbCxsW0xmVMuQjdPtiJdjhwfx0agCgYIKoZIzj0DAQehRANCAAQv+cDbPA9aF/hQ0WIJyVJmfzr533/v+9xvCw+d/ptbZHTOhfDrj38GrJGQqxu4d1NswrAj+JlqA7Fhen34bWoT"
-        
-        let privateKey = try P256.Signing.PrivateKey(derRepresentation: Data(base64Encoded: pkcs8PrivateKey)!)
-        let jwk = privateKey.publicKey.getPublicKeyJwk()
-        
+
+        // Holder key-bound proof. PIN key when a password is supplied, biometric key otherwise.
+        let keyManager = try KeyManager(fileName: "holder")
+        let keyId = password != nil ? "pin" : "bio"
+        let pin = password?.data(using: .utf8)
+
+        guard try keyManager.isKeySaved(id: keyId),
+              let keyInfo = try keyManager.getKeyInfos(ids: [keyId]).first
+        else
+        {
+            throw OID4VCIError.holderKeyNotFound(keyId)
+        }
+
+        let compressedPublicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
+        let jwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
+
         var nonce : String?
         if let nonceEndpoint = meta.nonceEndpoint
         {
             let cNonce : CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
             nonce = cNonce.cNonce
         }
-        
+
         let typ = "openid4vci-proof+jwt"
-        
+
         let header = try JWSHeader.init(
             typ: typ,
             jwk: jwk
         ).toJsonData().base64URLEncoded
-        
+
         let payload = try JWSAudiencePayload.init(
             aud: meta.credentialIssuer,
             nonce: nonce
         ).toJsonData().base64URLEncoded
-        
+
         let signSource = "\(header).\(payload)"
-        let signSourceData = signSource.data(using: .utf8)!
-        
-        let signature = try privateKey.signature(for: signSourceData).rawRepresentation.base64URLEncoded
+        let digest = signSource.data(using: .utf8)!.sha256()
+
+        // KeyManager returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
+        let compactSignature = try keyManager.sign(id: keyId, pin: pin, digest: digest)
+        let signature = Data(compactSignature.dropFirst()).base64URLEncoded
         let jws = "\(signSource).\(signature)"
 
         var credentialRequest : CredentialRequest
-        
+
         if let selectedCredentialID = selectedCredentialID
         {
             credentialRequest = CredentialRequest(
@@ -218,46 +234,69 @@ public struct OID4VCIProtocol
                 proofs: .init(jwt: [jws])
             )
         }
-        
-        
+
+
         let token = "\(tokenResponse.tokenType) \(tokenResponse.accessToken)"
-        
+
         var headers: [String: String] = [:]
         headers["Authorization"] = token
         headers.merge(DefaultHttpHeaderFields) { current, _ in current }
-        
+
         let credentialResponse : CredentialResponse = try await CommunicationClient.sendRequest(
             urlString: meta.credentialEndpoint,
             headerFields: headers,
             requestJsonable: credentialRequest
         )
-        
-        //TODO: Verify
-        
-        
+
+        guard let rawCredential = credentialResponse.credentials.first?.credential
+        else
+        {
+            throw OID4VCIError.emptyCredentialResponse
+        }
+
+        // Verify
         @ValidURL var issuerURL = offer.credentialIssuer
-        
+
         let issuerJWK = try await getIssuerJWK(url: issuerURL)
-        
+
         let pubKey = try P256.Signing.PublicKey.init(
             xBase64URL: issuerJWK.x,
             yBase64URL: issuerJWK.y
         )
-        
+
         switch credentialConfig.format
         {
         case .sdjwt:
-            try veryfySDJWT(credential: credentialResponse.credentials.first!.credential, pubKey: pubKey)
+            try veryfySDJWT(credential: rawCredential, pubKey: pubKey)
         case .mdoc:
-            ()
+            () //TODO: Phase 2 — mdoc (mso_mdoc) signature verification
         case .unknown(_):
             ()
         }
-        
-        print("done")
-        //TODO: Store Credential
-        
-        
+
+        // Store
+        let format : String
+        switch credentialConfig.format
+        {
+        case .sdjwt:
+            format = "dc+sd-jwt"
+        case .mdoc:
+            format = "mso_mdoc"
+        case .unknown(let value):
+            format = value
+        }
+
+        let issuedCredential = IssuedCredential(
+            id: selectedCredentialID ?? selectedConfigId,
+            format: format,
+            credentialConfigurationId: selectedConfigId,
+            credentialIdentifier: selectedCredentialID,
+            credential: rawCredential
+        )
+
+        try IssuedCredentialManager().saveCredential(issuedCredential)
+
+        return issuedCredential
     }
 }
 
@@ -267,15 +306,14 @@ extension OID4VCIProtocol
     {
         let sdJWT = SDJWT.parse(raw: credential)
         let (source, signature) = sdJWT.getSignSource()
-        
+
         let sign = try P256.Signing.ECDSASignature(rawRepresentation: signature.base64URLDecoded!)
-        
+
         let isValid = pubKey.isValidSignature(sign, for: source.data(using: .utf8)!)
-        
+
         guard isValid else
         {
-            //TODO: Failed to verify signature
-            throw NSError(domain: "Failed to verify signature", code: 0)
+            throw OID4VCIError.failedToVerifySignature
         }
     }
 }
@@ -290,55 +328,112 @@ extension OID4VCIProtocol
             urlString: endpoint,
             httpMethod: .GET
         )
-        
+
         return meta
     }
-    
+
     private static func getCredentialRequestURL(url: String) async throws -> String
     {
         @ValidURL var issuerURL = url
         let subURL = ".well-known/oauth-authorization-server"
-        
+
         let (result, status)  = try await CommunicationClient.sendRequest(
             urlString: _issuerURL.appendingPath(subURL),
             httpMethod: .GET
         )
-        
+
         if status != 200
         {
-            //TODO: Failed to fetch Issuer Metadata
-            throw NSError(domain: "Failed to fetch Issuer Metadata", code: 0)
+            throw OID4VCIError.failedToFetchIssuerMetadata
         }
-        
-        
+
+
         let json = try JSONSerialization.jsonObject(with: result, options: []) as? [String: Any]
         guard let endPoint = json?["token_endpoint"], let tokenEndpoint = endPoint as? String
         else{
-            //TODO: Not found token endpoint
-            throw NSError(domain: "Not found token endpoint", code: 0)
+            throw OID4VCIError.tokenEndpointNotFound
         }
-        
+
         return tokenEndpoint
     }
-    
+
     private static func getIssuerJWK(url: String) async throws -> JWK
     {
-   
+
         @ValidURL var issuerURL = url
         let subURL = ".well-known/jwt-vc-issuer"
-        
+
         let meta : IssuerJWTMetadata = try await CommunicationClient.sendRequest(
             urlString: _issuerURL.appendingPath(subURL),
             httpMethod: .GET
         )
-        
+
         let filtered = meta.jwks.keys.filter { $0.alg == .es256 && $0.crv == .p256 && $0.kty == .ec }
-        
+
         if filtered.isEmpty
         {
-            //TODO: No available jwk
-            throw NSError(domain: "No available jwk", code: 0)
+            throw OID4VCIError.noAvailableJWK
         }
         return filtered.first!
+    }
+}
+
+/// Errors thrown by the OID4VCI (OpenID for Verifiable Credential Issuance) flow.
+public enum OID4VCIError: Error, LocalizedError
+{
+    /// The credential offer URI is missing or malformed.
+    case invalidCredentialOfferURI
+    /// The offer contains no issuable credential configuration id.
+    case noIssuableCredential
+    /// The offer advertises the pre-authorized grant but carries no code.
+    case preAuthorizedCodeNotFound
+    /// The offer's grant type is not supported by this flow.
+    case unsupportedGrantType
+    /// The selected `credential_configuration_id` is not in the issuer metadata.
+    case unavailableConfigId(String)
+    /// The credential format is not supported. Carries the format token.
+    case unsupportedFormat(String)
+    /// Fetching the issuer (authorization-server) metadata failed.
+    case failedToFetchIssuerMetadata
+    /// The authorization-server metadata has no `token_endpoint`.
+    case tokenEndpointNotFound
+    /// The issuer exposes no usable ES256/P-256 JWK.
+    case noAvailableJWK
+    /// The holder signing key required for the proof was not found. Carries the key id.
+    case holderKeyNotFound(String)
+    /// The credential response carried no credential.
+    case emptyCredentialResponse
+    /// The issued credential's signature could not be verified.
+    case failedToVerifySignature
+
+    public var errorDescription: String?
+    {
+        switch self
+        {
+        case .invalidCredentialOfferURI:
+            return "Invalid credential offer URI format."
+        case .noIssuableCredential:
+            return "No issuable credential id in offer."
+        case .preAuthorizedCodeNotFound:
+            return "Pre-authorized code not in offer."
+        case .unsupportedGrantType:
+            return "Unsupported grant type."
+        case .unavailableConfigId(let id):
+            return "Unavailable credential configuration id: \(id)."
+        case .unsupportedFormat(let format):
+            return "This format \(format) is not supported."
+        case .failedToFetchIssuerMetadata:
+            return "Failed to fetch issuer metadata."
+        case .tokenEndpointNotFound:
+            return "Token endpoint not found."
+        case .noAvailableJWK:
+            return "No available jwk."
+        case .holderKeyNotFound(let keyId):
+            return "Holder signing key '\(keyId)' not found."
+        case .emptyCredentialResponse:
+            return "The credential response contained no credential."
+        case .failedToVerifySignature:
+            return "Failed to verify signature."
+        }
     }
 }

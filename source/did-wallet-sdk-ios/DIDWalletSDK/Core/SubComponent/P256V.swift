@@ -325,7 +325,50 @@ extension P256V
         let publicKey = try recoverPublicKey(digest: digest,
                                              vrs: signature)
         let recoveredKey = try publicKey.toCompressedData()
-        
+
         return compressedPublicKey == recoveredKey
+    }
+
+    /// Decompresses a 33-byte SEC1 compressed P-256 public key (`0x02`/`0x03` ‖ X(32)) into a
+    /// CryptoKit `P256.Signing.PublicKey`. Used to derive the JWK (x, y) of a wallet key whose stored
+    /// representation is the compressed point.
+    /// - Parameter compressedPublicKey: 33-byte compressed public key.
+    /// - Returns: The reconstructed public key.
+    public static func decompressPublicKey(compressedPublicKey: Data) throws -> P256.Signing.PublicKey
+    {
+        guard compressedPublicKey.count == 33,
+              let prefix = compressedPublicKey.first,
+              prefix == 0x02 || prefix == 0x03
+        else
+        {
+            throw SignableError.invalidPublicKey.getError()
+        }
+
+        // Prefer the native decompression where available; fall back to manual point recovery on iOS 15.
+        if #available(iOS 16.0, *)
+        {
+            return try P256.Signing.PublicKey(compressedRepresentation: compressedPublicKey)
+        }
+
+        let x = BigUInt(compressedPublicKey.dropFirst())
+        guard x < p else { throw SignableError.invalidPublicKey.getError() }
+
+        // y^2 = x^3 + a*x + b (mod p), with a = p - 3 on secp256r1.
+        let rhs = ((x.power(3, modulus: p) + (p - 3) * x) % p + b) % p
+        // y = rhs^((p+1)/4) mod p, valid since p ≡ 3 (mod 4).
+        var y = rhs.power((p + 1) >> 2, modulus: p)
+        guard (y * y) % p == rhs else { throw SignableError.invalidPublicKey.getError() }
+
+        let wantOdd = (prefix == 0x03)
+        if ((y & 1) == 1) != wantOdd { y = (p - y) % p }
+
+        func be32(_ value: BigUInt) -> Data {
+            let bytes = value.serialize()
+            return bytes.count >= 32 ? Data(bytes.suffix(32))
+                                     : Data(repeating: 0, count: 32 - bytes.count) + bytes
+        }
+
+        let x963 = Data([0x04]) + be32(x) + be32(y)
+        return try P256.Signing.PublicKey(x963Representation: x963)
     }
 }
