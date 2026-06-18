@@ -116,7 +116,7 @@ enum SupportedFormat: Jsonable, Equatable
     init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
-        case "dc+sd-jwt":
+        case "dc+sd-jwt-did":
             self = .sdjwt
         case "mso_mdoc":
             self = .mdoc
@@ -129,7 +129,7 @@ enum SupportedFormat: Jsonable, Equatable
         var container = encoder.singleValueContainer()
         switch self {
         case .sdjwt:
-            try container.encode("dc+sd-jwt")
+            try container.encode("dc+sd-jwt-did")
         case .mdoc:
             try container.encode("mso_mdoc")
         case .unknown(let value):

@@ -120,7 +120,6 @@ public struct OID4VCIProtocol
         }
 
         let tokenRequest = TokenRequest(
-//            grantType: "urn:ietf:params:oauth:grant-type:pre-authorized_code",
             preAuthorizedCode: offer.grants.preAuthorizedCode!.preAuthorizedCode,
             txCode: pinCode,
             authorizationDetails: authDetailsArray
