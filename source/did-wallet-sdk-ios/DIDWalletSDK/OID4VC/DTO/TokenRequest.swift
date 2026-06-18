@@ -19,7 +19,7 @@ import Foundation
 
 struct TokenRequest: Jsonable, FromSnake
 {
-    var clientId: String    = "oid4vci-ios"/*"oid4vci-ios-opendid"*/
+//    var clientId: String    = "oid4vci-ios"/*"oid4vci-ios-opendid"*/
     var grantType: String   = "urn:ietf:params:oauth:grant-type:pre-authorized_code"
     var preAuthorizedCode: String
     var txCode: String?
@@ -28,8 +28,8 @@ struct TokenRequest: Jsonable, FromSnake
 
 extension TokenRequest
 {
-    private static let clientIdKey   = AnyCodingKey(stringValue: "client_id")!
-    private static let clientIdConvertedKey = AnyCodingKey(stringValue: "clientId")!
+//    private static let clientIdKey   = AnyCodingKey(stringValue: "client_id")!
+//    private static let clientIdConvertedKey = AnyCodingKey(stringValue: "clientId")!
     
     private static let grantTypeKey  = AnyCodingKey(stringValue: "grant_type")!
     private static let grantTypeConvertedKey = AnyCodingKey(stringValue: "grantType")!
@@ -46,9 +46,9 @@ extension TokenRequest
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AnyCodingKey.self)
         
-        self.clientId =
-        try container.decodeIfPresent(String.self, forKey: Self.clientIdKey)
-        ?? container.decode(String.self, forKey: Self.clientIdConvertedKey)
+//        self.clientId =
+//        try container.decodeIfPresent(String.self, forKey: Self.clientIdKey)
+//        ?? container.decode(String.self, forKey: Self.clientIdConvertedKey)
         
         self.grantType =
         try container.decodeIfPresent(String.self, forKey: Self.grantTypeKey)
@@ -71,11 +71,11 @@ extension TokenRequest
     {
         var container = encoder.container(keyedBy: AnyCodingKey.self)
         
-        try container.encode(
-            clientId,
-            forKey: Self.clientIdKey
-        )
-        
+//        try container.encode(
+//            clientId,
+//            forKey: Self.clientIdKey
+//        )
+//        
         try container.encode(
             grantType,
             forKey: Self.grantTypeKey
