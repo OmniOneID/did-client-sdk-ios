@@ -118,11 +118,10 @@ class WalletToken: WalletTokenImpl {
         try await self.verifyCertVcRef(roleType: roleType, providerDID: walletTokenData.provider.did, providerURL: walletTokenData.provider.certVcRef, APIGatewayURL: APIGatewayURL)
         
         // get CAS DIDDoc
-        let path = "\(APIGatewayURL)/api-gateway/api/v1/did-doc?did=\(walletTokenData.provider.did)"
-        let _casDidDoc : DIDDocVO = try await CommunicationClient.sendRequest(urlString: path,
-                                                                              httpMethod: .GET)
+        let casDidDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                                     did: walletTokenData.provider.did)
         
-        let casDidDoc = try DIDDocument(from: try MultibaseUtils.decode(encoded: _casDidDoc.didDoc))
+        WalletLogger.debug("casDidDoc: \(try casDidDoc.toJson(isPretty: true))")
         
         for method in casDidDoc.verificationMethod {
             if method.id == "assert" {
@@ -190,12 +189,8 @@ class WalletToken: WalletTokenImpl {
         }
         
         // get CAS DIDDoc
-        let path = "\(APIGatewayURL)/api-gateway/api/v1/did-doc?did=\(certVc.issuer.id)"
-        let _didDoc : DIDDocVO = try await CommunicationClient.sendRequest(urlString: path,
-                                                                           httpMethod: .GET)
-        
-        
-        let didDoc = try DIDDocument(from: try MultibaseUtils.decode(encoded: _didDoc.didDoc))
+        let didDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                                  did: certVc.issuer.id)
         
         WalletLogger.debug("didDoc: \(try didDoc.toJson(isPretty: true))")
         

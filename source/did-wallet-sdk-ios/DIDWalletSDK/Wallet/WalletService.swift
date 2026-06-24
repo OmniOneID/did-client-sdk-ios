@@ -672,13 +672,10 @@ class WalletService: WalletServiceImpl {
         
         var vc = credInfo.vc
         
-        let path = "\(APIGatewayURL)/api-gateway/api/v1/did-doc?did=\(vc.issuer.id)"
-        let didDoc : DIDDocVO = try await CommunicationClient.sendRequest(urlString: path,
-                                                                          httpMethod: .GET)
+        let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                                        did: vc.issuer.id)
         
-        let issuerDIDDocJson = try MultibaseUtils.decode(encoded: didDoc.didDoc)
-        let issuerDIDDoc = try DIDDocument.init(from: issuerDIDDocJson)
-        WalletLogger.debug("issuerDIDDoc: \(try issuerDIDDoc.toJson(isPretty: true))")
+        WalletLogger.debug("issuerDIDDoc: \(try didDoc.toJson(isPretty: true))")
         
         let tempProofValue = vc.proof.proofValue
         let tempProofValueList = vc.proof.proofValueList

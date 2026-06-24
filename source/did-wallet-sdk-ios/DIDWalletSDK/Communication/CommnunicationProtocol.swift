@@ -16,13 +16,7 @@
 
 import Foundation
 
-public protocol CommunicationProtocol
-{
-    static func doGet(url: URL) async throws -> Data
-    static func doPost(url: URL, requestJsonData: Data) async throws -> Data
-}
-
-public protocol ZKPCommunicationProtocol
+public protocol CommunicationRetrieving
 {
     static func getZKPCredentialSchama(hostUrlString : String, id : String) async throws -> ZKPCredentialSchema
     static func getZKPCredentialDefinition(hostUrlString : String, id : String) async throws -> ZKPCredentialDefinition

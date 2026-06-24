@@ -34,6 +34,14 @@
 		7CDED8022C783121009CE791 /* WalletLockManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDED8012C783121009CE791 /* WalletLockManagerMock.swift */; };
 		7CDED8062C784EE6009CE791 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDED8052C784EE6009CE791 /* MockData.swift */; };
 		AAAA0004000000000000E365 /* OID4VPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0003000000000000E365 /* OID4VPTests.swift */; };
+		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
+		AAAA0013000000000000E365 /* CredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0012000000000000E365 /* CredentialAdapter.swift */; };
+		AAAA0015000000000000E365 /* CredentialAdapterRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */; };
+		AAAA0017000000000000E365 /* ClaimMatchingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0016000000000000E365 /* ClaimMatchingHelper.swift */; };
+		AAAA0019000000000000E365 /* SDJWTCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */; };
+		AAAA001B000000000000E365 /* VerifiableCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */; };
+		AAAA001F000000000000E365 /* IssuedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001E000000000000E365 /* IssuedCredential.swift */; };
+		AAAA0021000000000000E365 /* IssuedCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0020000000000000E365 /* IssuedCredentialManager.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
 		C90D3BDE2DAFA61400292BFD /* RequestUpdateDidDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BA22DAFA61400292BFD /* RequestUpdateDidDoc.swift */; };
@@ -105,14 +113,6 @@
 		C91A34192F88DC7000F20388 /* DCQLQueryValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34172F88DC7000F20388 /* DCQLQueryValidator.swift */; };
 		C91A341A2F88DC7000F20388 /* DCQLQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34162F88DC7000F20388 /* DCQLQuery.swift */; };
 		C91A341B2F88DC7000F20388 /* DCQLCredentialMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34142F88DC7000F20388 /* DCQLCredentialMatcher.swift */; };
-		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
-		AAAA0013000000000000E365 /* CredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0012000000000000E365 /* CredentialAdapter.swift */; };
-		AAAA0015000000000000E365 /* CredentialAdapterRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */; };
-		AAAA0017000000000000E365 /* ClaimMatchingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0016000000000000E365 /* ClaimMatchingHelper.swift */; };
-		AAAA0019000000000000E365 /* SDJWTCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */; };
-		AAAA001B000000000000E365 /* VerifiableCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */; };
-		AAAA001F000000000000E365 /* IssuedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001E000000000000E365 /* IssuedCredential.swift */; };
-		AAAA0021000000000000E365 /* IssuedCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0020000000000000E365 /* IssuedCredentialManager.swift */; };
 		C91A341E2F88DCAC00F20388 /* AnyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A341D2F88DCAB00F20388 /* AnyJSON.swift */; };
 		C91A34212F88E08A00F20388 /* AuthorizationDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34202F88E08600F20388 /* AuthorizationDetails.swift */; };
 		C91A34232F88E0B500F20388 /* CredentialOfferRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34222F88E0B300F20388 /* CredentialOfferRequest.swift */; };
@@ -318,6 +318,14 @@
 		7CDED8012C783121009CE791 /* WalletLockManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletLockManagerMock.swift; sourceTree = "<group>"; };
 		7CDED8052C784EE6009CE791 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		AAAA0003000000000000E365 /* OID4VPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPTests.swift; sourceTree = "<group>"; };
+		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
+		AAAA0012000000000000E365 /* CredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapter.swift; sourceTree = "<group>"; };
+		AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapterRegistry.swift; sourceTree = "<group>"; };
+		AAAA0016000000000000E365 /* ClaimMatchingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMatchingHelper.swift; sourceTree = "<group>"; };
+		AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTCredentialAdapter.swift; sourceTree = "<group>"; };
+		AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifiableCredentialAdapter.swift; sourceTree = "<group>"; };
+		AAAA001E000000000000E365 /* IssuedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredential.swift; sourceTree = "<group>"; };
+		AAAA0020000000000000E365 /* IssuedCredentialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredentialManager.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
 		C90D3B962DAFA61400292BFD /* OfferTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferTypeEnum.swift; sourceTree = "<group>"; };
@@ -389,14 +397,6 @@
 		C91A34152F88DC7000F20388 /* DCQLPathProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLPathProcessor.swift; sourceTree = "<group>"; };
 		C91A34162F88DC7000F20388 /* DCQLQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLQuery.swift; sourceTree = "<group>"; };
 		C91A34172F88DC7000F20388 /* DCQLQueryValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLQueryValidator.swift; sourceTree = "<group>"; };
-		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
-		AAAA0012000000000000E365 /* CredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapter.swift; sourceTree = "<group>"; };
-		AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapterRegistry.swift; sourceTree = "<group>"; };
-		AAAA0016000000000000E365 /* ClaimMatchingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMatchingHelper.swift; sourceTree = "<group>"; };
-		AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTCredentialAdapter.swift; sourceTree = "<group>"; };
-		AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifiableCredentialAdapter.swift; sourceTree = "<group>"; };
-		AAAA001E000000000000E365 /* IssuedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredential.swift; sourceTree = "<group>"; };
-		AAAA0020000000000000E365 /* IssuedCredentialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredentialManager.swift; sourceTree = "<group>"; };
 		C91A341D2F88DCAB00F20388 /* AnyJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyJSON.swift; sourceTree = "<group>"; };
 		C91A34202F88E08600F20388 /* AuthorizationDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationDetails.swift; sourceTree = "<group>"; };
 		C91A34222F88E0B300F20388 /* CredentialOfferRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialOfferRequest.swift; sourceTree = "<group>"; };
@@ -651,6 +651,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		AAAA001C000000000000E365 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA001E000000000000E365 /* IssuedCredential.swift */,
+				AAAA0020000000000000E365 /* IssuedCredentialManager.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		C90D3B942DAFA5FF00292BFD /* PropertyWrapper */ = {
 			isa = PBXGroup;
 			children = (
@@ -839,15 +848,6 @@
 				AAAA001C000000000000E365 /* Storage */,
 			);
 			path = OID4VC;
-			sourceTree = "<group>";
-		};
-		AAAA001C000000000000E365 /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-				AAAA001E000000000000E365 /* IssuedCredential.swift */,
-				AAAA0020000000000000E365 /* IssuedCredentialManager.swift */,
-			);
-			path = Storage;
 			sourceTree = "<group>";
 		};
 		C91A34132F88D7F300F20388 /* DCQL */ = {
@@ -1943,7 +1943,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1980,7 +1980,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

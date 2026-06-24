@@ -39,6 +39,7 @@ public protocol FromSnake {}
 /// Model to Json, and vice versa
 public protocol Jsonable : Codable
 {
+    init(fromMultibase encoded: String) throws
     init(from jsonData: Data) throws
     init(from jsonString: String) throws
     func toJsonData(isPretty: Bool) throws -> Data
@@ -47,6 +48,13 @@ public protocol Jsonable : Codable
 
 public extension Jsonable
 {
+    init(fromMultibase encoded: String) throws
+    {
+        let decoded = try MultibaseUtils.decode(encoded: encoded)
+        
+        try self.init(from: decoded)
+    }
+    
     init(from jsonData: Data) throws {
         do
         {
