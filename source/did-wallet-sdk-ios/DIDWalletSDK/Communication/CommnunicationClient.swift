@@ -231,13 +231,24 @@ extension CommunicationClient : CommunicationRetrieving
             throw CommunicationAPIError.incorrectURLconnection.getError()
         }
         
-        url.append(path: "/api-gateway/api/v1/did-doc")
-        url.append(queryItems: [URLQueryItem(name: "did", value: did)])
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        else
+        {
+            throw CommunicationAPIError.incorrectURLconnection.getError()
+        }
+        components.path += "/api-gateway/api/v1/did-doc"
+        var queryItems = [URLQueryItem(name: "did", value: did)]
         if let versionId = versionId
         {
-            url.append(queryItems: [URLQueryItem(name: "versionId",
-                                                 value: versionId)])
+            queryItems.append(URLQueryItem(name: "versionId", value: versionId))
         }
+        components.queryItems = queryItems
+        guard let resolvedURL = components.url
+        else
+        {
+            throw CommunicationAPIError.incorrectURLconnection.getError()
+        }
+        url = resolvedURL
         
         let coveredDIDDoc : DIDDocVO = try await sendRequest(urlString: url.absoluteString,
                                                              httpMethod: .GET)

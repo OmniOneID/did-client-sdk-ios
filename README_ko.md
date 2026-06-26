@@ -88,7 +88,7 @@ did-client-sdk-ios
 | OS                | iOS                         |
 | Language          | Swift 5.8                   |
 | IDE               | Xcode 26.0.1                |
-| Compatibility     | iOS 15.0 이상                |
+| Compatibility     | iOS 17.0 이상                |
 | Test Environment  | iPhone 15 (17.5) 시뮬레이터   |
 
 ## 라이브러리

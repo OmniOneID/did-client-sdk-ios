@@ -5,7 +5,7 @@ let package = Package(
     name: "DIDWalletSDK",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v17)
     ],
     products: [
         .library(name: "DIDWalletSDK", targets: ["DIDWalletSDK"])
