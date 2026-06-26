@@ -675,7 +675,7 @@ class WalletService: WalletServiceImpl {
         let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
                                                                         did: vc.issuer.id)
         
-        WalletLogger.debug("issuerDIDDoc: \(try didDoc.toJson(isPretty: true))")
+        WalletLogger.debug("issuerDIDDoc: \(try issuerDIDDoc.toJson(isPretty: true))")
         
         let tempProofValue = vc.proof.proofValue
         let tempProofValueList = vc.proof.proofValueList

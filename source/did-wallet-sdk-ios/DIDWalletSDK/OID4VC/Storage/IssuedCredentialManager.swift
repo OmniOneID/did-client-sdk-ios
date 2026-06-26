@@ -22,7 +22,7 @@ import Foundation
 /// This is the OID4VC counterpart to `VCManager`: where `VCManager` stores W3C `VerifiableCredential`
 /// VOs, this stores format-specific `IssuedCredential`s keyed by their `id`. Stored in its own file
 /// (`oid4vc_credential.vc`) so it never collides with the W3C VC wallet (`vc.vc`).
-struct IssuedCredentialManager
+public struct IssuedCredentialManager
 {
     private static let fileName = "oid4vc_credential"
 
@@ -33,13 +33,13 @@ struct IssuedCredentialManager
         return storageManager.isSaved()
     }
 
-    init() throws {
+    public init() throws {
         storageManager = try .init(fileName: Self.fileName, fileExtension: .vc, isEncrypted: true)
     }
 
     /// Stores an issued credential, replacing any existing entry with the same `id`.
     /// - Parameter credential: The issued credential to store.
-    func saveCredential(_ credential: IssuedCredential) throws {
+    public func saveCredential(_ credential: IssuedCredential) throws {
         let walletItem: StorageManager<IssuedCredentialMeta, IssuedCredential>.UsableInnerWalletItem =
             .init(meta: .init(id: credential.id, format: credential.format), item: credential)
 
@@ -51,27 +51,27 @@ struct IssuedCredentialManager
     }
 
     /// Returns the issued credentials matching `identifiers`.
-    func getCredentials(by identifiers: [String]) throws -> [IssuedCredential] {
+    public func getCredentials(by identifiers: [String]) throws -> [IssuedCredential] {
         return try storageManager.getItems(by: identifiers).map { $0.item }
     }
 
     /// Returns all stored issued credentials.
-    func getAllCredentials() throws -> [IssuedCredential] {
+    public func getAllCredentials() throws -> [IssuedCredential] {
         return try storageManager.getAllItems().map { $0.item }
     }
 
     /// Returns the meta (id + format) of all stored issued credentials, without decrypting them.
-    func getAllMetas() throws -> [IssuedCredentialMeta] {
+    public func getAllMetas() throws -> [IssuedCredentialMeta] {
         return try storageManager.getAllMetas()
     }
 
     /// Deletes the issued credentials matching `identifiers`.
-    func deleteCredentials(by identifiers: [String]) throws {
+    public func deleteCredentials(by identifiers: [String]) throws {
         try storageManager.removeItems(by: identifiers)
     }
 
     /// Deletes the entire issued-credential wallet file.
-    func deleteAllCredentials() throws {
+    public func deleteAllCredentials() throws {
         try storageManager.removeAllItems()
     }
 }

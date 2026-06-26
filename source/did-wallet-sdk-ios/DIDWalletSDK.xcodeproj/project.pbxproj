@@ -41,6 +41,8 @@
 		AAAA0019000000000000E365 /* SDJWTCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */; };
 		AAAA001B000000000000E365 /* VerifiableCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */; };
 		AAAA001F000000000000E365 /* IssuedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001E000000000000E365 /* IssuedCredential.swift */; };
+		AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0030000000000000E365 /* KBJWTPayload.swift */; };
+		AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0032000000000000E365 /* SDJWTPresenter.swift */; };
 		AAAA0021000000000000E365 /* IssuedCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0020000000000000E365 /* IssuedCredentialManager.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
@@ -139,6 +141,7 @@
 		C97A625D2EC32BC100F3789D /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C97A625C2EC32BC100F3789D /* LICENSE.md */; };
 		C97A625F2EC32BCA00F3789D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = C97A625E2EC32BCA00F3789D /* LICENSE.txt */; };
 		C97CF63F2FADA00200299576 /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */; };
+		C98B32972FEE19D1000B3D29 /* DIDUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98B32962FEE19C9000B3D29 /* DIDUtility.swift */; };
 		C98BAF462E9F77AC00CED7CA /* WalletServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98BAF452E9F77A200CED7CA /* WalletServiceProtocol.swift */; };
 		C98D25E22DB09DF700B2E84D /* SecureEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C62DB09DF700B2E84D /* SecureEncryptor.swift */; };
 		C98D25E32DB09DF700B2E84D /* VCManagerDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25D72DB09DF700B2E84D /* VCManagerDataModel.swift */; };
@@ -325,6 +328,8 @@
 		AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTCredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifiableCredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA001E000000000000E365 /* IssuedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredential.swift; sourceTree = "<group>"; };
+		AAAA0030000000000000E365 /* KBJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KBJWTPayload.swift; sourceTree = "<group>"; };
+		AAAA0032000000000000E365 /* SDJWTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTPresenter.swift; sourceTree = "<group>"; };
 		AAAA0020000000000000E365 /* IssuedCredentialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredentialManager.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
@@ -423,6 +428,7 @@
 		C97A625C2EC32BC100F3789D /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		C97A625E2EC32BCA00F3789D /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationRequest.swift; sourceTree = "<group>"; };
+		C98B32962FEE19C9000B3D29 /* DIDUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDUtility.swift; sourceTree = "<group>"; };
 		C98BAF452E9F77A200CED7CA /* WalletServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletServiceProtocol.swift; sourceTree = "<group>"; };
 		C98D25C32DB09DF700B2E84D /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
 		C98D25C42DB09DF700B2E84D /* DIDManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDManager.swift; sourceTree = "<group>"; };
@@ -651,6 +657,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		AAAA0034000000000000E365 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA0032000000000000E365 /* SDJWTPresenter.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
 		AAAA001C000000000000E365 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -846,6 +860,7 @@
 				C91A341C2F88DC9D00F20388 /* Common */,
 				C91A34132F88D7F300F20388 /* DCQL */,
 				AAAA001C000000000000E365 /* Storage */,
+				AAAA0034000000000000E365 /* Presentation */,
 			);
 			path = OID4VC;
 			sourceTree = "<group>";
@@ -880,6 +895,7 @@
 			isa = PBXGroup;
 			children = (
 				C98D82A72FA0810E00AF5BC2 /* CNonce.swift */,
+				AAAA0030000000000000E365 /* KBJWTPayload.swift */,
 				C96BBB742F9B3CEF008AB547 /* IssuerJWTMetadata.swift */,
 				C91A34372F88F88D00F20388 /* TokenResponse.swift */,
 				C91A34352F88F84A00F20388 /* TokenRequest.swift */,
@@ -1174,6 +1190,7 @@
 		C9EB19BC2DB7617600D152EE /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				C98B32962FEE19C9000B3D29 /* DIDUtility.swift */,
 				C9EB19CB2DB761CF00D152EE /* ZKP */,
 			);
 			path = Utility;
@@ -1494,6 +1511,7 @@
 				C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */,
 				C96F353F2EBAEDDE007BCE1F /* P256V.swift in Sources */,
 				C9EB19A02DB75F1900D152EE /* GCD.swift in Sources */,
+				C98B32972FEE19D1000B3D29 /* DIDUtility.swift in Sources */,
 				C9EB19A12DB75F1900D152EE /* Bitwise Ops.swift in Sources */,
 				C9EB19A22DB75F1900D152EE /* Data Conversion.swift in Sources */,
 				C91A341E2F88DCAC00F20388 /* AnyJSON.swift in Sources */,
@@ -1552,6 +1570,8 @@
 				AAAA0019000000000000E365 /* SDJWTCredentialAdapter.swift in Sources */,
 				AAAA001B000000000000E365 /* VerifiableCredentialAdapter.swift in Sources */,
 				AAAA001F000000000000E365 /* IssuedCredential.swift in Sources */,
+				AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */,
+				AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */,
 				AAAA0021000000000000E365 /* IssuedCredentialManager.swift in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,

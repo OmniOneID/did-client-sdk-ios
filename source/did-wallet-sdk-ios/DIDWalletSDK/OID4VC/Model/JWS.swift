@@ -23,7 +23,7 @@ struct JWSHeader : Jsonable
     var alg : JWK.Algorithm = .es256
     var typ : String
     var kid : String?
-    var jwk : JWK
+    var jwk : JWK?
 }
 
 struct JWSAudiencePayload : Jsonable
@@ -91,9 +91,15 @@ struct JWS
         
         let jwsHeader : JWSHeader = try .init(from: decodedHeader)
         
+        guard let jwk = jwsHeader.jwk
+        else
+        {
+            throw MultibaseUtilsError.failToDecode.getError()
+        }
+        
         return try .init(
-            xBase64URL: jwsHeader.jwk.x,
-            yBase64URL: jwsHeader.jwk.y
+            xBase64URL: jwk.x,
+            yBase64URL: jwk.y
         )
     }
 }

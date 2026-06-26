@@ -157,7 +157,8 @@ public struct OID4VCIProtocol
         tokenResponse : TokenResponse,
         selectedConfigId: String,
         selectedCredentialID: String?,
-        password: String? = nil
+        password: String? = nil,
+        APIGatewayURL : String
     ) async throws -> IssuedCredential
     {
         let meta = try await getMeta(host: offer.credentialIssuer)
@@ -256,17 +257,43 @@ public struct OID4VCIProtocol
         // Verify
         @ValidURL var issuerURL = offer.credentialIssuer
 
-        let issuerJWK = try await getIssuerJWK(url: issuerURL)
+//        let issuerJWK = try await getIssuerJWK(url: issuerURL)
+//
+//        let pubKey = try P256.Signing.PublicKey.init(
+//            xBase64URL: issuerJWK.x,
+//            yBase64URL: issuerJWK.y
+//        )
+        
+        let sdJWT = SDJWT.parse(raw: rawCredential)
+        let tempJWS = JWS.init(from: sdJWT.credentialJwt)
+        let jwsHeader : JWSHeader = try .init(from: tempJWS.header)
+        
+        guard let kid = jwsHeader.kid
+        else
+        {
+            //TODO: error
+            throw OID4VCIError.emptyCredentialResponse
+        }
+        let identifier = try DIDUtility.parseDIDKeyIdentifier(kid)
+        
+        let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                                        did: identifier.did,
+                                                                        versionId: identifier.versionId)
 
-        let pubKey = try P256.Signing.PublicKey.init(
-            xBase64URL: issuerJWK.x,
-            yBase64URL: issuerJWK.y
-        )
-
+        guard let publicKeyMultibase = issuerDIDDoc.verificationMethod.filter({ $0.id == identifier.kid }).first.map(\.publicKeyMultibase)
+        else
+        {
+            //TODO: no public key
+            throw OID4VCIError.emptyCredentialResponse
+        }
+        
+        
+        let publicKey : P256.Signing.PublicKey = try .init(compressedRepresentation: MultibaseUtils.decode(encoded: publicKeyMultibase))
+        
         switch credentialConfig.format
         {
         case .sdjwt:
-            try veryfySDJWT(credential: rawCredential, pubKey: pubKey)
+            try veryfySDJWT(credential: rawCredential, pubKey: publicKey)
         case .mdoc:
             () //TODO: Phase 2 — mdoc (mso_mdoc) signature verification
         case .unknown(_):
@@ -278,7 +305,7 @@ public struct OID4VCIProtocol
         switch credentialConfig.format
         {
         case .sdjwt:
-            format = "dc+sd-jwt"
+            format = "dc+sd-jwt-did"
         case .mdoc:
             format = "mso_mdoc"
         case .unknown(let value):
@@ -286,7 +313,7 @@ public struct OID4VCIProtocol
         }
 
         let issuedCredential = IssuedCredential(
-            id: selectedCredentialID ?? selectedConfigId,
+            id: UUID().uuidString,
             format: format,
             credentialConfigurationId: selectedConfigId,
             credentialIdentifier: selectedCredentialID,
@@ -356,25 +383,25 @@ extension OID4VCIProtocol
         return tokenEndpoint
     }
 
-    private static func getIssuerJWK(url: String) async throws -> JWK
-    {
-
-        @ValidURL var issuerURL = url
-        let subURL = ".well-known/jwt-vc-issuer"
-
-        let meta : IssuerJWTMetadata = try await CommunicationClient.sendRequest(
-            urlString: _issuerURL.appendingPath(subURL),
-            httpMethod: .GET
-        )
-
-        let filtered = meta.jwks.keys.filter { $0.alg == .es256 && $0.crv == .p256 && $0.kty == .ec }
-
-        if filtered.isEmpty
-        {
-            throw OID4VCIError.noAvailableJWK
-        }
-        return filtered.first!
-    }
+//    private static func getIssuerJWK(url: String) async throws -> JWK
+//    {
+//
+//        @ValidURL var issuerURL = url
+//        let subURL = ".well-known/jwt-vc-issuer"
+//
+//        let meta : IssuerJWTMetadata = try await CommunicationClient.sendRequest(
+//            urlString: _issuerURL.appendingPath(subURL),
+//            httpMethod: .GET
+//        )
+//
+//        let filtered = meta.jwks.keys.filter { $0.alg == .es256 && $0.crv == .p256 && $0.kty == .ec }
+//
+//        if filtered.isEmpty
+//        {
+//            throw OID4VCIError.noAvailableJWK
+//        }
+//        return filtered.first!
+//    }
 }
 
 /// Errors thrown by the OID4VCI (OpenID for Verifiable Credential Issuance) flow.

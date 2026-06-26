@@ -25,7 +25,9 @@ import Foundation
 /// issuer offered it under, and the issuer-assigned `credentialIdentifier` (when present).
 public struct IssuedCredential: Jsonable
 {
-    /// Storage primary key. Derived from `credentialIdentifier ?? credentialConfigurationId`.
+    /// Storage primary key. A wallet-generated UUID, unique per issuance — issuer-side identifiers
+    /// (`credentialConfigurationId` / `credentialIdentifier`) are kept as separate fields because they
+    /// can be shared across distinct credentials and so are unsafe as a primary key.
     public let id: String
     /// Credential format token, e.g. `"dc+sd-jwt"` or `"mso_mdoc"`.
     public let format: String
@@ -53,8 +55,8 @@ public struct IssuedCredential: Jsonable
 
 /// Wallet-file meta for an `IssuedCredential`. `format` is kept in the (plaintext) meta so callers
 /// can filter by format without decrypting every stored item.
-struct IssuedCredentialMeta: MetaProtocol
+public struct IssuedCredentialMeta: MetaProtocol
 {
-    var id: String
-    var format: String
+    public var id: String
+    public var format: String
 }
