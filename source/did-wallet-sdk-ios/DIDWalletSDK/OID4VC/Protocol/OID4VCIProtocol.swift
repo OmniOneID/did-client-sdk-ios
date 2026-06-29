@@ -266,7 +266,7 @@ public struct OID4VCIProtocol
         
         let sdJWT = SDJWT.parse(raw: rawCredential)
         let tempJWS = JWS.init(from: sdJWT.credentialJwt)
-        let jwsHeader : JWSHeader = try .init(from: tempJWS.header)
+        let jwsHeader : JWSHeader = try .init(fromMultibase: tempJWS.header)
         
         guard let kid = jwsHeader.kid
         else
