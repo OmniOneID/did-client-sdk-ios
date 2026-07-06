@@ -72,7 +72,7 @@ final class OID4VCITests: XCTestCase {
     
         let pinCode = "940171"
             
-        let tokenResponse = try await OID4VCIProtocol.getTokenByPreAuthrizedCode(
+        let tokenResponse = try await OID4VCIProtocol.getTokenByPreAuthorizedCode(
             pinCode: pinCode,
             offer: offer
         )
@@ -83,7 +83,8 @@ final class OID4VCITests: XCTestCase {
             offer: offer,
             tokenResponse: tokenResponse,
             selectedConfigId: authorizationDetail.credentialConfigurationId,
-            selectedCredentialID: authorizationDetail.credentialIdentifiers?.first
+            selectedCredentialID: authorizationDetail.credentialIdentifiers?.first,
+            APIGatewayURL: ""
         )
         
     }

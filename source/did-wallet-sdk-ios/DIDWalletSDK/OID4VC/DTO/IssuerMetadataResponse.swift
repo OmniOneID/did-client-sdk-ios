@@ -17,7 +17,7 @@
     
 import Foundation
 
-struct IssuerMetadataResponse: Jsonable, FromSnake
+public struct IssuerMetadataResponse: Jsonable, FromSnake
 {
     let credentialIssuer: String
     let authorizationServers: [String]?
@@ -31,13 +31,72 @@ struct IssuerMetadataResponse: Jsonable, FromSnake
     let requireCredentialResponseEncryption: Bool?
     let credentialIdentifiersSupported: Bool?
     let credentialConfigurationsSupported: [String: CredentialConfiguration]
+
+    // MARK: - Flexible Type for Signing Algorithms (handles String and Int)
+    enum SigningAlg: Codable {
+        case string(String)
+        case int(Int)
+    }
+
+    // MARK: - Credential Configuration (Main Expanded Model)
+    public struct CredentialConfiguration: Jsonable, FromSnake
+    {
+        let format: SupportedFormat //String
+        let scope: String?
+        let cryptographicBindingMethodsSupported: [String]?
+        let credentialSigningAlgValuesSupported: [SigningAlg]?
+        let display: [DisplayInfo]?
+        let proofTypesSupported: [String: ProofSupport]?
+        let vct: String?
+        let claims: [String: ClaimDetail]?
+        let doctype: String?
+        let credentialMetadata: CredentialMetadata?
+    }
+
+    struct CredentialMetadata: Codable {
+        let claims: [ClaimDetail]?
+        let display: [DisplayInfo]?
+    }
+
+    struct DisplayInfo: Jsonable, FromSnake
+    {
+        let name: String?
+        let logo: LogoInfo?
+        let locale: String?
+        let backgroundColor: String?
+        let textColor: String?
+    }
+
+    struct LogoInfo: Jsonable, FromSnake
+    {
+        let uri: String?
+        let altText: String?
+    }
+
+    struct ProofSupport: Jsonable, FromSnake
+    {
+        let proofSigningAlgValuesSupported: [String]?
+    }
+
+    struct ClaimDetail: Jsonable, FromSnake
+    {
+        let display: [DisplayInfo]? // Flexible: use DisplayInfo which covers name/locale
+        let mandatory: Bool?
+        let path: [String]?
+        let valueType: String?
+    }
+
+    enum SupportedFormat: Jsonable, Equatable
+    {
+        case sdjwt
+        case sdjwtDID
+        case mdoc
+        case unknown(String)
+    }
 }
 
-// MARK: - Flexible Type for Signing Algorithms (handles String and Int)
-enum SigningAlg: Codable {
-    case string(String)
-    case int(Int)
-    
+// MARK: - SigningAlg Codable
+extension IssuerMetadataResponse.SigningAlg {
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let x = try? container.decode(String.self) {
@@ -45,10 +104,10 @@ enum SigningAlg: Codable {
         } else if let x = try? container.decode(Int.self) {
             self = .int(x)
         } else {
-            throw DecodingError.typeMismatch(SigningAlg.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for SigningAlg"))
+            throw DecodingError.typeMismatch(Self.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for SigningAlg"))
         }
     }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -58,66 +117,15 @@ enum SigningAlg: Codable {
     }
 }
 
-// MARK: - Credential Configuration (Main Expanded Model)
-struct CredentialConfiguration: Jsonable, FromSnake
-{
-    let format: SupportedFormat //String
-    let scope: String?
-    let cryptographicBindingMethodsSupported: [String]?
-    let credentialSigningAlgValuesSupported: [SigningAlg]?
-    let display: [DisplayInfo]?
-    let proofTypesSupported: [String: ProofSupport]?
-    let vct: String?
-    let claims: [String: ClaimDetail]?
-    let doctype: String?
-    let credentialMetadata: CredentialMetadata?
-}
-
-struct CredentialMetadata: Codable {
-    let claims: [ClaimDetail]?
-    let display: [DisplayInfo]?
-}
-
-struct DisplayInfo: Jsonable, FromSnake
-{
-    let name: String?
-    let logo: LogoInfo?
-    let locale: String?
-    let backgroundColor: String?
-    let textColor: String?
-}
-
-struct LogoInfo: Jsonable, FromSnake
-{
-    let uri: String?
-    let altText: String?
-}
-
-struct ProofSupport: Jsonable, FromSnake
-{
-    let proofSigningAlgValuesSupported: [String]?
-}
-
-struct ClaimDetail: Jsonable, FromSnake
-{
-    let display: [DisplayInfo]? // Flexible: use DisplayInfo which covers name/locale
-    let mandatory: Bool?
-    let path: [String]?
-    let valueType: String?
-}
-
-enum SupportedFormat: Jsonable, Equatable
-{
-    case sdjwt
-    case mdoc
-    case unknown(String)
-    
-    
+// MARK: - SupportedFormat Codable
+extension IssuerMetadataResponse.SupportedFormat {
     init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
-        case "dc+sd-jwt-did":
+        case "dc+sd-jwt":
             self = .sdjwt
+        case "dc+sd-jwt-did":
+            self = .sdjwtDID
         case "mso_mdoc":
             self = .mdoc
         default:
@@ -129,6 +137,8 @@ enum SupportedFormat: Jsonable, Equatable
         var container = encoder.singleValueContainer()
         switch self {
         case .sdjwt:
+            try container.encode("dc+sd-jwt")
+        case .sdjwtDID:
             try container.encode("dc+sd-jwt-did")
         case .mdoc:
             try container.encode("mso_mdoc")

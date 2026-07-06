@@ -21,11 +21,11 @@ import CryptoKit
 public struct OID4VCIProtocol
 {
     public static func getCredentialOffer(
-        offerURI : String
+        rawPayload : String
     ) async throws -> CredentialOfferResponse
     {
         guard
-            let components = URLComponents(string: offerURI),
+            let components = URLComponents(string: rawPayload),
             let offerUriValue = components.queryItems?
                 .first(where: { $0.name == "credential_offer_uri" })?
                 .value
@@ -47,38 +47,12 @@ public struct OID4VCIProtocol
 
         return offer
     }
+    
 
-    public enum AuthorizationGrantType
-    {
-        case preAuthorizedCode
-        case authorizationCode
-    }
-
-    public static func checkGrantType(
-        offer : CredentialOfferResponse
-    ) throws -> AuthorizationGrantType
-    {
-        if let preAuth = offer.grants.preAuthorizedCode
-        {
-            if preAuth.preAuthorizedCode.isEmpty
-            {
-                throw OID4VCIError.preAuthorizedCodeNotFound
-            }
-            return .preAuthorizedCode
-        }
-        else if let _ = offer.grants.authorizationCode
-        {
-            return .authorizationCode
-        }
-        else
-        {
-            throw OID4VCIError.unsupportedGrantType
-        }
-    }
-
-    public static func getTokenByPreAuthrizedCode(
-        pinCode: String,
-        offer: CredentialOfferResponse
+    public static func getTokenByPreAuthorizedCode(
+        metaData: IssuerMetadataResponse,
+        offer: CredentialOfferResponse,
+        txCode: String
     ) async throws -> TokenResponse
     {
 
@@ -87,15 +61,15 @@ public struct OID4VCIProtocol
             throw OID4VCIError.unsupportedGrantType
         }
 
-        let meta = try await getMeta(host: offer.credentialIssuer)
+//        let meta = try await getMetadata(issuerURL: offer.credentialIssuer)
 
         @ValidURL var endPoint : String
 
-        if let authServers = meta.authorizationServers, authServers.isEmpty == false
+        if let authServers = metaData.authorizationServers, authServers.isEmpty == false
         {
             endPoint = authServers.first!
         }
-        else if let tokenEndpoint = meta.tokenEndpoint, tokenEndpoint.isEmpty == false
+        else if let tokenEndpoint = metaData.tokenEndpoint, tokenEndpoint.isEmpty == false
         {
             endPoint = tokenEndpoint
         }
@@ -121,18 +95,18 @@ public struct OID4VCIProtocol
 
         let tokenRequest = TokenRequest(
             preAuthorizedCode: offer.grants.preAuthorizedCode!.preAuthorizedCode,
-            txCode: pinCode,
+            txCode: txCode,
             authorizationDetails: authDetailsArray
         )
 
-        let authHeaderValue = "Basic b2lkNHZjaS1jbGllbnQ6c2VjcmV0"
-        var headers: [String: String] = [:]
-        headers["Authorization"] = authHeaderValue
-        headers.merge(XWWWFormHttpHeaderFields) { current, _ in current }
+//        let authHeaderValue = "Basic b2lkNHZjaS1jbGllbnQ6c2VjcmV0"
+//        var headers: [String: String] = [:]
+//        headers["Authorization"] = authHeaderValue
+//        headers.merge(XWWWFormHttpHeaderFields) { current, _ in current }
 
         let response : TokenResponse = try await CommunicationClient.sendPostUrlencoded(
             urlString: tokenEndpoint,
-            headerFields: headers,
+//            headerFields: headers,
             requestJsonable: tokenRequest
         )
 
@@ -152,21 +126,23 @@ public struct OID4VCIProtocol
     ///   - password: The wallet PIN. When `nil`, the biometric key is used.
     /// - Returns: The stored `IssuedCredential`.
     @discardableResult
-    public static func processIssuing(
-        offer : CredentialOfferResponse,
-        tokenResponse : TokenResponse,
-        selectedConfigId: String,
-        selectedCredentialID: String?,
+    public static func requestCredential(
+        metadata: IssuerMetadataResponse,
+//        offer : CredentialOfferResponse,
+        token : TokenResponse,
         password: String? = nil,
+        configurationID: String,
+        credentialIdentifier: String?,
         APIGatewayURL : String
     ) async throws -> IssuedCredential
     {
-        let meta = try await getMeta(host: offer.credentialIssuer)
+        
+//        let meta = try await getMetadata(issuerURL: offer.credentialIssuer)
 
-        guard let credentialConfig = meta.credentialConfigurationsSupported[selectedConfigId]
+        guard let credentialConfig = metadata.credentialConfigurationsSupported[configurationID]
         else
         {
-            throw OID4VCIError.unavailableConfigId(selectedConfigId)
+            throw OID4VCIError.unavailableConfigId(configurationID)
         }
 
         if case .unknown(let value) = credentialConfig.format
@@ -179,7 +155,7 @@ public struct OID4VCIProtocol
         let keyId = password != nil ? "pin" : "bio"
         let pin = password?.data(using: .utf8)
 
-        guard try keyManager.isKeySaved(id: keyId),
+        guard try WalletAPI.shared.isSavedKey(keyId: keyId),
               let keyInfo = try keyManager.getKeyInfos(ids: [keyId]).first
         else
         {
@@ -190,7 +166,7 @@ public struct OID4VCIProtocol
         let jwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
 
         var nonce : String?
-        if let nonceEndpoint = meta.nonceEndpoint
+        if let nonceEndpoint = metadata.nonceEndpoint
         {
             let cNonce : CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
             nonce = cNonce.cNonce
@@ -204,7 +180,7 @@ public struct OID4VCIProtocol
         ).toJsonData().base64URLEncoded
 
         let payload = try JWSAudiencePayload.init(
-            aud: meta.credentialIssuer,
+            aud: metadata.credentialIssuer,
             nonce: nonce
         ).toJsonData().base64URLEncoded
 
@@ -218,7 +194,7 @@ public struct OID4VCIProtocol
 
         var credentialRequest : CredentialRequest
 
-        if let selectedCredentialID = selectedCredentialID
+        if let selectedCredentialID = credentialIdentifier
         {
             credentialRequest = CredentialRequest(
                 credentialConfigurationId: nil,
@@ -229,21 +205,21 @@ public struct OID4VCIProtocol
         else
         {
             credentialRequest = CredentialRequest(
-                credentialConfigurationId: selectedConfigId,
+                credentialConfigurationId: configurationID,
                 credentialIdentifier: nil,
                 proofs: .init(jwt: [jws])
             )
         }
 
 
-        let token = "\(tokenResponse.tokenType) \(tokenResponse.accessToken)"
+        let token = "\(token.tokenType) \(token.accessToken)"
 
         var headers: [String: String] = [:]
         headers["Authorization"] = token
         headers.merge(DefaultHttpHeaderFields) { current, _ in current }
 
         let credentialResponse : CredentialResponse = try await CommunicationClient.sendRequest(
-            urlString: meta.credentialEndpoint,
+            urlString: metadata.credentialEndpoint,
             headerFields: headers,
             requestJsonable: credentialRequest
         )
@@ -255,8 +231,8 @@ public struct OID4VCIProtocol
         }
 
         // Verify
-        @ValidURL var issuerURL = offer.credentialIssuer
-
+//        @ValidURL var issuerURL = offer.credentialIssuer
+//
 //        let issuerJWK = try await getIssuerJWK(url: issuerURL)
 //
 //        let pubKey = try P256.Signing.PublicKey.init(
@@ -292,7 +268,7 @@ public struct OID4VCIProtocol
         
         switch credentialConfig.format
         {
-        case .sdjwt:
+        case .sdjwt, .sdjwtDID:
             try veryfySDJWT(credential: rawCredential, pubKey: publicKey)
         case .mdoc:
             () //TODO: Phase 2 — mdoc (mso_mdoc) signature verification
@@ -305,6 +281,8 @@ public struct OID4VCIProtocol
         switch credentialConfig.format
         {
         case .sdjwt:
+            format = "dc+sd-jwt"
+        case .sdjwtDID:
             format = "dc+sd-jwt-did"
         case .mdoc:
             format = "mso_mdoc"
@@ -315,14 +293,45 @@ public struct OID4VCIProtocol
         let issuedCredential = IssuedCredential(
             id: UUID().uuidString,
             format: format,
-            credentialConfigurationId: selectedConfigId,
-            credentialIdentifier: selectedCredentialID,
+            credentialConfigurationId: configurationID,
+            credentialIdentifier: credentialIdentifier,
             credential: rawCredential
         )
 
         try IssuedCredentialManager().saveCredential(issuedCredential)
 
         return issuedCredential
+    }
+}
+
+extension OID4VCIProtocol
+{
+    private enum AuthorizationGrantType
+    {
+        case preAuthorizedCode
+        case authorizationCode
+    }
+
+    private static func checkGrantType(
+        offer : CredentialOfferResponse
+    ) throws -> AuthorizationGrantType
+    {
+        if let preAuth = offer.grants.preAuthorizedCode
+        {
+            if preAuth.preAuthorizedCode.isEmpty
+            {
+                throw OID4VCIError.preAuthorizedCodeNotFound
+            }
+            return .preAuthorizedCode
+        }
+        else if let _ = offer.grants.authorizationCode
+        {
+            return .authorizationCode
+        }
+        else
+        {
+            throw OID4VCIError.unsupportedGrantType
+        }
     }
 }
 
@@ -347,17 +356,21 @@ extension OID4VCIProtocol
 
 extension OID4VCIProtocol
 {
-    private static func getMeta(host: String) async throws -> IssuerMetadataResponse
+    public static func getMetadata(issuerURL: String) async throws -> IssuerMetadataResponse
     {
-        let endpoint = host + "/.well-known/openid-credential-issuer"
+        let endpoint = issuerURL + "/.well-known/openid-credential-issuer"
         let meta : IssuerMetadataResponse = try await CommunicationClient.sendRequest(
             urlString: endpoint,
             httpMethod: .GET
         )
-
+        
         return meta
     }
-
+    
+}
+    
+extension OID4VCIProtocol
+{
     private static func getCredentialRequestURL(url: String) async throws -> String
     {
         @ValidURL var issuerURL = url
