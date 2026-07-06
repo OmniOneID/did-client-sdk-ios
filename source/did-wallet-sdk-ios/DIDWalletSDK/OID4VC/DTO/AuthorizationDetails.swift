@@ -17,7 +17,7 @@
     
 import Foundation
 
-struct AuthorizationDetails: Jsonable, FromSnake
+public struct AuthorizationDetails: Jsonable, FromSnake
 {
     var type: String = "openid_credential"
     var credentialConfigurationId: String
