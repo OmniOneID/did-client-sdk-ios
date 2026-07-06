@@ -19,9 +19,9 @@ import Foundation
 
 public struct TokenResponse: Jsonable, FromSnake
 {
-    let accessToken: String
-    let tokenType: String
-    let cNonce: String?
-    let expiresIn: Int?
-    let authorizationDetails: [AuthorizationDetails]?
+    public let accessToken: String
+    public let tokenType: String
+    public let cNonce: String?
+    public let expiresIn: Int?
+    public let authorizationDetails: [AuthorizationDetails]?
 }

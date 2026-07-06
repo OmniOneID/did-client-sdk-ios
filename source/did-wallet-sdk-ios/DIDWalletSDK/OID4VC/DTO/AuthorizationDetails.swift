@@ -19,7 +19,7 @@ import Foundation
 
 public struct AuthorizationDetails: Jsonable, FromSnake
 {
-    var type: String = "openid_credential"
-    var credentialConfigurationId: String
-    var credentialIdentifiers: [String]?
+    public var type: String = "openid_credential"
+    public var credentialConfigurationId: String
+    public var credentialIdentifiers: [String]?
 }
