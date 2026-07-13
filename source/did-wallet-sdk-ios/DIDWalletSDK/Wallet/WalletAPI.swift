@@ -683,6 +683,49 @@ extension WalletAPI : ISecurityAuthService
     }
 }
 
+extension WalletAPI : IOID4VCService
+{
+    func requestIssueOID4VC(hWalletToken: String,
+                            metadata: IssuerMetadataResponse,
+                            token: TokenResponse,
+                            passcode: String?,
+                            configurationId: String,
+                            credentialIdentifier: String?,
+                            APIGatewayURL: String) async throws -> String
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.ISSUE_VC])
+        return try await walletService.requestIssueOID4VC(metadata: metadata,
+                                                          token: token,
+                                                          passcode: passcode,
+                                                          configurationId: configurationId,
+                                                          credentialIdentifier: credentialIdentifier,
+                                                          APIGatewayURL: APIGatewayURL)
+    }
+    
+
+    public func getAllOID4VCS(hWalletToken: String) throws -> [OID4VCICredential] {
+        //TODO: Fill below
+        []
+    }
+    
+    public func getOID4VCs(hWalletToken: String, ids: [String]) throws -> OID4VCICredential {
+        //TODO: Fill below
+        OID4VCICredential.init(id: "", format: "", credentialConfigurationId: "", credentialIdentifier: "", credential: "")
+    }
+    
+    public func deleteOID4VCs(hWalletToken: String, ids: [String]) throws {
+        //TODO: Fill below
+    }
+    
+    public var isAnyOID4VCSaved: Bool {
+        //TODO: Fill below
+        return true
+    }
+    
+    
+}
+
 private extension WalletAPI
 {
     /// Revokes the specified ZKP credentials from the wallet using the provided wallet token.

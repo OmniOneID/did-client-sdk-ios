@@ -145,6 +145,25 @@ struct Secp256R1Manager : SignableProtocol
     
 }
 
+extension Secp256R1Manager
+{
+    static func verifyRawRepresentation(
+        signature: Data,
+        message: Data,
+        publicKey: Data
+    ) throws -> Bool
+    {
+        let pubKey : P256.Signing.PublicKey = try .init(compressedRepresentation: publicKey)
+        
+        let sign = try P256.Signing.ECDSASignature(rawRepresentation: signature)
+        
+        let isValid = pubKey.isValidSignature(sign, for: message)
+        
+        return isValid
+    }
+}
+
+
 //https://developer.apple.com/forums/thread/696715
 fileprivate struct Digest256 : Digest
 {

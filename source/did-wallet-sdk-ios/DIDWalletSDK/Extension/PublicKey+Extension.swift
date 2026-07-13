@@ -87,3 +87,57 @@ extension P256.Signing.PublicKey {
         try self.init(x: xData, y: yData)
     }
 }
+
+extension P256.KeyAgreement.PublicKey {
+    
+    public init(
+        x: Data,
+        y: Data
+    ) throws {
+
+        guard x.count == 32, y.count == 32
+        else
+        {
+            //TODO: Error
+            throw NSError(domain: "InvalidKey", code: -1, userInfo: [NSLocalizedDescriptionKey: "x and y must be 32 bytes"])
+        }
+        
+        // x963: 0x04 || x || y
+        var data = Data([0x04])
+        data.append(x)
+        data.append(y)
+        
+        try self.init(x963Representation: data)
+    }
+    
+    public init(
+        xBase64URL: String,
+        yBase64URL: String
+    ) throws {
+        
+        guard let xData = xBase64URL.base64URLDecoded,
+              let yData = yBase64URL.base64URLDecoded
+        else {
+            //TODO: Confirm the error
+            throw MultibaseUtilsError.failToDecode.getError()
+        }
+        
+        try self.init(x: xData, y: yData)
+    }
+    
+    func getPublicKeyJwk() -> JWK {
+        let x963Data = self.x963Representation
+        let x = x963Data.subdata(in: 1..<33)
+        let y = x963Data.subdata(in: 33..<65)
+        
+        let jwk : JWK = .init(
+//            alg: .es256,
+            crv: .p256,
+            kty: .ec,
+            x: x.base64URLEncoded,
+            y: y.base64URLEncoded
+        )
+        
+        return jwk
+    }
+}

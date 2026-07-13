@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ enum WalletCoreCommonError: WalletCoreErrorProcotol {
         case vcManager       = "02"
         case secureEncryptor = "03"
         case zkpManager      = "04"
+        case oid4vcManager   = "05"
 
         case storageMaanger  = "10"
         case signable        = "11"

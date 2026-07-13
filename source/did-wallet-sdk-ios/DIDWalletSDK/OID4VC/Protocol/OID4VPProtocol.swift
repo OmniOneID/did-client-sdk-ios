@@ -145,7 +145,7 @@ extension OID4VPProtocol
 {
     /// Builds the `vp_token` map (DCQL query id -> presentation strings) from matched submittables.
     ///
-    /// Raw credentials are fetched from `IssuedCredentialManager` by `ClaimInfo.credentialId`; each
+    /// Raw credentials are fetched from `OID4VCManager` by `ClaimInfo.credentialId`; each
     /// entry's `claimCodes` are the claims the holder agreed to disclose (empty = disclose all).
     /// SD-JWT is supported now; mdoc (`mso_mdoc`) is deferred (Phase 2) and throws
     /// `unsupportedPresentationFormat`. The result is ready to pass to `submitVpToken`.
@@ -162,7 +162,7 @@ extension OID4VPProtocol
         pin: Data? = nil
     ) throws -> [String: [String]]
     {
-        let store = try IssuedCredentialManager()
+        let store = try OID4VCManager()
 
         var vpToken: [String: [String]] = [:]
         for (dcqlId, claimInfos) in submittables

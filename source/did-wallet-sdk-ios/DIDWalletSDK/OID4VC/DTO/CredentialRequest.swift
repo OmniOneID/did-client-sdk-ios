@@ -29,4 +29,12 @@ struct CredentialRequest: Jsonable, FromSnake
         var jwt: [String]?
         var attestation: [String]?
     }
+    
+    var credentialResponseEncryption : CredentialResponseEncryption?
+    
+    struct CredentialResponseEncryption: Jsonable, FromSnake
+    {
+        var jwk: JWK
+        var enc: String = "A256GCM"
+    }
 }

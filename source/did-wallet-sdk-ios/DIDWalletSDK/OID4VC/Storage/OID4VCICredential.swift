@@ -23,7 +23,7 @@ import Foundation
 /// (SD-JWT compact strings, mdoc, …). This wrapper keeps the raw credential together with the
 /// metadata needed to identify and re-match it: its `format`, the `credentialConfigurationId` the
 /// issuer offered it under, and the issuer-assigned `credentialIdentifier` (when present).
-public struct IssuedCredential: Jsonable
+public struct OID4VCICredential: Jsonable
 {
     /// Storage primary key. A wallet-generated UUID, unique per issuance — issuer-side identifiers
     /// (`credentialConfigurationId` / `credentialIdentifier`) are kept as separate fields because they
@@ -37,6 +37,8 @@ public struct IssuedCredential: Jsonable
     public let credentialIdentifier: String?
     /// The raw credential as returned by the issuer (SD-JWT compact, mdoc base64url, …).
     public let credential: String
+    
+    
 
     public init(
         id: String,

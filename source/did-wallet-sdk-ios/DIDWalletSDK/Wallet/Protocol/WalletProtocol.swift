@@ -79,6 +79,9 @@ public protocol WalletCoreImpl {
     func createZKProof(proofRequest : ProofRequest,
                        selectedReferents : [UserReferent],
                        proofParam : ZKProofParam) throws -> ZKProof
+    
+    //MARK: Credential For OID4VCI
+    func addOID4VCICredential(credential: OID4VCICredential) throws -> Bool
 }
 
 public protocol WalletServiceImpl {
@@ -122,4 +125,11 @@ public protocol WalletServiceImpl {
     func requestIssueVc(url: String, didAuth: DIDAuth?, issuerProfile: _RequestIssueProfile?, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
     func requestRevokeVc(url: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String?) async throws -> _RequestRevokeVc
     func getSignedWalletInfo() throws -> SignedWalletInfo
+    
+    func requestIssueOID4VC(metadata: IssuerMetadataResponse,
+                            token: TokenResponse,
+                            passcode: String?,
+                            configurationId: String,
+                            credentialIdentifier: String?,
+                            APIGatewayURL: String) async throws -> String
 }

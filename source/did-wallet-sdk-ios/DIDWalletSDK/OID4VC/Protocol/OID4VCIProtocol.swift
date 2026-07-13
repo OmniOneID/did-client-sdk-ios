@@ -33,38 +33,38 @@ public struct OID4VCIProtocol
         {
             throw OID4VCIError.invalidCredentialOfferURI
         }
-
+        
         let offer: CredentialOfferResponse = try await CommunicationClient.sendRequest(
             urlString: offerUriValue,
             httpMethod: .GET
         )
-
+        
         guard let configIds = offer.credentialConfigurationIds, configIds.isEmpty == false
         else
         {
             throw OID4VCIError.noIssuableCredential
         }
-
+        
         return offer
     }
     
-
+    
     public static func getTokenByPreAuthorizedCode(
         metaData: IssuerMetadataResponse,
         offer: CredentialOfferResponse,
         txCode: String
     ) async throws -> TokenResponse
     {
-
+        
         if case try checkGrantType(offer: offer) = .authorizationCode
         {
             throw OID4VCIError.unsupportedGrantType
         }
-
-//        let meta = try await getMetadata(issuerURL: offer.credentialIssuer)
-
+        
+        //        let meta = try await getMetadata(issuerURL: offer.credentialIssuer)
+        
         @ValidURL var endPoint : String
-
+        
         if let authServers = metaData.authorizationServers, authServers.isEmpty == false
         {
             endPoint = authServers.first!
@@ -77,231 +77,248 @@ public struct OID4VCIProtocol
         {
             endPoint = offer.credentialIssuer
         }
-
+        
         let tokenEndpoint = try await getCredentialRequestURL(url: endPoint)
-
+        
         guard let configIds = offer.credentialConfigurationIds, configIds.isEmpty == false
         else
         {
             throw OID4VCIError.noIssuableCredential
         }
-
+        
         let authDetailsArray = configIds.map {
             return AuthorizationDetails(
                 credentialConfigurationId: $0,
                 credentialIdentifiers: nil
             )
         }
-
+        
         let tokenRequest = TokenRequest(
             preAuthorizedCode: offer.grants.preAuthorizedCode!.preAuthorizedCode,
             txCode: txCode,
             authorizationDetails: authDetailsArray
         )
-
-//        let authHeaderValue = "Basic b2lkNHZjaS1jbGllbnQ6c2VjcmV0"
-//        var headers: [String: String] = [:]
-//        headers["Authorization"] = authHeaderValue
-//        headers.merge(XWWWFormHttpHeaderFields) { current, _ in current }
-
+        
+        //        let authHeaderValue = "Basic b2lkNHZjaS1jbGllbnQ6c2VjcmV0"
+        //        var headers: [String: String] = [:]
+        //        headers["Authorization"] = authHeaderValue
+        //        headers.merge(XWWWFormHttpHeaderFields) { current, _ in current }
+        
         let response : TokenResponse = try await CommunicationClient.sendPostUrlencoded(
             urlString: tokenEndpoint,
-//            headerFields: headers,
+            //            headerFields: headers,
             requestJsonable: tokenRequest
         )
-
+        
         return response
     }
-
-    /// Requests, verifies and stores a credential.
-    ///
-    /// The key-binding proof JWT is signed with the holder wallet key: the PIN key when `password`
-    /// is supplied, the biometric key otherwise (mirroring the VP signing path in `WalletService`).
-    /// On success the issued credential is persisted via `IssuedCredentialManager` and returned.
-    /// - Parameters:
-    ///   - offer: The credential offer (from `getCredentialOffer`).
-    ///   - tokenResponse: The access token response (from `getTokenByPreAuthrizedCode`).
-    ///   - selectedConfigId: The chosen `credential_configuration_id`.
-    ///   - selectedCredentialID: The chosen `credential_identifier`, when the issuer uses identifiers.
-    ///   - password: The wallet PIN. When `nil`, the biometric key is used.
-    /// - Returns: The stored `IssuedCredential`.
-    @discardableResult
-    public static func requestCredential(
-        metadata: IssuerMetadataResponse,
-//        offer : CredentialOfferResponse,
-        token : TokenResponse,
-        password: String? = nil,
-        configurationID: String,
-        credentialIdentifier: String?,
-        APIGatewayURL : String
-    ) async throws -> IssuedCredential
+    
+    public func requestCredential(hWalletToken: String,
+                                  metadata: IssuerMetadataResponse,
+                                  token: TokenResponse,
+                                  passcode: String?,
+                                  configurationId: String,
+                                  credentialIdentifier: String?,
+                                  APIGatewayURL: String) async throws -> String
     {
-        
-//        let meta = try await getMetadata(issuerURL: offer.credentialIssuer)
-
-        guard let credentialConfig = metadata.credentialConfigurationsSupported[configurationID]
-        else
-        {
-            throw OID4VCIError.unavailableConfigId(configurationID)
-        }
-
-        if case .unknown(let value) = credentialConfig.format
-        {
-            throw OID4VCIError.unsupportedFormat(value)
-        }
-
-        // Holder key-bound proof. PIN key when a password is supplied, biometric key otherwise.
-        let keyManager = try KeyManager(fileName: "holder")
-        let keyId = password != nil ? "pin" : "bio"
-        let pin = password?.data(using: .utf8)
-
-        guard try WalletAPI.shared.isSavedKey(keyId: keyId),
-              let keyInfo = try keyManager.getKeyInfos(ids: [keyId]).first
-        else
-        {
-            throw OID4VCIError.holderKeyNotFound(keyId)
-        }
-
-        let compressedPublicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
-        let jwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
-
-        var nonce : String?
-        if let nonceEndpoint = metadata.nonceEndpoint
-        {
-            let cNonce : CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
-            nonce = cNonce.cNonce
-        }
-
-        let typ = "openid4vci-proof+jwt"
-
-        let header = try JWSHeader.init(
-            typ: typ,
-            jwk: jwk
-        ).toJsonData().base64URLEncoded
-
-        let payload = try JWSAudiencePayload.init(
-            aud: metadata.credentialIssuer,
-            nonce: nonce
-        ).toJsonData().base64URLEncoded
-
-        let signSource = "\(header).\(payload)"
-        let digest = signSource.data(using: .utf8)!.sha256()
-
-        // KeyManager returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
-        let compactSignature = try keyManager.sign(id: keyId, pin: pin, digest: digest)
-        let signature = Data(compactSignature.dropFirst()).base64URLEncoded
-        let jws = "\(signSource).\(signature)"
-
-        var credentialRequest : CredentialRequest
-
-        if let selectedCredentialID = credentialIdentifier
-        {
-            credentialRequest = CredentialRequest(
-                credentialConfigurationId: nil,
-                credentialIdentifier: selectedCredentialID,
-                proofs: .init(jwt: [jws])
-            )
-        }
-        else
-        {
-            credentialRequest = CredentialRequest(
-                credentialConfigurationId: configurationID,
-                credentialIdentifier: nil,
-                proofs: .init(jwt: [jws])
-            )
-        }
-
-
-        let token = "\(token.tokenType) \(token.accessToken)"
-
-        var headers: [String: String] = [:]
-        headers["Authorization"] = token
-        headers.merge(DefaultHttpHeaderFields) { current, _ in current }
-
-        let credentialResponse : CredentialResponse = try await CommunicationClient.sendRequest(
-            urlString: metadata.credentialEndpoint,
-            headerFields: headers,
-            requestJsonable: credentialRequest
-        )
-
-        guard let rawCredential = credentialResponse.credentials.first?.credential
-        else
-        {
-            throw OID4VCIError.emptyCredentialResponse
-        }
-
-        // Verify
-//        @ValidURL var issuerURL = offer.credentialIssuer
-//
-//        let issuerJWK = try await getIssuerJWK(url: issuerURL)
-//
-//        let pubKey = try P256.Signing.PublicKey.init(
-//            xBase64URL: issuerJWK.x,
-//            yBase64URL: issuerJWK.y
-//        )
-        
-        let sdJWT = SDJWT.parse(raw: rawCredential)
-        let tempJWS = JWS.init(from: sdJWT.credentialJwt)
-        let jwsHeader : JWSHeader = try .init(from: tempJWS.header.base64URLDecoded!)
-        
-        guard let kid = jwsHeader.kid
-        else
-        {
-            //TODO: error
-            throw OID4VCIError.emptyCredentialResponse
-        }
-        let identifier = try DIDUtility.parseDIDKeyIdentifier(kid)
-        
-        let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
-                                                                        did: identifier.did,
-                                                                        versionId: identifier.versionId)
-
-        guard let publicKeyMultibase = issuerDIDDoc.verificationMethod.filter({ $0.id == identifier.kid }).first.map(\.publicKeyMultibase)
-        else
-        {
-            //TODO: no public key
-            throw OID4VCIError.emptyCredentialResponse
-        }
-        
-        
-        let publicKey : P256.Signing.PublicKey = try .init(compressedRepresentation: MultibaseUtils.decode(encoded: publicKeyMultibase))
-        
-        switch credentialConfig.format
-        {
-        case .sdjwt, .sdjwtDID:
-            try veryfySDJWT(credential: rawCredential, pubKey: publicKey)
-        case .mdoc:
-            () //TODO: Phase 2 — mdoc (mso_mdoc) signature verification
-        case .unknown(_):
-            ()
-        }
-
-        // Store
-        let format : String
-        switch credentialConfig.format
-        {
-        case .sdjwt:
-            format = "dc+sd-jwt"
-        case .sdjwtDID:
-            format = "dc+sd-jwt-did"
-        case .mdoc:
-            format = "mso_mdoc"
-        case .unknown(let value):
-            format = value
-        }
-
-        let issuedCredential = IssuedCredential(
-            id: UUID().uuidString,
-            format: format,
-            credentialConfigurationId: configurationID,
+        return try await WalletAPI.shared.requestIssueOID4VC(
+            hWalletToken: hWalletToken,
+            metadata: metadata,
+            token: token,
+            passcode: passcode,
+            configurationId:configurationId,
             credentialIdentifier: credentialIdentifier,
-            credential: rawCredential
+            APIGatewayURL: APIGatewayURL
         )
-
-        try IssuedCredentialManager().saveCredential(issuedCredential)
-
-        return issuedCredential
+        
     }
+//    /// Requests, verifies and stores a credential.
+//    ///
+//    /// The key-binding proof JWT is signed with the holder wallet key: the PIN key when `password`
+//    /// is supplied, the biometric key otherwise (mirroring the VP signing path in `WalletService`).
+//    /// On success the issued credential is persisted via `OID4VCManager` and returned.
+//    /// - Parameters:
+//    ///   - offer: The credential offer (from `getCredentialOffer`).
+//    ///   - tokenResponse: The access token response (from `getTokenByPreAuthrizedCode`).
+//    ///   - selectedConfigId: The chosen `credential_configuration_id`.
+//    ///   - selectedCredentialID: The chosen `credential_identifier`, when the issuer uses identifiers.
+//    ///   - password: The wallet PIN. When `nil`, the biometric key is used.
+//    /// - Returns: The stored `IssuedCredential`.
+//    @discardableResult
+//    public static func requestCredential(
+//        metadata: IssuerMetadataResponse,
+////        offer : CredentialOfferResponse,
+//        token : TokenResponse,
+//        password: String? = nil,
+//        configurationId: String,
+//        credentialIdentifier: String?,
+//        APIGatewayURL : String
+//    ) async throws -> String
+//    {
+//        
+////        let meta = try await getMetadata(issuerURL: offer.credentialIssuer)
+//
+//        guard let credentialConfig = metadata.credentialConfigurationsSupported[configurationId]
+//        else
+//        {
+//            throw OID4VCIError.unavailableConfigId(configurationId)
+//        }
+//
+//        if case .unknown(let value) = credentialConfig.format
+//        {
+//            throw OID4VCIError.unsupportedFormat(value)
+//        }
+//
+//        // Holder key-bound proof. PIN key when a password is supplied, biometric key otherwise.
+//        let keyManager = try KeyManager(fileName: "holder")
+//        let keyId = password != nil ? "pin" : "bio"
+//        let pin = password?.data(using: .utf8)
+//
+//        guard try WalletAPI.shared.isSavedKey(keyId: keyId),
+//              let keyInfo = try keyManager.getKeyInfos(ids: [keyId]).first
+//        else
+//        {
+//            throw OID4VCIError.holderKeyNotFound(keyId)
+//        }
+//
+//        let compressedPublicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
+//        let jwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
+//
+//        var nonce : String?
+//        if let nonceEndpoint = metadata.nonceEndpoint
+//        {
+//            let cNonce : CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
+//            nonce = cNonce.cNonce
+//        }
+//
+//        let typ = "openid4vci-proof+jwt"
+//
+//        let header = try JWSHeader.init(
+//            typ: typ,
+//            jwk: jwk
+//        ).toJsonData().base64URLEncoded
+//
+//        let payload = try JWSAudiencePayload.init(
+//            aud: metadata.credentialIssuer,
+//            nonce: nonce
+//        ).toJsonData().base64URLEncoded
+//
+//        let signSource = "\(header).\(payload)"
+//        let digest = signSource.data(using: .utf8)!.sha256()
+//
+//        // KeyManager returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
+//        let compactSignature = try keyManager.sign(id: keyId, pin: pin, digest: digest)
+//        let signature = Data(compactSignature.dropFirst()).base64URLEncoded
+//        let jws = "\(signSource).\(signature)"
+//
+//        var credentialRequest : CredentialRequest
+//
+//        if let selectedCredentialID = credentialIdentifier
+//        {
+//            credentialRequest = CredentialRequest(
+//                credentialConfigurationId: nil,
+//                credentialIdentifier: selectedCredentialID,
+//                proofs: .init(jwt: [jws])
+//            )
+//        }
+//        else
+//        {
+//            credentialRequest = CredentialRequest(
+//                credentialConfigurationId: configurationId,
+//                credentialIdentifier: nil,
+//                proofs: .init(jwt: [jws])
+//            )
+//        }
+//
+//
+//        let token = "\(token.tokenType) \(token.accessToken)"
+//
+//        var headers: [String: String] = [:]
+//        headers["Authorization"] = token
+//        headers.merge(DefaultHttpHeaderFields) { current, _ in current }
+//
+//        let credentialResponse : CredentialResponse = try await CommunicationClient.sendRequest(
+//            urlString: metadata.credentialEndpoint,
+//            headerFields: headers,
+//            requestJsonable: credentialRequest
+//        )
+//
+//        guard let rawCredential = credentialResponse.credentials.first?.credential
+//        else
+//        {
+//            throw OID4VCIError.emptyCredentialResponse
+//        }
+//
+//        // Verify
+////        @ValidURL var issuerURL = offer.credentialIssuer
+////
+////        let issuerJWK = try await getIssuerJWK(url: issuerURL)
+////
+////        let pubKey = try P256.Signing.PublicKey.init(
+////            xBase64URL: issuerJWK.x,
+////            yBase64URL: issuerJWK.y
+////        )
+//        
+//        let sdJWT = SDJWT.parse(raw: rawCredential)
+//        let tempJWS = JWS.init(from: sdJWT.credentialJwt)
+//        let jwsHeader : JWSHeader = try .init(from: tempJWS.header.base64URLDecoded!)
+//        
+//        guard let kid = jwsHeader.kid
+//        else
+//        {
+//            //TODO: error
+//            throw OID4VCIError.emptyCredentialResponse
+//        }
+//        let identifier = try DIDUtility.parseDIDKeyIdentifier(kid)
+//        
+//        let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+//                                                                        did: identifier.did,
+//                                                                        versionId: identifier.versionId)
+//
+//        guard let publicKeyMultibase = issuerDIDDoc.verificationMethod.filter({ $0.id == identifier.kid }).first.map(\.publicKeyMultibase)
+//        else
+//        {
+//            //TODO: no public key
+//            throw OID4VCIError.emptyCredentialResponse
+//        }
+//        
+//        
+//        let publicKey : P256.Signing.PublicKey = try .init(compressedRepresentation: MultibaseUtils.decode(encoded: publicKeyMultibase))
+//        
+//        switch credentialConfig.format
+//        {
+//        case .sdjwt:
+//            try veryfySDJWT(credential: rawCredential, pubKey: publicKey)
+//        case .mdoc:
+//            () //TODO: Phase 2 — mdoc (mso_mdoc) signature verification
+//        case .unknown(_):
+//            ()
+//        }
+//
+//        // Store
+//        let format : String
+//        switch credentialConfig.format
+//        {
+//        case .sdjwt:
+//            format = "dc+sd-jwt-did"
+//        case .mdoc:
+//            format = "mso_mdoc"
+//        case .unknown(let value):
+//            format = value
+//        }
+//
+//        let issuedCredential = OID4VCICredential(
+//            id: UUID().uuidString,
+//            format: format,
+//            credentialConfigurationId: configurationId,
+//            credentialIdentifier: credentialIdentifier,
+//            credential: rawCredential
+//        )
+//
+////        try WalletAPI.shared.addCredential(credential: issuedCredential)
+//
+//        return issuedCredential.id
+//    }
 }
 
 extension OID4VCIProtocol
@@ -335,23 +352,23 @@ extension OID4VCIProtocol
     }
 }
 
-extension OID4VCIProtocol
-{
-    private static func veryfySDJWT(credential : String, pubKey : P256.Signing.PublicKey) throws
-    {
-        let sdJWT = SDJWT.parse(raw: credential)
-        let (source, signature) = sdJWT.getSignSource()
-
-        let sign = try P256.Signing.ECDSASignature(rawRepresentation: signature.base64URLDecoded!)
-
-        let isValid = pubKey.isValidSignature(sign, for: source.data(using: .utf8)!)
-
-        guard isValid else
-        {
-            throw OID4VCIError.failedToVerifySignature
-        }
-    }
-}
+//extension OID4VCIProtocol
+//{
+//    private static func veryfySDJWT(credential : String, pubKey : P256.Signing.PublicKey) throws
+//    {
+//        let sdJWT = SDJWT.parse(raw: credential)
+//        let (source, signature) = sdJWT.getSignSource()
+//
+//        let sign = try P256.Signing.ECDSASignature(rawRepresentation: signature.base64URLDecoded!)
+//
+//        let isValid = pubKey.isValidSignature(sign, for: source.data(using: .utf8)!)
+//
+//        guard isValid else
+//        {
+//            throw OID4VCIError.failedToVerifySignature
+//        }
+//    }
+//}
 
 
 extension OID4VCIProtocol

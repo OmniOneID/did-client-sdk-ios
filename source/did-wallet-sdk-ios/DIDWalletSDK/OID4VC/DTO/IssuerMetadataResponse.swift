@@ -21,14 +21,14 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 {
     let credentialIssuer: String
     let authorizationServers: [String]?
+    let credentialOfferEndpoint: String?
     let credentialEndpoint: String
     let tokenEndpoint: String?
     let nonceEndpoint: String?
     let deferredCredentialEndpoint: String?
     let notificationEndpoint: String?
-    let credentialResponseEncryptionAlgValuesSupported: [String]?
-    let credentialResponseEncryptionEncValuesSupported: [String]?
-    let requireCredentialResponseEncryption: Bool?
+    let credentialRequestEncryption: EncryptionSupport?
+    let credentialResponseEncryption: EncryptionSupport?
     let credentialIdentifiersSupported: Bool?
     let credentialConfigurationsSupported: [String: CredentialConfiguration]
 
@@ -38,6 +38,14 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
         case int(Int)
     }
 
+    // MARK: - Encryption Support (what the issuer advertises, not what the wallet sends)
+    struct EncryptionSupport: Jsonable, FromSnake
+    {
+        let algValuesSupported: [String]?
+        let encValuesSupported: [String]?
+        let encryptionRequired: Bool?
+    }
+
     // MARK: - Credential Configuration (Main Expanded Model)
     public struct CredentialConfiguration: Jsonable, FromSnake
     {
@@ -45,12 +53,17 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
         let scope: String?
         let cryptographicBindingMethodsSupported: [String]?
         let credentialSigningAlgValuesSupported: [SigningAlg]?
-        let display: [DisplayInfo]?
         let proofTypesSupported: [String: ProofSupport]?
         let vct: String?
-        let claims: [String: ClaimDetail]?
         let doctype: String?
+        let policy: CredentialPolicy?
         let credentialMetadata: CredentialMetadata?
+    }
+
+    struct CredentialPolicy: Jsonable, FromSnake
+    {
+        let batchSize: Int?
+        let oneTimeUse: Bool?
     }
 
     struct CredentialMetadata: Codable {
@@ -86,12 +99,21 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
         let valueType: String?
     }
 
+    /// Carries the issuer's original format token so it can be stored and re-sent verbatim.
     enum SupportedFormat: Jsonable, Equatable
     {
-        case sdjwt
-        case sdjwtDID
-        case mdoc
+        case sdjwt(String)
+        case mdoc(String)
         case unknown(String)
+
+        var rawValue: String
+        {
+            switch self
+            {
+            case .sdjwt(let value), .mdoc(let value), .unknown(let value):
+                return value
+            }
+        }
     }
 }
 
@@ -122,12 +144,10 @@ extension IssuerMetadataResponse.SupportedFormat {
     init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
-        case "dc+sd-jwt":
-            self = .sdjwt
         case "dc+sd-jwt-did":
-            self = .sdjwtDID
-        case "mso_mdoc":
-            self = .mdoc
+            self = .sdjwt(value)
+        case "mso-mdoc-did":
+            self = .mdoc(value)
         default:
             self = .unknown(value)
         }
@@ -135,15 +155,6 @@ extension IssuerMetadataResponse.SupportedFormat {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        switch self {
-        case .sdjwt:
-            try container.encode("dc+sd-jwt")
-        case .sdjwtDID:
-            try container.encode("dc+sd-jwt-did")
-        case .mdoc:
-            try container.encode("mso_mdoc")
-        case .unknown(let value):
-            try container.encode(value)
-        }
+        try container.encode(rawValue)
     }
 }

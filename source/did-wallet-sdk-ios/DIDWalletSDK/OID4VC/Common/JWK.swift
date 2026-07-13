@@ -16,6 +16,7 @@
  */
     
 import Foundation
+import CryptoKit
 
 struct JWK: Jsonable
 {
@@ -25,6 +26,7 @@ struct JWK: Jsonable
     var kty : KeyType    = .ec
     var x   : String
     var y   : String
+    var use : JWKUse?
 
     enum Algorithm: Jsonable, Equatable
     {
@@ -43,6 +45,13 @@ struct JWK: Jsonable
         case ec
         case unknown(String)
     }
+    
+    enum JWKUse: String, Jsonable, Equatable
+    {
+        case sig
+        case enc
+    }
+    
 }
 
 

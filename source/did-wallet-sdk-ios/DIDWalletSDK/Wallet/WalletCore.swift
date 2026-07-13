@@ -1,5 +1,5 @@
 /*
- * Copyright 2024-2025 OmniOne.
+ * Copyright 2024-2026 OmniOne.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ class WalletCore: WalletCoreImpl {
     private var vcManager: VCManager
     private var zkpManager : ZKPManager
     
+    private var oid4vcManager: OID4VCManager
+    
     public init() {
         self.deviceKeyManager = try! KeyManager(fileName: "device")
         self.deviceDidManager = try! DIDManager(fileName: "device")
@@ -33,6 +35,7 @@ class WalletCore: WalletCoreImpl {
         self.holderDidManager = try! DIDManager(fileName: "holder")
         self.vcManager = try! VCManager(fileName: "vc")
         self.zkpManager = try! ZKPManager(fileName: "zkp")
+        self.oid4vcManager = try! OID4VCManager(fileName: "oid4vc")
         
         WalletLogger.debug("succeed create Wallet")
     }
@@ -68,6 +71,10 @@ class WalletCore: WalletCoreImpl {
         
         if zkpManager.isAnyCredentialsSaved {
             try zkpManager.removeAllCredentials()
+        }
+        
+        if oid4vcManager.isAnyCredentialsSaved {
+            try oid4vcManager.deleteAllCredentials()
         }
     }
     
@@ -472,4 +479,18 @@ class WalletCore: WalletCoreImpl {
                                           selectedReferents: selectedReferents,
                                           proofParam: proofParam)
     }
+}
+
+extension WalletCore
+{
+    //MARK: Credential For OID4VCI
+    public func addOID4VCICredential(credential: OID4VCICredential) throws -> Bool
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        try oid4vcManager.addCredential(credential: credential)
+        return true
+    }
+    
 }

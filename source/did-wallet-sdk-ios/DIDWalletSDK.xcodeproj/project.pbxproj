@@ -40,10 +40,9 @@
 		AAAA0017000000000000E365 /* ClaimMatchingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0016000000000000E365 /* ClaimMatchingHelper.swift */; };
 		AAAA0019000000000000E365 /* SDJWTCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */; };
 		AAAA001B000000000000E365 /* VerifiableCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */; };
-		AAAA001F000000000000E365 /* IssuedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001E000000000000E365 /* IssuedCredential.swift */; };
+		AAAA001F000000000000E365 /* OID4VCICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001E000000000000E365 /* OID4VCICredential.swift */; };
 		AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0030000000000000E365 /* KBJWTPayload.swift */; };
 		AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0032000000000000E365 /* SDJWTPresenter.swift */; };
-		AAAA0021000000000000E365 /* IssuedCredentialManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0020000000000000E365 /* IssuedCredentialManager.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
 		C90D3BDE2DAFA61400292BFD /* RequestUpdateDidDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BA22DAFA61400292BFD /* RequestUpdateDidDoc.swift */; };
@@ -127,6 +126,7 @@
 		C91A34332F88EFE400F20388 /* JWK.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34322F88EFDD00F20388 /* JWK.swift */; };
 		C91A34362F88F84E00F20388 /* TokenRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34352F88F84A00F20388 /* TokenRequest.swift */; };
 		C91A34382F88F88D00F20388 /* TokenResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34372F88F88D00F20388 /* TokenResponse.swift */; };
+		C923E88F2FFB8CCE00B3663B /* OID4VCManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C923E88E2FFB8CC900B3663B /* OID4VCManager.swift */; };
 		C95C41482E6562CD00DBD01F /* ResponseTxId.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C41472E6562C800DBD01F /* ResponseTxId.swift */; };
 		C95C738E2F99E5C30031E365 /* OID4VCITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C95C738D2F99E5C30031E365 /* OID4VCITests.swift */; };
 		C96061D02DDEB42500A67DA3 /* CredDefVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */; };
@@ -140,6 +140,7 @@
 		C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A5D2C91887400DE37D1 /* CoreData.framework */; };
 		C97A625D2EC32BC100F3789D /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C97A625C2EC32BC100F3789D /* LICENSE.md */; };
 		C97A625F2EC32BCA00F3789D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = C97A625E2EC32BCA00F3789D /* LICENSE.txt */; };
+		C97BAFC02FFDECA30057319A /* CredentialItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97BAFBF2FFDEBAB0057319A /* CredentialItem.swift */; };
 		C97CF63F2FADA00200299576 /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */; };
 		C98B32972FEE19D1000B3D29 /* DIDUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98B32962FEE19C9000B3D29 /* DIDUtility.swift */; };
 		C98BAF462E9F77AC00CED7CA /* WalletServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98BAF452E9F77A200CED7CA /* WalletServiceProtocol.swift */; };
@@ -169,6 +170,7 @@
 		C98D26002DB0A5DE00B2E84D /* CFError+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FC2DB0A5DE00B2E84D /* CFError+Extension.swift */; };
 		C98D26012DB0A5DE00B2E84D /* PrivateKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */; };
 		C98D26022DB0A5DE00B2E84D /* Error+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */; };
+		C98D52563000BDB600DD48AC /* JWE.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D52553000BDB300DD48AC /* JWE.swift */; };
 		C98D82A82FA0811600AF5BC2 /* CNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D82A72FA0810E00AF5BC2 /* CNonce.swift */; };
 		C98D83322FA0857700AF5BC2 /* SwiftCBOR in Frameworks */ = {isa = PBXBuildFile; productRef = C98D83312FA0857700AF5BC2 /* SwiftCBOR */; };
 		C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */; };
@@ -327,10 +329,9 @@
 		AAAA0016000000000000E365 /* ClaimMatchingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaimMatchingHelper.swift; sourceTree = "<group>"; };
 		AAAA0018000000000000E365 /* SDJWTCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTCredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA001A000000000000E365 /* VerifiableCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifiableCredentialAdapter.swift; sourceTree = "<group>"; };
-		AAAA001E000000000000E365 /* IssuedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredential.swift; sourceTree = "<group>"; };
+		AAAA001E000000000000E365 /* OID4VCICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCICredential.swift; sourceTree = "<group>"; };
 		AAAA0030000000000000E365 /* KBJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KBJWTPayload.swift; sourceTree = "<group>"; };
 		AAAA0032000000000000E365 /* SDJWTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTPresenter.swift; sourceTree = "<group>"; };
-		AAAA0020000000000000E365 /* IssuedCredentialManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuedCredentialManager.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
 		C90D3B962DAFA61400292BFD /* OfferTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferTypeEnum.swift; sourceTree = "<group>"; };
@@ -414,6 +415,7 @@
 		C91A34322F88EFDD00F20388 /* JWK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWK.swift; sourceTree = "<group>"; };
 		C91A34352F88F84A00F20388 /* TokenRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenRequest.swift; sourceTree = "<group>"; };
 		C91A34372F88F88D00F20388 /* TokenResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenResponse.swift; sourceTree = "<group>"; };
+		C923E88E2FFB8CC900B3663B /* OID4VCManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCManager.swift; sourceTree = "<group>"; };
 		C95C41472E6562C800DBD01F /* ResponseTxId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseTxId.swift; sourceTree = "<group>"; };
 		C95C738D2F99E5C30031E365 /* OID4VCITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCITests.swift; sourceTree = "<group>"; };
 		C96061CF2DDEB41900A67DA3 /* CredDefVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredDefVO.swift; sourceTree = "<group>"; };
@@ -427,6 +429,7 @@
 		C9712A5D2C91887400DE37D1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		C97A625C2EC32BC100F3789D /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		C97A625E2EC32BCA00F3789D /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		C97BAFBF2FFDEBAB0057319A /* CredentialItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialItem.swift; sourceTree = "<group>"; };
 		C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationRequest.swift; sourceTree = "<group>"; };
 		C98B32962FEE19C9000B3D29 /* DIDUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDUtility.swift; sourceTree = "<group>"; };
 		C98BAF452E9F77A200CED7CA /* WalletServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletServiceProtocol.swift; sourceTree = "<group>"; };
@@ -456,6 +459,7 @@
 		C98D25FC2DB0A5DE00B2E84D /* CFError+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CFError+Extension.swift"; sourceTree = "<group>"; };
 		C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+Extension.swift"; sourceTree = "<group>"; };
 		C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrivateKey+Extension.swift"; sourceTree = "<group>"; };
+		C98D52553000BDB300DD48AC /* JWE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWE.swift; sourceTree = "<group>"; };
 		C98D82A72FA0810E00AF5BC2 /* CNonce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CNonce.swift; sourceTree = "<group>"; };
 		C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationClient.swift; sourceTree = "<group>"; };
 		C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationProtocol.swift; sourceTree = "<group>"; };
@@ -657,21 +661,20 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		AAAA001C000000000000E365 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA001E000000000000E365 /* OID4VCICredential.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		AAAA0034000000000000E365 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
 				AAAA0032000000000000E365 /* SDJWTPresenter.swift */,
 			);
 			path = Presentation;
-			sourceTree = "<group>";
-		};
-		AAAA001C000000000000E365 /* Storage */ = {
-			isa = PBXGroup;
-			children = (
-				AAAA001E000000000000E365 /* IssuedCredential.swift */,
-				AAAA0020000000000000E365 /* IssuedCredentialManager.swift */,
-			);
-			path = Storage;
 			sourceTree = "<group>";
 		};
 		C90D3B942DAFA5FF00292BFD /* PropertyWrapper */ = {
@@ -824,6 +827,7 @@
 		C90D3BDC2DAFA61400292BFD /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				C97BAFBE2FFDEB9A0057319A /* Common */,
 				C9EB19CE2DB7632B00D152EE /* ZKP */,
 				C90D3BD62DAFA61400292BFD /* DIDDocument.swift */,
 				C90D3BD72DAFA61400292BFD /* VerifiableCredential.swift */,
@@ -885,6 +889,7 @@
 		C91A341C2F88DC9D00F20388 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				C98D52553000BDB300DD48AC /* JWE.swift */,
 				C91A34322F88EFDD00F20388 /* JWK.swift */,
 				C91A341D2F88DCAB00F20388 /* AnyJSON.swift */,
 			);
@@ -943,6 +948,14 @@
 			path = OID4VC;
 			sourceTree = "<group>";
 		};
+		C97BAFBE2FFDEB9A0057319A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				C97BAFBF2FFDEBAB0057319A /* CredentialItem.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		C98BAF472E9F77E700CED7CA /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
@@ -955,6 +968,7 @@
 		C98D25C72DB09DF700B2E84D /* MainComponent */ = {
 			isa = PBXGroup;
 			children = (
+				C923E88E2FFB8CC900B3663B /* OID4VCManager.swift */,
 				C98D25C32DB09DF700B2E84D /* KeyManager.swift */,
 				C98D25C42DB09DF700B2E84D /* DIDManager.swift */,
 				C98D25C52DB09DF700B2E84D /* VCManager.swift */,
@@ -1569,10 +1583,9 @@
 				AAAA0017000000000000E365 /* ClaimMatchingHelper.swift in Sources */,
 				AAAA0019000000000000E365 /* SDJWTCredentialAdapter.swift in Sources */,
 				AAAA001B000000000000E365 /* VerifiableCredentialAdapter.swift in Sources */,
-				AAAA001F000000000000E365 /* IssuedCredential.swift in Sources */,
+				AAAA001F000000000000E365 /* OID4VCICredential.swift in Sources */,
 				AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */,
 				AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */,
-				AAAA0021000000000000E365 /* IssuedCredentialManager.swift in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,
 				C98D25F02DB09DF700B2E84D /* VCManager.swift in Sources */,
@@ -1610,6 +1623,7 @@
 				C90D3BEC2DAFA61400292BFD /* AttestedAppInfo.swift in Sources */,
 				C90D3BED2DAFA61400292BFD /* RequestEcdh.swift in Sources */,
 				C90D3BEE2DAFA61400292BFD /* RequestRegisterPii.swift in Sources */,
+				C98D52563000BDB600DD48AC /* JWE.swift in Sources */,
 				C90D3BEF2DAFA61400292BFD /* RequestRevokeVc.swift in Sources */,
 				C90D3BF02DAFA61400292BFD /* AccE2e.swift in Sources */,
 				C90D3BF12DAFA61400292BFD /* ConfirmUpdateDidDoc.swift in Sources */,
@@ -1622,6 +1636,7 @@
 				C90D3BF72DAFA61400292BFD /* ConfirmRevokeVc.swift in Sources */,
 				C9EB19B62DB760CE00D152EE /* ZKPConstants.swift in Sources */,
 				C90D3BF82DAFA61400292BFD /* RequestOfferPayload.swift in Sources */,
+				C97BAFC02FFDECA30057319A /* CredentialItem.swift in Sources */,
 				C90D3BF92DAFA61400292BFD /* ReqRevokeVc.swift in Sources */,
 				C90D3BFA2DAFA61400292BFD /* VCPlan.swift in Sources */,
 				C90D3BFB2DAFA61400292BFD /* RequestIssueVc.swift in Sources */,
@@ -1687,6 +1702,7 @@
 				7CA9829D2C85CEBA00EDF367 /* WalletUtil.swift in Sources */,
 				C91A34292F88E1E300F20388 /* CredentialResponse.swift in Sources */,
 				C98D25FA2DB0A10700B2E84D /* SecKey+Extension.swift in Sources */,
+				C923E88F2FFB8CCE00B3663B /* OID4VCManager.swift in Sources */,
 				7CA9829E2C85CEBA00EDF367 /* WalletLockManager.swift in Sources */,
 				C9F414ED2DAE5D6A00C04A1A /* CoreDataManager.swift in Sources */,
 				C9F414EE2DAE5D6A00C04A1A /* Ca.swift in Sources */,
