@@ -113,7 +113,7 @@ public struct OID4VCIProtocol
         return response
     }
     
-    public func requestCredential(hWalletToken: String,
+    public static func requestCredential(hWalletToken: String,
                                   metadata: IssuerMetadataResponse,
                                   token: TokenResponse,
                                   passcode: String?,

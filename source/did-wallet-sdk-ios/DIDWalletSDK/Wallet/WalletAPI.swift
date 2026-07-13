@@ -685,13 +685,15 @@ extension WalletAPI : ISecurityAuthService
 
 extension WalletAPI : IOID4VCService
 {
-    func requestIssueOID4VC(hWalletToken: String,
-                            metadata: IssuerMetadataResponse,
-                            token: TokenResponse,
-                            passcode: String?,
-                            configurationId: String,
-                            credentialIdentifier: String?,
-                            APIGatewayURL: String) async throws -> String
+    public func requestIssueOID4VC(
+        hWalletToken: String,
+        metadata: IssuerMetadataResponse,
+        token: TokenResponse,
+        passcode: String?,
+        configurationId: String,
+        credentialIdentifier: String?,
+        APIGatewayURL: String
+    ) async throws -> String
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
                                                purposes: [.ISSUE_VC])
