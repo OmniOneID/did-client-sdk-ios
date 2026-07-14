@@ -90,8 +90,8 @@ extension JWE
 {
     func decrypt(using privateKey: P256.KeyAgreement.PrivateKey) throws -> Data
     {
-        guard protectedHeader.epk.kty != .ec,
-              protectedHeader.epk.crv != .p256
+        guard protectedHeader.epk.kty == .ec,
+              protectedHeader.epk.crv == .p256
         else
         {
             //TODO: Error
