@@ -706,7 +706,7 @@ extension WalletAPI : IOID4VCService
     }
     
 
-    public func getAllOID4VCS(hWalletToken: String) throws -> [SdJwtCredentialItem]
+    public func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
                                                purposes: [.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
