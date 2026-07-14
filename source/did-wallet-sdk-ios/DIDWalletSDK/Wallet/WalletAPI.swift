@@ -706,23 +706,29 @@ extension WalletAPI : IOID4VCService
     }
     
 
-    public func getAllOID4VCS(hWalletToken: String) throws -> [OID4VCICredential] {
-        //TODO: Fill below
-        []
+    public func getAllOID4VCS(hWalletToken: String) throws -> [SdJwtCredentialItem]
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
+        return try walletCore.getAllOID4VCICredentials()
     }
-    
-    public func getOID4VCs(hWalletToken: String, ids: [String]) throws -> OID4VCICredential {
-        //TODO: Fill below
-        OID4VCICredential.init(id: "", format: "", credentialConfigurationId: "", credentialIdentifier: "", credential: "")
+
+    public func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialItem]
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
+        return try walletCore.getOID4VCICredentials(ids: ids)
     }
-    
-    public func deleteOID4VCs(hWalletToken: String, ids: [String]) throws {
-        //TODO: Fill below
+
+    public func deleteOID4VCs(hWalletToken: String, ids: [String]) throws
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.REMOVE_VC])
+        _ = try walletCore.deleteOID4VCICredential(ids: ids)
     }
-    
+
     public var isAnyOID4VCSaved: Bool {
-        //TODO: Fill below
-        return true
+        return walletCore.isAnyOID4VCICredentialsSaved()
     }
     
     

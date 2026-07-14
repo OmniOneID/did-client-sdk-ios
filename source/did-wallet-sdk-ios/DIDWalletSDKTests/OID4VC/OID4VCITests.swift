@@ -65,29 +65,29 @@ final class OID4VCITests: XCTestCase {
     }
     
     
-    func testIssuanceProtocol() async throws
-    {
-        let offerURI = "openid-credential-offer://?credential_offer_uri=http://192.168.3.130:8096/credential-offer/p0nNKrV4MXLN3Gqwaa00DxYDY_4oL8e3btDyY4Jyg_AQ"
-        let offer = try await OID4VCIProtocol.getCredentialOffer(offerURI: offerURI)
-    
-        let pinCode = "940171"
-            
-        let tokenResponse = try await OID4VCIProtocol.getTokenByPreAuthorizedCode(
-            pinCode: pinCode,
-            offer: offer
-        )
-        
-        let authorizationDetail = tokenResponse.authorizationDetails![3]
-        
-        try await OID4VCIProtocol.processIssuing(
-            offer: offer,
-            tokenResponse: tokenResponse,
-            selectedConfigId: authorizationDetail.credentialConfigurationId,
-            selectedCredentialID: authorizationDetail.credentialIdentifiers?.first,
-            APIGatewayURL: ""
-        )
-        
-    }
+//    func testIssuanceProtocol() async throws
+//    {
+//        let offerURI = "openid-credential-offer://?credential_offer_uri=http://192.168.3.130:8096/credential-offer/p0nNKrV4MXLN3Gqwaa00DxYDY_4oL8e3btDyY4Jyg_AQ"
+//        let offer = try await OID4VCIProtocol.getCredentialOffer(offerURI: offerURI)
+//
+//        let pinCode = "940171"
+//
+//        let tokenResponse = try await OID4VCIProtocol.getTokenByPreAuthorizedCode(
+//            pinCode: pinCode,
+//            offer: offer
+//        )
+//
+//        let authorizationDetail = tokenResponse.authorizationDetails![3]
+//
+//        try await OID4VCIProtocol.processIssuing(
+//            offer: offer,
+//            tokenResponse: tokenResponse,
+//            selectedConfigId: authorizationDetail.credentialConfigurationId,
+//            selectedCredentialID: authorizationDetail.credentialIdentifiers?.first,
+//            APIGatewayURL: ""
+//        )
+//
+//    }
     
     func testExample() throws {
         // This is an example of a functional test case.

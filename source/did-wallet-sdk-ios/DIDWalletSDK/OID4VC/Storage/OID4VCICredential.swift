@@ -32,25 +32,30 @@ public struct OID4VCICredential: Jsonable
     /// Credential format token, e.g. `"dc+sd-jwt"` or `"mso_mdoc"`.
     public let format: String
     /// The `credential_configuration_id` the credential was issued under.
-    public let credentialConfigurationId: String?
+    public let credentialConfigurationId: String
     /// The issuer-assigned `credential_identifier`, when the issuer used identifiers.
     public let credentialIdentifier: String?
+    /// The holder key id the key-binding proof was signed with at issuance (`"pin"` or `"bio"`).
+    /// Reused later when presenting this credential (KB-JWT signing) and surfaced on `CredentialItem`.
+    public let kid: String
     /// The raw credential as returned by the issuer (SD-JWT compact, mdoc base64url, …).
     public let credential: String
-    
-    
+
+
 
     public init(
         id: String,
         format: String,
-        credentialConfigurationId: String?,
+        credentialConfigurationId: String,
         credentialIdentifier: String?,
+        kid: String,
         credential: String
     ) {
         self.id = id
         self.format = format
         self.credentialConfigurationId = credentialConfigurationId
         self.credentialIdentifier = credentialIdentifier
+        self.kid = kid
         self.credential = credential
     }
 }

@@ -397,4 +397,13 @@ class WalletServiceMock : WalletServiceImpl
     func getSignedWalletInfo() throws -> SignedWalletInfo {
         return try SignedWalletInfo(from: Data())
     }
+    // TODO
+    func requestIssueOID4VC(metadata: IssuerMetadataResponse,
+                            token: TokenResponse,
+                            passcode: String?,
+                            configurationId: String,
+                            credentialIdentifier: String?,
+                            APIGatewayURL: String) async throws -> String {
+        return ""
+    }
 }

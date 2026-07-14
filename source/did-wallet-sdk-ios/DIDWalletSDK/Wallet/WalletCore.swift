@@ -492,5 +492,56 @@ extension WalletCore
         try oid4vcManager.addCredential(credential: credential)
         return true
     }
-    
+
+    public func getAllOID4VCICredentials() throws -> [SdJwtCredentialItem]
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try oid4vcManager.getAllCredentials().map { try makeCredentialItem(from: $0) }
+    }
+
+    public func getOID4VCICredentials(ids: [String]) throws -> [SdJwtCredentialItem]
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try oid4vcManager.getCredentials(by: ids).map { try makeCredentialItem(from: $0) }
+    }
+
+    public func deleteOID4VCICredential(ids: [String]) throws -> Bool
+    {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        try oid4vcManager.deleteCredentials(by: ids)
+        return true
+    }
+
+    public func isAnyOID4VCICredentialsSaved() -> Bool
+    {
+        return oid4vcManager.isAnyCredentialsSaved
+    }
+
+    /// Maps a stored `OID4VCICredential` (raw issuer output) to the public `CredentialItem` model,
+    /// dispatching on the stored `format` to pick the concrete item type. SD-JWT maps to
+    /// `SdJwtCredentialItem`; mdoc (`mso_mdoc`) has no concrete `CredentialItem` yet (Phase 2) and throws.
+    private func makeCredentialItem(from credential: OID4VCICredential) throws -> SdJwtCredentialItem
+    {
+        switch credential.format
+        {
+        case "dc+sd-jwt-did":
+            return SdJwtCredentialItem(
+                id: credential.id,
+                format: .sdJwtVc,
+                configurationId: credential.credentialConfigurationId,
+                kid: credential.kid,
+                credentialIdentifier: credential.credentialIdentifier,
+                sdjwt: SDJWT.parse(raw: credential.credential)
+            )
+        default:
+            throw OID4VCIError.unsupportedFormat(credential.format)
+        }
+    }
+
 }

@@ -980,16 +980,14 @@ extension WalletService
             ()
         }
 
-        // Store
+        // Store — only supported formats are persisted; unsupported ones are rejected, not stored.
         let format : String
         switch credentialConfig.format
         {
         case .sdjwt:
             format = "dc+sd-jwt-did"
-        case .mdoc:
-            format = "mso_mdoc"
-        case .unknown(let value):
-            format = value
+        case .mdoc, .unknown:
+            throw OID4VCIError.unsupportedFormat(credentialConfig.format.rawValue)
         }
 
         let credential = OID4VCICredential(
@@ -997,6 +995,7 @@ extension WalletService
             format: format,
             credentialConfigurationId: configurationId,
             credentialIdentifier: credentialIdentifier,
+            kid: authType,
             credential: rawCredential
         )
 

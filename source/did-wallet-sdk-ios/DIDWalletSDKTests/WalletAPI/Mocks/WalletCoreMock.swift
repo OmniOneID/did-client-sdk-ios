@@ -349,4 +349,24 @@ class WalletCoreMock: WalletCoreImpl {
         
         try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
     }
+
+    public func addOID4VCICredential(credential: OID4VCICredential) throws -> Bool {
+        return true
+    }
+
+    public func getAllOID4VCICredentials() throws -> [SdJwtCredentialItem] {
+        return []
+    }
+
+    public func getOID4VCICredentials(ids: [String]) throws -> [SdJwtCredentialItem] {
+        return []
+    }
+
+    public func deleteOID4VCICredential(ids: [String]) throws -> Bool {
+        return true
+    }
+
+    public func isAnyOID4VCICredentialsSaved() -> Bool {
+        return false
+    }
 }
