@@ -174,7 +174,7 @@ public struct ValidURL : Codable
 
 extension ValidURL
 {
-    func appendingPath(_ component: String) -> String
+    public func appendingPath(_ component: String) -> String
     {
         URL(string: wrappedValue)!
             .appendingPathComponent(component)

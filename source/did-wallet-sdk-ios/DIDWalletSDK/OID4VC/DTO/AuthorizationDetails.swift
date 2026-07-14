@@ -22,4 +22,11 @@ public struct AuthorizationDetails: Jsonable, FromSnake
     public var type: String = "openid_credential"
     public var credentialConfigurationId: String
     public var credentialIdentifiers: [String]?
+    
+    public init(credentialConfigurationId: String,
+                credentialIdentifiers: [String]?)
+    {
+        self.credentialConfigurationId = credentialConfigurationId
+        self.credentialIdentifiers = credentialIdentifiers
+    }
 }

@@ -17,12 +17,21 @@
     
 import Foundation
 
-struct TokenRequest: Jsonable, FromSnake
+public struct TokenRequest: Jsonable, FromSnake
 {
-    var grantType: String   = "urn:ietf:params:oauth:grant-type:pre-authorized_code"
-    var preAuthorizedCode: String
-    var txCode: String?
-    var authorizationDetails: [AuthorizationDetails]
+    public var grantType: String   = "urn:ietf:params:oauth:grant-type:pre-authorized_code"
+    public var preAuthorizedCode: String
+    public var txCode: String?
+    public var authorizationDetails: [AuthorizationDetails]
+    
+    public init(preAuthorizedCode: String,
+                txCode: String?,
+                authorizationDetails: [AuthorizationDetails])
+    {
+        self.preAuthorizedCode = preAuthorizedCode
+        self.txCode = txCode
+        self.authorizationDetails = authorizationDetails
+    }
 }
 
 extension TokenRequest

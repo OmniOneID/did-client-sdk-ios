@@ -20,18 +20,18 @@ import CryptoKit
 
 struct JWE
 {
-    let protectedHeader: JWEProtectedHeader   // 디코딩된 헤더
-    let rawProtectedHeader: String            // ← base64url 원본 문자열 (AAD로 그대로 사용)
-    let encryptedKey: Data                    // KW면 채워짐, Direct(ECDH-ES)면 empty
-    let iv: Data                              // A256GCM 논스 (12바이트)
+    let protectedHeader: JWEProtectedHeader
+    let rawProtectedHeader: String
+    let encryptedKey: Data
+    let iv: Data
     let ciphertext: Data
-    let authTag: Data                         // GCM 인증 태그 (16바이트)
+    let authTag: Data
     
     struct JWEProtectedHeader: Jsonable, FromSnake {
         let alg: JWEAlgorithm     // "ECDH-ES"
         let enc: JWEEncryption    // "A256GCM"
-        let epk: JWK              // 발신자(issuer) 임시 공개키
-        let kid: String?          // 지갑 임시키 선택 힌트
+        let epk: JWK
+        let kid: String?
         let apu: String?          // base64url, Concat KDF PartyUInfo
         let apv: String?          // base64url, Concat KDF PartyVInfo
     }
@@ -43,7 +43,6 @@ struct JWE
         case ecdhESA256KW = "ECDH-ES+A256KW"
 
         var isKeyWrapping: Bool { self != .ecdhES }
-        /// Concat KDF의 AlgorithmID에 들어가는 값: KW는 alg 자신, Direct는 enc 값
         var kdfAlgorithmID: String? { isKeyWrapping ? rawValue : nil }
     }
     
@@ -66,19 +65,23 @@ struct JWE
     
     init(compact: String) throws
     {
-        // omittingEmptySubsequences: false → Direct 모드의 빈 encryptedKey 파트 보존
         let parts = compact.split(separator: ".", omittingEmptySubsequences: false)
         guard parts.count == 5 else { fatalError("Invalid JWE format") }
         
         self.rawProtectedHeader = String(parts[0])
         
         self.protectedHeader = try JWEProtectedHeader.init(from: rawProtectedHeader.base64URLDecoded!)
-        self.encryptedKey = String(parts[1]).base64URLDecoded!  // 빈 파트면 empty Data
+        self.encryptedKey = String(parts[1]).base64URLDecoded!
         self.iv           = String(parts[2]).base64URLDecoded!
         self.ciphertext   = String(parts[3]).base64URLDecoded!
         self.authTag      = String(parts[4]).base64URLDecoded!
     }
-    
+
+}
+
+enum JWEError: Error {
+    case unsupportedAlgorithm(String)
+    case unsupportedKeyType
 }
 
 extension JWE
@@ -90,14 +93,23 @@ extension JWE
 {
     func decrypt(using privateKey: P256.KeyAgreement.PrivateKey) throws -> Data
     {
+        guard protectedHeader.alg == .ecdhES else
+        {
+            throw JWEError.unsupportedAlgorithm(protectedHeader.alg.rawValue)
+        }
+
+        guard encryptedKey.isEmpty else
+        {
+            throw JWEError.unsupportedAlgorithm("\(protectedHeader.alg.rawValue): unexpected encrypted key")
+        }
+
         guard protectedHeader.epk.kty == .ec,
               protectedHeader.epk.crv == .p256
         else
         {
-            //TODO: Error
-            fatalError("Unsupport Algorithm")
+            throw JWEError.unsupportedKeyType
         }
-        
+
         let publicKey: P256.KeyAgreement.PublicKey = try .init(
             xBase64URL: protectedHeader.epk.x,
             yBase64URL: protectedHeader.epk.y
@@ -151,8 +163,9 @@ private extension JWE {
             Data($0)
         }
 
+        let algorithmIDValue = header.alg.kdfAlgorithmID ?? header.enc.rawValue
         let algorithmID = try lengthPrefixedData(
-            Data(header.enc.rawValue.utf8)
+            Data(algorithmIDValue.utf8)
         )
 
         let partyUInfo = try lengthPrefixedData(
@@ -163,11 +176,11 @@ private extension JWE {
             decodeOptionalBase64URL(header.apv)
         )
 
-        // A256GCM 키 길이: 256 bits
-        let keyDataLength = UInt32(256)
+        let keyDataLengthBits = header.enc.cekBitLength
+        let keyDataLengthBytes = keyDataLengthBits / 8
 
         var suppPubInfo = Data()
-        suppPubInfo.appendUInt32BigEndian(keyDataLength)
+        suppPubInfo.appendUInt32BigEndian(UInt32(keyDataLengthBits))
 
         let suppPrivInfo = Data()
 
@@ -178,16 +191,22 @@ private extension JWE {
         otherInfo.append(suppPubInfo)
         otherInfo.append(suppPrivInfo)
 
-        // SHA-256 출력이 256비트이므로 A256GCM에서는 한 번만 계산하면 된다.
-        var digestInput = Data()
-        digestInput.appendUInt32BigEndian(1)
-        digestInput.append(sharedSecretData)
-        digestInput.append(otherInfo)
+        // NIST SP 800-56A Concat KDF (single-step, SHA-256).
+        let hashLengthBytes = 32
+        let reps = (keyDataLengthBytes + hashLengthBytes - 1) / hashLengthBytes
 
-        let digest = SHA256.hash(data: digestInput)
-        let derivedKey = Data(digest)
+        var keyMaterial = Data()
+        for counter in 1...reps {
+            var digestInput = Data()
+            digestInput.appendUInt32BigEndian(UInt32(counter))
+            digestInput.append(sharedSecretData)
+            digestInput.append(otherInfo)
+            keyMaterial.append(Data(SHA256.hash(data: digestInput)))
+        }
 
-        guard derivedKey.count == 32 else {
+        let derivedKey = keyMaterial.prefix(keyDataLengthBytes)
+
+        guard derivedKey.count == keyDataLengthBytes else {
             //TODO: Error
             fatalError("JWEError.keyDerivationFailed")
         }
