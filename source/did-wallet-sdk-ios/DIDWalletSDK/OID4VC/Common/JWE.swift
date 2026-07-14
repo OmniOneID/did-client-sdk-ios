@@ -130,7 +130,7 @@ extension JWE
             return try AES.GCM.open(
                 sealedBox,
                 using: contentEncryptionKey,
-                authenticating: rawProtectedHeader.base64URLDecoded!
+                authenticating: Data(rawProtectedHeader.utf8)
             )
         } catch {
             //TODO: Error
