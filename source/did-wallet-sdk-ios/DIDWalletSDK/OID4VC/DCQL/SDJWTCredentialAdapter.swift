@@ -21,7 +21,7 @@ import Foundation
 /// Reuses the SDK's `SDJWT` parser, `Disclosure`, and `SimpleJWTDecoder`.
 public class SDJWTCredentialAdapter: CredentialAdapter {
 
-    private static let supportedFormats: Set<String> = ["vc+sd-jwt", "dc+sd-jwt"]
+    private static let supportedFormats: Set<String> = ["vc+sd-jwt", "dc+sd-jwt-did"]
 
     private static let reservedClaims: Set<String> = [
         "iss", "sub", "aud", "exp", "nbf", "iat", "jti",
@@ -54,7 +54,7 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
 
         let allClaims = extractAllClaimsInternal(sdjwt: sdjwt, payload: payload)
         let metadata = extractMetadata(payload: payload)
-        let format = (payload["vct"] != nil) ? "dc+sd-jwt" : "vc+sd-jwt"
+        let format = (payload["vct"] != nil) ? "dc+sd-jwt-did" : "vc+sd-jwt"
 
         return ParsedCredential(
             format: format,

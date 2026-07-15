@@ -46,7 +46,7 @@ public class CredentialAdapterRegistry {
 
         // SD-JWT compact form contains '~' disclosure separators.
         if trimmed.contains("~") {
-            return findAdapter("dc+sd-jwt")
+            return findAdapter("dc+sd-jwt-did")
         }
         // opendid_vc is stored as a VerifiableCredential JSON object.
         if trimmed.hasPrefix("{") {

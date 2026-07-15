@@ -148,7 +148,7 @@ public enum DCQLCredentialMatcher {
 
     public static func matchesFormat(requiredFormat: String?) -> Bool {
         guard let requiredFormat = requiredFormat else { return true }
-        let supported: Set<String> = ["dc+sd-jwt", "vc+sd-jwt"]
+        let supported: Set<String> = ["dc+sd-jwt-did", "vc+sd-jwt"]
         return supported.contains(requiredFormat)
     }
 
