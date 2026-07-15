@@ -197,18 +197,39 @@ extension OID4VPProtocol
         return vpToken
     }
 
+    /// Response modes carried in the authorization request's `response_mode`.
+    static let responseModeDirectPost    = "direct_post"
+    static let responseModeDirectPostJWT = "direct_post.jwt"
+
     /// Submits the `vp_token` map to the verifier's `response_uri` as
-    /// `application/x-www-form-urlencoded` (`vp_token` = JSON object, `state` echoed back).
+    /// `application/x-www-form-urlencoded`.
+    ///
+    /// When `response_mode` is `direct_post` the body is the clear `vp_token` (JSON object) plus the
+    /// echoed `state`. When it is `direct_post.jwt` the `{vp_token, state}` object is JWE-encrypted
+    /// (ECDH-ES + AES-GCM) to the verifier's encryption key from `client_metadata` and sent as a
+    /// single `response` field.
     /// - Returns: The raw verifier response body and HTTP status code.
-    /// - Throws: `OID4VPError.failedToSubmit` on a non-2xx response.
+    /// - Throws: `OID4VPError.failedToSubmit` on a non-2xx response, or a response-encryption error
+    ///           when `direct_post.jwt` is requested but the verifier's key/parameters are missing
+    ///           or unsupported.
     @discardableResult
     public static func submitVpToken(
         authRequest: AuthorizationRequest,
         vpToken: [String: [String]]
     ) async throws -> (Data, Int)
     {
-        let submission = VPTokenSubmission(vpToken: vpToken, state: authRequest.state)
-        let body = try submission.toFormData()
+        let body: Data
+        if authRequest.responseMode == responseModeDirectPostJWT
+        {
+            let (jwk, enc) = try parseResponseEncryption(from: authRequest.clientMetadata)
+            let payload = try VPTokenSubmission(vpToken: vpToken, state: authRequest.state).toJsonData()
+            let compactJWE = try JWE.encrypt(plaintext: payload, to: jwk, enc: enc)
+            body = try EncryptedResponseSubmission(response: compactJWE).toFormData()
+        }
+        else
+        {
+            body = try VPTokenSubmission(vpToken: vpToken, state: authRequest.state).toFormData()
+        }
 
         let (data, statusCode) = try await CommunicationClient.sendPostUrlencoded(
             urlString: authRequest.responseUri,
@@ -221,6 +242,72 @@ extension OID4VPProtocol
             throw OID4VPError.failedToSubmit(statusCode)
         }
         return (data, statusCode)
+    }
+
+    /// Extracts the verifier's response-encryption key and content-encryption algorithm from the
+    /// authorization request's `client_metadata` (OpenID4VP 1.0).
+    ///
+    /// The `enc` is chosen from `encrypted_response_enc_values_supported` (preferring `A256GCM`,
+    /// then `A128GCM`; defaulting to `A256GCM` when the list is absent). The key is taken from
+    /// `jwks.keys`, preferring an `EC` / `P-256` key marked `use: "enc"`. Only key agreement
+    /// `ECDH-ES` (Direct) is supported, matching `JWE.encrypt`; anything else throws.
+    static func parseResponseEncryption(
+        from clientMetadata: [String: AnyJSON]
+    ) throws -> (jwk: JWK, enc: JWE.JWEEncryption)
+    {
+        let enc = try selectResponseEncAlgorithm(from: clientMetadata)
+
+        guard let keys = clientMetadata["jwks"]?.asObject?["keys"]?.asArray
+        else
+        {
+            throw OID4VPError.missingVerifierEncryptionKey
+        }
+
+        let ecKeys: [JWK] = keys.compactMap { entry in
+            guard let object = entry.asObject,
+                  let data = try? JSONSerialization.data(
+                    withJSONObject: AnyJSON.object(object).toFoundation()
+                  ),
+                  let jwk = try? JWK(from: data),
+                  jwk.kty == .ec, jwk.crv == .p256
+            else
+            {
+                return nil
+            }
+            return jwk
+        }
+
+        guard let jwk = ecKeys.first(where: { $0.use == .enc }) ?? ecKeys.first
+        else
+        {
+            throw OID4VPError.missingVerifierEncryptionKey
+        }
+
+        // The key-agreement alg comes from the JWK; nil is treated as the ECDH-ES default for EC
+        // encryption keys. Key wrapping (ECDH-ES+A*KW) and other algs are not supported.
+        if let alg = jwk.alg, alg != .ecdhES
+        {
+            throw OID4VPError.unsupportedResponseEncryption("alg: \(alg)")
+        }
+
+        return (jwk, enc)
+    }
+
+    private static func selectResponseEncAlgorithm(
+        from clientMetadata: [String: AnyJSON]
+    ) throws -> JWE.JWEEncryption
+    {
+        guard let supported = clientMetadata["encrypted_response_enc_values_supported"]?.asArray
+        else
+        {
+            return .a256GCM
+        }
+
+        let values = supported.compactMap { $0.asString }
+        if values.contains(JWE.JWEEncryption.a256GCM.rawValue) { return .a256GCM }
+        if values.contains(JWE.JWEEncryption.a128GCM.rawValue) { return .a128GCM }
+        if values.isEmpty { return .a256GCM }
+        throw OID4VPError.unsupportedResponseEncryption("enc: \(values.joined(separator: ", "))")
     }
 }
 
@@ -235,6 +322,12 @@ struct VPTokenSubmission: Jsonable
         case vpToken = "vp_token"
         case state
     }
+}
+
+/// Form body for an OID4VP `direct_post.jwt`: the JWE-encrypted authorization response.
+struct EncryptedResponseSubmission: Jsonable
+{
+    let response: String
 }
 
 /// Errors thrown by the OID4VP (OpenID for Verifiable Presentations) flow.
@@ -258,6 +351,12 @@ public enum OID4VPError: Error, LocalizedError
     case unsupportedPresentationFormat(String)
     /// Submitting the vp_token to the verifier failed. Carries the HTTP status code.
     case failedToSubmit(Int)
+    /// `direct_post.jwt` was requested but no usable verifier encryption key was found in
+    /// `client_metadata.jwks`.
+    case missingVerifierEncryptionKey
+    /// The verifier's requested response encryption is not supported. Carries the offending
+    /// alg/enc detail.
+    case unsupportedResponseEncryption(String)
 
     public var errorDescription: String?
     {
@@ -281,6 +380,10 @@ public enum OID4VPError: Error, LocalizedError
             return "Presentation for format \(format) is not supported."
         case .failedToSubmit(let status):
             return "Failed to submit vp_token (HTTP \(status))."
+        case .missingVerifierEncryptionKey:
+            return "No verifier encryption key found in client_metadata for direct_post.jwt."
+        case .unsupportedResponseEncryption(let detail):
+            return "Unsupported response encryption (\(detail))."
         }
     }
 }

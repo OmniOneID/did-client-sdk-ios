@@ -16,6 +16,7 @@
  */
 
 import XCTest
+import CryptoKit
 @testable import DIDWalletSDK
 
 final class OID4VPTests: XCTestCase {
@@ -296,5 +297,119 @@ final class OID4VPTests: XCTestCase {
             rawCredentials: [(id: "c1", raw: sdjwt, format: "dc+sd-jwt")]
         )
         XCTAssertEqual(infos["q"]?.first?.claimCodes, ["family_name"])
+    }
+
+    // MARK: - direct_post.jwt response encryption
+
+    /// Builds an authorization request whose `client_metadata` advertises the given verifier
+    /// encryption key (as an EC/P-256 `use:enc` JWK) and `enc` values, in `direct_post.jwt` mode.
+    private func encryptedAuthRequest(
+        keyJWK: JWK,
+        encValues: String = #""A256GCM""#,
+        alg: String = "ECDH-ES"
+    ) throws -> AuthorizationRequest {
+        let json = """
+        {
+          "response_uri": "https://verifier.example/response",
+          "nonce": "test-nonce",
+          "state": "test-state",
+          "client_id": "verifier",
+          "response_type": "vp_token",
+          "response_mode": "direct_post.jwt",
+          "iat": 1700000000,
+          "client_metadata": {
+            "encrypted_response_enc_values_supported": [\(encValues)],
+            "jwks": { "keys": [
+              { "kty": "EC", "crv": "P-256", "use": "enc", "alg": "\(alg)",
+                "x": "\(keyJWK.x)", "y": "\(keyJWK.y)" }
+            ] }
+          },
+          "dcql_query": { "credentials": [] }
+        }
+        """
+        return try AuthorizationRequest(from: json)
+    }
+
+    // parseResponseEncryption picks the EC/P-256 enc key and the preferred A256GCM enc; encrypting a
+    // VPTokenSubmission with them and decrypting with the verifier key must round-trip the JSON.
+    func testDirectPostJWT_parseAndEncryptRoundTrips() throws {
+        let verifierPrivateKey = P256.KeyAgreement.PrivateKey()
+        let verifierJWK = verifierPrivateKey.publicKey.getPublicKeyJwk()
+
+        let request = try encryptedAuthRequest(keyJWK: verifierJWK)
+
+        let (jwk, enc) = try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        XCTAssertEqual(enc, .a256GCM)
+        XCTAssertEqual(jwk.x, verifierJWK.x)
+        XCTAssertEqual(jwk.y, verifierJWK.y)
+
+        // Reproduce submitVpToken's assembly and verify the verifier can recover {vp_token, state}.
+        let vpToken = ["student_id": ["ey.presentation.token"]]
+        let payload = try VPTokenSubmission(vpToken: vpToken, state: request.state).toJsonData()
+        let compactJWE = try JWE.encrypt(plaintext: payload, to: jwk, enc: enc)
+
+        let decrypted = try JWE(compact: compactJWE).decrypt(using: verifierPrivateKey)
+        let recovered = try JSONSerialization.jsonObject(with: decrypted) as? [String: Any]
+        XCTAssertEqual(recovered?["state"] as? String, "test-state")
+        XCTAssertEqual((recovered?["vp_token"] as? [String: Any])?["student_id"] as? [String],
+                       ["ey.presentation.token"])
+    }
+
+    // A128GCM is selected when it is the only supported enc value.
+    func testDirectPostJWT_selectsA128GCM() throws {
+        let verifierJWK = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
+        let request = try encryptedAuthRequest(keyJWK: verifierJWK, encValues: #""A128GCM""#)
+
+        let (_, enc) = try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        XCTAssertEqual(enc, .a128GCM)
+    }
+
+    // An enc value we cannot produce (e.g. A192GCM) is rejected.
+    func testDirectPostJWT_unsupportedEncThrows() throws {
+        let verifierJWK = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
+        let request = try encryptedAuthRequest(keyJWK: verifierJWK, encValues: #""A192GCM""#)
+
+        XCTAssertThrowsError(
+            try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        ) { error in
+            guard case OID4VPError.unsupportedResponseEncryption = error else {
+                return XCTFail("expected unsupportedResponseEncryption, got \(error)")
+            }
+        }
+    }
+
+    // A key-wrapping alg (ECDH-ES+A256KW) is rejected — only ECDH-ES Direct is supported.
+    func testDirectPostJWT_keyWrappingAlgThrows() throws {
+        let verifierJWK = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
+        let request = try encryptedAuthRequest(keyJWK: verifierJWK, alg: "ECDH-ES+A256KW")
+
+        XCTAssertThrowsError(
+            try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        ) { error in
+            guard case OID4VPError.unsupportedResponseEncryption = error else {
+                return XCTFail("expected unsupportedResponseEncryption, got \(error)")
+            }
+        }
+    }
+
+    // direct_post.jwt with no verifier key in client_metadata is a hard error.
+    func testDirectPostJWT_missingKeyThrows() throws {
+        let json = """
+        {
+          "response_uri": "https://verifier.example/response",
+          "nonce": "n", "state": "s", "client_id": "verifier",
+          "response_type": "vp_token", "response_mode": "direct_post.jwt",
+          "iat": 1700000000, "client_metadata": {},
+          "dcql_query": { "credentials": [] }
+        }
+        """
+        let request = try AuthorizationRequest(from: json)
+        XCTAssertThrowsError(
+            try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        ) { error in
+            guard case OID4VPError.missingVerifierEncryptionKey = error else {
+                return XCTFail("expected missingVerifierEncryptionKey, got \(error)")
+            }
+        }
     }
 }

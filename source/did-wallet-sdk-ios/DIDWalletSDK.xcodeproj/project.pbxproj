@@ -34,6 +34,7 @@
 		7CDED8022C783121009CE791 /* WalletLockManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDED8012C783121009CE791 /* WalletLockManagerMock.swift */; };
 		7CDED8062C784EE6009CE791 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDED8052C784EE6009CE791 /* MockData.swift */; };
 		AAAA0004000000000000E365 /* OID4VPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0003000000000000E365 /* OID4VPTests.swift */; };
+		AAAA0006000000000000E365 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0005000000000000E365 /* JWETests.swift */; };
 		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
 		AAAA0013000000000000E365 /* CredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0012000000000000E365 /* CredentialAdapter.swift */; };
 		AAAA0015000000000000E365 /* CredentialAdapterRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */; };
@@ -323,6 +324,7 @@
 		7CDED8012C783121009CE791 /* WalletLockManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletLockManagerMock.swift; sourceTree = "<group>"; };
 		7CDED8052C784EE6009CE791 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		AAAA0003000000000000E365 /* OID4VPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPTests.swift; sourceTree = "<group>"; };
+		AAAA0005000000000000E365 /* JWETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWETests.swift; sourceTree = "<group>"; };
 		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
 		AAAA0012000000000000E365 /* CredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapterRegistry.swift; sourceTree = "<group>"; };
@@ -944,6 +946,7 @@
 			children = (
 				C95C738D2F99E5C30031E365 /* OID4VCITests.swift */,
 				AAAA0003000000000000E365 /* OID4VPTests.swift */,
+				AAAA0005000000000000E365 /* JWETests.swift */,
 			);
 			path = OID4VC;
 			sourceTree = "<group>";
@@ -1738,6 +1741,7 @@
 				7CB8D83C2BC917370063D094 /* WalletSDKTests.swift in Sources */,
 				C95C738E2F99E5C30031E365 /* OID4VCITests.swift in Sources */,
 				AAAA0004000000000000E365 /* OID4VPTests.swift in Sources */,
+				AAAA0006000000000000E365 /* JWETests.swift in Sources */,
 				7CDED8002C7830ED009CE791 /* WalletCoreMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

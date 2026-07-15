@@ -31,6 +31,7 @@ struct JWK: Jsonable
     enum Algorithm: Jsonable, Equatable
     {
         case es256
+        case ecdhES
         case unknown(String)
     }
 
@@ -108,6 +109,8 @@ extension JWK.Algorithm
         switch value {
         case "ES256":
             self = .es256
+        case "ECDH-ES":
+            self = .ecdhES
         default:
             self = .unknown(value)
         }
@@ -118,6 +121,8 @@ extension JWK.Algorithm
         switch self {
         case .es256:
             try container.encode("ES256")
+        case .ecdhES:
+            try container.encode("ECDH-ES")
         case .unknown(let value):
             try container.encode(value)
         }

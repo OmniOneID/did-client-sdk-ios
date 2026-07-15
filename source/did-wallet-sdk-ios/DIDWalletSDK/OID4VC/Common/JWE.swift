@@ -82,6 +82,8 @@ struct JWE
 enum JWEError: Error {
     case unsupportedAlgorithm(String)
     case unsupportedKeyType
+    case invalidRecipientKey
+    case encryptionFailed
 }
 
 extension JWE
@@ -119,7 +121,7 @@ extension JWE
             with: publicKey
         )
         
-        let contentEncryptionKey = try deriveContentEncryptionKey(
+        let contentEncryptionKey = try Self.deriveContentEncryptionKey(
             sharedSecret: sharedSecret,
             header: protectedHeader
         )
@@ -148,14 +150,98 @@ extension JWE
             //TODO: Error
             fatalError("JWEError.authenticationFailed")
         }
-        
+
     }
-    
-    
+
+    /// Encrypts `plaintext` for `recipient` (ECDH-ES Direct + AES-GCM) and returns a compact JWE.
+    ///
+    /// Mirror of `decrypt`: an ephemeral P-256 key is generated, the shared secret is run through
+    /// the Concat KDF (NIST SP 800-56A, SHA-256) to derive the content-encryption key, and the
+    /// base64url protected header is used as the AES-GCM additional authenticated data. Only the
+    /// algorithm set `decrypt` supports is produced here (`ECDH-ES`, `A128GCM`/`A256GCM`); key
+    /// wrapping is not implemented, so the encrypted-key segment is always empty.
+    /// The recipient JWK's `kid` (if any) is echoed into the top-level protected header so the
+    /// recipient can select which of its keys to run the ECDH agreement with (RFC 7516 §4.1.6);
+    /// it is omitted when the JWK has no `kid`. This is the recipient's static-key id, distinct
+    /// from the ephemeral `epk`, which never carries a `kid`.
+    /// - Parameters:
+    ///   - plaintext: The bytes to encrypt.
+    ///   - recipient: The recipient's public key as a JWK (must be `EC` / `P-256`).
+    ///   - enc: The content encryption algorithm. Defaults to `A256GCM`.
+    ///   - apu: Optional base64url PartyUInfo for the Concat KDF.
+    ///   - apv: Optional base64url PartyVInfo for the Concat KDF.
+    /// - Returns: The compact JWE string (`header..iv.ciphertext.tag`).
+    static func encrypt(
+        plaintext: Data,
+        to recipient: JWK,
+        enc: JWEEncryption = .a256GCM,
+        apu: String? = nil,
+        apv: String? = nil
+    ) throws -> String
+    {
+        guard recipient.kty == .ec, recipient.crv == .p256
+        else
+        {
+            throw JWEError.invalidRecipientKey
+        }
+
+        let recipientPublicKey: P256.KeyAgreement.PublicKey
+        do {
+            recipientPublicKey = try .init(
+                xBase64URL: recipient.x,
+                yBase64URL: recipient.y
+            )
+        } catch {
+            throw JWEError.invalidRecipientKey
+        }
+
+        let ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
+        let epk = ephemeralPrivateKey.publicKey.getPublicKeyJwk()
+
+        let header = JWEProtectedHeader(
+            alg: .ecdhES,
+            enc: enc,
+            epk: epk,
+            kid: recipient.kid,
+            apu: apu,
+            apv: apv
+        )
+
+        let rawProtectedHeader = try header.toJsonData().base64URLEncoded
+
+        let sharedSecret = try ephemeralPrivateKey.sharedSecretFromKeyAgreement(
+            with: recipientPublicKey
+        )
+
+        let contentEncryptionKey = try deriveContentEncryptionKey(
+            sharedSecret: sharedSecret,
+            header: header
+        )
+
+        let sealedBox: AES.GCM.SealedBox
+        do {
+            sealedBox = try AES.GCM.seal(
+                plaintext,
+                using: contentEncryptionKey,
+                authenticating: Data(rawProtectedHeader.utf8)
+            )
+        } catch {
+            throw JWEError.encryptionFailed
+        }
+
+        // ECDH-ES Direct: no wrapped key, so the encrypted-key segment is empty.
+        return [
+            rawProtectedHeader,
+            "",
+            sealedBox.nonce.withUnsafeBytes { Data($0) }.base64URLEncoded,
+            sealedBox.ciphertext.base64URLEncoded,
+            sealedBox.tag.base64URLEncoded
+        ].joined(separator: ".")
+    }
 }
 
 private extension JWE {
-    func deriveContentEncryptionKey(
+    static func deriveContentEncryptionKey(
         sharedSecret: SharedSecret,
         header: JWEProtectedHeader
     ) throws -> SymmetricKey {
@@ -214,7 +300,7 @@ private extension JWE {
         return SymmetricKey(data: derivedKey)
     }
 
-    func decodeOptionalBase64URL(
+    static func decodeOptionalBase64URL(
         _ value: String?
     ) throws -> Data {
         guard let value else {
@@ -232,7 +318,7 @@ private extension JWE {
         return data
     }
 
-    func lengthPrefixedData(
+    static func lengthPrefixedData(
         _ data: Data
     ) throws -> Data {
         guard data.count <= Int(UInt32.max) else {
