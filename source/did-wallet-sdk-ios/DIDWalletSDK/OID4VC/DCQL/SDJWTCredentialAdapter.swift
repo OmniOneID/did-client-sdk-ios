@@ -17,11 +17,11 @@
 
 import Foundation
 
-/// `CredentialAdapter` for SD-JWT credentials (formats: vc+sd-jwt, dc+sd-jwt).
+/// `CredentialAdapter` for SD-JWT credentials (formats: vc+sd-jwt, dc+sd-jwt, dc+sd-jwt-did).
 /// Reuses the SDK's `SDJWT` parser, `Disclosure`, and `SimpleJWTDecoder`.
 public class SDJWTCredentialAdapter: CredentialAdapter {
 
-    private static let supportedFormats: Set<String> = ["vc+sd-jwt", "dc+sd-jwt-did"]
+    private static let supportedFormats: Set<String> = ["vc+sd-jwt", "dc+sd-jwt", "dc+sd-jwt-did"]
 
     private static let reservedClaims: Set<String> = [
         "iss", "sub", "aud", "exp", "nbf", "iat", "jti",
@@ -40,12 +40,13 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
         }
 
         let sdjwt = SDJWT.parse(raw: rawCredential)
-        let payload: [String: Any]
+        let decodedJwt: SimpleJWTDecoder.SimpleJWT
         do {
-            payload = try SimpleJWTDecoder.parse(sdjwt.credentialJwt).payload
+            decodedJwt = try SimpleJWTDecoder.parse(sdjwt.credentialJwt)
         } catch {
             throw DCQLError.parseError("Failed to decode SD-JWT payload: \(error)")
         }
+        let payload = decodedJwt.payload
 
         var baseClaims: [String: Any] = [:]
         for (k, v) in payload where !SDJWTCredentialAdapter.reservedClaims.contains(k) {
@@ -54,7 +55,12 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
 
         let allClaims = extractAllClaimsInternal(sdjwt: sdjwt, payload: payload)
         let metadata = extractMetadata(payload: payload)
-        let format = (payload["vct"] != nil) ? "dc+sd-jwt-did" : "vc+sd-jwt"
+        // The transport format is the SD-JWT VC media type in the issuer JWT `typ` header
+        // (e.g. dc+sd-jwt / vc+sd-jwt), not the `vct` type claim (which is always present and
+        // only identifies the credential type, e.g. urn:eudi:pid:1).
+        guard let format = decodedJwt.header["typ"] as? String, !format.isEmpty else {
+            throw DCQLError.parseError("SD-JWT is missing the 'typ' header")
+        }
 
         return ParsedCredential(
             format: format,
