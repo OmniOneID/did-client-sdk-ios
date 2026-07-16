@@ -28,27 +28,27 @@ import CryptoKit
 struct SDJWTPresenter
 {
     /// SD-JWT credential format tokens this presenter can handle.
-    static let supportedFormats: Set<String> = ["dc+sd-jwt", "vc+sd-jwt", "dc+sd-jwt-did"]
+    static let supportedFormats: Set<String> = ["dc+sd-jwt-did"]
+
+    init() {}
 
     /// - Parameters:
-    ///   - rawCredential: The stored SD-JWT compact string.
+    ///   - sdjwt: The stored SD-JWT (issuer JWT + disclosures), as returned by the wallet.
     ///   - claimCodes: The claim names to disclose. Empty discloses all of the credential's claims.
     ///   - aud: The verifier audience — the request's `client_id`.
     ///   - nonce: The request's `nonce`, bound into the KB-JWT.
     ///   - keyId: The holder key id (`"pin"` / `"bio"`).
-    ///   - pin: The wallet PIN as data when `keyId` is the PIN key; `nil` for biometric.
+    ///   - pin: The wallet PIN when `keyId` is the PIN key; `nil` for biometric.
     /// - Returns: The combined SD-JWT presentation string with a key-binding JWT appended.
     static func createVpToken(
-        rawCredential: String,
+        sdjwt: SDJWT,
         claimCodes: [String],
         aud: String,
         nonce: String,
         keyId: String,
-        pin: Data?
+        pin: String?
     ) throws -> String
     {
-        let sdjwt = SDJWT.parse(raw: rawCredential)
-
         // Disclose only the agreed claims; an empty list discloses everything.
         let selected: [Disclosure]
         if claimCodes.isEmpty
@@ -86,12 +86,56 @@ struct SDJWTPresenter
         let digest = signSource.data(using: .utf8)!.sha256()
 
         // KeyManager returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
-        let compactSignature = try keyManager.sign(id: keyId, pin: pin, digest: digest)
+        let compactSignature = try keyManager.sign(id: keyId, pin: pin?.data(using: .utf8), digest: digest)
         let signature = Data(compactSignature.dropFirst()).base64URLEncoded
         let keyBindingJwt = "\(signSource).\(signature)"
 
         return SDJWT(credentialJwt: sdjwt.credentialJwt,
                      disclosures: selected,
                      keyBindingJwt: keyBindingJwt).toString()
+    }
+}
+
+extension SDJWTPresenter: CredentialPresenter
+{
+    func getSupportedFormats() -> Set<String> { SDJWTPresenter.supportedFormats }
+
+    func supports(_ format: String) -> Bool { SDJWTPresenter.supportedFormats.contains(format) }
+
+    /// Fetches each matched SD-JWT through `WalletAPI` by `ClaimInfo.credentialId` (mirroring the
+    /// W3C presenter, which goes through `WalletAPI.createVp`) and builds one combined SD-JWT +
+    /// KB-JWT presentation per credential. `WalletAPI.getOID4VCs` verifies `hWalletToken` and only
+    /// returns SD-JWT items, so no separate format guard is needed here. The KB-JWT is signed with
+    /// the holder key bound to the credential at issuance (`SdJwtCredentialItem.kid`).
+    func createVpTokens(
+        hWalletToken: String,
+        claimInfos: [ClaimInfo],
+        authRequest: AuthorizationRequest,
+        pin: String?
+    ) throws -> [String]
+    {
+        var tokens: [String] = []
+        for claimInfo in claimInfos
+        {
+            guard let item = try WalletAPI.shared.getOID4VCs(
+                hWalletToken: hWalletToken,
+                ids: [claimInfo.credentialId]
+            ).first
+            else
+            {
+                throw OID4VPError.credentialNotFound(claimInfo.credentialId)
+            }
+
+            let token = try SDJWTPresenter.createVpToken(
+                sdjwt: item.sdjwt,
+                claimCodes: claimInfo.claimCodes,
+                aud: authRequest.clientId,
+                nonce: authRequest.nonce,
+                keyId: item.kid,
+                pin: pin
+            )
+            tokens.append(token)
+        }
+        return tokens
     }
 }

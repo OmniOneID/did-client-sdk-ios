@@ -17,11 +17,11 @@
 
 import Foundation
 
-/// `CredentialAdapter` for SD-JWT credentials (formats: vc+sd-jwt, dc+sd-jwt, dc+sd-jwt-did).
+/// `CredentialAdapter` for SD-JWT credentials (format: dc+sd-jwt-did).
 /// Reuses the SDK's `SDJWT` parser, `Disclosure`, and `SimpleJWTDecoder`.
 public class SDJWTCredentialAdapter: CredentialAdapter {
 
-    private static let supportedFormats: Set<String> = ["vc+sd-jwt", "dc+sd-jwt", "dc+sd-jwt-did"]
+    private static let supportedFormats: Set<String> = ["dc+sd-jwt-did"]
 
     private static let reservedClaims: Set<String> = [
         "iss", "sub", "aud", "exp", "nbf", "iat", "jti",

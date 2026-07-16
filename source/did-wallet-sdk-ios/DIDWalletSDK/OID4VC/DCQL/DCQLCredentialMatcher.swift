@@ -120,14 +120,13 @@ public enum DCQLCredentialMatcher {
         var collected: Set<String> = []
 
         for claimQuery in claimQueries {
-            guard let path = claimQuery.path, !path.isEmpty else { continue }
-            var perQuery: Set<String> = []
-            processPathAndCollectClaims(allClaims: allClaims,
-                                        path: path,
-                                        claimQuery: claimQuery,
-                                        matchingClaims: &perQuery)
+            guard claimQuery.path?.isEmpty == false else { continue }
+            // Single shared path/condition engine (ClaimMatchingHelper); a query that matches
+            // nothing means a required claim is unsatisfied, so the credential is ineligible.
+            let perQuery = ClaimMatchingHelper.extractMatchingClaimsByPath(
+                allClaims: allClaims, claimQueries: [claimQuery])
             if perQuery.isEmpty {
-                return nil   // a required claim condition is not satisfied by this credential
+                return nil
             }
             collected.formUnion(perQuery)
         }
@@ -144,252 +143,6 @@ public enum DCQLCredentialMatcher {
             map[claim.code] = claim.value
         }
         return map
-    }
-
-    public static func matchesFormat(requiredFormat: String?) -> Bool {
-        guard let requiredFormat = requiredFormat else { return true }
-        let supported: Set<String> = ["dc+sd-jwt-did", "vc+sd-jwt"]
-        return supported.contains(requiredFormat)
-    }
-
-    public static func matchesMetadata(sdjwt: SDJWT, metadata: [String: AnyJSON]?) -> Bool {
-        guard let metadata = metadata, !metadata.isEmpty else { return true }
-
-        if let v = metadata["vct_values"] {
-            // vct_values must be array of strings
-            guard let required = v.asArray?.compactMap({ $0.asString }) else { return false }
-            return checkVctValues(sdjwt: sdjwt, requiredVcts: required)
-        }
-
-        return true
-    }
-
-    private static func checkVctValues(sdjwt: SDJWT, requiredVcts: [String]?) -> Bool {
-        guard let requiredVcts = requiredVcts, !requiredVcts.isEmpty else { return true }
-        do {
-            let jwt = try SimpleJWTDecoder.parse(sdjwt.credentialJwt)
-            guard let vct = jwt.payload["vct"] else { 
-                WalletLogger.debug("'vct' claim missing in JWT payload")
-                return false 
-            }
-            let actual = String(describing: vct)
-            WalletLogger.debug("--- checkVctValues ---")
-            WalletLogger.debug("Required VCTs: \(requiredVcts)")
-            WalletLogger.debug("Actual VCT: \(actual)")
-            let isContained = requiredVcts.contains(actual)
-            WalletLogger.debug("Match result: \(isContained)")
-            WalletLogger.debug("-----------------------")
-            return isContained
-        } catch {
-            WalletLogger.debug("SimpleJWTDecoder failed: \(error)")
-            return false
-        }
-    }
-
-    public static func extractMatchingClaimNames(dcqlQuery: DCQLQuery?, sdjwt: SDJWT?) -> Set<String> {
-        guard let dcqlQuery = dcqlQuery, let creds = dcqlQuery.credentials, let sdjwt = sdjwt else {
-            return []
-        }
-
-        var matching: Set<String> = []
-        let allClaims = extractAllCredentialClaims(sdjwt: sdjwt)
-
-        for credential in creds {
-            if credential.claims == nil {
-                matching.formUnion(allClaims.keys)
-                continue
-            }
-
-            for claimQuery in credential.claims ?? [] {
-                guard let path = claimQuery.path, !path.isEmpty else { continue }
-                processPathAndCollectClaims(allClaims: allClaims,
-                                           path: path,
-                                           claimQuery: claimQuery,
-                                           matchingClaims: &matching)
-            }
-        }
-
-        return matching
-    }
-
-    private static func extractAllCredentialClaims(sdjwt: SDJWT) -> [String: Any] {
-        var allClaims: [String: Any] = [:]
-
-        if let jwt = try? SimpleJWTDecoder.parse(sdjwt.credentialJwt) {
-            for (k, v) in jwt.payload where !isReservedJWTClaim(k) {
-                allClaims[k] = v
-            }
-        }
-
-        if !sdjwt.disclosures.isEmpty {
-            for d in sdjwt.disclosures {
-                if let name = d.claimName {
-                    allClaims[name] = d.claimValue as Any
-                }
-            }
-            integrateDisclosuresIntoCredential(allClaims: &allClaims, sdjwt: sdjwt)
-        }
-
-        return allClaims
-    }
-
-    private static func integrateDisclosuresIntoCredential(allClaims: inout [String: Any], sdjwt: SDJWT) {
-        var digestToDisclosure: [String: Disclosure] = [:]
-        for d in sdjwt.disclosures {
-            digestToDisclosure[d.digest()] = d
-        }
-
-        let snapshot = allClaims
-        for (claimName, claimValue) in snapshot {
-            if var obj = claimValue as? [String: Any] {
-                integrateDisclosuresIntoObject(parentName: claimName,
-                                              parentObject: &obj,
-                                              digestToDisclosure: digestToDisclosure)
-                allClaims[claimName] = obj
-            }
-        }
-    }
-
-    private static func integrateDisclosuresIntoObject(parentName: String,
-                                                       parentObject: inout [String: Any],
-                                                       digestToDisclosure: [String: Disclosure]) {
-        guard let sd = parentObject["_sd"] as? [Any] else { return }
-
-        for item in sd {
-            guard let digest = item as? String else { continue }
-            guard let disclosure = digestToDisclosure[digest], let claimName = disclosure.claimName else { continue }
-
-            let claimValue = disclosure.claimValue as Any
-            parentObject[claimName] = claimValue
-
-            if var nested = claimValue as? [String: Any] {
-                integrateDisclosuresIntoObject(parentName: parentName + "." + claimName,
-                                              parentObject: &nested,
-                                              digestToDisclosure: digestToDisclosure)
-                parentObject[claimName] = nested
-            }
-        }
-    }
-
-    private static func processPathAndCollectClaims(allClaims: [String: Any],
-                                                    path: [DCQLPathElement],
-                                                    claimQuery: DCQLQuery.ClaimQuery,
-                                                    matchingClaims: inout Set<String>) {
-
-        guard case .key(let topLevel) = path[0] else { return }
-        guard let rootValue = allClaims[topLevel] else { return }
-
-        if path.count == 1 {
-            if meetsClaimConditions(claimQuery: claimQuery, actualValue: rootValue) {
-                matchingClaims.insert(topLevel)
-            }
-            return
-        }
-
-        let remaining = Array(path.dropFirst())
-        collectMatchingValuesFromPath(current: rootValue,
-                                      remainingPath: remaining,
-                                      claimQuery: claimQuery,
-                                      claimNamePrefix: topLevel,
-                                      matchingClaims: &matchingClaims)
-    }
-
-    private static func collectMatchingValuesFromPath(current: Any,
-                                                      remainingPath: [DCQLPathElement],
-                                                      claimQuery: DCQLQuery.ClaimQuery,
-                                                      claimNamePrefix: String,
-                                                      matchingClaims: inout Set<String>) {
-        if remainingPath.isEmpty {
-            if meetsClaimConditions(claimQuery: claimQuery, actualValue: current) {
-                matchingClaims.insert(claimNamePrefix)
-            }
-            return
-        }
-
-        let next = remainingPath[0]
-        let nextRemaining = Array(remainingPath.dropFirst())
-
-        switch next {
-        case .wildcard:
-            guard let list = current as? [Any] else { return }
-            for i in 0..<list.count {
-                let newName = "\(claimNamePrefix)[\(i)]"
-                collectMatchingValuesFromPath(current: list[i],
-                                              remainingPath: nextRemaining,
-                                              claimQuery: claimQuery,
-                                              claimNamePrefix: newName,
-                                              matchingClaims: &matchingClaims)
-            }
-
-        case .index(let idx):
-            guard let list = current as? [Any] else { return }
-            guard idx >= 0, idx < list.count else { return }
-            let newName = "\(claimNamePrefix)[\(idx)]"
-            collectMatchingValuesFromPath(current: list[idx],
-                                          remainingPath: nextRemaining,
-                                          claimQuery: claimQuery,
-                                          claimNamePrefix: newName,
-                                          matchingClaims: &matchingClaims)
-
-        case .key(let key):
-            guard let dict = current as? [String: Any] else { return }
-            guard let nextValue = dict[key] else { return }
-            let newName = "\(claimNamePrefix).\(key)"
-            collectMatchingValuesFromPath(current: nextValue,
-                                          remainingPath: nextRemaining,
-                                          claimQuery: claimQuery,
-                                          claimNamePrefix: newName,
-                                          matchingClaims: &matchingClaims)
-        }
-    }
-
-    private static func meetsClaimConditions(claimQuery: DCQLQuery.ClaimQuery, actualValue: Any) -> Bool {
-        // Convert actualValue to AnyJSON for robust comparisons
-        let actualJSON = AnyJSON.fromFoundation(actualValue) ?? .null
-
-        if let values = claimQuery.values, !values.isEmpty {
-            if !values.contains(actualJSON) { return false }
-        }
-
-        if let v = claimQuery.value {
-            if actualJSON != v { return false }
-        }
-
-        if let min = claimQuery.min, !checkMinCondition(actualValue: actualJSON, minValue: min) {
-            return false
-        }
-        if let max = claimQuery.max, !checkMaxCondition(actualValue: actualJSON, maxValue: max) {
-            return false
-        }
-
-        return true
-    }
-
-    private static func checkMinCondition(actualValue: AnyJSON, minValue: AnyJSON) -> Bool {
-        switch (actualValue, minValue) {
-        case (.number(let a), .number(let m)):
-            return a >= m
-        case (.string(let a), .string(let m)):
-            return a.compare(m) != .orderedAscending
-        default:
-            return true
-        }
-    }
-
-    private static func checkMaxCondition(actualValue: AnyJSON, maxValue: AnyJSON) -> Bool {
-        switch (actualValue, maxValue) {
-        case (.number(let a), .number(let m)):
-            return a <= m
-        case (.string(let a), .string(let m)):
-            return a.compare(m) != .orderedDescending
-        default:
-            return true
-        }
-    }
-
-    private static func isReservedJWTClaim(_ claimName: String) -> Bool {
-        let reserved: Set<String> = ["iss","sub","aud","exp","nbf","iat","jti","_sd_alg","_sd","cnf","vct"]
-        return reserved.contains(claimName)
     }
 
     // MARK: - Format-agnostic matching (adapter-based)
@@ -445,11 +198,18 @@ public enum DCQLCredentialMatcher {
         }
         guard let adapter = registry.findAdapter(query.format ?? credential.format) else { return nil }
 
-        // claim_sets (OR of alternative sets; first fully-satisfiable set wins)
+        // claim_sets (OID4VP 1.0 §6.4): each option is an array of claim ids referencing
+        // `claims[].id`. The options are alternatives (OR); the first option whose every referenced
+        // claim is satisfiable wins.
         if let claimSets = query.claimSets, !claimSets.isEmpty {
-            for set in claimSets {
-                guard let setClaims = set.claims, !setClaims.isEmpty else { continue }
-                if let matched = matchAllClaims(setClaims, adapter: adapter, credential: credential) {
+            let claimsById: [String: DCQLQuery.ClaimQuery] = (query.claims ?? []).reduce(into: [:]) { acc, claim in
+                if let id = claim.id { acc[id] = claim }
+            }
+            for option in claimSets {
+                // Resolve every id in the option; skip the option if any id is undefined.
+                let resolved = option.compactMap { claimsById[$0] }
+                guard resolved.count == option.count, !resolved.isEmpty else { continue }
+                if let matched = matchAllClaims(resolved, adapter: adapter, credential: credential) {
                     return matched
                 }
             }
@@ -495,20 +255,6 @@ public enum DCQLCredentialMatcher {
             infos[id] = claimInfos
         }
         return infos
-    }
-
-    /// Adapter-based claim-name extraction across all credential queries for one credential.
-    public static func extractMatchingClaimNames(dcqlQuery: DCQLQuery?,
-                                                 credential: ParsedCredential?) -> Set<String> {
-        guard let creds = dcqlQuery?.credentials, let credential = credential else { return [] }
-        var matching: Set<String> = []
-        for query in creds {
-            if let names = eligibleClaimNames(query: query, credential: credential) {
-                if names.isEmpty { matching.formUnion(credential.allClaims.keys) }
-                else { matching.formUnion(names) }
-            }
-        }
-        return matching
     }
 
     /// Validates that presented credential ids satisfy at least one option of each required

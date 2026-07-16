@@ -34,7 +34,7 @@ final class OID4VPTests: XCTestCase {
           "credentials": [
             {
               "id": "\(queryID)",
-              "format": "dc+sd-jwt",
+              "format": "dc+sd-jwt-did",
               "meta": { "credential_schema_id_values": ["\(schemaID)"] }
             }
           ]
@@ -58,7 +58,7 @@ final class OID4VPTests: XCTestCase {
             "credentials": [
               {
                 "id": "student_id",
-                "format": "dc+sd-jwt",
+                "format": "dc+sd-jwt-did",
                 "meta": { "credential_schema_id_values": ["\(schemaID)"] }
               }
             ]
@@ -133,7 +133,7 @@ final class OID4VPTests: XCTestCase {
           "credentials": [
             {
               "id": "student_id",
-              "format": "dc+sd-jwt",
+              "format": "dc+sd-jwt-did",
               "meta": { "credential_schema_id_values": ["\(schemaID)"] },
               "claims": \(claimsJSON)
             }
@@ -177,6 +177,24 @@ final class OID4VPTests: XCTestCase {
                       "a credential whose claim value fails the condition must be excluded")
     }
 
+    func testGetMatchedMetadata_minConditionTypeMismatchExcludes() throws {
+        // family_name is a string ("김"); a numeric `min` bound is incomparable. An unsatisfiable
+        // constraint must exclude the credential, not silently match (regression: default was true).
+        let vc = try makeCredential()
+        let query = try dcqlQueryWithClaims(
+            claimsJSON: #"[ { "path": ["org.iso.18013.5.family_name"], "min": 18 } ]"#,
+            schemaID: matchingSchemaID
+        )
+
+        let infos = DCQLCredentialMatcher.getMatchedMetadata(
+            credentials: [vc],
+            queries: query.credentials!
+        )
+
+        XCTAssertTrue(infos.isEmpty,
+                      "a numeric min against a string claim must exclude the credential")
+    }
+
     // MARK: - Multi-format (SD-JWT adapter + DCQL advanced) matching
 
     private func b64url(_ s: String) -> String {
@@ -189,11 +207,17 @@ final class OID4VPTests: XCTestCase {
     /// Builds a parseable (unsigned) SD-JWT compact string for matching tests.
     private func makeSDJWT(vct: String, iss: String,
                            disclosures: [(salt: String, name: String, value: String)]) -> String {
-        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt"}"#)
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
         let payload = b64url("{\"vct\":\"\(vct)\",\"iss\":\"\(iss)\",\"_sd_alg\":\"sha-256\"}")
         let jwt = "\(header).\(payload).sig"
         let discs = disclosures.map { b64url("[\"\($0.salt)\",\"\($0.name)\",\"\($0.value)\"]") }
         return ([jwt] + discs).joined(separator: "~")
+    }
+
+    /// Wraps a raw SD-JWT compact string into the wallet item type the SD-JWT matching overload takes.
+    private func makeSdJwtItem(id: String, rawSdJwt: String) -> SdJwtCredentialItem {
+        SdJwtCredentialItem(id: id, format: .sdJwtVc, configurationId: "", kid: "bio",
+                            credentialIdentifier: nil, sdjwt: SDJWT.parse(raw: rawSdJwt))
     }
 
     private func authRequest(dcqlCredentialsJSON: String, clientId: String = "verifier") throws -> AuthorizationRequest {
@@ -215,13 +239,13 @@ final class OID4VPTests: XCTestCase {
         let sdjwt = makeSDJWT(vct: vct, iss: "https://issuer.example",
                               disclosures: [("s1", "family_name", "Kim"), ("s2", "given_name", "Raon")])
         let creds = """
-        [ { "id": "id_card", "format": "dc+sd-jwt",
+        [ { "id": "id_card", "format": "dc+sd-jwt-did",
             "meta": { "vct_values": ["\(vct)"] },
             "claims": [ { "path": ["family_name"] } ] } ]
         """
         let infos = try OID4VPProtocol.findEligibleSubmittables(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
-            rawCredentials: [(id: "cred-1", raw: sdjwt, format: "dc+sd-jwt")]
+            sdJwtCredentials: [makeSdJwtItem(id: "cred-1", rawSdJwt: sdjwt)]
         )
         let cis = try XCTUnwrap(infos["id_card"])
         XCTAssertEqual(cis.first?.credentialId, "cred-1")
@@ -231,25 +255,24 @@ final class OID4VPTests: XCTestCase {
     func testSDJWT_vctMismatchExcluded() throws {
         let sdjwt = makeSDJWT(vct: "https://credentials.example/identity", iss: "https://issuer.example",
                               disclosures: [("s1", "family_name", "Kim")])
-        let creds = #"[ { "id": "id_card", "format": "dc+sd-jwt", "meta": { "vct_values": ["https://other/vct"] } } ]"#
+        let creds = #"[ { "id": "id_card", "format": "dc+sd-jwt-did", "meta": { "vct_values": ["https://other/vct"] } } ]"#
         XCTAssertThrowsError(try OID4VPProtocol.findEligibleSubmittables(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
-            rawCredentials: [(id: "c1", raw: sdjwt, format: "dc+sd-jwt")]
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
             guard case OID4VPError.noEligibleCredentials = error else { return XCTFail("got \(error)") }
         }
     }
 
-    func testParsedCredentials_opendidVc() throws {
+    func testOpendidVc_credentialsOverload() throws {
         let vc = try makeCredential()
-        let parsed = VerifiableCredentialAdapter.from(vc)
         let creds = """
         [ { "id": "student_id", "format": "opendid_vc",
             "meta": { "credential_schema_id_values": ["\(matchingSchemaID)"] } } ]
         """
         let infos = try OID4VPProtocol.findEligibleSubmittables(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
-            parsedCredentials: [(id: vc.id, credential: parsed)]
+            credentials: [vc]
         )
         XCTAssertEqual(infos["student_id"]?.first?.credentialId, vc.id)
     }
@@ -259,44 +282,115 @@ final class OID4VPTests: XCTestCase {
         let sdjwt = makeSDJWT(vct: "v", iss: iss, disclosures: [("s", "family_name", "Kim")])
 
         let okCreds = """
-        [ { "id": "q", "format": "dc+sd-jwt",
+        [ { "id": "q", "format": "dc+sd-jwt-did",
             "trusted_authorities": [ { "type": "x509_san_dns", "values": ["\(iss)"] } ] } ]
         """
         let infos = try OID4VPProtocol.findEligibleSubmittables(
             authRequest: try authRequest(dcqlCredentialsJSON: okCreds),
-            rawCredentials: [(id: "c1", raw: sdjwt, format: "dc+sd-jwt")]
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )
         XCTAssertNotNil(infos["q"], "matching trusted authority should be eligible")
 
         let badCreds = """
-        [ { "id": "q", "format": "dc+sd-jwt",
+        [ { "id": "q", "format": "dc+sd-jwt-did",
             "trusted_authorities": [ { "type": "x509_san_dns", "values": ["https://evil.example"] } ] } ]
         """
         XCTAssertThrowsError(try OID4VPProtocol.findEligibleSubmittables(
             authRequest: try authRequest(dcqlCredentialsJSON: badCreds),
-            rawCredentials: [(id: "c1", raw: sdjwt, format: "dc+sd-jwt")]
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
             guard case OID4VPError.noEligibleCredentials = error else { return XCTFail("got \(error)") }
         }
     }
 
     func testSDJWT_claimSets_firstSatisfiableWins() throws {
-        // SDK models claim_sets as an array of {claims:[...]} objects (not spec id-arrays).
-        // First set requires 'phone' (absent) → second set requires 'family_name' (present).
+        // Spec form (OID4VP 1.0 §6.4): claim_sets is an array of arrays of claim ids.
+        // First option ["ph"] requires 'phone' (absent) → second ["fn"] requires 'family_name' (present).
         let vct = "https://credentials.example/identity"
         let sdjwt = makeSDJWT(vct: vct, iss: "https://issuer.example",
                               disclosures: [("s1", "family_name", "Kim"), ("s2", "email", "a@b.c")])
         let creds = """
-        [ { "id": "q", "format": "dc+sd-jwt", "meta": { "vct_values": ["\(vct)"] },
+        [ { "id": "q", "format": "dc+sd-jwt-did", "meta": { "vct_values": ["\(vct)"] },
             "claims": [ { "id": "fn", "path": ["family_name"] }, { "id": "ph", "path": ["phone"] } ],
-            "claim_sets": [ { "claims": [ { "path": ["phone"] } ] },
-                            { "claims": [ { "path": ["family_name"] } ] } ] } ]
+            "claim_sets": [ ["ph"], ["fn"] ] } ]
         """
         let infos = try OID4VPProtocol.findEligibleSubmittables(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
-            rawCredentials: [(id: "c1", raw: sdjwt, format: "dc+sd-jwt")]
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )
         XCTAssertEqual(infos["q"]?.first?.claimCodes, ["family_name"])
+    }
+
+    // MARK: - credential_sets satisfaction gate
+
+    /// Builds an SD-JWT matching-request whose `dcql_query` carries both `credentials` and the given
+    /// raw `credential_sets` JSON.
+    private func authRequest(credentialsJSON: String, credentialSetsJSON: String) throws -> AuthorizationRequest {
+        let json = """
+        {
+          "response_uri": "https://verifier.example/response",
+          "nonce": "test-nonce", "state": "test-state",
+          "client_id": "verifier",
+          "response_type": "vp_token", "response_mode": "direct_post",
+          "client_metadata": {}, "iat": 1700000000,
+          "dcql_query": { "credentials": \(credentialsJSON), "credential_sets": \(credentialSetsJSON) }
+        }
+        """
+        return try AuthorizationRequest(from: json)
+    }
+
+    func testCredentialSets_requiredOptionSatisfied_passes() throws {
+        let sdjwt = makeSDJWT(vct: "https://vct.a", iss: "https://issuer.example",
+                              disclosures: [("s", "family_name", "Kim")])
+        let request = try authRequest(
+            credentialsJSON: #"[ { "id": "q1", "format": "dc+sd-jwt-did" } ]"#,
+            credentialSetsJSON: #"[ { "options": [["q1"]] } ]"#
+        )
+        let infos = try OID4VPProtocol.findEligibleSubmittables(
+            authRequest: request,
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
+        )
+        XCTAssertNotNil(infos["q1"], "a required credential_set whose option matches must pass")
+    }
+
+    func testCredentialSets_requiredUnsatisfied_throws() throws {
+        // q1 matches (no constraints); q2 requires a mismatching vct, so it cannot match. A required
+        // set that needs q2 has no satisfiable option → throw.
+        let sdjwt = makeSDJWT(vct: "https://vct.a", iss: "https://issuer.example",
+                              disclosures: [("s", "family_name", "Kim")])
+        let request = try authRequest(
+            credentialsJSON: """
+            [ { "id": "q1", "format": "dc+sd-jwt-did" },
+              { "id": "q2", "format": "dc+sd-jwt-did", "meta": { "vct_values": ["https://vct.b"] } } ]
+            """,
+            credentialSetsJSON: #"[ { "options": [["q2"]] } ]"#
+        )
+        XCTAssertThrowsError(try OID4VPProtocol.findEligibleSubmittables(
+            authRequest: request,
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
+        )) { error in
+            guard case OID4VPError.credentialSetsNotSatisfied = error else {
+                return XCTFail("expected credentialSetsNotSatisfied, got \(error)")
+            }
+        }
+    }
+
+    func testCredentialSets_optionalUnsatisfied_doesNotThrow() throws {
+        // An optional (required:false) set that cannot be satisfied must not gate matching.
+        let sdjwt = makeSDJWT(vct: "https://vct.a", iss: "https://issuer.example",
+                              disclosures: [("s", "family_name", "Kim")])
+        let request = try authRequest(
+            credentialsJSON: """
+            [ { "id": "q1", "format": "dc+sd-jwt-did" },
+              { "id": "q2", "format": "dc+sd-jwt-did", "meta": { "vct_values": ["https://vct.b"] } } ]
+            """,
+            credentialSetsJSON: #"[ { "options": [["q2"]], "required": false } ]"#
+        )
+        let infos = try OID4VPProtocol.findEligibleSubmittables(
+            authRequest: request,
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
+        )
+        XCTAssertNotNil(infos["q1"], "an unsatisfiable optional set must not block eligible matches")
     }
 
     // MARK: - direct_post.jwt response encryption
@@ -411,5 +505,63 @@ final class OID4VPTests: XCTestCase {
                 return XCTFail("expected missingVerifierEncryptionKey, got \(error)")
             }
         }
+    }
+}
+
+/// DCQL grammar validation (OID4VP 1.0 §6). Feeds invalid queries and asserts they are rejected.
+final class DCQLQueryValidatorTests: XCTestCase {
+
+    private func validate(_ json: String) throws -> DCQLQueryValidator.ValidationResult {
+        DCQLQueryValidator.validate(try DCQLQuery(from: json))
+    }
+
+    func testValidQueryPasses() throws {
+        let r = try validate(#"{ "credentials": [ { "id": "q1", "format": "dc+sd-jwt-did", "meta": { "vct_values": ["v"] } } ] }"#)
+        XCTAssertTrue(r.isValid(), "unexpected errors: \(r.errors)")
+    }
+
+    func testEmptyCredentialsRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [] }"#).isValid())
+    }
+
+    func testDuplicateCredentialIdRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did" }, { "id": "q", "format": "dc+sd-jwt-did" } ] }"#).isValid())
+    }
+
+    func testMissingFormatRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q" } ] }"#).isValid())
+    }
+
+    func testNegativePathIndexRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "path": [-1] } ] } ] }"#).isValid())
+    }
+
+    func testEmptyValuesRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "path": ["x"], "values": [] } ] } ] }"#).isValid())
+    }
+
+    func testClaimSetsWithoutClaimsRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "claim_sets": [["a"]] } ] }"#).isValid())
+    }
+
+    func testClaimSetsUndefinedIdRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "id": "a", "path": ["x"] } ], "claim_sets": [["b"]] } ] }"#).isValid())
+    }
+
+    func testClaimSetsRequireClaimIds() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "path": ["x"] } ], "claim_sets": [["a"]] } ] }"#).isValid())
+    }
+
+    func testTrustedAuthorityMissingValuesRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "trusted_authorities": [ { "type": "aki" } ] } ] }"#).isValid())
+    }
+
+    func testCredentialSetUndefinedReferenceRejected() throws {
+        XCTAssertFalse(try validate(#"{ "credentials": [ { "id": "q1", "format": "dc+sd-jwt-did" } ], "credential_sets": [ { "options": [["q2"]] } ] }"#).isValid())
+    }
+
+    func testValidClaimSetsPasses() throws {
+        let r = try validate(#"{ "credentials": [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "id": "a", "path": ["x"] } ], "claim_sets": [["a"]] } ] }"#)
+        XCTAssertTrue(r.isValid(), "unexpected errors: \(r.errors)")
     }
 }

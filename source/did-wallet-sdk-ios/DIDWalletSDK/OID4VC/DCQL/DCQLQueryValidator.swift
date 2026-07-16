@@ -93,15 +93,23 @@ public enum DCQLQueryValidator {
         if let id = credential.id { validateCredentialId(id, context, &result) }
         if let format = credential.format { validateFormat(format, context, &result) }
 
+        // Per OID4VP 1.0 §6.4: when claim_sets is present, every claims entry MUST have a unique id.
+        let claimSetsPresent = credential.claimSets != nil
+
         if let claims = credential.claims {
-            validateClaims(claims, context, &result)
+            validateClaims(claims, context, requireIds: claimSetsPresent, &result)
         }
 
         if let claimSets = credential.claimSets {
-            validateCredentialClaimSets(claimSets, context, &result)
-            if credential.claims != nil {
-                result.addWarning("\(context) has both 'claims' and 'claim_sets' - claim_sets takes precedence")
+            // claim_sets MUST NOT be present unless claims is present.
+            if credential.claims == nil {
+                result.addError("\(context).claim_sets requires 'claims' to be present")
             }
+            validateCredentialClaimSets(claimSets, claims: credential.claims ?? [], context, &result)
+        }
+
+        if let trustedAuthorities = credential.trustedAuthorities {
+            validateTrustedAuthorities(trustedAuthorities, context, &result)
         }
 
         if let meta = credential.meta {
@@ -109,7 +117,8 @@ public enum DCQLQueryValidator {
         }
     }
 
-    private static func validateClaims(_ claims: [DCQLQuery.ClaimQuery], _ context: String, _ result: inout ValidationResult) {
+    private static func validateClaims(_ claims: [DCQLQuery.ClaimQuery], _ context: String, requireIds: Bool, _ result: inout ValidationResult) {
+        var seenIds: Set<String> = []
         for (i, claim) in claims.enumerated() {
             let claimContext = "\(context).claims[\(i)]"
 
@@ -122,6 +131,20 @@ public enum DCQLQueryValidator {
 
             if let values = claim.values {
                 validateValues(values, "\(claimContext).values", &result)
+            }
+
+            // Per OID4VP 1.0 §6.4: with claim_sets, each claims entry needs a unique, well-formed id.
+            if requireIds {
+                guard let id = claim.id, !id.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                    result.addError("\(claimContext).id is required when 'claim_sets' is present")
+                    continue
+                }
+                if id.range(of: "^[a-zA-Z0-9_-]+$", options: .regularExpression) == nil {
+                    result.addError("\(claimContext).id must contain only alphanumeric characters, underscores, and hyphens")
+                }
+                if !seenIds.insert(id).inserted {
+                    result.addError("\(claimContext).id '\(id)' is duplicated within 'claims'")
+                }
             }
         }
     }
@@ -139,15 +162,19 @@ public enum DCQLQueryValidator {
                 if s.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     result.addError("\(context)[\(i)] cannot be empty string")
                 }
-            case .index:
-                continue
+            case .index(let idx):
+                // Per OID4VP 1.0 §7.1: an array index path element is a non-negative integer.
+                if idx < 0 {
+                    result.addError("\(context)[\(i)] array index must be non-negative")
+                }
             }
         }
     }
 
     private static func validateValues(_ values: [AnyJSON], _ context: String, _ result: inout ValidationResult) {
         if values.isEmpty {
-            result.addWarning("\(context) is empty - no value restrictions will be applied")
+            // Per OID4VP 1.0 §6.3: `values`, when present, MUST be a non-empty array.
+            result.addError("\(context) must not be empty")
             return
         }
 
@@ -229,7 +256,7 @@ public enum DCQLQueryValidator {
     }
 
     private static func validateFormat(_ format: String, _ context: String, _ result: inout ValidationResult) {
-        let supported: Set<String> = ["dc+sd-jwt-did","vc+sd-jwt","sd-jwt","jwt_vc_json","jwt_vc","ldp_vc"]
+        let supported: Set<String> = ["dc+sd-jwt-did","opendid_vc","vc+sd-jwt","sd-jwt","jwt_vc_json","jwt_vc","ldp_vc"]
         if !supported.contains(format) {
             result.addWarning("\(context).format '\(format)' may not be supported")
         }
@@ -248,13 +275,48 @@ public enum DCQLQueryValidator {
         }
     }
 
-    private static func validateCredentialClaimSets(_ claimSets: [DCQLQuery.ClaimSet], _ context: String, _ result: inout ValidationResult) {
+    /// Per OID4VP 1.0 §6.4: `claim_sets` is a non-empty array of non-empty options, each an array of
+    /// claim `id`s that MUST reference an entry in the credential query's `claims`.
+    private static func validateCredentialClaimSets(_ claimSets: [[String]],
+                                                    claims: [DCQLQuery.ClaimQuery],
+                                                    _ context: String,
+                                                    _ result: inout ValidationResult) {
         if claimSets.isEmpty {
             result.addError("\(context).claim_sets cannot be empty")
+            return
         }
-        for (i, cs) in claimSets.enumerated() {
-            if cs.claims == nil || cs.claims?.isEmpty == true {
-                result.addError("\(context).claim_sets[\(i)].claims cannot be null or empty")
+        let definedIds = Set(claims.compactMap { $0.id })
+        for (i, option) in claimSets.enumerated() {
+            let optionContext = "\(context).claim_sets[\(i)]"
+            if option.isEmpty {
+                result.addError("\(optionContext) cannot be empty")
+                continue
+            }
+            for id in option where !definedIds.contains(id) {
+                result.addError("\(optionContext) references undefined claim id: \(id)")
+            }
+        }
+    }
+
+    /// Per OID4VP 1.0 §6.1.1: each trusted authority needs a `type` and a non-empty `values` array.
+    /// The `type` registry is extensible, so an unrecognized value is a warning, not a hard error.
+    private static func validateTrustedAuthorities(_ authorities: [DCQLQuery.TrustedAuthority],
+                                                   _ context: String,
+                                                   _ result: inout ValidationResult) {
+        if authorities.isEmpty {
+            result.addError("\(context).trusted_authorities cannot be empty")
+            return
+        }
+        for (i, authority) in authorities.enumerated() {
+            let taContext = "\(context).trusted_authorities[\(i)]"
+            if (authority.type?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
+                result.addError("\(taContext).type is required")
+            } else if let type = authority.type,
+                      !["aki", "etsi_tl", "openid_federation"].contains(type) {
+                result.addWarning("\(taContext).type '\(type)' is not a spec-registered value")
+            }
+            if (authority.values?.isEmpty ?? true) {
+                result.addError("\(taContext).values is required and cannot be empty")
             }
         }
     }

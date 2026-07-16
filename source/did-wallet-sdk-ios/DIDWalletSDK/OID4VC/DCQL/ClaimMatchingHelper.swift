@@ -133,7 +133,9 @@ public enum ClaimMatchingHelper {
         switch (actualValue, minValue) {
         case (.number(let a), .number(let m)): return a >= m
         case (.string(let a), .string(let m)): return a.compare(m) != .orderedAscending
-        default: return true
+        // A `min` bound was requested but the actual value is not comparable to it (wrong/missing
+        // type). An unsatisfiable constraint must exclude the credential, not silently match.
+        default: return false
         }
     }
 
@@ -141,7 +143,9 @@ public enum ClaimMatchingHelper {
         switch (actualValue, maxValue) {
         case (.number(let a), .number(let m)): return a <= m
         case (.string(let a), .string(let m)): return a.compare(m) != .orderedDescending
-        default: return true
+        // A `max` bound was requested but the actual value is not comparable to it (wrong/missing
+        // type). An unsatisfiable constraint must exclude the credential, not silently match.
+        default: return false
         }
     }
 }

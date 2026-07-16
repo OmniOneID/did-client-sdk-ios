@@ -19,16 +19,10 @@ import Foundation
 
 
 /// Manages OID4VCI-issued credentials (SD-JWT, mdoc, …) stored in the wallet.
-///
-/// The OID4VC counterpart to `VCManager`: where `VCManager` stores W3C `VerifiableCredential` VOs,
-/// this stores format-specific `IssuedCredential`s keyed by their `id`, in their own encrypted file
-/// (`oid4vc_credential.vc`) so they never collide with the W3C VC wallet (`vc.vc`).
+
 struct OID4VCManager
 {
     typealias C = WalletCoreCommonError
-
-    /// Default wallet file name for OID4VCI-issued credentials.
-    static let defaultFileName = "oid4vc_credential"
 
     var storageManager: StorageManager<IssuedCredentialMeta, OID4VCICredential>
 
@@ -39,12 +33,12 @@ struct OID4VCManager
 
     /// Creates an instance of OID4VCManager to manage the issued-credential wallet.
     /// - Parameter fileName: Name of the wallet file to store the credentials.
-    public init(fileName: String = OID4VCManager.defaultFileName) throws {
+    public init(fileName: String) throws {
         if fileName.isEmpty {
             throw C.invalidParameter(code: .oid4vcManager, name: "fileName").getError()
         }
 
-        storageManager = try .init(fileName: fileName, fileExtension: .vc, isEncrypted: true)
+        storageManager = try .init(fileName: fileName, fileExtension: .oid4vc, isEncrypted: true)
     }
 
     /// Stores an issued credential in the wallet.

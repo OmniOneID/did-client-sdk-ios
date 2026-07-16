@@ -31,10 +31,11 @@ public struct DCQLQuery: Jsonable, FromSnake
         public var format: String?
         public var meta: [String: AnyJSON]?
         public var claims: [ClaimQuery]?
-        /// Per OID4VP spec: claim_sets is an array of arrays of claim query IDs.
-        /// Each inner array references claim IDs defined in the 'claims' array.
-        /// Example: [["a", "b"], ["a", "b", "c"]]
-        public var claimSets: [ClaimSet]?
+        /// Per OID4VP 1.0 §6.4: `claim_sets` is an array of arrays of claim query `id`s. Each inner
+        /// array is one acceptable option; the Wallet uses the first option all of whose claim ids
+        /// resolve to satisfiable `claims` entries. Every id references a `claims[].id`. Example:
+        /// `[["a", "b"], ["a", "c"]]`.
+        public var claimSets: [[String]]?
         public var trustedAuthorities: [TrustedAuthority]?
         public var purpose: String?
         /// If true, the Wallet MAY return multiple credentials for this query.
@@ -73,18 +74,6 @@ public struct DCQLQuery: Jsonable, FromSnake
         public var values: [String]?
     }
 
-    public struct ClaimSet: Jsonable, FromSnake {
-        public var id: String?
-        public var claims: [ClaimQuery]?
-        public var purpose: String?
-
-        public init(id: String? = nil, claims: [ClaimQuery]? = nil, purpose: String? = nil) {
-            self.id = id
-            self.claims = claims
-            self.purpose = purpose
-        }
-    }
-    
     public struct CredentialSet: Jsonable, FromSnake {
         public var id: String?
         public var options: [[String]]?

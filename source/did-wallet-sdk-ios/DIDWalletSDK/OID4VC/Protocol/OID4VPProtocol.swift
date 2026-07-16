@@ -19,9 +19,6 @@ import Foundation
 
 public struct OID4VPProtocol
 {
-    static let schemaIdValues : String = "credential_schema_id_values"
-    static let vctValus       : String = "vct_values"
-    
     public static func getAuthorizationRequest(uri : String) async throws -> AuthorizationRequest
     {
         guard
@@ -56,87 +53,136 @@ public struct OID4VPProtocol
 
 extension OID4VPProtocol
 {
-    /// Finds which stored credentials satisfy the presentation request's DCQL query.
+    /// Finds which stored credentials satisfy the presentation request's DCQL query — the app-facing
+    /// entry point.
     ///
-    /// The credentials are supplied by the caller (e.g. `WalletAPI.getAllCredentials`); this layer
-    /// is stateless and holds no wallet token. The returned map keys are DCQL query ids and the
-    /// values are `ClaimInfo` lists ready to pass to `WalletAPI.createVp`. VP creation and
-    /// submission to the verifier are the caller's responsibility.
+    /// The SDK reads the request's credential `format` (from `dcql_query.credentials[]`) and gathers
+    /// the matching wallet store itself — W3C via `WalletAPI.getAllCredentials`, SD-JWT via
+    /// `WalletAPI.getAllOID4VCs` — so the caller only supplies a wallet token, not the credentials.
+    /// A request is assumed to target a single format (W3C and SD-JWT are not mixed); a missing or
+    /// mixed format throws. Internally it dispatches to the format-specific overloads below.
     /// - Parameters:
+    ///   - hWalletToken: Wallet access token used to read the stored credentials.
     ///   - authRequest: The parsed authorization request (from `getAuthorizationRequest`).
-    ///   - credentials: The holder's stored credentials.
-    /// - Returns: Map of DCQL query id -> matched `ClaimInfo` list.
-    /// - Throws: `OID4VPError.invalidDCQLQuery` if the query is invalid,
-    ///           `OID4VPError.noEligibleCredentials` if nothing matches.
+    /// - Returns: Map of DCQL query id -> matched `ClaimInfo` list, ready to pass to `createVpToken`.
+    /// - Throws: `unsupportedPresentationFormat` (missing/mixed/unknown format), `invalidDCQLQuery`,
+    ///           `noEligibleCredentials`, `credentialSetsNotSatisfied`.
+    public static func findEligibleSubmittables(
+        hWalletToken: String,
+        authRequest: AuthorizationRequest
+    ) throws -> [ClientID: [ClaimInfo]]
+    {
+        let formats = Set((authRequest.dcqlQuery.credentials ?? []).compactMap { $0.format })
+        guard formats.count == 1, let format = formats.first
+        else
+        {
+            throw OID4VPError.unsupportedPresentationFormat(
+                formats.isEmpty
+                    ? "no credential format in DCQL query"
+                    : "mixed credential formats are not supported: \(formats.sorted().joined(separator: ", "))"
+            )
+        }
+
+        if format == VerifiableCredentialAdapter.format
+        {
+            let vcs = try WalletAPI.shared.getAllCredentials(hWalletToken: hWalletToken) ?? []
+            return try findEligibleSubmittables(authRequest: authRequest, credentials: vcs)
+        }
+        else if SDJWTPresenter.supportedFormats.contains(format)
+        {
+            let items = try WalletAPI.shared.getAllOID4VCs(hWalletToken: hWalletToken)
+            return try findEligibleSubmittables(authRequest: authRequest, sdJwtCredentials: items)
+        }
+        else
+        {
+            throw OID4VPError.unsupportedPresentationFormat(format)
+        }
+    }
+
+    /// Format-specific overload for W3C (`opendid_vc`) credentials, matched by DCQL `meta`
+    /// (credential schema id) + claim queries. The unified `hWalletToken` entry point dispatches here
+    /// after reading the W3C wallet; a caller holding its own credentials may use it directly.
     public static func findEligibleSubmittables(
         authRequest: AuthorizationRequest,
         credentials: [VerifiableCredential]
     ) throws -> [ClientID: [ClaimInfo]]
     {
-        let validation = DCQLQueryValidator.validate(authRequest.dcqlQuery)
-        if !validation.isValid()
-        {
-            throw OID4VPError.invalidDCQLQuery(validation.errors.joined(separator: "; "))
-        }
-
-        guard let queries = authRequest.dcqlQuery.credentials
-        else
-        {
-            throw OID4VPError.invalidDCQLQuery("missing 'credentials' in DCQL query")
-        }
-
+        let queries = try validatedQueries(authRequest)
         let infos = DCQLCredentialMatcher.getMatchedMetadata(credentials: credentials, queries: queries)
-
-        if infos.isEmpty
-        {
-            throw OID4VPError.noEligibleCredentials
-        }
-
-        return infos
+        return try finalize(infos, authRequest: authRequest)
     }
 
-    /// Multi-format variant: matches caller-supplied credentials (already parsed to
-    /// `ParsedCredential` via `DCQLCredentialMatcher.parseCredential` or adapter `from`) against the
-    /// request's DCQL query (format + meta + trusted_authorities + claims/claim_sets). Each entry's
-    /// `id` is echoed back as `ClaimInfo.credentialId`. `claimCodes` empty = disclose all claims.
+    /// Format-specific overload for SD-JWT (`dc+sd-jwt-did`) credentials. Each item's `sdjwt` is
+    /// parsed via the SD-JWT adapter and matched against the DCQL query (format + meta +
+    /// trusted_authorities + claims/claim_sets). The unified `hWalletToken` entry point dispatches
+    /// here after reading the SD-JWT wallet; a caller holding its own credentials may use it directly.
     public static func findEligibleSubmittables(
         authRequest: AuthorizationRequest,
-        parsedCredentials: [(id: String, credential: ParsedCredential)]
+        sdJwtCredentials: [SdJwtCredentialItem]
     ) throws -> [ClientID: [ClaimInfo]]
+    {
+        let queries = try validatedQueries(authRequest)
+        let adapter = SDJWTCredentialAdapter()
+        let parsed: [(id: String, credential: ParsedCredential)] = try sdJwtCredentials.map {
+            (id: $0.id, credential: try adapter.parse($0.sdjwt.toString()))
+        }
+        let infos = DCQLCredentialMatcher.getMatchedSubmittables(parsedCredentials: parsed, queries: queries)
+        return try finalize(infos, authRequest: authRequest)
+    }
+
+    // MARK: - Shared matching scaffolding
+
+    /// Validates the request's DCQL query and returns its credential queries.
+    private static func validatedQueries(
+        _ authRequest: AuthorizationRequest
+    ) throws -> [DCQLQuery.CredentialQuery]
     {
         let validation = DCQLQueryValidator.validate(authRequest.dcqlQuery)
         if !validation.isValid()
         {
             throw OID4VPError.invalidDCQLQuery(validation.errors.joined(separator: "; "))
         }
-
         guard let queries = authRequest.dcqlQuery.credentials
         else
         {
             throw OID4VPError.invalidDCQLQuery("missing 'credentials' in DCQL query")
         }
+        return queries
+    }
 
-        let infos = DCQLCredentialMatcher.getMatchedSubmittables(parsedCredentials: parsedCredentials,
-                                                                 queries: queries)
+    /// Common tail for every matching overload: rejects an empty match set and enforces the
+    /// request's `credential_sets` before returning.
+    private static func finalize(
+        _ infos: [ClientID: [ClaimInfo]],
+        authRequest: AuthorizationRequest
+    ) throws -> [ClientID: [ClaimInfo]]
+    {
         if infos.isEmpty
         {
             throw OID4VPError.noEligibleCredentials
         }
+        try requireCredentialSetsSatisfied(authRequest.dcqlQuery, satisfiedQueryIds: Set(infos.keys))
         return infos
     }
 
-    /// Convenience over the `ParsedCredential` variant: parses raw multi-format credentials
-    /// (SD-JWT compact, opendid_vc JSON, …) via the adapter registry, then matches.
-    public static func findEligibleSubmittables(
-        authRequest: AuthorizationRequest,
-        rawCredentials: [(id: String, raw: String, format: String?)]
-    ) throws -> [ClientID: [ClaimInfo]]
+    /// Gates matching on the request's `credential_sets`: every required set must have at least one
+    /// option whose credential query ids are all among `satisfiedQueryIds` (the ids that matched).
+    /// This operates purely on DCQL credential query ids, so it is credential-format-agnostic.
+    /// No-op when the request has no `credential_sets`.
+    /// - Throws: `OID4VPError.credentialSetsNotSatisfied` if a required set has no satisfiable option.
+    private static func requireCredentialSetsSatisfied(
+        _ dcqlQuery: DCQLQuery,
+        satisfiedQueryIds: Set<String>
+    ) throws
     {
-        let parsed: [(id: String, credential: ParsedCredential)] = try rawCredentials.map {
-            (id: $0.id,
-             credential: try DCQLCredentialMatcher.parseCredential(rawCredential: $0.raw, format: $0.format))
+        let errors = DCQLCredentialMatcher.validateCredentialSetsSatisfied(
+            credentialSets: dcqlQuery.credentialSets,
+            presentedCredentialIds: satisfiedQueryIds
+        )
+        if !errors.isEmpty
+        {
+            throw OID4VPError.credentialSetsNotSatisfied(errors.joined(separator: "; "))
         }
-        return try findEligibleSubmittables(authRequest: authRequest, parsedCredentials: parsed)
     }
 
 }
@@ -145,56 +191,65 @@ extension OID4VPProtocol
 {
     /// Builds the `vp_token` map (DCQL query id -> presentation strings) from matched submittables.
     ///
-    /// Raw credentials are fetched from `OID4VCManager` by `ClaimInfo.credentialId`; each
-    /// entry's `claimCodes` are the claims the holder agreed to disclose (empty = disclose all).
-    /// SD-JWT is supported now; mdoc (`mso_mdoc`) is deferred (Phase 2) and throws
-    /// `unsupportedPresentationFormat`. The result is ready to pass to `submitVpToken`.
+    /// Each DCQL query id is presented by the `CredentialPresenter` for that query's
+    /// `dcql_query.credentials[].format` (SD-JWT and W3C `opendid_vc` in Phase 1; mdoc deferred to
+    /// Phase 2 and throws `unsupportedPresentationFormat`). Both presenters reach the wallet through
+    /// `WalletAPI` (hence `hWalletToken`): SD-JWT fetches via `WalletAPI.getOID4VCs` and signs a
+    /// key-binding JWT, while W3C builds the VP via `WalletAPI.createVp`. `claimInfos.claimCodes` are
+    /// the claims the holder agreed to disclose (empty = disclose all). The result is ready to pass
+    /// to `submitVpToken`.
     /// - Parameters:
+    ///   - hWalletToken: Wallet access token; both presenters need it to reach the wallet through
+    ///     `WalletAPI` (SD-JWT credential fetch and W3C VP build both verify it).
     ///   - authRequest: The parsed authorization request (from `getAuthorizationRequest`).
     ///   - submittables: The matched credentials/claims (from `findEligibleSubmittables`).
-    ///   - keyId: The holder key id (`"pin"` / `"bio"`).
-    ///   - pin: The wallet PIN as data for the PIN key; `nil` for biometric.
+    ///   - pin: The wallet PIN when unlocking with a passcode; `nil` for biometric. The holder
+    ///     signing key is resolved by the SDK — SD-JWT uses the key bound to the credential at
+    ///     issuance (`SdJwtCredentialItem.kid`), W3C derives it from `pin` presence.
     /// - Returns: Map of DCQL query id -> presentation token strings.
     public static func createVpToken(
+        hWalletToken: String,
         authRequest: AuthorizationRequest,
         submittables: [ClientID: [ClaimInfo]],
-        keyId: String,
-        pin: Data? = nil
+        pin: String? = nil
     ) throws -> [String: [String]]
     {
-        let store = try OID4VCManager()
-
         var vpToken: [String: [String]] = [:]
         for (dcqlId, claimInfos) in submittables
         {
-            var tokens: [String] = []
-            for claimInfo in claimInfos
+            let format = try presentationFormat(for: dcqlId, in: authRequest)
+
+            guard let presenter = CredentialPresenterRegistry.shared.findPresenter(format)
+            else
             {
-                guard let credential = try store.getCredentials(by: [claimInfo.credentialId]).first
-                else
-                {
-                    throw OID4VPError.credentialNotFound(claimInfo.credentialId)
-                }
-
-                guard SDJWTPresenter.supportedFormats.contains(credential.format)
-                else
-                {
-                    throw OID4VPError.unsupportedPresentationFormat(credential.format)
-                }
-
-                let token = try SDJWTPresenter.createVpToken(
-                    rawCredential: credential.credential,
-                    claimCodes: claimInfo.claimCodes,
-                    aud: authRequest.clientId,
-                    nonce: authRequest.nonce,
-                    keyId: keyId,
-                    pin: pin
-                )
-                tokens.append(token)
+                throw OID4VPError.unsupportedPresentationFormat(format)
             }
-            vpToken[dcqlId] = tokens
+
+            vpToken[dcqlId] = try presenter.createVpTokens(
+                hWalletToken: hWalletToken,
+                claimInfos: claimInfos,
+                authRequest: authRequest,
+                pin: pin
+            )
         }
         return vpToken
+    }
+
+    /// Resolves a DCQL query id to its requested credential `format` from the authorization
+    /// request's `dcql_query.credentials`. This is the branch point for per-format presentation:
+    /// the matcher keys `submittables` by the same query id.
+    private static func presentationFormat(
+        for dcqlId: String,
+        in authRequest: AuthorizationRequest
+    ) throws -> String
+    {
+        guard let query = authRequest.dcqlQuery.credentials?.first(where: { $0.id == dcqlId }),
+              let format = query.format
+        else
+        {
+            throw OID4VPError.unsupportedPresentationFormat("missing format for query '\(dcqlId)'")
+        }
+        return format
     }
 
     /// Response modes carried in the authorization request's `response_mode`.
@@ -343,6 +398,9 @@ public enum OID4VPError: Error, LocalizedError
     case invalidDCQLQuery(String)
     /// No stored credential satisfies the authorization request.
     case noEligibleCredentials
+    /// The request's `credential_sets` cannot be satisfied by the matched credentials — at least
+    /// one required set has no fully-satisfiable option. Carries the per-set detail.
+    case credentialSetsNotSatisfied(String)
     /// The holder signing key required for the key-binding JWT was not found. Carries the key id.
     case holderKeyNotFound(String)
     /// A matched credential id was not found in the wallet store. Carries the id.
@@ -372,6 +430,8 @@ public enum OID4VPError: Error, LocalizedError
             return "Invalid DCQL query: \(detail)"
         case .noEligibleCredentials:
             return "No credentials available for submission."
+        case .credentialSetsNotSatisfied(let detail):
+            return "Required credential_sets not satisfied: \(detail)"
         case .holderKeyNotFound(let keyId):
             return "Holder signing key '\(keyId)' not found."
         case .credentialNotFound(let id):
