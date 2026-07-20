@@ -46,13 +46,15 @@ protocol CredentialPresenter
     ///   - pin: The wallet PIN when unlocking with a passcode; `nil` for biometric. Each presenter
     ///     resolves the holder signing key itself (SD-JWT from the credential's bound `kid`, W3C from
     ///     `pin` presence).
-    /// - Returns: The presentation token strings for this query (the `vp_token` map value).
+    /// - Returns: The presentation values for this query (the `vp_token` map value). The element type
+    ///   is format-dependent: SD-JWT (and mdoc in Phase 2) presentations are strings, while a W3C
+    ///   `ldp_vp` presentation is a JSON object — hence `AnyJSON` rather than `String`.
     func createVpTokens(
         hWalletToken: String,
         claimInfos: [ClaimInfo],
         authRequest: AuthorizationRequest,
         pin: String?
-    ) throws -> [String]
+    ) throws -> [AnyJSON]
 }
 
 /// Registry of credential presenters. Selects the presenter for a DCQL credential format.

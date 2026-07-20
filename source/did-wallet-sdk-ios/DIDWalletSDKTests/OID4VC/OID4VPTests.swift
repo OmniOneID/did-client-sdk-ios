@@ -438,7 +438,7 @@ final class OID4VPTests: XCTestCase {
         XCTAssertEqual(jwk.y, verifierJWK.y)
 
         // Reproduce submitVpToken's assembly and verify the verifier can recover {vp_token, state}.
-        let vpToken = ["student_id": ["ey.presentation.token"]]
+        let vpToken: [String: [AnyJSON]] = ["student_id": [.string("ey.presentation.token")]]
         let payload = try VPTokenSubmission(vpToken: vpToken, state: request.state).toJsonData()
         let compactJWE = try JWE.encrypt(plaintext: payload, to: jwk, enc: enc)
 
@@ -470,6 +470,34 @@ final class OID4VPTests: XCTestCase {
                 return XCTFail("expected unsupportedResponseEncryption, got \(error)")
             }
         }
+    }
+
+    // A W3C (ldp_vp) presentation must reach the wire as a JSON *object*. Serializing the VP to a
+    // string before it enters vp_token makes toFormData() escape it a second time, which the
+    // verifier rejects. Asserting on the encoded form body covers the exact place that broke.
+    func testVpToken_w3cElementEncodesAsObject() throws {
+        let vp: AnyJSON = .object([
+            "@context": .array([.string("https://www.w3.org/ns/credentials/v2")]),
+            "type": .array([.string("VerifiablePresentation")]),
+            "holder": .string("did:omn:holder")
+        ])
+
+        let body = try VPTokenSubmission(vpToken: ["student_id": [vp]], state: "s").toFormData()
+        let decoded = String(data: body, encoding: .utf8)!.removingPercentEncoding!
+
+        XCTAssertTrue(decoded.contains(#""@context""#), "vp_token lost the VP object: \(decoded)")
+        XCTAssertFalse(decoded.contains(#"\""#), "VP was double-encoded as a string: \(decoded)")
+    }
+
+    // The SD-JWT element stays a compact string on the wire — the regression guard for the fix above.
+    func testVpToken_sdJwtElementEncodesAsString() throws {
+        let body = try VPTokenSubmission(
+            vpToken: ["student_id": [.string("ey.presentation.token")]],
+            state: "s"
+        ).toFormData()
+        let decoded = String(data: body, encoding: .utf8)!.removingPercentEncoding!
+
+        XCTAssertTrue(decoded.contains(#""ey.presentation.token""#), "unexpected form body: \(decoded)")
     }
 
     // A key-wrapping alg (ECDH-ES+A256KW) is rejected — only ECDH-ES Direct is supported.

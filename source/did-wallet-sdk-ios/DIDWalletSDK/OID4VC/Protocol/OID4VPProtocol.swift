@@ -206,15 +206,16 @@ extension OID4VPProtocol
     ///   - pin: The wallet PIN when unlocking with a passcode; `nil` for biometric. The holder
     ///     signing key is resolved by the SDK — SD-JWT uses the key bound to the credential at
     ///     issuance (`SdJwtCredentialItem.kid`), W3C derives it from `pin` presence.
-    /// - Returns: Map of DCQL query id -> presentation token strings.
+    /// - Returns: Map of DCQL query id -> presentation values. SD-JWT entries are strings; W3C
+    ///   entries are JSON objects (`ldp_vp`), so the element type is `AnyJSON`.
     public static func createVpToken(
         hWalletToken: String,
         authRequest: AuthorizationRequest,
         submittables: [ClientID: [ClaimInfo]],
         pin: String? = nil
-    ) throws -> [String: [String]]
+    ) throws -> [String: [AnyJSON]]
     {
-        var vpToken: [String: [String]] = [:]
+        var vpToken: [String: [AnyJSON]] = [:]
         for (dcqlId, claimInfos) in submittables
         {
             let format = try presentationFormat(for: dcqlId, in: authRequest)
@@ -270,7 +271,7 @@ extension OID4VPProtocol
     @discardableResult
     public static func submitVpToken(
         authRequest: AuthorizationRequest,
-        vpToken: [String: [String]]
+        vpToken: [String: [AnyJSON]]
     ) async throws -> (Data, Int)
     {
         let body: Data
@@ -369,7 +370,7 @@ extension OID4VPProtocol
 /// Form body for an OID4VP `direct_post`: the `vp_token` JSON object plus the echoed `state`.
 struct VPTokenSubmission: Jsonable
 {
-    let vpToken: [String: [String]]
+    let vpToken: [String: [AnyJSON]]
     let state: String
 
     enum CodingKeys: String, CodingKey

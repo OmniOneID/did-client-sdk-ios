@@ -112,9 +112,9 @@ extension SDJWTPresenter: CredentialPresenter
         claimInfos: [ClaimInfo],
         authRequest: AuthorizationRequest,
         pin: String?
-    ) throws -> [String]
+    ) throws -> [AnyJSON]
     {
-        var tokens: [String] = []
+        var tokens: [AnyJSON] = []
         for claimInfo in claimInfos
         {
             guard let item = try WalletAPI.shared.getOID4VCs(
@@ -134,7 +134,7 @@ extension SDJWTPresenter: CredentialPresenter
                 keyId: item.kid,
                 pin: pin
             )
-            tokens.append(token)
+            tokens.append(.string(token))
         }
         return tokens
     }

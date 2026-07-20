@@ -22,9 +22,9 @@ import Foundation
 /// Unlike the SD-JWT presenter — which signs a key-binding JWT directly — the W3C path reuses the
 /// existing wallet VP pipeline: it delegates to `WalletAPI.createVp`, which pulls the matched
 /// credentials from `VCManager` by `ClaimInfo.credentialId`, builds a `VerifiablePresentation`
-/// (holder proof, `Secp256r1Signature2018`), and returns it. The signed VP is serialized to JSON as
-/// the `vp_token` string. This is why `createVpToken` carries `hWalletToken`: `WalletAPI.createVp`
-/// verifies the wallet access token before presenting.
+/// (holder proof, `Secp256r1Signature2018`), and returns it. The signed VP is carried in `vp_token`
+/// as a JSON object (`ldp_vp`), not as a serialized string. This is why `createVpToken` carries
+/// `hWalletToken`: `WalletAPI.createVp` verifies the wallet access token before presenting.
 struct VerifiableCredentialPresenter: CredentialPresenter
 {
     /// W3C credential format token this presenter can handle (matches `VerifiableCredentialAdapter`).
@@ -48,7 +48,7 @@ struct VerifiableCredentialPresenter: CredentialPresenter
         claimInfos: [ClaimInfo],
         authRequest: AuthorizationRequest,
         pin: String?
-    ) throws -> [String]
+    ) throws -> [AnyJSON]
     {
         let vp = try WalletAPI.shared.createVp(
             hWalletToken: hWalletToken,
@@ -57,6 +57,9 @@ struct VerifiableCredentialPresenter: CredentialPresenter
             verifierNonce: authRequest.nonce
         )
 
-        return [try vp.toJson()]
+        // The VP must stay a JSON *object* in `vp_token` (ldp_vp). Serializing it to a string here
+        // would make the form/JWE encoder escape it a second time, and the verifier — which parses
+        // the element as an object — rejects the result.
+        return [try JSONDecoder().decode(AnyJSON.self, from: vp.toJsonData())]
     }
 }
