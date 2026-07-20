@@ -111,7 +111,7 @@ extension SDJWTPresenter: CredentialPresenter
         hWalletToken: String,
         claimInfos: [ClaimInfo],
         authRequest: AuthorizationRequest,
-        pin: String?
+        passcode: String?
     ) throws -> [AnyJSON]
     {
         var tokens: [AnyJSON] = []
@@ -132,7 +132,7 @@ extension SDJWTPresenter: CredentialPresenter
                 aud: authRequest.clientId,
                 nonce: authRequest.nonce,
                 keyId: item.kid,
-                pin: pin
+                pin: passcode
             )
             tokens.append(.string(token))
         }

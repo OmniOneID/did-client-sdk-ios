@@ -41,20 +41,28 @@ struct VerifiableCredentialPresenter: CredentialPresenter
 
     /// Builds one signed W3C `VerifiablePresentation` bundling the query's matched credentials and
     /// returns it serialized to JSON. The verifier binding is `authRequest.nonce` (embedded as the
-    /// VP's `verifierNonce`); `WalletAPI.createVp` selects the holder signing key from `pin` presence
-    /// (PIN key when a passcode is supplied, biometric otherwise).
+    /// VP's `verifierNonce`, and as the proof's `challenge` alongside `domain` = `client_id`);
+    /// `WalletAPI.createVp` selects the holder signing key from `passcode` presence (PIN key when a
+    /// passcode is supplied, biometric otherwise).
     func createVpTokens(
         hWalletToken: String,
         claimInfos: [ClaimInfo],
         authRequest: AuthorizationRequest,
-        pin: String?
+        passcode: String?
     ) throws -> [AnyJSON]
     {
+        // `challenge` carries the presentation binding into the VP proof (`domain` / `challenge`).
+        // It defaults to nil in `WalletAPI.createVp`, so omitting it compiles but submits an unbound
+        // VP that verifiers reject — always bind to the request's client_id and nonce here.
         let vp = try WalletAPI.shared.createVp(
             hWalletToken: hWalletToken,
             claimInfos: claimInfos,
-            passcode: pin,
-            verifierNonce: authRequest.nonce
+            passcode: passcode,
+            verifierNonce: authRequest.nonce,
+            challenge: OIDV4VPChallenge(
+                domain: authRequest.clientId,
+                challenge: authRequest.nonce
+            )
         )
 
         // The VP must stay a JSON *object* in `vp_token` (ldp_vp). Serializing it to a string here

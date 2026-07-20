@@ -203,16 +203,16 @@ extension OID4VPProtocol
     ///     `WalletAPI` (SD-JWT credential fetch and W3C VP build both verify it).
     ///   - authRequest: The parsed authorization request (from `getAuthorizationRequest`).
     ///   - submittables: The matched credentials/claims (from `findEligibleSubmittables`).
-    ///   - pin: The wallet PIN when unlocking with a passcode; `nil` for biometric. The holder
+    ///   - passcode: The wallet passcode when unlocking with a PIN; `nil` for biometric. The holder
     ///     signing key is resolved by the SDK — SD-JWT uses the key bound to the credential at
-    ///     issuance (`SdJwtCredentialItem.kid`), W3C derives it from `pin` presence.
+    ///     issuance (`SdJwtCredentialItem.kid`), W3C derives it from `passcode` presence.
     /// - Returns: Map of DCQL query id -> presentation values. SD-JWT entries are strings; W3C
     ///   entries are JSON objects (`ldp_vp`), so the element type is `AnyJSON`.
     public static func createVpToken(
         hWalletToken: String,
         authRequest: AuthorizationRequest,
         submittables: [ClientID: [ClaimInfo]],
-        pin: String? = nil
+        passcode: String? = nil
     ) throws -> [String: [AnyJSON]]
     {
         var vpToken: [String: [AnyJSON]] = [:]
@@ -230,7 +230,7 @@ extension OID4VPProtocol
                 hWalletToken: hWalletToken,
                 claimInfos: claimInfos,
                 authRequest: authRequest,
-                pin: pin
+                passcode: passcode
             )
         }
         return vpToken

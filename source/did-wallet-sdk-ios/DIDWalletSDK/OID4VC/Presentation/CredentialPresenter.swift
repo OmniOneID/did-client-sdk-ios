@@ -43,9 +43,9 @@ protocol CredentialPresenter
     ///     (SD-JWT credential fetch and W3C VP build).
     ///   - claimInfos: The matched credentials/claims for a single DCQL query id.
     ///   - authRequest: The parsed authorization request — supplies `client_id` (aud) and `nonce`.
-    ///   - pin: The wallet PIN when unlocking with a passcode; `nil` for biometric. Each presenter
-    ///     resolves the holder signing key itself (SD-JWT from the credential's bound `kid`, W3C from
-    ///     `pin` presence).
+    ///   - passcode: The wallet passcode when unlocking with a PIN; `nil` for biometric. Each
+    ///     presenter resolves the holder signing key itself (SD-JWT from the credential's bound
+    ///     `kid`, W3C from `passcode` presence).
     /// - Returns: The presentation values for this query (the `vp_token` map value). The element type
     ///   is format-dependent: SD-JWT (and mdoc in Phase 2) presentations are strings, while a W3C
     ///   `ldp_vp` presentation is a JSON object — hence `AnyJSON` rather than `String`.
@@ -53,7 +53,7 @@ protocol CredentialPresenter
         hWalletToken: String,
         claimInfos: [ClaimInfo],
         authRequest: AuthorizationRequest,
-        pin: String?
+        passcode: String?
     ) throws -> [AnyJSON]
 }
 
