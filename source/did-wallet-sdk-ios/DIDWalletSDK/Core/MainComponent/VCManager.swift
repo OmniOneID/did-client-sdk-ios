@@ -110,31 +110,34 @@ struct VCManager {
         for credential in credentials {
             
             let claimCodes = claimInfos.filter({ $0.credentialId == credential.id }).first!.claimCodes
-            
-            if claimCodes.isEmpty
+
+            let codesInCredential = Set(credential.credentialSubject.claims.map({ $0.code }))
+
+            // Full disclosure: either no claim codes specified (empty), or the requested codes
+            // cover every claim in the VC. Both mean "nothing to hide", so present the whole VC
+            // with its original proofValue intact (no per-claim proofValueList).
+            if claimCodes.isEmpty || Set(claimCodes) == codesInCredential
             {
                 var tempCredential = credential
                 var tempProof = credential.proof
                 tempProof.proofValueList = nil
-                
+
                 tempCredential.proof = tempProof
-                
+
                 credentialsToPresent.append(tempCredential)
                 continue
             }
-            
+
             if Set(claimCodes).count != claimCodes.count {
                 throw C.duplicateParameter(code: .vcManager, name: "claimInfos.claimCodes").getError()
             }
-            
+
             var index: Int = -1
             var tempCredential = credential
             var tempProof = credential.proof
             tempProof.proofValue = nil
             tempProof.proofValueList = .init()
-            
-            let codesInCredential = Set(credential.credentialSubject.claims.map({ $0.code }))
-            
+
             let reaminingCodes = Set(claimCodes).subtracting(codesInCredential)
             
             if !reaminingCodes.isEmpty {
