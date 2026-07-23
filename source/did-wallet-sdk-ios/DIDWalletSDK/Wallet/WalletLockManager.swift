@@ -55,12 +55,16 @@ class WalletLockManager: WalletLockManagerImpl {
         return false
     }
     @discardableResult
-    func authenticateLock(passcode: String) throws -> Data? {
+    func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data? {
         let finalEncCek = try MultibaseUtils.decode(encoded: CoreDataManager.shared.selectUser()!.finalEncKey)
         let result = try KeyChainWrapper.matching(passcode: passcode,
                                                   finalEncCek: finalEncCek)
-        
-        WalletLockManager.isLock = (result == nil)
+
+        // When authenticating solely to verify the passcode for a change flow,
+        // do not mutate the wallet's global lock state.
+        if !isChanging {
+            WalletLockManager.isLock = (result == nil)
+        }
         return result
     }
     
@@ -76,7 +80,7 @@ class WalletLockManager: WalletLockManagerImpl {
             throw WalletAPIError.newPasscodeEqualsOldPasscode.getError()
         }
         
-        guard let cek = try authenticateLock(passcode: oldPasscode)
+        guard let cek = try authenticateLock(passcode: oldPasscode, isChanging: true)
         else
         {
             throw WalletAPIError.incorrectPasscode.getError()

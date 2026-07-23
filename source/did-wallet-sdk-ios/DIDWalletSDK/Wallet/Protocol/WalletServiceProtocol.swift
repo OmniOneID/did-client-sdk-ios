@@ -129,7 +129,7 @@ protocol ISecurityAuthService
     func registerLock(hWalletToken: String,
                       passcode: String,
                       isLock: Bool) throws -> Bool
-    func authenticateLock(passcode: String) throws -> Data?
+    func authenticateLock(passcode: String, isChanging: Bool) throws -> Data?
     func isLock() throws -> Bool
     func changePin(id: String,
                    oldPIN: String,

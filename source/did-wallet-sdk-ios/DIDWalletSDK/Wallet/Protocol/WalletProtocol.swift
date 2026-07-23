@@ -21,7 +21,7 @@ import Foundation
 public protocol WalletLockManagerImpl {
     func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool
     func isRegLock() throws -> Bool
-    func authenticateLock(passcode: String) throws -> Data?
+    func authenticateLock(passcode: String, isChanging: Bool) throws -> Data?
     func changeLock(oldPasscode: String, newPasscode: String) throws
 }
 

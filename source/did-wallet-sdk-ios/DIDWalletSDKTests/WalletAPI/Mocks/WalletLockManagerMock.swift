@@ -29,7 +29,7 @@ class WalletLockManagerMock: WalletLockManagerImpl {
             throw WalletAPIError.newPasscodeEqualsOldPasscode.getError()
         }
         
-        guard let cek = try authenticateLock(passcode: oldPasscode)
+        guard let cek = try authenticateLock(passcode: oldPasscode, isChanging: true)
         else
         {
             throw WalletAPIError.incorrectPasscode.getError()
@@ -71,12 +71,14 @@ class WalletLockManagerMock: WalletLockManagerImpl {
         return false
     }
     
-    func authenticateLock(passcode: String) throws -> Data? {
+    func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data? {
         let finalEncCek = try MultibaseUtils.decode(encoded: MockData.shared.getUserMock().finalEncKey)
         let result = try KeyChainWrapper.matching(passcode: passcode,
                                                   finalEncCek: finalEncCek)
-        
-        WalletLockManagerMock.isLock = (result == nil)
+
+        if !isChanging {
+            WalletLockManagerMock.isLock = (result == nil)
+        }
         return result
     }
 }

@@ -634,12 +634,16 @@ extension WalletAPI : ISecurityAuthService
     }
     
     /// Authenticates the lock using the provided passcode.
-    /// - Parameter passcode: The passcode to authenticate the lock.
+    /// - Parameters:
+    ///   - passcode: The passcode to authenticate the lock.
+    ///   - isChanging: Pass `true` when authenticating solely to verify the passcode
+    ///     for a change flow; the wallet's global lock state is then left unchanged.
+    ///     Defaults to `false`.
     /// - Returns: The authenticated data if the passcode is correct, otherwise nil.
     /// - Throws: An error if there is an issue with the authentication process.
-    public func authenticateLock(passcode: String) throws -> Data?
+    public func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data?
     {
-        return try lockMnr.authenticateLock(passcode: passcode)
+        return try lockMnr.authenticateLock(passcode: passcode, isChanging: isChanging)
     }
     
     /// Checks if the lock is enabled.
