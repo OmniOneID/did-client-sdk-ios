@@ -145,6 +145,7 @@
 		C97A625F2EC32BCA00F3789D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = C97A625E2EC32BCA00F3789D /* LICENSE.txt */; };
 		C97BAFC02FFDECA30057319A /* CredentialItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97BAFBF2FFDEBAB0057319A /* CredentialItem.swift */; };
 		C97CF63F2FADA00200299576 /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */; };
+		C980BAE83011E1B00032DC08 /* OID4VCManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980BAE73011E1AA0032DC08 /* OID4VCManagerError.swift */; };
 		C98B32972FEE19D1000B3D29 /* DIDUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98B32962FEE19C9000B3D29 /* DIDUtility.swift */; };
 		C98BAF462E9F77AC00CED7CA /* WalletServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98BAF452E9F77A200CED7CA /* WalletServiceProtocol.swift */; };
 		C98D25E22DB09DF700B2E84D /* SecureEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25C62DB09DF700B2E84D /* SecureEncryptor.swift */; };
@@ -437,6 +438,7 @@
 		C97A625E2EC32BCA00F3789D /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		C97BAFBF2FFDEBAB0057319A /* CredentialItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialItem.swift; sourceTree = "<group>"; };
 		C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationRequest.swift; sourceTree = "<group>"; };
+		C980BAE73011E1AA0032DC08 /* OID4VCManagerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCManagerError.swift; sourceTree = "<group>"; };
 		C98B32962FEE19C9000B3D29 /* DIDUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDUtility.swift; sourceTree = "<group>"; };
 		C98BAF452E9F77A200CED7CA /* WalletServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletServiceProtocol.swift; sourceTree = "<group>"; };
 		C98D25C32DB09DF700B2E84D /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
@@ -1029,6 +1031,7 @@
 		C98D25E12DB09DF700B2E84D /* Error */ = {
 			isa = PBXGroup;
 			children = (
+				C980BAE73011E1AA0032DC08 /* OID4VCManagerError.swift */,
 				C98D25D92DB09DF700B2E84D /* WalletCoreError.swift */,
 				C98D25DA2DB09DF700B2E84D /* WalletCoreCommonError.swift */,
 				C98D25DB2DB09DF700B2E84D /* KeyManagerError.swift */,
@@ -1623,6 +1626,7 @@
 				C90D3BE12DAFA61400292BFD /* Profile.swift in Sources */,
 				C90D3BE22DAFA61400292BFD /* SignedWalletInfo.swift in Sources */,
 				C90D3BE32DAFA61400292BFD /* RoleTypeEnum.swift in Sources */,
+				C980BAE83011E1B00032DC08 /* OID4VCManagerError.swift in Sources */,
 				C90D3BE42DAFA61400292BFD /* DIDDocument.swift in Sources */,
 				C90D3BE52DAFA61400292BFD /* IssueOfferPayload.swift in Sources */,
 				C90D3BE62DAFA61400292BFD /* PresentModeEnum.swift in Sources */,

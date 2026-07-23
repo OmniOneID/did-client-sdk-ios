@@ -57,7 +57,7 @@ struct JWE
         guard let compact = String(data: data, encoding: .utf8)
         else
         {
-            fatalError("Invalid JWE format")
+            throw OID4VCManagerError.invalidJWE.getError()
         }
         
         try self.init(compact: compact)
@@ -66,7 +66,10 @@ struct JWE
     init(compact: String) throws
     {
         let parts = compact.split(separator: ".", omittingEmptySubsequences: false)
-        guard parts.count == 5 else { fatalError("Invalid JWE format") }
+        guard parts.count == 5
+        else {
+            throw OID4VCManagerError.invalidJWE.getError()
+        }
         
         self.rawProtectedHeader = String(parts[0])
         
@@ -97,19 +100,21 @@ extension JWE
     {
         guard protectedHeader.alg == .ecdhES else
         {
-            throw JWEError.unsupportedAlgorithm(protectedHeader.alg.rawValue)
+            throw OID4VCManagerError.unsupportedAlgorithmJWE.getError()
+//protectedHeader.alg.rawValue
         }
 
         guard encryptedKey.isEmpty else
         {
-            throw JWEError.unsupportedAlgorithm("\(protectedHeader.alg.rawValue): unexpected encrypted key")
+            throw OID4VCManagerError.unsupportedAlgorithmJWE.getError()
+//("\(protectedHeader.alg.rawValue): unexpected encrypted key")
         }
 
         guard protectedHeader.epk.kty == .ec,
               protectedHeader.epk.crv == .p256
         else
         {
-            throw JWEError.unsupportedKeyType
+            throw OID4VCManagerError.unsupportedJWEKey.getError()
         }
 
         let publicKey: P256.KeyAgreement.PublicKey = try .init(
@@ -135,8 +140,7 @@ extension JWE
                 tag: authTag
             )
         } catch {
-            //TODO: Error
-            fatalError("JWEError.invalidSealedBox")
+            throw OID4VCManagerError.invalidSealedBox.getError()
         }
         
         
@@ -147,8 +151,7 @@ extension JWE
                 authenticating: Data(rawProtectedHeader.utf8)
             )
         } catch {
-            //TODO: Error
-            fatalError("JWEError.authenticationFailed")
+            throw OID4VCManagerError.authenticationFailed.getError()
         }
 
     }
@@ -182,7 +185,7 @@ extension JWE
         guard recipient.kty == .ec, recipient.crv == .p256
         else
         {
-            throw JWEError.invalidRecipientKey
+            throw OID4VCManagerError.unsupportedJWEKey.getError()
         }
 
         let recipientPublicKey: P256.KeyAgreement.PublicKey
@@ -192,7 +195,7 @@ extension JWE
                 yBase64URL: recipient.y
             )
         } catch {
-            throw JWEError.invalidRecipientKey
+            throw SignableError.invalidPublicKey.getError()
         }
 
         let ephemeralPrivateKey = P256.KeyAgreement.PrivateKey()
@@ -226,7 +229,7 @@ extension JWE
                 authenticating: Data(rawProtectedHeader.utf8)
             )
         } catch {
-            throw JWEError.encryptionFailed
+            throw OID4VCManagerError.failedToEncrypt.getError()
         }
 
         // ECDH-ES Direct: no wrapped key, so the encrypted-key segment is empty.
@@ -293,8 +296,7 @@ private extension JWE {
         let derivedKey = keyMaterial.prefix(keyDataLengthBytes)
 
         guard derivedKey.count == keyDataLengthBytes else {
-            //TODO: Error
-            fatalError("JWEError.keyDerivationFailed")
+            throw OID4VCManagerError.keyDerivationFailed.getError()
         }
 
         return SymmetricKey(data: derivedKey)
@@ -311,8 +313,7 @@ private extension JWE {
         guard let data = value.base64URLDecoded
         else
         {
-            //TODO: Error
-            fatalError("JWEError.invalidBase64URL")
+            throw MultibaseUtilsError.failToDecode.getError()
         }
 
         return data
@@ -322,8 +323,7 @@ private extension JWE {
         _ data: Data
     ) throws -> Data {
         guard data.count <= Int(UInt32.max) else {
-            //TODO: Error
-            fatalError("JWEError.invalidKDFInput")
+            throw OID4VCManagerError.invalidKDFInput.getError()
         }
 
         var result = Data()

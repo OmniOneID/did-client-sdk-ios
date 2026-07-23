@@ -155,11 +155,18 @@ extension Secp256R1Manager
     {
         let pubKey : P256.Signing.PublicKey = try .init(compressedRepresentation: publicKey)
         
-        let sign = try P256.Signing.ECDSASignature(rawRepresentation: signature)
-        
-        let isValid = pubKey.isValidSignature(sign, for: message)
-        
-        return isValid
+        do
+        {
+            let sign = try P256.Signing.ECDSASignature(rawRepresentation: signature)
+            
+            let isValid = pubKey.isValidSignature(sign, for: message)
+            
+            return isValid
+        }
+        catch
+        {
+            throw SignableError.verifySignatureFailed(detail: error).getError()
+        }
     }
 }
 

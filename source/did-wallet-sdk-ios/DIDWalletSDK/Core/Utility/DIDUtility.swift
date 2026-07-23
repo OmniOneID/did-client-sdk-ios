@@ -22,14 +22,10 @@ struct DIDKeyIdentifier
     let kid: String
 }
 
-//TODO: Error
-enum DIDKeyIdentifierParseError: Error {
-    case invalidFormat
-}
-
 struct DIDUtility
 {
-    static func parseDIDKeyIdentifier(_ input: String) throws -> DIDKeyIdentifier {
+    static func parseDIDKeyIdentifier(_ input: String) -> DIDKeyIdentifier?
+    {
         let kidParts = input.split(
             separator: "#",
             maxSplits: 1,
@@ -37,7 +33,7 @@ struct DIDUtility
         )
 
         guard kidParts.count == 2 else {
-            throw DIDKeyIdentifierParseError.invalidFormat
+            return nil
         }
 
         let beforeKid = String(kidParts[0])
@@ -46,7 +42,7 @@ struct DIDUtility
         let versionParts = beforeKid.components(separatedBy: "?versionId=")
 
         guard versionParts.count == 2 else {
-            throw DIDKeyIdentifierParseError.invalidFormat
+            return nil
         }
 
         return DIDKeyIdentifier(

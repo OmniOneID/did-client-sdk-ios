@@ -813,12 +813,12 @@ extension WalletService
         guard let credentialConfig = metadata.credentialConfigurationsSupported[configurationId]
         else
         {
-            throw OID4VCIError.unavailableConfigId(configurationId)
+            throw OID4VCManagerError.unsupportedId(id: configurationId).getError()
         }
 
         if case .unknown(let value) = credentialConfig.format
         {
-            throw OID4VCIError.unsupportedFormat(value)
+            throw OID4VCManagerError.unsupportedFormat(format: value).getError()
         }
         
         let authType = passcode != nil
@@ -930,7 +930,7 @@ extension WalletService
         guard let rawCredential = credentialResponse.credentials.first?.credential
         else
         {
-            throw OID4VCIError.emptyCredentialResponse
+            throw OID4VCManagerError.invalidCredentialResponse.getError()
         }
 
         // Verify
@@ -947,13 +947,12 @@ extension WalletService
         let tempJWS = JWS.init(from: sdJWT.credentialJwt)
         let jwsHeader : JWSHeader = try .init(from: tempJWS.header.base64URLDecoded!)
         
-        guard let kid = jwsHeader.kid
+        guard let kid = jwsHeader.kid, let identifier = DIDUtility.parseDIDKeyIdentifier(kid)
         else
         {
-            //TODO: error
-            throw OID4VCIError.emptyCredentialResponse
+            throw OID4VCManagerError.notFoundKid.getError()
         }
-        let identifier = try DIDUtility.parseDIDKeyIdentifier(kid)
+        
         
         let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
                                                                         did: identifier.did,
@@ -962,8 +961,7 @@ extension WalletService
         guard let publicKeyMultibase = issuerDIDDoc.verificationMethod.filter({ $0.id == identifier.kid }).first.map(\.publicKeyMultibase)
         else
         {
-            //TODO: no public key
-            throw OID4VCIError.emptyCredentialResponse
+            throw OID4VCManagerError.notFoundKid.getError()
         }
         
         
@@ -987,7 +985,7 @@ extension WalletService
         case .sdjwt:
             format = "dc+sd-jwt-did"
         case .mdoc, .unknown:
-            throw OID4VCIError.unsupportedFormat(credentialConfig.format.rawValue)
+            throw OID4VCManagerError.unsupportedFormat(format: credentialConfig.format.rawValue).getError()
         }
 
         let credential = OID4VCICredential(
@@ -1018,8 +1016,7 @@ extension WalletService
         
         guard isValid else
         {
-            //TODO: error
-            throw OID4VCIError.failedToVerifySignature
+            throw OID4VCManagerError.failedToVerifySignature.getError()
         }
     }
 }
