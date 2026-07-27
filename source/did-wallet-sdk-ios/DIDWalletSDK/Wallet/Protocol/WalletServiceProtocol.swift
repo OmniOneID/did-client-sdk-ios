@@ -17,7 +17,7 @@
 
 import Foundation
 
-protocol IWalletAPI : IWalletService, IDIDKeyService, ICredentialService, IZKPService, ISecurityAuthService, IOID4VCService
+protocol IWalletAPI : IWalletService, IDIDKeyService, ICredentialService, IZKPService, ISecurityAuthService, IOID4VCService, IOID4VPService
 {}
 
 protocol IWalletService
@@ -156,5 +156,16 @@ protocol IOID4VCService
     func deleteOID4VCs(hWalletToken: String,
                        ids: [String]) throws
     var isAnyOID4VCSaved: Bool { get }
-    
+
+}
+
+protocol IOID4VPService
+{
+    func matchCredentials(hWalletToken: String,
+                          authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+
+    func createVpToken(hWalletToken: String,
+                       authRequest: AuthorizationRequest,
+                       matchedCredentials: [MatchedCredential],
+                       passcode: String?) throws -> Data
 }

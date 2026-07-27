@@ -37,8 +37,17 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     //verify(054xx)
     case notFoundKid
     case failedToVerifySignature
-    
-    
+    //OID4VP(055xx)
+    case unsupportedPresentationFormat(format: String)
+    case invalidDCQLQuery(detail: String)
+    case noMatchedCredentials
+    case credentialSetsNotSatisfied(detail: String)
+    case credentialNotFound
+    case holderKeyNotFound
+    case missingVerifierEncryptionKey
+    case unsupportedResponseEncryption(detail: String)
+
+
     func getCodeAndMessage() -> (String, String) {
         switch self
         {
@@ -68,6 +77,22 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05400", "Not found kid for verify")
         case .failedToVerifySignature:
             return ("05401", "Failed to verify signature")
+        case .unsupportedPresentationFormat(let format):
+            return ("05500", "Presentation for format \(format) is not supported")
+        case .invalidDCQLQuery(let detail):
+            return ("05501", "Invalid DCQL query: \(detail)")
+        case .noMatchedCredentials:
+            return ("05502", "No credentials matched the request")
+        case .credentialSetsNotSatisfied(let detail):
+            return ("05503", "Required credential_sets not satisfied: \(detail)")
+        case .credentialNotFound:
+            return ("05504", "Matched credential not found")
+        case .holderKeyNotFound:
+            return ("05505", "Holder signing key not found")
+        case .missingVerifierEncryptionKey:
+            return ("05506", "No verifier encryption key found in client_metadata for direct_post.jwt")
+        case .unsupportedResponseEncryption(let detail):
+            return ("05507", "Unsupported response encryption (\(detail))")
         }
     }
 }

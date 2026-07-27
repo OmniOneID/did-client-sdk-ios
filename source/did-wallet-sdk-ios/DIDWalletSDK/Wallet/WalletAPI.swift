@@ -488,7 +488,6 @@ extension WalletAPI : ICredentialService
         )
         
         return try walletService.createVp(
-            hWalletToken: hWalletToken,
             claimInfos: claimInfos,
             passcode: passcode,
             verifierNonce: verifierNonce,
@@ -734,8 +733,34 @@ extension WalletAPI : IOID4VCService
     public var isAnyOID4VCSaved: Bool {
         return walletCore.isAnyOID4VCICredentialsSaved()
     }
-    
-    
+
+
+}
+
+extension WalletAPI : IOID4VPService
+{
+    public func matchCredentials(hWalletToken: String,
+                                 authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        return try walletService.matchCredentials(authRequest: authRequest)
+    }
+
+    public func createVpToken(hWalletToken: String,
+                              authRequest: AuthorizationRequest,
+                              matchedCredentials: [MatchedCredential],
+                              passcode: String?) throws -> Data
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        guard !matchedCredentials.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("matchedCredentials").getError()
+        }
+        return try walletService.createVpToken(authRequest: authRequest,
+                                               matchedCredentials: matchedCredentials,
+                                               passcode: passcode)
+    }
 }
 
 private extension WalletAPI

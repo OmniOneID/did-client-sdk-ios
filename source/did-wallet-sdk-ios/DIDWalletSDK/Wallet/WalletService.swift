@@ -128,7 +128,6 @@ class WalletService: WalletServiceImpl {
 //        vp.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: vpSignature!)
         
         let vp = try createVp(
-            hWalletToken: hWalletToken,
             claimInfos: claimInfos,
             passcode: passcode,
             verifierNonce: verifierProfile.profile.profile.process.verifierNonce
@@ -149,16 +148,11 @@ class WalletService: WalletServiceImpl {
         return (accE2e, encVp)
     }
     
-    func createVp(hWalletToken: String,
-                  claimInfos: [ClaimInfo],
+    func createVp(claimInfos: [ClaimInfo],
                   passcode: String?,
                   verifierNonce: String,
                   challenge: OIDV4VPChallenge? = nil) throws -> VerifiablePresentation
     {
-        guard !hWalletToken.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("hWalletToken").getError()
-        }
-        
         let holderDidDoc = try WalletAPI.shared.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
         
         let presentationInfo = PresentationInfo(holder: holderDidDoc.id,
@@ -190,8 +184,126 @@ class WalletService: WalletServiceImpl {
             vpSignature = try walletCore.sign(keyId: "bio", pin: nil, data: vpSource, type: DidDocumentType.HolderDidDocumnet)
         }
         vp.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: vpSignature!)
-        
+
         return vp
+    }
+
+    // MARK: - OID4VP
+
+    func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+    {
+        let formats = Set((authRequest.dcqlQuery.credentials ?? []).compactMap { $0.format })
+        guard formats.count == 1, let format = formats.first
+        else
+        {
+            throw OID4VCManagerError.unsupportedPresentationFormat(
+                format: formats.isEmpty
+                    ? "no credential format in DCQL query"
+                    : "mixed credential formats are not supported: \(formats.sorted().joined(separator: ", "))").getError()
+        }
+
+        // The service owns only the wallet fetch; DCQL matching lives in DCQLCredentialMatcher.
+        let infos: [ClientID: [ClaimInfo]]
+        if format == VerifiableCredentialAdapter.format
+        {
+            infos = try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
+                                                               credentials: walletCore.getAllCredentials())
+        }
+        else if SDJWTPresenter.supportedFormats.contains(format)
+        {
+            infos = try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
+                                                               sdJwtCredentials: walletCore.getAllOID4VCICredentials())
+        }
+        else
+        {
+            throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
+        }
+
+        // Flatten to one entry per credential, in DCQL declaration order (deterministic).
+        return (authRequest.dcqlQuery.credentials ?? []).flatMap { query -> [MatchedCredential] in
+            guard let id = query.id else { return [] }
+            return (infos[id] ?? []).map {
+                MatchedCredential(queryId: id, credentialId: $0.credentialId, claimCodes: $0.claimCodes)
+            }
+        }
+    }
+
+    func createVpToken(authRequest: AuthorizationRequest,
+                       matchedCredentials: [MatchedCredential],
+                       passcode: String?) throws -> Data
+    {
+        // Regroup by DCQL query id, preserving first-seen order.
+        var order: [String] = []
+        var grouped: [String: [MatchedCredential]] = [:]
+        for mc in matchedCredentials
+        {
+            if grouped[mc.queryId] == nil { order.append(mc.queryId) }
+            grouped[mc.queryId, default: []].append(mc)
+        }
+
+        var vpToken: [String: [AnyJSON]] = [:]
+        for queryId in order
+        {
+            let group = grouped[queryId]!
+            let format = try presentationFormat(for: queryId, in: authRequest)
+
+            if format == VerifiableCredentialAdapter.format
+            {
+                // W3C: reuse the existing VP pipeline unchanged. VP is carried as an ldp_vp JSON object.
+                let claimInfos = group.map { ClaimInfo(credentialId: $0.credentialId, claimCodes: $0.claimCodes) }
+                let vp = try createVp(
+                    claimInfos: claimInfos,
+                    passcode: passcode,
+                    verifierNonce: authRequest.nonce,
+                    challenge: OIDV4VPChallenge(domain: authRequest.clientId, challenge: authRequest.nonce))
+                vpToken[queryId] = [try JSONDecoder().decode(AnyJSON.self, from: vp.toJsonData())]
+            }
+            else if SDJWTPresenter.supportedFormats.contains(format)
+            {
+                let items = try walletCore.getOID4VCICredentials(ids: group.map { $0.credentialId })
+                vpToken[queryId] = try group.map { mc in
+                    guard let item = items.first(where: { $0.id == mc.credentialId })
+                    else { throw OID4VCManagerError.credentialNotFound.getError() }
+
+                    // Wallet-touching key ops live here (walletCore owner); the presenter stays pure.
+                    guard try walletCore.isSavedKey(keyId: item.kid),
+                          let keyInfo = try walletCore.getKeyInfos(ids: [item.kid]).first
+                    else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+                    let holderJwk = try P256V.decompressPublicKey(
+                        compressedPublicKey: MultibaseUtils.decode(encoded: keyInfo.publicKey)).getPublicKeyJwk()
+
+                    let token = try SDJWTPresenter.createVpToken(
+                        sdjwt: item.sdjwt,
+                        claimCodes: mc.claimCodes,
+                        aud: authRequest.clientId,
+                        nonce: authRequest.nonce,
+                        holderJwk: holderJwk,
+                        signDigest: { digest in
+                            try self.walletCore.sign(keyId: item.kid,
+                                                     pin: passcode?.data(using: .utf8),
+                                                     data: digest,
+                                                     type: .HolderDidDocumnet)
+                        })
+                    return .string(token)
+                }
+            }
+            else
+            {
+                throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
+            }
+        }
+
+        // Assemble the authorization response and, for direct_post.jwt, JWE-seal it.
+        return try OID4VPResponseUtil.encodeResponseBody(authRequest: authRequest, vpToken: vpToken)
+    }
+
+    private func presentationFormat(for queryId: String,
+                                    in authRequest: AuthorizationRequest) throws -> String
+    {
+        guard let query = authRequest.dcqlQuery.credentials?.first(where: { $0.id == queryId }),
+              let format = query.format
+        else { throw OID4VCManagerError.unsupportedPresentationFormat(format: "missing format for query '\(queryId)'").getError() }
+        return format
     }
     
     public func requestZKProof(hWalletToken:String,

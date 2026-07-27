@@ -277,3 +277,84 @@ public enum DCQLCredentialMatcher {
     }
 }
 
+extension DCQLCredentialMatcher
+{
+    /// Matches stored W3C credentials against the request's DCQL query: validates the query, runs
+    /// the metadata match, then enforces the request's `credential_sets`.
+    /// - Returns: Map of DCQL query id -> matched `ClaimInfo` list.
+    /// - Throws: `OID4VPError.invalidDCQLQuery`, `.noEligibleCredentials`, `.credentialSetsNotSatisfied`.
+    static func matchCredentials(authRequest: AuthorizationRequest,
+                                 credentials: [VerifiableCredential]) throws -> [ClientID: [ClaimInfo]]
+    {
+        let queries = try validatedQueries(authRequest)
+        let infos = getMatchedMetadata(credentials: credentials, queries: queries)
+        return try finalize(infos, authRequest: authRequest)
+    }
+
+    /// Matches stored SD-JWT credentials against the request's DCQL query: parses each SD-JWT via the
+    /// adapter, runs the submittable match, then enforces the request's `credential_sets`.
+    static func matchCredentials(authRequest: AuthorizationRequest,
+                                 sdJwtCredentials: [SdJwtCredentialItem]) throws -> [ClientID: [ClaimInfo]]
+    {
+        let queries = try validatedQueries(authRequest)
+        let adapter = SDJWTCredentialAdapter()
+        let parsed: [(id: String, credential: ParsedCredential)] = try sdJwtCredentials.map {
+            (id: $0.id, credential: try adapter.parse($0.sdjwt.toString()))
+        }
+        let infos = getMatchedSubmittables(parsedCredentials: parsed, queries: queries)
+        return try finalize(infos, authRequest: authRequest)
+    }
+
+    /// Validates the request's DCQL query and returns its credential queries.
+    private static func validatedQueries(
+        _ authRequest: AuthorizationRequest
+    ) throws -> [DCQLQuery.CredentialQuery]
+    {
+        let validation = DCQLQueryValidator.validate(authRequest.dcqlQuery)
+        if !validation.isValid()
+        {
+            throw OID4VCManagerError.invalidDCQLQuery(detail: validation.errors.joined(separator: "; ")).getError()
+        }
+        guard let queries = authRequest.dcqlQuery.credentials
+        else
+        {
+            throw OID4VCManagerError.invalidDCQLQuery(detail: "missing 'credentials' in DCQL query").getError()
+        }
+        return queries
+    }
+
+    /// Common tail for every matching overload: rejects an empty match set and enforces the
+    /// request's `credential_sets` before returning.
+    private static func finalize(
+        _ infos: [ClientID: [ClaimInfo]],
+        authRequest: AuthorizationRequest
+    ) throws -> [ClientID: [ClaimInfo]]
+    {
+        if infos.isEmpty
+        {
+            throw OID4VCManagerError.noMatchedCredentials.getError()
+        }
+        try requireCredentialSetsSatisfied(authRequest.dcqlQuery, satisfiedQueryIds: Set(infos.keys))
+        return infos
+    }
+
+    /// Gates matching on the request's `credential_sets`: every required set must have at least one
+    /// option whose credential query ids are all among `satisfiedQueryIds` (the ids that matched).
+    /// This operates purely on DCQL credential query ids, so it is credential-format-agnostic.
+    /// No-op when the request has no `credential_sets`.
+    private static func requireCredentialSetsSatisfied(
+        _ dcqlQuery: DCQLQuery,
+        satisfiedQueryIds: Set<String>
+    ) throws
+    {
+        let errors = validateCredentialSetsSatisfied(
+            credentialSets: dcqlQuery.credentialSets,
+            presentedCredentialIds: satisfiedQueryIds
+        )
+        if !errors.isEmpty
+        {
+            throw OID4VCManagerError.credentialSetsNotSatisfied(detail: errors.joined(separator: "; ")).getError()
+        }
+    }
+}
+

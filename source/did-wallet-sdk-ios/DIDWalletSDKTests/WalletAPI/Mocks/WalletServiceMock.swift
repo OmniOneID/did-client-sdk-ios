@@ -26,10 +26,20 @@ class WalletServiceMock : WalletServiceImpl
         self.walletCore = walletCore
     }
     
-    func createVp(hWalletToken: String, claimInfos: [DIDWalletSDK.ClaimInfo], passcode: String?, verifierNonce: String, challenge: DIDWalletSDK.OIDV4VPChallenge?) throws -> DIDWalletSDK.VerifiablePresentation {
+    func createVp(claimInfos: [DIDWalletSDK.ClaimInfo], passcode: String?, verifierNonce: String, challenge: DIDWalletSDK.OIDV4VPChallenge?) throws -> DIDWalletSDK.VerifiablePresentation {
         return .init(context: [], id: "", type: [], holder: "", validFrom: "", validUntil: "", verifierNonce: "", verifiableCredential: [])
     }
-    
+
+    //TODO: future
+    func matchCredentials(authRequest: DIDWalletSDK.AuthorizationRequest) throws -> [DIDWalletSDK.MatchedCredential] {
+        return []
+    }
+
+    //TODO: future
+    func createVpToken(authRequest: DIDWalletSDK.AuthorizationRequest, matchedCredentials: [DIDWalletSDK.MatchedCredential], passcode: String?) throws -> Data {
+        return Data()
+    }
+
     //TODO: future
     func requestZKProof(hWalletToken: String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile?, APIGatewayURL: String) async throws -> (DIDWalletSDK.AccE2e, Data) {
         return (DIDWalletSDK.AccE2e.init(publicKey: "", iv: ""), Data())

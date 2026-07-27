@@ -44,8 +44,7 @@
 		AAAA001F000000000000E365 /* OID4VCICredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA001E000000000000E365 /* OID4VCICredential.swift */; };
 		AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0030000000000000E365 /* KBJWTPayload.swift */; };
 		AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0032000000000000E365 /* SDJWTPresenter.swift */; };
-		AAAA0041000000000000E365 /* CredentialPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0040000000000000E365 /* CredentialPresenter.swift */; };
-		AAAA0043000000000000E365 /* VerifiableCredentialPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0042000000000000E365 /* VerifiableCredentialPresenter.swift */; };
+		AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0044000000000000E365 /* MatchedCredential.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
 		C90D3BDE2DAFA61400292BFD /* RequestUpdateDidDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BA22DAFA61400292BFD /* RequestUpdateDidDoc.swift */; };
@@ -175,6 +174,7 @@
 		C98D26012DB0A5DE00B2E84D /* PrivateKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */; };
 		C98D26022DB0A5DE00B2E84D /* Error+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */; };
 		C98D52563000BDB600DD48AC /* JWE.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D52553000BDB300DD48AC /* JWE.swift */; };
+		AAAA0047000000000000E365 /* OID4VPResponseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */; };
 		C98D82A82FA0811600AF5BC2 /* CNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D82A72FA0810E00AF5BC2 /* CNonce.swift */; };
 		C98D83322FA0857700AF5BC2 /* SwiftCBOR in Frameworks */ = {isa = PBXBuildFile; productRef = C98D83312FA0857700AF5BC2 /* SwiftCBOR */; };
 		C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */; };
@@ -337,8 +337,7 @@
 		AAAA001E000000000000E365 /* OID4VCICredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCICredential.swift; sourceTree = "<group>"; };
 		AAAA0030000000000000E365 /* KBJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KBJWTPayload.swift; sourceTree = "<group>"; };
 		AAAA0032000000000000E365 /* SDJWTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTPresenter.swift; sourceTree = "<group>"; };
-		AAAA0040000000000000E365 /* CredentialPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialPresenter.swift; sourceTree = "<group>"; };
-		AAAA0042000000000000E365 /* VerifiableCredentialPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerifiableCredentialPresenter.swift; sourceTree = "<group>"; };
+		AAAA0044000000000000E365 /* MatchedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchedCredential.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
 		C90D3B962DAFA61400292BFD /* OfferTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferTypeEnum.swift; sourceTree = "<group>"; };
@@ -468,6 +467,7 @@
 		C98D25FD2DB0A5DE00B2E84D /* Error+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+Extension.swift"; sourceTree = "<group>"; };
 		C98D25FE2DB0A5DE00B2E84D /* PrivateKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrivateKey+Extension.swift"; sourceTree = "<group>"; };
 		C98D52553000BDB300DD48AC /* JWE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWE.swift; sourceTree = "<group>"; };
+		AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPResponseUtil.swift; sourceTree = "<group>"; };
 		C98D82A72FA0810E00AF5BC2 /* CNonce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CNonce.swift; sourceTree = "<group>"; };
 		C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationClient.swift; sourceTree = "<group>"; };
 		C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationProtocol.swift; sourceTree = "<group>"; };
@@ -681,8 +681,6 @@
 			isa = PBXGroup;
 			children = (
 				AAAA0032000000000000E365 /* SDJWTPresenter.swift */,
-				AAAA0040000000000000E365 /* CredentialPresenter.swift */,
-				AAAA0042000000000000E365 /* VerifiableCredentialPresenter.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -902,6 +900,7 @@
 				C98D52553000BDB300DD48AC /* JWE.swift */,
 				C91A34322F88EFDD00F20388 /* JWK.swift */,
 				C91A341D2F88DCAB00F20388 /* AnyJSON.swift */,
+				AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -930,6 +929,7 @@
 				C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */,
 				C9623BE82F9F290D00641A5E /* JWS.swift */,
 				C91A34302F88E5E800F20388 /* SDJWT.swift */,
+				AAAA0044000000000000E365 /* MatchedCredential.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1598,8 +1598,7 @@
 				AAAA001F000000000000E365 /* OID4VCICredential.swift in Sources */,
 				AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */,
 				AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */,
-				AAAA0041000000000000E365 /* CredentialPresenter.swift in Sources */,
-				AAAA0043000000000000E365 /* VerifiableCredentialPresenter.swift in Sources */,
+				AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,
 				C98D25F02DB09DF700B2E84D /* VCManager.swift in Sources */,
@@ -1639,6 +1638,7 @@
 				C90D3BED2DAFA61400292BFD /* RequestEcdh.swift in Sources */,
 				C90D3BEE2DAFA61400292BFD /* RequestRegisterPii.swift in Sources */,
 				C98D52563000BDB600DD48AC /* JWE.swift in Sources */,
+				AAAA0047000000000000E365 /* OID4VPResponseUtil.swift in Sources */,
 				C90D3BEF2DAFA61400292BFD /* RequestRevokeVc.swift in Sources */,
 				C90D3BF02DAFA61400292BFD /* AccE2e.swift in Sources */,
 				C90D3BF12DAFA61400292BFD /* ConfirmUpdateDidDoc.swift in Sources */,

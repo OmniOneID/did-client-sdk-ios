@@ -32,21 +32,24 @@ struct SDJWTPresenter
 
     init() {}
 
+    /// Pure: no wallet access. The caller supplies the holder public JWK (for the KB-JWT header) and
+    /// a `signDigest` closure that signs the KB-JWT signing input with the holder key.
     /// - Parameters:
     ///   - sdjwt: The stored SD-JWT (issuer JWT + disclosures), as returned by the wallet.
     ///   - claimCodes: The claim names to disclose. Empty discloses all of the credential's claims.
     ///   - aud: The verifier audience — the request's `client_id`.
     ///   - nonce: The request's `nonce`, bound into the KB-JWT.
-    ///   - keyId: The holder key id (`"pin"` / `"bio"`).
-    ///   - pin: The wallet PIN when `keyId` is the PIN key; `nil` for biometric.
+    ///   - holderJwk: The holder public key as a JWK, embedded in the KB-JWT protected header.
+    ///   - signDigest: Signs the KB-JWT signing-input digest with the holder key; returns the raw
+    ///     65-byte compact signature (`v‖r‖s`).
     /// - Returns: The combined SD-JWT presentation string with a key-binding JWT appended.
     static func createVpToken(
         sdjwt: SDJWT,
         claimCodes: [String],
         aud: String,
         nonce: String,
-        keyId: String,
-        pin: String?
+        holderJwk: JWK,
+        signDigest: (_ digest: Data) throws -> Data
     ) throws -> String
     {
         // Disclose only the agreed claims; an empty list discloses everything.
@@ -67,75 +70,19 @@ struct SDJWTPresenter
                               keyBindingJwt: nil).toString()
         let sdHash = presented.data(using: .utf8)!.sha256().base64URLEncoded
 
-        // Holder key-bound signature. PIN key when a passcode is supplied, biometric key otherwise.
-        let keyManager = try KeyManager(fileName: "holder")
-        guard try keyManager.isKeySaved(id: keyId),
-              let keyInfo = try keyManager.getKeyInfos(ids: [keyId]).first
-        else
-        {
-            throw OID4VPError.holderKeyNotFound(keyId)
-        }
-
-        let compressedPublicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
-        let jwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
-
-        let header = try JWSHeader(typ: "kb+jwt", jwk: jwk).toJsonData().base64URLEncoded
+        let header = try JWSHeader(typ: "kb+jwt", jwk: holderJwk).toJsonData().base64URLEncoded
         let payload = try KBJWTPayload(aud: aud, nonce: nonce, sdHash: sdHash).toJsonData().base64URLEncoded
 
         let signSource = "\(header).\(payload)"
         let digest = signSource.data(using: .utf8)!.sha256()
 
-        // KeyManager returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
-        let compactSignature = try keyManager.sign(id: keyId, pin: pin?.data(using: .utf8), digest: digest)
+        // The signer returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
+        let compactSignature = try signDigest(digest)
         let signature = Data(compactSignature.dropFirst()).base64URLEncoded
         let keyBindingJwt = "\(signSource).\(signature)"
 
         return SDJWT(credentialJwt: sdjwt.credentialJwt,
                      disclosures: selected,
                      keyBindingJwt: keyBindingJwt).toString()
-    }
-}
-
-extension SDJWTPresenter: CredentialPresenter
-{
-    func getSupportedFormats() -> Set<String> { SDJWTPresenter.supportedFormats }
-
-    func supports(_ format: String) -> Bool { SDJWTPresenter.supportedFormats.contains(format) }
-
-    /// Fetches each matched SD-JWT through `WalletAPI` by `ClaimInfo.credentialId` (mirroring the
-    /// W3C presenter, which goes through `WalletAPI.createVp`) and builds one combined SD-JWT +
-    /// KB-JWT presentation per credential. `WalletAPI.getOID4VCs` verifies `hWalletToken` and only
-    /// returns SD-JWT items, so no separate format guard is needed here. The KB-JWT is signed with
-    /// the holder key bound to the credential at issuance (`SdJwtCredentialItem.kid`).
-    func createVpTokens(
-        hWalletToken: String,
-        claimInfos: [ClaimInfo],
-        authRequest: AuthorizationRequest,
-        passcode: String?
-    ) throws -> [AnyJSON]
-    {
-        var tokens: [AnyJSON] = []
-        for claimInfo in claimInfos
-        {
-            guard let item = try WalletAPI.shared.getOID4VCs(
-                hWalletToken: hWalletToken,
-                ids: [claimInfo.credentialId]
-            ).first
-            else
-            {
-                throw OID4VPError.credentialNotFound(claimInfo.credentialId)
-            }
-
-            let token = try SDJWTPresenter.createVpToken(
-                sdjwt: item.sdjwt,
-                claimCodes: claimInfo.claimCodes,
-                aud: authRequest.clientId,
-                nonce: authRequest.nonce,
-                keyId: item.kid,
-                pin: passcode
-            )
-            tokens.append(.string(token))
-        }
-        return tokens
     }
 }

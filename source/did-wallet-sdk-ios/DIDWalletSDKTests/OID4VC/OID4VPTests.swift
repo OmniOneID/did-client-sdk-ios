@@ -98,13 +98,13 @@ final class OID4VPTests: XCTestCase {
         XCTAssertTrue(infos.isEmpty)
     }
 
-    // MARK: - OID4VPProtocol.findEligibleSubmittables
+    // MARK: - DCQLCredentialMatcher.matchCredentials
 
     func testFindEligibleSubmittables_success() throws {
         let vc = try makeCredential()
         let request = try authRequest(schemaID: matchingSchemaID)
 
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: request,
             credentials: [vc]
         )
@@ -117,9 +117,9 @@ final class OID4VPTests: XCTestCase {
         let request = try authRequest(schemaID: "http://other.example/schema?name=none")
 
         XCTAssertThrowsError(
-            try OID4VPProtocol.findEligibleSubmittables(authRequest: request, credentials: [vc])
+            try DCQLCredentialMatcher.matchCredentials(authRequest: request, credentials: [vc])
         ) { error in
-            guard case OID4VPError.noEligibleCredentials = error else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else {
                 return XCTFail("expected noEligibleCredentials, got \(error)")
             }
         }
@@ -243,7 +243,7 @@ final class OID4VPTests: XCTestCase {
             "meta": { "vct_values": ["\(vct)"] },
             "claims": [ { "path": ["family_name"] } ] } ]
         """
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
             sdJwtCredentials: [makeSdJwtItem(id: "cred-1", rawSdJwt: sdjwt)]
         )
@@ -256,11 +256,11 @@ final class OID4VPTests: XCTestCase {
         let sdjwt = makeSDJWT(vct: "https://credentials.example/identity", iss: "https://issuer.example",
                               disclosures: [("s1", "family_name", "Kim")])
         let creds = #"[ { "id": "id_card", "format": "dc+sd-jwt-did", "meta": { "vct_values": ["https://other/vct"] } } ]"#
-        XCTAssertThrowsError(try OID4VPProtocol.findEligibleSubmittables(
+        XCTAssertThrowsError(try DCQLCredentialMatcher.matchCredentials(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
-            guard case OID4VPError.noEligibleCredentials = error else { return XCTFail("got \(error)") }
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else { return XCTFail("got \(error)") }
         }
     }
 
@@ -270,7 +270,7 @@ final class OID4VPTests: XCTestCase {
         [ { "id": "student_id", "format": "opendid_vc",
             "meta": { "credential_schema_id_values": ["\(matchingSchemaID)"] } } ]
         """
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
             credentials: [vc]
         )
@@ -285,7 +285,7 @@ final class OID4VPTests: XCTestCase {
         [ { "id": "q", "format": "dc+sd-jwt-did",
             "trusted_authorities": [ { "type": "x509_san_dns", "values": ["\(iss)"] } ] } ]
         """
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: try authRequest(dcqlCredentialsJSON: okCreds),
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )
@@ -295,11 +295,11 @@ final class OID4VPTests: XCTestCase {
         [ { "id": "q", "format": "dc+sd-jwt-did",
             "trusted_authorities": [ { "type": "x509_san_dns", "values": ["https://evil.example"] } ] } ]
         """
-        XCTAssertThrowsError(try OID4VPProtocol.findEligibleSubmittables(
+        XCTAssertThrowsError(try DCQLCredentialMatcher.matchCredentials(
             authRequest: try authRequest(dcqlCredentialsJSON: badCreds),
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
-            guard case OID4VPError.noEligibleCredentials = error else { return XCTFail("got \(error)") }
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else { return XCTFail("got \(error)") }
         }
     }
 
@@ -314,7 +314,7 @@ final class OID4VPTests: XCTestCase {
             "claims": [ { "id": "fn", "path": ["family_name"] }, { "id": "ph", "path": ["phone"] } ],
             "claim_sets": [ ["ph"], ["fn"] ] } ]
         """
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )
@@ -346,7 +346,7 @@ final class OID4VPTests: XCTestCase {
             credentialsJSON: #"[ { "id": "q1", "format": "dc+sd-jwt-did" } ]"#,
             credentialSetsJSON: #"[ { "options": [["q1"]] } ]"#
         )
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: request,
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )
@@ -365,11 +365,11 @@ final class OID4VPTests: XCTestCase {
             """,
             credentialSetsJSON: #"[ { "options": [["q2"]] } ]"#
         )
-        XCTAssertThrowsError(try OID4VPProtocol.findEligibleSubmittables(
+        XCTAssertThrowsError(try DCQLCredentialMatcher.matchCredentials(
             authRequest: request,
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
-            guard case OID4VPError.credentialSetsNotSatisfied = error else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05503" else {
                 return XCTFail("expected credentialSetsNotSatisfied, got \(error)")
             }
         }
@@ -386,7 +386,7 @@ final class OID4VPTests: XCTestCase {
             """,
             credentialSetsJSON: #"[ { "options": [["q2"]], "required": false } ]"#
         )
-        let infos = try OID4VPProtocol.findEligibleSubmittables(
+        let infos = try DCQLCredentialMatcher.matchCredentials(
             authRequest: request,
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )
@@ -432,7 +432,7 @@ final class OID4VPTests: XCTestCase {
 
         let request = try encryptedAuthRequest(keyJWK: verifierJWK)
 
-        let (jwk, enc) = try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        let (jwk, enc) = try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         XCTAssertEqual(enc, .a256GCM)
         XCTAssertEqual(jwk.x, verifierJWK.x)
         XCTAssertEqual(jwk.y, verifierJWK.y)
@@ -454,7 +454,7 @@ final class OID4VPTests: XCTestCase {
         let verifierJWK = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
         let request = try encryptedAuthRequest(keyJWK: verifierJWK, encValues: #""A128GCM""#)
 
-        let (_, enc) = try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+        let (_, enc) = try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         XCTAssertEqual(enc, .a128GCM)
     }
 
@@ -464,9 +464,9 @@ final class OID4VPTests: XCTestCase {
         let request = try encryptedAuthRequest(keyJWK: verifierJWK, encValues: #""A192GCM""#)
 
         XCTAssertThrowsError(
-            try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+            try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         ) { error in
-            guard case OID4VPError.unsupportedResponseEncryption = error else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05507" else {
                 return XCTFail("expected unsupportedResponseEncryption, got \(error)")
             }
         }
@@ -506,9 +506,9 @@ final class OID4VPTests: XCTestCase {
         let request = try encryptedAuthRequest(keyJWK: verifierJWK, alg: "ECDH-ES+A256KW")
 
         XCTAssertThrowsError(
-            try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+            try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         ) { error in
-            guard case OID4VPError.unsupportedResponseEncryption = error else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05507" else {
                 return XCTFail("expected unsupportedResponseEncryption, got \(error)")
             }
         }
@@ -527,9 +527,9 @@ final class OID4VPTests: XCTestCase {
         """
         let request = try AuthorizationRequest(from: json)
         XCTAssertThrowsError(
-            try OID4VPProtocol.parseResponseEncryption(from: request.clientMetadata)
+            try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         ) { error in
-            guard case OID4VPError.missingVerifierEncryptionKey = error else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05506" else {
                 return XCTFail("expected missingVerifierEncryptionKey, got \(error)")
             }
         }

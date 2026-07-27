@@ -100,13 +100,18 @@ public protocol WalletServiceImpl {
     ) async throws -> (AccE2e, Data)
     
     func createVp(
-        hWalletToken: String,
         claimInfos: [ClaimInfo],
         passcode: String?,
         verifierNonce: String,
         challenge: OIDV4VPChallenge?
     ) throws -> VerifiablePresentation
-    
+
+    func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+
+    func createVpToken(authRequest: AuthorizationRequest,
+                       matchedCredentials: [MatchedCredential],
+                       passcode: String?) throws -> Data
+
     func requestZKProof(hWalletToken:String,
                         selectedReferents : [UserReferent],
                         proofParam : ZKProofParam,
