@@ -764,8 +764,8 @@ extension WalletAPI : IOID4VPService
     ///
     /// The facade only verifies the wallet token and forwards to `WalletService`, which owns the
     /// argument validation, per-format VP building and response encoding (JWE-sealed for
-    /// `direct_post.jwt`). The returned data is transfer-ready — pass it to
-    /// `OID4VPProtocol.submitVpToken`.
+    /// `direct_post.jwt`). The returned data is transfer-ready — POST it to the request's
+    /// `response_uri` as `application/x-www-form-urlencoded`.
     ///
     /// - Parameters:
     ///   - hWalletToken: The wallet token; must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP`.

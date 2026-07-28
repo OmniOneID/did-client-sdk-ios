@@ -136,7 +136,6 @@
 		C96061D22DDEB65C00A67DA3 /* CredSchemaVO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */; };
 		C96061D42DDF262000A67DA3 /* CredInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96061D32DDF261B00A67DA3 /* CredInfo.swift */; };
 		C9623BE92F9F290F00641A5E /* JWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9623BE82F9F290D00641A5E /* JWS.swift */; };
-		C96586272F970A56001B7846 /* OID4VPProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96586262F970A51001B7846 /* OID4VPProtocol.swift */; };
 		C96BBB752F9B3D03008AB547 /* IssuerJWTMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96BBB742F9B3CEF008AB547 /* IssuerJWTMetadata.swift */; };
 		C96F353F2EBAEDDE007BCE1F /* P256V.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96F353E2EBAEDC3007BCE1F /* P256V.swift */; };
 		C96F35412EBB37BB007BCE1F /* PublicKey+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */; };
@@ -197,7 +196,6 @@
 		C9CF5DD92DAF7C090078DFFA /* DigestUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */; };
 		C9CF5DDA2DAF7C090078DFFA /* CryptoUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD62DAF7C090078DFFA /* CryptoUtilsTests.swift */; };
 		C9CF5DDB2DAF7C090078DFFA /* MultibaseUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DD72DAF7C090078DFFA /* MultibaseUtilsTests.swift */; };
-		C9D383292F8CEF5D008A5CD0 /* OID4VCIProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D383282F8CEF54008A5CD0 /* OID4VCIProtocol.swift */; };
 		C9EB19952DB75F1900D152EE /* Words and Bits.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19932DB75F1900D152EE /* Words and Bits.swift */; };
 		C9EB19962DB75F1900D152EE /* Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB19822DB75F1900D152EE /* Codable.swift */; };
 		C9EB19972DB75F1900D152EE /* Square Root.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9EB198F2DB75F1900D152EE /* Square Root.swift */; };
@@ -430,7 +428,6 @@
 		C96061D12DDEB65600A67DA3 /* CredSchemaVO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredSchemaVO.swift; sourceTree = "<group>"; };
 		C96061D32DDF261B00A67DA3 /* CredInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredInfo.swift; sourceTree = "<group>"; };
 		C9623BE82F9F290D00641A5E /* JWS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWS.swift; sourceTree = "<group>"; };
-		C96586262F970A51001B7846 /* OID4VPProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPProtocol.swift; sourceTree = "<group>"; };
 		C96BBB742F9B3CEF008AB547 /* IssuerJWTMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerJWTMetadata.swift; sourceTree = "<group>"; };
 		C96F353E2EBAEDC3007BCE1F /* P256V.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = P256V.swift; sourceTree = "<group>"; };
 		C96F35402EBB37B3007BCE1F /* PublicKey+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PublicKey+Extension.swift"; sourceTree = "<group>"; };
@@ -490,7 +487,6 @@
 		C9CF5DD62DAF7C090078DFFA /* CryptoUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoUtilsTests.swift; sourceTree = "<group>"; };
 		C9CF5DD72DAF7C090078DFFA /* MultibaseUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultibaseUtilsTests.swift; sourceTree = "<group>"; };
 		C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigestUtilsTests.swift; sourceTree = "<group>"; };
-		C9D383282F8CEF54008A5CD0 /* OID4VCIProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCIProtocol.swift; sourceTree = "<group>"; };
 		C9EB19782DB75F1900D152EE /* Decoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Decoder.swift; sourceTree = "<group>"; };
 		C9EB19792DB75F1900D152EE /* JSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		C9EB197A2DB75F1900D152EE /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
@@ -868,7 +864,6 @@
 		C91A34122F88D7E700F20388 /* OID4VC */ = {
 			isa = PBXGroup;
 			children = (
-				C9D382122F8CEE5E008A5CD0 /* Protocol */,
 				C91A342F2F88E5E100F20388 /* Model */,
 				C91A341F2F88DEA300F20388 /* DTO */,
 				C91A341C2F88DC9D00F20388 /* Common */,
@@ -1137,15 +1132,6 @@
 				C9CF5DD82DAF7C090078DFFA /* DigestUtilsTests.swift */,
 			);
 			path = Utility;
-			sourceTree = "<group>";
-		};
-		C9D382122F8CEE5E008A5CD0 /* Protocol */ = {
-			isa = PBXGroup;
-			children = (
-				C96586262F970A51001B7846 /* OID4VPProtocol.swift */,
-				C9D383282F8CEF54008A5CD0 /* OID4VCIProtocol.swift */,
-			);
-			path = Protocol;
 			sourceTree = "<group>";
 		};
 		C9EB19772DB75EFF00D152EE /* OpenSource */ = {
@@ -1583,12 +1569,10 @@
 				C9EB19E82DB7636000D152EE /* ZKPCredentialRequest.swift in Sources */,
 				C98D25E92DB09DF700B2E84D /* SecureEnclaveError.swift in Sources */,
 				C98D25EA2DB09DF700B2E84D /* WalletCoreCommonError.swift in Sources */,
-				C96586272F970A56001B7846 /* OID4VPProtocol.swift in Sources */,
 				C98D25EB2DB09DF700B2E84D /* SecureEnclaveManager.swift in Sources */,
 				C9EB19B42DB760A600D152EE /* BigInt+String.swift in Sources */,
 				C98D25EC2DB09DF700B2E84D /* KeyManagerError.swift in Sources */,
 				C91A34182F88DC7000F20388 /* DCQLPathProcessor.swift in Sources */,
-				C9D383292F8CEF5D008A5CD0 /* OID4VCIProtocol.swift in Sources */,
 				C91A34192F88DC7000F20388 /* DCQLQueryValidator.swift in Sources */,
 				C91A341A2F88DC7000F20388 /* DCQLQuery.swift in Sources */,
 				C91A341B2F88DC7000F20388 /* DCQLCredentialMatcher.swift in Sources */,

@@ -540,7 +540,7 @@ extension WalletCore
                 sdjwt: SDJWT.parse(raw: credential.credential)
             )
         default:
-            throw OID4VCIError.unsupportedFormat(credential.format)
+            throw OID4VCManagerError.unsupportedFormat(format: credential.format).getError()
         }
     }
 

@@ -22,8 +22,8 @@ import CryptoKit
 ///
 /// Picks up where DCQL matching leaves off: given a stored SD-JWT and the claim codes the holder
 /// agreed to disclose, it filters the disclosures, signs a `kb+jwt` with the holder wallet key
-/// (the PIN key when a passcode is supplied, the biometric key otherwise — mirroring the proof
-/// signing in `OID4VCIProtocol`), and returns the combined presentation string
+/// (the key the credential was bound to at issuance, supplied by the caller as `signDigest`),
+/// and returns the combined presentation string
 /// `<issuer JWT>~<selected disclosures>~<KB-JWT>`.
 struct SDJWTPresenter
 {
