@@ -57,11 +57,24 @@ final class OID4VCITests: XCTestCase {
         """
         
         let offer : CredentialOfferResponse = try .init(from: offerString)
-        
-        let json = try offer.toJson(isPretty: true)
-        print("json \(json)")
-        print("offer \(offer.grants)")
-        XCTAssert(offerString == json, "not equal")
+
+        XCTAssertEqual(offer.credentialIssuer, "http://10.48.17.124:8082")
+        XCTAssertEqual(offer.credentialConfigurationIds,
+                       ["UniversityDegree", "VerifiableIdSD", "VerifiableIdLDP", "mDoc", "StudentID"])
+        let preAuthorizedCode = try XCTUnwrap(offer.grants.preAuthorizedCode)
+        XCTAssertEqual(preAuthorizedCode.preAuthorizedCode, "1499bc66-f28c-4c99-972e-2443bc900a92")
+        XCTAssertEqual(preAuthorizedCode.txCode?.inputMode, "numeric")
+        XCTAssertEqual(preAuthorizedCode.txCode?.length, 6)
+        XCTAssertEqual(preAuthorizedCode.txCode?.description, "Please enter the PIN.")
+        XCTAssertNil(offer.grants.authorizationCode)
+
+        // Re-encoding must preserve the offer, so compare the parsed JSON structures — comparing the
+        // serialized strings would only assert Foundation's pretty-print formatting ("key" : value).
+        let reencoded = try JSONSerialization.jsonObject(
+            with: Data(offer.toJson(isPretty: true).utf8)) as? NSDictionary
+        let original = try JSONSerialization.jsonObject(
+            with: Data(offerString.utf8)) as? NSDictionary
+        XCTAssertEqual(reencoded, original)
     }
     
     

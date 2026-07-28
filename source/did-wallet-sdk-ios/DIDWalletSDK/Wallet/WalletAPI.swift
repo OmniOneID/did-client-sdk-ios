@@ -739,6 +739,19 @@ extension WalletAPI : IOID4VCService
 
 extension WalletAPI : IOID4VPService
 {
+    /// Finds the stored credentials that satisfy the verifier's DCQL query.
+    ///
+    /// The facade only verifies the wallet token and forwards to `WalletService`, which owns the
+    /// query validation, format resolution, credential lookup and matching.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: The wallet token; must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP`.
+    ///   - authRequest: Verifier authorization request carrying the DCQL query.
+    /// - Returns: One `MatchedCredential` per matched credential, in DCQL declaration order. The
+    ///   app may narrow the list (credentials and disclosed claims) before calling `createVpToken`.
+    /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
+    ///   `OID4VCManagerError` (055xx) when the query is invalid, its format is unsupported, or no
+    ///   credential matches.
     public func matchCredentials(hWalletToken: String,
                                  authRequest: AuthorizationRequest) throws -> [MatchedCredential]
     {
@@ -747,6 +760,24 @@ extension WalletAPI : IOID4VPService
         return try walletService.matchCredentials(authRequest: authRequest)
     }
 
+    /// Builds the authorization response body carrying the `vp_token` for the selected credentials.
+    ///
+    /// The facade only verifies the wallet token and forwards to `WalletService`, which owns the
+    /// argument validation, per-format VP building and response encoding (JWE-sealed for
+    /// `direct_post.jwt`). The returned data is transfer-ready — pass it to
+    /// `OID4VPProtocol.submitVpToken`.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: The wallet token; must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP`.
+    ///   - authRequest: Verifier authorization request the selection was matched against.
+    ///   - matchedCredentials: The credentials to present, as returned (and optionally narrowed)
+    ///     by `matchCredentials`.
+    ///   - passcode: PIN when the holder key is PIN-protected, otherwise nil (biometrics).
+    /// - Returns: The transfer-ready response body.
+    /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
+    ///   `WalletAPIError.verifyParameterFail` when the selection is empty or does not belong to the
+    ///   request, `OID4VCManagerError` (055xx) when a credential, holder key or response encryption
+    ///   key is missing or the format is unsupported.
     public func createVpToken(hWalletToken: String,
                               authRequest: AuthorizationRequest,
                               matchedCredentials: [MatchedCredential],
@@ -754,9 +785,6 @@ extension WalletAPI : IOID4VPService
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
                                                purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
-        guard !matchedCredentials.isEmpty else {
-            throw WalletAPIError.verifyParameterFail("matchedCredentials").getError()
-        }
         return try walletService.createVpToken(authRequest: authRequest,
                                                matchedCredentials: matchedCredentials,
                                                passcode: passcode)

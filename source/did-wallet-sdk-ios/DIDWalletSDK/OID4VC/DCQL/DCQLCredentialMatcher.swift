@@ -282,7 +282,7 @@ extension DCQLCredentialMatcher
     /// Matches stored W3C credentials against the request's DCQL query: validates the query, runs
     /// the metadata match, then enforces the request's `credential_sets`.
     /// - Returns: Map of DCQL query id -> matched `ClaimInfo` list.
-    /// - Throws: `OID4VPError.invalidDCQLQuery`, `.noEligibleCredentials`, `.credentialSetsNotSatisfied`.
+    /// - Throws: `OID4VCManagerError.invalidDCQLQuery`, `.noMatchedCredentials`, `.credentialSetsNotSatisfied`.
     static func matchCredentials(authRequest: AuthorizationRequest,
                                  credentials: [VerifiableCredential]) throws -> [ClientID: [ClaimInfo]]
     {
@@ -306,7 +306,12 @@ extension DCQLCredentialMatcher
     }
 
     /// Validates the request's DCQL query and returns its credential queries.
-    private static func validatedQueries(
+    ///
+    /// Callers that need the queries before matching (e.g. to resolve the presentation format) run
+    /// this first; the matching entry points above run it again so they stay usable standalone.
+    /// Validation is pure and cheap, so the repeat is intentional.
+    /// - Throws: `OID4VCManagerError.invalidDCQLQuery`.
+    static func validatedQueries(
         _ authRequest: AuthorizationRequest
     ) throws -> [DCQLQuery.CredentialQuery]
     {
@@ -336,6 +341,94 @@ extension DCQLCredentialMatcher
         }
         try requireCredentialSetsSatisfied(authRequest.dcqlQuery, satisfiedQueryIds: Set(infos.keys))
         return infos
+    }
+
+    /// Validates a selection the app may have narrowed against the credentials that actually matched.
+    ///
+    /// `matchCredentials` returns what the wallet can present, but `MatchedCredential` is public and
+    /// the app is expected to drop credentials and claims for user consent. Everything the app hands
+    /// back is therefore untrusted: without this gate a selection that the verifier is bound to
+    /// reject (unmatched credential, missing required claim or query) would only fail after the
+    /// response has been sent.
+    ///
+    /// - Parameters:
+    ///   - selection: The credentials the app wants to present.
+    ///   - matched: The unmodified result of matching the same request.
+    ///   - dcqlQuery: The request's DCQL query, for the `credential_sets` gate.
+    /// - Throws: `OID4VCManagerError.invalidSelectedCredentials`, `.credentialSetsNotSatisfied`.
+    static func validateSelection(_ selection: [MatchedCredential],
+                                  against matched: [MatchedCredential],
+                                  dcqlQuery: DCQLQuery) throws
+    {
+        // allowed[queryId][credentialId] = claim codes the query requires (empty == no constraint).
+        var allowed: [String: [String: Set<String>]] = [:]
+        for m in matched
+        {
+            allowed[m.queryId, default: [:]][m.credentialId] = Set(m.claimCodes)
+        }
+
+        var seen: Set<String> = []
+        for selected in selection
+        {
+            guard let credentials = allowed[selected.queryId]
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedCredentials(
+                    detail: "no matched credential for query '\(selected.queryId)'").getError()
+            }
+            guard let requiredClaims = credentials[selected.credentialId]
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedCredentials(
+                    detail: "credential '\(selected.credentialId)' does not match query '\(selected.queryId)'").getError()
+            }
+            guard seen.insert("\(selected.queryId)\u{0}\(selected.credentialId)").inserted
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedCredentials(
+                    detail: "credential '\(selected.credentialId)' is selected twice for query '\(selected.queryId)'").getError()
+            }
+
+            // An empty claim selection discloses everything, so it always covers the query. Narrowing
+            // below what the query asked for is rejected here rather than by the verifier.
+            let missingClaims = selected.claimCodes.isEmpty
+                ? []
+                : requiredClaims.subtracting(selected.claimCodes).sorted()
+            guard missingClaims.isEmpty
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedCredentials(
+                    detail: "query '\(selected.queryId)' requires claim(s) \(missingClaims.joined(separator: ", ")) of credential '\(selected.credentialId)'").getError()
+            }
+        }
+
+        try requireSelectionCoversQueries(selection, matched: allowed, dcqlQuery: dcqlQuery)
+    }
+
+    /// Enforces that dropping credentials did not leave a required credential query unanswered:
+    /// via `credential_sets` when the request has them, otherwise every query that matched must
+    /// still be presented (with no `credential_sets`, all credential queries are required).
+    private static func requireSelectionCoversQueries(
+        _ selection: [MatchedCredential],
+        matched allowed: [String: [String: Set<String>]],
+        dcqlQuery: DCQLQuery
+    ) throws
+    {
+        let presentedQueryIds = Set(selection.map { $0.queryId })
+
+        if let credentialSets = dcqlQuery.credentialSets, !credentialSets.isEmpty
+        {
+            try requireCredentialSetsSatisfied(dcqlQuery, satisfiedQueryIds: presentedQueryIds)
+            return
+        }
+
+        let dropped = Set(allowed.keys).subtracting(presentedQueryIds).sorted()
+        guard dropped.isEmpty
+        else
+        {
+            throw OID4VCManagerError.invalidSelectedCredentials(
+                detail: "no credential selected for required query(s) \(dropped.joined(separator: ", "))").getError()
+        }
     }
 
     /// Gates matching on the request's `credential_sets`: every required set must have at least one

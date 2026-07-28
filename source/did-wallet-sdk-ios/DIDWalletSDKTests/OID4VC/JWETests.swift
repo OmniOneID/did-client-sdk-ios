@@ -95,8 +95,8 @@ final class JWETests: XCTestCase {
         badJWK.crv = .unknown("P-384")
 
         XCTAssertThrowsError(try JWE.encrypt(plaintext: Data("x".utf8), to: badJWK)) { error in
-            guard case JWEError.invalidRecipientKey = error else {
-                return XCTFail("expected JWEError.invalidRecipientKey, got \(error)")
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05212" else {
+                return XCTFail("expected unsupportedJWEKey, got \(error)")
             }
         }
     }

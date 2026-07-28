@@ -534,6 +534,208 @@ final class OID4VPTests: XCTestCase {
             }
         }
     }
+
+    // MARK: - Selection validation (app-narrowed matchedCredentials)
+
+    /// Two required queries (no credential_sets), each matched by one credential requiring one claim.
+    private func selectionRequest() throws -> AuthorizationRequest {
+        try authRequest(dcqlCredentialsJSON: """
+        [ { "id": "id_card", "format": "dc+sd-jwt-did", "claims": [ { "path": ["family_name"] } ] },
+          { "id": "license", "format": "dc+sd-jwt-did", "claims": [ { "path": ["number"] } ] } ]
+        """)
+    }
+
+    private var selectionMatched: [MatchedCredential] {
+        [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: ["family_name"]),
+         MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: ["number"])]
+    }
+
+    private func assertSelectionThrows(_ selection: [MatchedCredential],
+                                       code: String = "MSDKWLT05508",
+                                       _ message: String,
+                                       file: StaticString = #filePath, line: UInt = #line) throws {
+        let request = try selectionRequest()
+        XCTAssertThrowsError(
+            try DCQLCredentialMatcher.validateSelection(selection,
+                                                        against: selectionMatched,
+                                                        dcqlQuery: request.dcqlQuery),
+            message, file: file, line: line
+        ) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == code else {
+                return XCTFail("expected \(code), got \(error)", file: file, line: line)
+            }
+        }
+    }
+
+    // The unmodified match result is always presentable.
+    func testSelection_unmodifiedPasses() throws {
+        let request = try selectionRequest()
+        XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selectionMatched,
+                                                                    against: selectionMatched,
+                                                                    dcqlQuery: request.dcqlQuery))
+    }
+
+    // A credential the query never matched must not be presentable by handing it to createVpToken.
+    func testSelection_unmatchedCredentialThrows() throws {
+        try assertSelectionThrows(
+            [MatchedCredential(queryId: "id_card", credentialId: "not-matched", claimCodes: []),
+             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: [])],
+            "a credential outside the match result was accepted")
+    }
+
+    // Same for a query id the request does not declare.
+    func testSelection_unknownQueryIdThrows() throws {
+        try assertSelectionThrows(
+            [MatchedCredential(queryId: "passport", credentialId: "cred-1", claimCodes: [])],
+            "an undeclared query id was accepted")
+    }
+
+    // Presenting one credential twice for a query would reach Core as a duplicate-identifier error.
+    func testSelection_duplicateSelectionThrows() throws {
+        try assertSelectionThrows(
+            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
+             MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
+             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: [])],
+            "a duplicated credential was accepted")
+    }
+
+    // Narrowing claims below what the query requires is rejected locally, not by the verifier.
+    func testSelection_claimNarrowedBelowRequiredThrows() throws {
+        try assertSelectionThrows(
+            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: ["given_name"]),
+             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: ["number"])],
+            "a selection missing a required claim was accepted")
+    }
+
+    // An empty claim list means full disclosure, so it always covers the required claims.
+    func testSelection_emptyClaimCodesMeansFullDisclosure() throws {
+        let request = try selectionRequest()
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
+                         MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: [])]
+        XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selection,
+                                                                    against: selectionMatched,
+                                                                    dcqlQuery: request.dcqlQuery))
+    }
+
+    // With no credential_sets every credential query is required, so dropping one is an error.
+    func testSelection_droppedRequiredQueryThrows() throws {
+        try assertSelectionThrows(
+            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: [])],
+            "a dropped required query was accepted")
+    }
+
+    // With credential_sets, dropping a query is fine as long as an option stays satisfied.
+    func testSelection_credentialSetsOptionSatisfiedPasses() throws {
+        let request = try authRequest(
+            credentialsJSON: """
+            [ { "id": "id_card", "format": "dc+sd-jwt-did" },
+              { "id": "license", "format": "dc+sd-jwt-did" } ]
+            """,
+            credentialSetsJSON: """
+            [ { "id": "identity", "required": true, "options": [ ["id_card"], ["license"] ] } ]
+            """)
+
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: [])]
+        XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selection,
+                                                                    against: selectionMatched,
+                                                                    dcqlQuery: request.dcqlQuery))
+    }
+
+    // ...and dropping everything a required set needs still fails, with the credential_sets code.
+    func testSelection_credentialSetsUnsatisfiedThrows() throws {
+        let request = try authRequest(
+            credentialsJSON: """
+            [ { "id": "id_card", "format": "dc+sd-jwt-did" },
+              { "id": "license", "format": "dc+sd-jwt-did" } ]
+            """,
+            credentialSetsJSON: """
+            [ { "id": "both", "required": true, "options": [ ["id_card", "license"] ] } ]
+            """)
+
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: [])]
+        XCTAssertThrowsError(
+            try DCQLCredentialMatcher.validateSelection(selection,
+                                                        against: selectionMatched,
+                                                        dcqlQuery: request.dcqlQuery)
+        ) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05503" else {
+                return XCTFail("expected credentialSetsNotSatisfied, got \(error)")
+            }
+        }
+    }
+
+    // MARK: - Presenter and response-mode guards
+
+    // A claim code with no matching disclosure would silently vanish from the presentation.
+    func testPresenter_undisclosableClaimThrows() throws {
+        let sdjwt = SDJWT.parse(raw: makeSDJWT(vct: "https://credentials.example/identity",
+                                               iss: "https://issuer.example",
+                                               disclosures: [("s1", "family_name", "Kim")]))
+        let holderJwk = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
+
+        XCTAssertThrowsError(
+            try SDJWTPresenter.createVpToken(sdjwt: sdjwt,
+                                             claimCodes: ["family_name", "given_name"],
+                                             aud: "verifier",
+                                             nonce: "n",
+                                             holderJwk: holderJwk,
+                                             signDigest: { _ in Data(repeating: 0, count: 65) })
+        ) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+                return XCTFail("expected invalidSelectedCredentials, got \(error)")
+            }
+        }
+    }
+
+    // The claims that do exist are still presentable.
+    func testPresenter_disclosableClaimsSucceed() throws {
+        let sdjwt = SDJWT.parse(raw: makeSDJWT(vct: "https://credentials.example/identity",
+                                               iss: "https://issuer.example",
+                                               disclosures: [("s1", "family_name", "Kim"),
+                                                             ("s2", "given_name", "Raon")]))
+        let holderJwk = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
+
+        let token = try SDJWTPresenter.createVpToken(sdjwt: sdjwt,
+                                                     claimCodes: ["family_name"],
+                                                     aud: "verifier",
+                                                     nonce: "n",
+                                                     holderJwk: holderJwk,
+                                                     signDigest: { _ in Data(repeating: 0, count: 65) })
+        XCTAssertEqual(token.split(separator: "~").count, 3, "expected issuer JWT + 1 disclosure + KB-JWT")
+    }
+
+    // Only the POST-based response modes are supported; anything else must not be sent in the clear.
+    func testEncodeResponseBody_unsupportedResponseModeThrows() throws {
+        let json = """
+        {
+          "response_uri": "https://verifier.example/response",
+          "nonce": "n", "state": "s", "client_id": "verifier",
+          "response_type": "vp_token", "response_mode": "fragment",
+          "iat": 1700000000, "client_metadata": {},
+          "dcql_query": { "credentials": [] }
+        }
+        """
+        let request = try AuthorizationRequest(from: json)
+        XCTAssertThrowsError(
+            try OID4VPResponseUtil.encodeResponseBody(authRequest: request,
+                                                      vpToken: ["id_card": [.string("ey.token")]])
+        ) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05509" else {
+                return XCTFail("expected unsupportedResponseMode, got \(error)")
+            }
+        }
+    }
+
+    // direct_post still encodes a clear form body.
+    func testEncodeResponseBody_directPostEncodesClearForm() throws {
+        let request = try authRequest(dcqlCredentialsJSON: #"[ { "id": "id_card", "format": "dc+sd-jwt-did" } ]"#)
+        let body = try OID4VPResponseUtil.encodeResponseBody(authRequest: request,
+                                                             vpToken: ["id_card": [.string("ey.token")]])
+        let decoded = String(data: body, encoding: .utf8)!.removingPercentEncoding!
+
+        XCTAssertTrue(decoded.contains("vp_token="), "unexpected form body: \(decoded)")
+        XCTAssertTrue(decoded.contains(#""ey.token""#), "unexpected form body: \(decoded)")
+    }
 }
 
 /// DCQL grammar validation (OID4VP 1.0 §6). Feeds invalid queries and asserts they are rejected.

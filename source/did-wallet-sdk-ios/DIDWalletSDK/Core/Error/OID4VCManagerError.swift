@@ -46,6 +46,8 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     case holderKeyNotFound
     case missingVerifierEncryptionKey
     case unsupportedResponseEncryption(detail: String)
+    case invalidSelectedCredentials(detail: String)
+    case unsupportedResponseMode(mode: String)
 
 
     func getCodeAndMessage() -> (String, String) {
@@ -93,6 +95,10 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05506", "No verifier encryption key found in client_metadata for direct_post.jwt")
         case .unsupportedResponseEncryption(let detail):
             return ("05507", "Unsupported response encryption (\(detail))")
+        case .invalidSelectedCredentials(let detail):
+            return ("05508", "Invalid selected credentials: \(detail)")
+        case .unsupportedResponseMode(let mode):
+            return ("05509", "Unsupported response_mode : \(mode)")
         }
     }
 }

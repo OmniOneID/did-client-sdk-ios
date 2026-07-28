@@ -22,6 +22,7 @@ import Foundation
 /// encryption key. Keeps the response-encoding / `JWE`/`JWK` concerns out of the wallet service.
 enum OID4VPResponseUtil
 {
+    private static let responseModeDirectPost = "direct_post"
     private static let responseModeDirectPostJWT = "direct_post.jwt"
 
     /// Assembles the OID4VP authorization response (`{vp_token, state}`) as an
@@ -39,16 +40,19 @@ enum OID4VPResponseUtil
         vpToken: [String: [AnyJSON]]
     ) throws -> Data
     {
-        if authRequest.responseMode == responseModeDirectPostJWT
+        switch authRequest.responseMode
         {
+        case responseModeDirectPostJWT:
             let (jwk, enc) = try parseResponseEncryption(from: authRequest.clientMetadata)
             let payload = try VPTokenSubmission(vpToken: vpToken, state: authRequest.state).toJsonData()
             let compactJWE = try JWE.encrypt(plaintext: payload, to: jwk, enc: enc)
             return try EncryptedResponseSubmission(response: compactJWE).toFormData()
-        }
-        else
-        {
+        case responseModeDirectPost:
             return try VPTokenSubmission(vpToken: vpToken, state: authRequest.state).toFormData()
+        default:
+            // Only the POST-based modes are supported; anything else must not be silently sent
+            // as a clear direct_post body.
+            throw OID4VCManagerError.unsupportedResponseMode(mode: authRequest.responseMode).getError()
         }
     }
 

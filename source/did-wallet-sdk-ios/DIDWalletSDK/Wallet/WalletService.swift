@@ -190,37 +190,66 @@ class WalletService: WalletServiceImpl {
 
     // MARK: - OID4VP
 
+    /// Matches the credentials stored in the wallet against the verifier's DCQL query.
+    ///
+    /// Internal steps, in order:
+    /// 1. Validate the DCQL query — `OID4VCManagerError.invalidDCQLQuery`.
+    /// 2. Resolve the single presentation format the query asks for —
+    ///    `OID4VCManagerError.unsupportedPresentationFormat`.
+    /// 3. Load the stored credentials of that format from `WalletCore` and run DCQL matching —
+    ///    `OID4VCManagerError.noMatchedCredentials`, `.credentialSetsNotSatisfied`.
+    /// 4. Flatten the match into one entry per credential, in DCQL declaration order.
+    ///
+    /// - Parameter authRequest: Verifier authorization request carrying the DCQL query.
+    /// - Returns: One `MatchedCredential` per matched credential; the app may narrow the list
+    ///   (credentials and disclosed claims) before calling `createVpToken`.
     func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
     {
-        let formats = Set((authRequest.dcqlQuery.credentials ?? []).compactMap { $0.format })
+        let queries = try DCQLCredentialMatcher.validatedQueries(authRequest)
+        let format = try presentationFormat(of: queries)
+        let infos = try matchStoredCredentials(authRequest: authRequest, format: format)
+        return flattenMatches(infos, queries: queries)
+    }
+
+    /// Resolves the one credential format the DCQL query asks for: a single request maps to a
+    /// single presentation pipeline, so mixed formats are rejected.
+    private func presentationFormat(of queries: [DCQLQuery.CredentialQuery]) throws -> String
+    {
+        // Validation runs first and rejects a query without a format, so an empty set cannot occur.
+        let formats = Set(queries.compactMap { $0.format })
         guard formats.count == 1, let format = formats.first
         else
         {
             throw OID4VCManagerError.unsupportedPresentationFormat(
-                format: formats.isEmpty
-                    ? "no credential format in DCQL query"
-                    : "mixed credential formats are not supported: \(formats.sorted().joined(separator: ", "))").getError()
+                format: "mixed credential formats are not supported: \(formats.sorted().joined(separator: ", "))").getError()
         }
+        return format
+    }
 
-        // The service owns only the wallet fetch; DCQL matching lives in DCQLCredentialMatcher.
-        let infos: [ClientID: [ClaimInfo]]
+    /// Loads the stored credentials of `format` and matches them against the query.
+    /// The service owns only the wallet fetch; DCQL matching lives in `DCQLCredentialMatcher`.
+    private func matchStoredCredentials(authRequest: AuthorizationRequest,
+                                        format: String) throws -> [ClientID: [ClaimInfo]]
+    {
         if format == VerifiableCredentialAdapter.format
         {
-            infos = try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
-                                                               credentials: walletCore.getAllCredentials())
+            return try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
+                                                              credentials: walletCore.getAllCredentials())
         }
-        else if SDJWTPresenter.supportedFormats.contains(format)
+        if SDJWTPresenter.supportedFormats.contains(format)
         {
-            infos = try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
-                                                               sdJwtCredentials: walletCore.getAllOID4VCICredentials())
+            return try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
+                                                              sdJwtCredentials: walletCore.getAllOID4VCICredentials())
         }
-        else
-        {
-            throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
-        }
+        throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
+    }
 
-        // Flatten to one entry per credential, in DCQL declaration order (deterministic).
-        return (authRequest.dcqlQuery.credentials ?? []).flatMap { query -> [MatchedCredential] in
+    /// Flattens the per-query match to one entry per credential, in DCQL declaration order
+    /// (deterministic).
+    private func flattenMatches(_ infos: [ClientID: [ClaimInfo]],
+                                queries: [DCQLQuery.CredentialQuery]) -> [MatchedCredential]
+    {
+        return queries.flatMap { query -> [MatchedCredential] in
             guard let id = query.id else { return [] }
             return (infos[id] ?? []).map {
                 MatchedCredential(queryId: id, credentialId: $0.credentialId, claimCodes: $0.claimCodes)
@@ -228,11 +257,61 @@ class WalletService: WalletServiceImpl {
         }
     }
 
+    /// Builds the `vp_token` for the credentials the app selected and encodes the authorization
+    /// response body to send to the verifier.
+    ///
+    /// Internal steps, in order:
+    /// 1. Validate the arguments — `WalletAPIError.verifyParameterFail`.
+    /// 2. Validate the selection against a fresh match of the same request —
+    ///    `OID4VCManagerError.invalidSelectedCredentials`, `.credentialSetsNotSatisfied`.
+    /// 3. Regroup the selection by DCQL query id, preserving first-seen order.
+    /// 4. Per query, resolve its presentation format and build the `vp_token` element —
+    ///    `OID4VCManagerError.invalidDCQLQuery`, `.unsupportedPresentationFormat`,
+    ///    `.credentialNotFound`, `.holderKeyNotFound`.
+    /// 5. Assemble the response body and, for `direct_post.jwt`, JWE-seal it —
+    ///    `OID4VCManagerError.unsupportedResponseMode`, `.missingVerifierEncryptionKey`,
+    ///    `.unsupportedResponseEncryption`.
+    ///
+    /// - Parameters:
+    ///   - authRequest: Verifier authorization request the selection was matched against.
+    ///   - matchedCredentials: The credentials to present, as returned (and optionally narrowed)
+    ///     by `matchCredentials`.
+    ///   - passcode: PIN when the holder key is PIN-protected, otherwise nil (biometrics).
+    /// - Returns: The transfer-ready response body.
     func createVpToken(authRequest: AuthorizationRequest,
                        matchedCredentials: [MatchedCredential],
                        passcode: String?) throws -> Data
     {
-        // Regroup by DCQL query id, preserving first-seen order.
+        guard !matchedCredentials.isEmpty
+        else
+        {
+            throw WalletAPIError.verifyParameterFail("matchedCredentials").getError()
+        }
+
+        // The app narrows the selection for user consent, so it is untrusted input: re-match the
+        // request and gate the selection on it before anything is built or sent.
+        try DCQLCredentialMatcher.validateSelection(matchedCredentials,
+                                                    against: matchCredentials(authRequest: authRequest),
+                                                    dcqlQuery: authRequest.dcqlQuery)
+
+        var vpToken: [String: [AnyJSON]] = [:]
+        for (queryId, group) in groupedByQueryId(matchedCredentials)
+        {
+            vpToken[queryId] = try vpTokenElements(queryId: queryId,
+                                                   group: group,
+                                                   authRequest: authRequest,
+                                                   passcode: passcode)
+        }
+
+        // Assemble the authorization response and, for direct_post.jwt, JWE-seal it.
+        return try OID4VPResponseUtil.encodeResponseBody(authRequest: authRequest, vpToken: vpToken)
+    }
+
+    /// Regroups the selection by DCQL query id, preserving first-seen order (deterministic).
+    private func groupedByQueryId(
+        _ matchedCredentials: [MatchedCredential]
+    ) -> [(queryId: String, group: [MatchedCredential])]
+    {
         var order: [String] = []
         var grouped: [String: [MatchedCredential]] = [:]
         for mc in matchedCredentials
@@ -240,72 +319,95 @@ class WalletService: WalletServiceImpl {
             if grouped[mc.queryId] == nil { order.append(mc.queryId) }
             grouped[mc.queryId, default: []].append(mc)
         }
-
-        var vpToken: [String: [AnyJSON]] = [:]
-        for queryId in order
-        {
-            let group = grouped[queryId]!
-            let format = try presentationFormat(for: queryId, in: authRequest)
-
-            if format == VerifiableCredentialAdapter.format
-            {
-                // W3C: reuse the existing VP pipeline unchanged. VP is carried as an ldp_vp JSON object.
-                let claimInfos = group.map { ClaimInfo(credentialId: $0.credentialId, claimCodes: $0.claimCodes) }
-                let vp = try createVp(
-                    claimInfos: claimInfos,
-                    passcode: passcode,
-                    verifierNonce: authRequest.nonce,
-                    challenge: OIDV4VPChallenge(domain: authRequest.clientId, challenge: authRequest.nonce))
-                vpToken[queryId] = [try JSONDecoder().decode(AnyJSON.self, from: vp.toJsonData())]
-            }
-            else if SDJWTPresenter.supportedFormats.contains(format)
-            {
-                let items = try walletCore.getOID4VCICredentials(ids: group.map { $0.credentialId })
-                vpToken[queryId] = try group.map { mc in
-                    guard let item = items.first(where: { $0.id == mc.credentialId })
-                    else { throw OID4VCManagerError.credentialNotFound.getError() }
-
-                    // Wallet-touching key ops live here (walletCore owner); the presenter stays pure.
-                    guard try walletCore.isSavedKey(keyId: item.kid),
-                          let keyInfo = try walletCore.getKeyInfos(ids: [item.kid]).first
-                    else { throw OID4VCManagerError.holderKeyNotFound.getError() }
-                    let holderJwk = try P256V.decompressPublicKey(
-                        compressedPublicKey: MultibaseUtils.decode(encoded: keyInfo.publicKey)).getPublicKeyJwk()
-
-                    let token = try SDJWTPresenter.createVpToken(
-                        sdjwt: item.sdjwt,
-                        claimCodes: mc.claimCodes,
-                        aud: authRequest.clientId,
-                        nonce: authRequest.nonce,
-                        holderJwk: holderJwk,
-                        signDigest: { digest in
-                            try self.walletCore.sign(keyId: item.kid,
-                                                     pin: passcode?.data(using: .utf8),
-                                                     data: digest,
-                                                     type: .HolderDidDocumnet)
-                        })
-                    return .string(token)
-                }
-            }
-            else
-            {
-                throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
-            }
-        }
-
-        // Assemble the authorization response and, for direct_post.jwt, JWE-seal it.
-        return try OID4VPResponseUtil.encodeResponseBody(authRequest: authRequest, vpToken: vpToken)
+        return order.map { (queryId: $0, group: grouped[$0]!) }
     }
 
+    /// Builds the `vp_token` elements of one DCQL query, dispatching on its presentation format.
+    private func vpTokenElements(queryId: String,
+                                 group: [MatchedCredential],
+                                 authRequest: AuthorizationRequest,
+                                 passcode: String?) throws -> [AnyJSON]
+    {
+        let format = try presentationFormat(for: queryId, in: authRequest)
+
+        if format == VerifiableCredentialAdapter.format
+        {
+            return [try w3cVpTokenElement(group: group, authRequest: authRequest, passcode: passcode)]
+        }
+        if SDJWTPresenter.supportedFormats.contains(format)
+        {
+            return try sdJwtVpTokenElements(group: group, authRequest: authRequest, passcode: passcode)
+        }
+        throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
+    }
+
+    /// W3C: reuses the existing VP pipeline unchanged. The VP is carried as an ldp_vp JSON object.
+    private func w3cVpTokenElement(group: [MatchedCredential],
+                                   authRequest: AuthorizationRequest,
+                                   passcode: String?) throws -> AnyJSON
+    {
+        let claimInfos = group.map { ClaimInfo(credentialId: $0.credentialId, claimCodes: $0.claimCodes) }
+        let vp = try createVp(
+            claimInfos: claimInfos,
+            passcode: passcode,
+            verifierNonce: authRequest.nonce,
+            challenge: OIDV4VPChallenge(domain: authRequest.clientId, challenge: authRequest.nonce))
+        return try JSONDecoder().decode(AnyJSON.self, from: vp.toJsonData())
+    }
+
+    /// SD-JWT: one presentation string per credential, each with its own key-bound KB-JWT.
+    private func sdJwtVpTokenElements(group: [MatchedCredential],
+                                      authRequest: AuthorizationRequest,
+                                      passcode: String?) throws -> [AnyJSON]
+    {
+        let items = try walletCore.getOID4VCICredentials(ids: group.map { $0.credentialId })
+        return try group.map { mc in
+            guard let item = items.first(where: { $0.id == mc.credentialId })
+            else { throw OID4VCManagerError.credentialNotFound.getError() }
+
+            // Wallet-touching key ops live here (walletCore owner); the presenter stays pure.
+            guard try walletCore.isSavedKey(keyId: item.kid),
+                  let keyInfo = try walletCore.getKeyInfos(ids: [item.kid]).first
+            else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+            let holderJwk = try P256V.decompressPublicKey(
+                compressedPublicKey: MultibaseUtils.decode(encoded: keyInfo.publicKey)).getPublicKeyJwk()
+
+            let token = try SDJWTPresenter.createVpToken(
+                sdjwt: item.sdjwt,
+                claimCodes: mc.claimCodes,
+                aud: authRequest.clientId,
+                nonce: authRequest.nonce,
+                holderJwk: holderJwk,
+                signDigest: { digest in
+                    try self.walletCore.sign(keyId: item.kid,
+                                             pin: passcode?.data(using: .utf8),
+                                             data: digest,
+                                             type: .HolderDidDocumnet)
+                })
+            return .string(token)
+        }
+    }
+
+    /// Resolves the presentation format of one DCQL query. Selection validation already rejected
+    /// query ids the request does not declare; the guard stays as a defence in depth.
     private func presentationFormat(for queryId: String,
                                     in authRequest: AuthorizationRequest) throws -> String
     {
-        guard let query = authRequest.dcqlQuery.credentials?.first(where: { $0.id == queryId }),
-              let format = query.format
-        else { throw OID4VCManagerError.unsupportedPresentationFormat(format: "missing format for query '\(queryId)'").getError() }
+        guard let query = authRequest.dcqlQuery.credentials?.first(where: { $0.id == queryId })
+        else
+        {
+            throw OID4VCManagerError.invalidSelectedCredentials(
+                detail: "no credential query with id '\(queryId)' in the request").getError()
+        }
+        guard let format = query.format
+        else
+        {
+            throw OID4VCManagerError.invalidDCQLQuery(
+                detail: "missing 'format' in credential query '\(queryId)'").getError()
+        }
         return format
     }
-    
+
     public func requestZKProof(hWalletToken:String,
                                selectedReferents : [UserReferent],
                                proofParam: ZKProofParam,

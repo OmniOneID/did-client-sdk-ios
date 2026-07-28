@@ -60,7 +60,18 @@ struct SDJWTPresenter
         }
         else
         {
-            selected = sdjwt.disclosures.filter { claimCodes.contains($0.claimName ?? "") }
+            let requested = Set(claimCodes)
+            selected = sdjwt.disclosures.filter { requested.contains($0.claimName ?? "") }
+
+            // A claim code with no disclosure would silently drop out of the presentation and be
+            // rejected by the verifier; fail here instead.
+            let missing = requested.subtracting(selected.compactMap { $0.claimName }).sorted()
+            guard missing.isEmpty
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedCredentials(
+                    detail: "claim(s) \(missing.joined(separator: ", ")) are not disclosable in the credential").getError()
+            }
         }
 
         // sd_hash is computed over the PRESENTED SD-JWT — issuer JWT + selected disclosures with the

@@ -82,13 +82,6 @@ struct JWE
 
 }
 
-enum JWEError: Error {
-    case unsupportedAlgorithm(String)
-    case unsupportedKeyType
-    case invalidRecipientKey
-    case encryptionFailed
-}
-
 extension JWE
 {
     var isKeyWrapping: Bool { !encryptedKey.isEmpty }
