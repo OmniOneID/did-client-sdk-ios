@@ -40,7 +40,7 @@ public struct OID4VPProtocol
         {
             throw OID4VPError.failedToFetchJWS
         }
-        let jws = JWS(from: String(data: encodedData, encoding: .utf8)!)
+        let jws = try JWS(from: String(data: encodedData, encoding: .utf8)!)
         if try jws.verify() == false
         {
             throw OID4VPError.failedToVerifyJWS

@@ -1158,7 +1158,7 @@ extension WalletService
 //        )
         
         let sdJWT = SDJWT.parse(raw: rawCredential)
-        let tempJWS = JWS.init(from: sdJWT.credentialJwt)
+        let tempJWS = try JWS.init(from: sdJWT.credentialJwt)
         let jwsHeader : JWSHeader = try .init(from: tempJWS.header.base64URLDecoded!)
         
         guard let kid = jwsHeader.kid, let identifier = DIDUtility.parseDIDKeyIdentifier(kid)

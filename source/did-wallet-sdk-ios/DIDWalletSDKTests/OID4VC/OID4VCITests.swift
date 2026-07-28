@@ -17,6 +17,7 @@
     
 
 import XCTest
+import CryptoKit
 @testable import DIDWalletSDK
 
 final class OID4VCITests: XCTestCase {
@@ -75,6 +76,111 @@ final class OID4VCITests: XCTestCase {
         let original = try JSONSerialization.jsonObject(
             with: Data(offerString.utf8)) as? NSDictionary
         XCTAssertEqual(reencoded, original)
+    }
+
+    // MARK: - JWS (public surface)
+
+    /// Builds a real ES256 JWS with the signer's public key embedded in the header.
+    private func makeSignedJWS(privateKey: P256.Signing.PrivateKey,
+                               payloadJSON: String) throws -> String
+    {
+        let header = try JWSHeader(typ: "JWT", jwk: privateKey.publicKey.getPublicKeyJwk())
+            .toJsonData().base64URLEncoded
+        let payload = Data(payloadJSON.utf8).base64URLEncoded
+        let signSource = "\(header).\(payload)"
+        let signature = try privateKey.signature(for: Data(signSource.utf8))
+        return "\(signSource).\(signature.rawRepresentation.base64URLEncoded)"
+    }
+
+    func testJWS_parsesAndVerifies() throws
+    {
+        let privateKey = P256.Signing.PrivateKey()
+        let raw = try makeSignedJWS(privateKey: privateKey,
+                                    payloadJSON: #"{"aud":"verifier","nonce":"n"}"#)
+
+        let jws = try JWS(from: raw)
+
+        XCTAssertTrue(try jws.verify())
+        let payload = try JSONSerialization.jsonObject(with: try jws.payloadData) as? [String: Any]
+        XCTAssertEqual(payload?["aud"] as? String, "verifier")
+        XCTAssertEqual(payload?["nonce"] as? String, "n")
+    }
+
+    func testJWS_tamperedPayloadFailsVerification() throws
+    {
+        let privateKey = P256.Signing.PrivateKey()
+        let raw = try makeSignedJWS(privateKey: privateKey, payloadJSON: #"{"aud":"verifier"}"#)
+
+        let parts = raw.split(separator: ".").map(String.init)
+        let tampered = "\(parts[0]).\(Data(#"{"aud":"attacker"}"#.utf8).base64URLEncoded).\(parts[2])"
+
+        XCTAssertFalse(try JWS(from: tampered).verify())
+    }
+
+    func testJWS_malformedThrows() throws
+    {
+        XCTAssertThrowsError(try JWS(from: "header.payload")) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05102" else {
+                return XCTFail("expected invalidJWS, got \(error)")
+            }
+        }
+    }
+
+    // A header carrying only a kid cannot be verified without resolving the signer's DID document.
+    func testJWS_missingHeaderKeyThrows() throws
+    {
+        let header = try JWSHeader(typ: "JWT", kid: "did:omn:issuer#key-1")
+            .toJsonData().base64URLEncoded
+        let payload = Data(#"{"aud":"verifier"}"#.utf8).base64URLEncoded
+        let raw = "\(header).\(payload).\(Data(repeating: 0, count: 64).base64URLEncoded)"
+
+        XCTAssertThrowsError(try JWS(from: raw).verify()) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05402" else {
+                return XCTFail("expected missingJWSHeaderKey, got \(error)")
+            }
+        }
+    }
+
+    // MARK: - Issuer list
+
+    // The issuer list is served in camelCase, so it decodes with the default key strategy (no
+    // FromSnake). userInitiationUri is optional — issuer-initiated-only issuers omit it.
+    func testIssuerList() throws
+    {
+        let listString = """
+        {
+          "count": 2,
+          "items": [
+            {
+              "credentialIssuer": "http://issuer.example",
+              "credentialIssuerMetadataUri": "http://issuer.example/.well-known/openid-credential-issuer",
+              "userInitiationUri": "http://issuer.example/initiate"
+            },
+            {
+              "credentialIssuer": "http://issuer2.example",
+              "credentialIssuerMetadataUri": "http://issuer2.example/.well-known/openid-credential-issuer"
+            }
+          ]
+        }
+        """
+
+        let list: OID4VCIIssuerList = try .init(from: listString)
+
+        XCTAssertEqual(list.count, 2)
+        XCTAssertEqual(list.items.count, 2)
+        XCTAssertEqual(list.items[0].credentialIssuer, "http://issuer.example")
+        XCTAssertEqual(list.items[0].credentialIssuerMetadataUri,
+                       "http://issuer.example/.well-known/openid-credential-issuer")
+        XCTAssertEqual(list.items[0].userInitiationUri, "http://issuer.example/initiate")
+        XCTAssertNil(list.items[1].userInitiationUri)
+
+        // Round-trips through the wire format the server uses.
+        let reencoded = try JSONSerialization.jsonObject(
+            with: try list.toJsonData()) as? [String: Any]
+        let items = try XCTUnwrap(reencoded?["items"] as? [[String: Any]])
+        XCTAssertEqual(reencoded?["count"] as? Int, 2)
+        XCTAssertEqual(items[0]["credentialIssuerMetadataUri"] as? String,
+                       "http://issuer.example/.well-known/openid-credential-issuer")
     }
     
     

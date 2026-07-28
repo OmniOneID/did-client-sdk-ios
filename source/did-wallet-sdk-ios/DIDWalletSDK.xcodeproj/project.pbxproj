@@ -45,6 +45,7 @@
 		AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0030000000000000E365 /* KBJWTPayload.swift */; };
 		AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0032000000000000E365 /* SDJWTPresenter.swift */; };
 		AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0044000000000000E365 /* MatchedCredential.swift */; };
+		AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
 		C90D3BDE2DAFA61400292BFD /* RequestUpdateDidDoc.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BA22DAFA61400292BFD /* RequestUpdateDidDoc.swift */; };
@@ -338,6 +339,7 @@
 		AAAA0030000000000000E365 /* KBJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KBJWTPayload.swift; sourceTree = "<group>"; };
 		AAAA0032000000000000E365 /* SDJWTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTPresenter.swift; sourceTree = "<group>"; };
 		AAAA0044000000000000E365 /* MatchedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchedCredential.swift; sourceTree = "<group>"; };
+		AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCIIssuerList.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
 		C90D3B962DAFA61400292BFD /* OfferTypeEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferTypeEnum.swift; sourceTree = "<group>"; };
@@ -909,6 +911,7 @@
 			isa = PBXGroup;
 			children = (
 				C98D82A72FA0810E00AF5BC2 /* CNonce.swift */,
+				AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */,
 				AAAA0030000000000000E365 /* KBJWTPayload.swift */,
 				C96BBB742F9B3CEF008AB547 /* IssuerJWTMetadata.swift */,
 				C91A34372F88F88D00F20388 /* TokenResponse.swift */,
@@ -1599,6 +1602,7 @@
 				AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */,
 				AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */,
 				AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */,
+				AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,
 				C98D25F02DB09DF700B2E84D /* VCManager.swift in Sources */,

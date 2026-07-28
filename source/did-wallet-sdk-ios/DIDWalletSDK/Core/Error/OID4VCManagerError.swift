@@ -23,6 +23,7 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     //Common(051xx)
     case unsupportedId(id: String)
     case unsupportedFormat(format: String)
+    case invalidJWS(detail: String)
     //JWE(052xx)
     case invalidJWE
     case unsupportedAlgorithmJWE
@@ -37,6 +38,7 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     //verify(054xx)
     case notFoundKid
     case failedToVerifySignature
+    case missingJWSHeaderKey
     //OID4VP(055xx)
     case unsupportedPresentationFormat(format: String)
     case invalidDCQLQuery(detail: String)
@@ -57,6 +59,8 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05100", "Unsupported in : \(id)")
         case .unsupportedFormat(let format):
             return ("05101", "Unsupported format : \(format)")
+        case .invalidJWS(let detail):
+            return ("05102", "Invalid JWS : \(detail)")
         case .invalidJWE:
             return ("05210", "Invalid JWE")
         case .unsupportedAlgorithmJWE:
@@ -79,6 +83,8 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05400", "Not found kid for verify")
         case .failedToVerifySignature:
             return ("05401", "Failed to verify signature")
+        case .missingJWSHeaderKey:
+            return ("05402", "No 'jwk' in the JWS header to verify with")
         case .unsupportedPresentationFormat(let format):
             return ("05500", "Presentation for format \(format) is not supported")
         case .invalidDCQLQuery(let detail):
