@@ -28,6 +28,25 @@ public struct CommunicationClient//: CommunicationProtocol
     
     public static let defaultTimeoutInterval: TimeInterval = 30
     
+    /// Dedicated session for all SDK traffic. Responses are never read from, nor written to,
+    /// the URL loading system's cache.
+    ///
+    /// The SDK always requires the current value of a resource, so caching is not a policy the
+    /// caller may choose: trust material goes stale in a way that matters. A cached DID Document
+    /// would let signature verification succeed against rotated or revoked keys, and a cached CA
+    /// allow list would keep admitting an authority whose trust was withdrawn. Relying on
+    /// server-supplied cache headers for that guarantee is not sufficient.
+    ///
+    /// `urlCache` is cleared to prevent responses from being stored; the cache policy only
+    /// governs whether a stored response is read back, so both are required.
+    private static let session : URLSession =
+    {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.urlCache = nil
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        return URLSession(configuration: configuration)
+    }()
+    
     /// Sends an asynchronous HTTP request to the specified URL with the given parameters and returns a decoded response.
     ///
     /// This method supports sending any request that conforms to the `Jsonable` protocol.
@@ -104,6 +123,7 @@ public struct CommunicationClient//: CommunicationProtocol
         
         var request = URLRequest(url: url)
         request.timeoutInterval = Self.defaultTimeoutInterval
+        request.cachePolicy = .reloadIgnoringLocalCacheData
         for (key, value) in headerFields
         {
             request.setValue(value, forHTTPHeaderField: key)
@@ -128,7 +148,7 @@ public struct CommunicationClient//: CommunicationProtocol
             }
         }
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await Self.session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse
         else
@@ -193,6 +213,7 @@ public struct CommunicationClient//: CommunicationProtocol
         
         var request = URLRequest(url: url)
         request.timeoutInterval = Self.defaultTimeoutInterval
+        request.cachePolicy = .reloadIgnoringLocalCacheData
         for (key, value) in headerFields
         {
             request.setValue(value, forHTTPHeaderField: key)
@@ -202,7 +223,7 @@ public struct CommunicationClient//: CommunicationProtocol
         
         request.httpBody = requestJsonData
         
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await Self.session.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse
         else

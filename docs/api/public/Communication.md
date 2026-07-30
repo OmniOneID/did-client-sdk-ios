@@ -41,6 +41,14 @@ iOS Communication API
   - [5. sendRequest](#5-sendrequest)
   - [6. sendRequest](#6-sendrequest)  
 
+# Caching
+
+Every request issued by `CommunicationClient` bypasses the URL loading system's cache, and no
+response is stored in it. The SDK always requires the current value of a resource: a cached DID
+Document would let signature verification succeed against rotated or revoked keys, and a cached
+CA allow list would keep admitting an authority whose trust was withdrawn. This is not
+configurable — callers cannot opt into cached responses.
+
 # API List
 ### 1. doGet
 

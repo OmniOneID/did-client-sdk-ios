@@ -42,6 +42,14 @@ iOS Communication API
   - [6. sendRequest](#6-sendrequest)
 
 
+## 캐시
+
+`CommunicationClient`가 보내는 모든 요청은 URL 로딩 시스템의 캐시를 우회하며, 응답 또한 캐시에
+저장되지 않습니다. SDK는 항상 리소스의 최신 값을 요구합니다. 캐시된 DID Document는 회전 또는
+폐기된 키로 서명 검증이 통과되게 하고, 캐시된 CA 목록은 신뢰가 철회된 기관을 계속 허용하게 됩니다.
+이 동작은 설정할 수 없으며, 호출부가 캐시된 응답을 사용하도록 선택할 수 없습니다.
+
+
 ## API 목록
 ### 1. doGet
 
