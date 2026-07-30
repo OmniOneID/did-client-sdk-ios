@@ -141,6 +141,63 @@ final class OID4VCITests: XCTestCase {
         }
     }
 
+    /// Builds a real ES256 JWS whose header carries only a `kid`, as a Status List Token does. The
+    /// signer's key has to come from somewhere else — that is what `verify(publicKey:)` is for.
+    private func makeKidOnlyJWS(privateKey: P256.Signing.PrivateKey,
+                                payloadJSON: String) throws -> String
+    {
+        let header = try JWSHeader(typ: "statuslist+jwt", kid: "did:omn:issuer?versionId=1#assert")
+            .toJsonData().base64URLEncoded
+        let payload = Data(payloadJSON.utf8).base64URLEncoded
+        let signSource = "\(header).\(payload)"
+        let signature = try privateKey.signature(for: Data(signSource.utf8))
+        return "\(signSource).\(signature.rawRepresentation.base64URLEncoded)"
+    }
+
+    func testJWS_verifiesWithCallerSuppliedKey() throws
+    {
+        let privateKey = P256.Signing.PrivateKey()
+        let raw = try makeKidOnlyJWS(privateKey: privateKey, payloadJSON: #"{"status":"ok"}"#)
+        let jws = try JWS(from: raw)
+
+        // Compressed is what a DID document's publicKeyMultibase decodes to; the other two forms
+        // are accepted so a caller already holding a CryptoKit key need not convert it.
+        XCTAssertTrue(try jws.verify(publicKey: privateKey.publicKey.compressedRepresentation))
+        XCTAssertTrue(try jws.verify(publicKey: privateKey.publicKey.x963Representation))
+        XCTAssertTrue(try jws.verify(publicKey: privateKey.publicKey.rawRepresentation))
+    }
+
+    func testJWS_callerSuppliedKeyRejectsOtherSigner() throws
+    {
+        let raw = try makeKidOnlyJWS(privateKey: P256.Signing.PrivateKey(),
+                                     payloadJSON: #"{"status":"ok"}"#)
+        let otherKey = P256.Signing.PrivateKey().publicKey
+
+        XCTAssertFalse(try JWS(from: raw).verify(publicKey: otherKey.compressedRepresentation))
+    }
+
+    func testJWS_callerSuppliedKeyRejectsMalformedBytes() throws
+    {
+        let raw = try makeKidOnlyJWS(privateKey: P256.Signing.PrivateKey(),
+                                     payloadJSON: #"{"status":"ok"}"#)
+
+        XCTAssertThrowsError(try JWS(from: raw).verify(publicKey: Data(repeating: 0, count: 10)))
+    }
+
+    // Reading the header is how a caller finds the kid it has to resolve.
+    func testJWS_protectedHeader() throws
+    {
+        let raw = try makeKidOnlyJWS(privateKey: P256.Signing.PrivateKey(),
+                                     payloadJSON: #"{"status":"ok"}"#)
+
+        let header = try JWS(from: raw).protectedHeader
+
+        XCTAssertEqual(header.kid, "did:omn:issuer?versionId=1#assert")
+        XCTAssertEqual(header.typ, "statuslist+jwt")
+        XCTAssertEqual(header.alg, .es256)
+        XCTAssertNil(header.jwk)
+    }
+
     // MARK: - Issuer list
 
     // The issuer list is served in camelCase, so it decodes with the default key strategy (no

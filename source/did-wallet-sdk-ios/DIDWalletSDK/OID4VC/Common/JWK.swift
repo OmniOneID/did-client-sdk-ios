@@ -18,47 +18,51 @@
 import Foundation
 import CryptoKit
 
-struct JWK: Jsonable
+/// A JSON Web Key. Only EC P-256 keys are modelled: `x` and `y` are the required coordinates.
+///
+/// Callers read this type — for example off a `JWSHeader` — but do not construct it; the
+/// memberwise initializer stays internal to the SDK.
+public struct JWK: Jsonable
 {
-    var alg : Algorithm?
-    var kid : String?
-    var crv : Curve      = .p256
-    var kty : KeyType    = .ec
-    var x   : String
-    var y   : String
-    var use : JWKUse?
+    public var alg : Algorithm?
+    public var kid : String?
+    public var crv : Curve      = .p256
+    public var kty : KeyType    = .ec
+    public var x   : String
+    public var y   : String
+    public var use : JWKUse?
 
-    enum Algorithm: Jsonable, Equatable
+    public enum Algorithm: Jsonable, Equatable
     {
         case es256
         case ecdhES
         case unknown(String)
     }
 
-    enum Curve: Jsonable, Equatable
+    public enum Curve: Jsonable, Equatable
     {
         case p256
         case unknown(String)
     }
 
-    enum KeyType: Jsonable, Equatable
+    public enum KeyType: Jsonable, Equatable
     {
         case ec
         case unknown(String)
     }
-    
-    enum JWKUse: String, Jsonable, Equatable
+
+    public enum JWKUse: String, Jsonable, Equatable
     {
         case sig
         case enc
     }
-    
+
 }
 
 
 extension JWK.KeyType
 {
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
         case "EC":
@@ -68,7 +72,7 @@ extension JWK.KeyType
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .ec:
@@ -81,7 +85,7 @@ extension JWK.KeyType
 
 extension JWK.Curve
 {
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
         case "P-256":
@@ -91,7 +95,7 @@ extension JWK.Curve
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .p256:
@@ -104,7 +108,7 @@ extension JWK.Curve
 
 extension JWK.Algorithm
 {
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
         case "ES256":
@@ -116,7 +120,7 @@ extension JWK.Algorithm
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .es256:

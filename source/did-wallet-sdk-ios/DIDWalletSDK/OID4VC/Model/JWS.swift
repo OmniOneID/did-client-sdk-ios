@@ -18,12 +18,17 @@
 import Foundation
 import CryptoKit
 
-struct JWSHeader : Jsonable
+/// A JWS protected header.
+///
+/// `alg` and `typ` are required on decode; a header that omits either is rejected. Callers read
+/// this type through `JWS.protectedHeader` but do not construct it — the memberwise initializer
+/// stays internal to the SDK.
+public struct JWSHeader : Jsonable
 {
-    var alg : JWK.Algorithm = .es256
-    var typ : String
-    var kid : String?
-    var jwk : JWK?
+    public var alg : JWK.Algorithm = .es256
+    public var typ : String
+    public var kid : String?
+    public var jwk : JWK?
 }
 
 struct JWSAudiencePayload : Jsonable
@@ -79,30 +84,52 @@ public struct JWS
         }
     }
 
+    /// The decoded protected header.
+    ///
+    /// Read `kid` from here when the header carries no `jwk`, resolve the signer's key yourself and
+    /// hand it to `verify(publicKey:)`.
+    /// - Throws: `OID4VCManagerError.invalidJWS` when the header is not base64url; a decoding error
+    ///   when it is not a JWS header — `alg` and `typ` are both required.
+    public var protectedHeader: JWSHeader
+    {
+        get throws
+        {
+            guard let decoded = header.base64URLDecoded
+            else
+            {
+                throw OID4VCManagerError.invalidJWS(detail: "header is not base64url").getError()
+            }
+
+            return try .init(from: decoded)
+        }
+    }
+
     /// Verifies the signature against the public key embedded in the header (`jwk`).
     ///
     /// Only self-contained JWSs can be checked this way; a header that carries a `kid` instead of a
-    /// `jwk` needs the signer's DID document, which this type does not resolve.
+    /// `jwk` needs the signer's DID document, which this type does not resolve — use
+    /// `verify(publicKey:)` for those.
     /// - Returns: Whether the signature is valid.
     /// - Throws: `OID4VCManagerError.invalidJWS` when a segment is not base64url,
     ///   `.missingJWSHeaderKey` when the header carries no `jwk`.
     public func verify() throws -> Bool
     {
-        let message = header + "." + payload
+        return try verify(key: try getPublicKey())
+    }
 
-        let publicKey = try getPublicKey()
-
-        guard let signatureData = signature.base64URLDecoded
-        else
-        {
-            throw OID4VCManagerError.invalidJWS(detail: "signature is not base64url").getError()
-        }
-
-        let sig = try P256.Signing.ECDSASignature.init(rawRepresentation: signatureData)
-
-        let digest = SHA256.hash(data: message.data(using: .utf8)!)
-
-        return publicKey.isValidSignature(sig, for: digest)
+    /// Verifies the signature against a caller-supplied public key.
+    ///
+    /// Use this when the header carries only a `kid`: resolve the signer's key yourself — from the
+    /// issuer's DID document, for instance — and pass its bytes in. Key resolution and trust
+    /// decisions stay with the caller, and so does checking `alg`: this method does not read the
+    /// header at all.
+    /// - Parameter publicKey: A P-256 public key, in compressed (33), X9.63 (65) or raw (64) form.
+    /// - Returns: Whether the signature is valid.
+    /// - Throws: `OID4VCManagerError.invalidJWS` when the signature is not base64url,
+    ///   `SignableError.invalidPublicKey` when the bytes are not a P-256 public key.
+    public func verify(publicKey: Data) throws -> Bool
+    {
+        return try verify(key: try .init(p256Representation: publicKey))
     }
 
     /// Decodes the payload into a `Jsonable` model.
@@ -111,17 +138,25 @@ public struct JWS
         return try T.init(from: try payloadData)
     }
 
-    private func getPublicKey() throws -> P256.Signing.PublicKey
+    /// The signature check both public entry points share.
+    private func verify(key: P256.Signing.PublicKey) throws -> Bool
     {
-        guard let decodedHeader = header.base64URLDecoded
+        guard let signatureData = signature.base64URLDecoded
         else
         {
-            throw OID4VCManagerError.invalidJWS(detail: "header is not base64url").getError()
+            throw OID4VCManagerError.invalidJWS(detail: "signature is not base64url").getError()
         }
 
-        let jwsHeader : JWSHeader = try .init(from: decodedHeader)
+        let sig = try P256.Signing.ECDSASignature.init(rawRepresentation: signatureData)
 
-        guard let jwk = jwsHeader.jwk
+        let digest = SHA256.hash(data: Data((header + "." + payload).utf8))
+
+        return key.isValidSignature(sig, for: digest)
+    }
+
+    private func getPublicKey() throws -> P256.Signing.PublicKey
+    {
+        guard let jwk = try protectedHeader.jwk
         else
         {
             throw OID4VCManagerError.missingJWSHeaderKey.getError()

@@ -51,7 +51,36 @@ extension P256.Signing.PublicKey
 }
 
 extension P256.Signing.PublicKey {
-    
+
+    /// Creates a key from a P-256 public key in compressed (33), X9.63 (65) or raw (64) byte form.
+    ///
+    /// DID documents in this ecosystem carry the compressed form; the other two are accepted so a
+    /// caller that already holds a CryptoKit-shaped key does not have to convert it first.
+    /// - Parameter data: The public key bytes.
+    /// - Throws: `SignableError.invalidPublicKey` when the bytes are not a P-256 public key in one
+    ///   of those forms.
+    init(p256Representation data: Data) throws
+    {
+        do
+        {
+            switch data.count
+            {
+            case 33:
+                self = try P256V.decompressPublicKey(compressedPublicKey: data)
+            case 65:
+                self = try P256.Signing.PublicKey(x963Representation: data)
+            case 64:
+                self = try P256.Signing.PublicKey(rawRepresentation: data)
+            default:
+                throw SignableError.invalidPublicKey.getError()
+            }
+        }
+        catch
+        {
+            throw SignableError.invalidPublicKey.getError()
+        }
+    }
+
     public init(
         x: Data,
         y: Data
