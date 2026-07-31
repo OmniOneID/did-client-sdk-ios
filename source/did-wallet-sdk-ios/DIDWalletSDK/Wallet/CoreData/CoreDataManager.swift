@@ -63,7 +63,7 @@ final class CoreDataManager {
         
         // View (main/UI) context: read/light edits only; auto-merge from writer
         container.viewContext.automaticallyMergesChangesFromParent = true
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         container.viewContext.undoManager = nil
         
         return container
@@ -74,7 +74,7 @@ final class CoreDataManager {
     /// All writes MUST go through this writer context (serialized, background queue)
     private lazy var writer: NSManagedObjectContext = {
         let ctx = container.newBackgroundContext()
-        ctx.mergePolicy = NSMergeByPropertyStoreTrumpMergePolicy
+        ctx.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
         ctx.automaticallyMergesChangesFromParent = true
         ctx.undoManager = nil
         return ctx

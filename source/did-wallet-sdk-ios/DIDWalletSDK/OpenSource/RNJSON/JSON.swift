@@ -11,7 +11,7 @@ public enum JSONError: Swift.Error {
 }
 
 @dynamicMemberLookup
-public enum JSON {
+public enum JSON : Sendable {
     public static let formatter = NumberFormatter()
 
     case string(String)

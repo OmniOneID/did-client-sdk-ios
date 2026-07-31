@@ -176,7 +176,8 @@ fileprivate struct Digest256 : Digest
 {
     let bytes: (UInt64, UInt64, UInt64, UInt64)
     
-    public static var byteCount: Int = 32
+    /// Fixed by the curve — P-256 digests are 32 bytes — so it is a constant, not settable state.
+    public static let byteCount: Int = 32
     
     public func withUnsafeBytes<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R 
     {

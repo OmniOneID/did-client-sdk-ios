@@ -15,8 +15,9 @@
  */
 
 import Foundation
+import os
 
-public enum WalletLogLevel: String {
+public enum WalletLogLevel: String, Sendable {
     case verbose = "VERBOSE"
     case debug = "DEBUG"
     case info = "INFO"
@@ -25,18 +26,28 @@ public enum WalletLogLevel: String {
 }
 
 public enum WalletLogger {
-    
-    private static var logLevel: WalletLogLevel = .debug
-    private static var onOff: Bool = false
-    
-    // MARK: - Config
-    
-    public static func setEnable(_ onOff: Bool) {
-        self.onOff = onOff
+
+    /// The logger's configuration.
+    ///
+    /// Every log call reads it from whatever thread the caller is on, while `setEnable` and
+    /// `setLogLevel` may be called at any time, so the state is held behind a lock instead of being
+    /// free-floating mutable statics. An uncontended lock costs far less than the string
+    /// interpolation each log call already performs.
+    private struct Config {
+        var logLevel: WalletLogLevel = .debug
+        var onOff: Bool = false
     }
-    
+
+    private static let config = OSAllocatedUnfairLock(initialState: Config())
+
+    // MARK: - Config
+
+    public static func setEnable(_ onOff: Bool) {
+        config.withLock { $0.onOff = onOff }
+    }
+
     public static func setLogLevel(_ level: WalletLogLevel) {
-        self.logLevel = level
+        config.withLock { $0.logLevel = level }
     }
     
     // MARK: - Log Methods
@@ -64,14 +75,17 @@ public enum WalletLogger {
     // MARK: - Private
     
     private static func log(_ message: String, level: WalletLogLevel, function: String) {
-        guard onOff else { return }
-        guard shouldLog(level: level) else { return }
+        // Read both values under one lock so the decision is made against a single consistent
+        // configuration.
+        let current = config.withLock { $0 }
+        guard current.onOff else { return }
+        guard shouldLog(level: level, minimum: current.logLevel) else { return }
         print("▶️[\(level.rawValue)]◀️ \(function): \(message)")
     }
-    
-    private static func shouldLog(level: WalletLogLevel) -> Bool {
+
+    private static func shouldLog(level: WalletLogLevel, minimum: WalletLogLevel) -> Bool {
         let levels: [WalletLogLevel] = [.verbose, .debug, .info, .warning, .error]
-        guard let currentIndex = levels.firstIndex(of: logLevel),
+        guard let currentIndex = levels.firstIndex(of: minimum),
               let levelIndex = levels.firstIndex(of: level) else {
             return false
         }

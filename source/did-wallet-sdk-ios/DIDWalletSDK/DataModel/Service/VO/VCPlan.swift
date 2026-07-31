@@ -22,7 +22,7 @@ public struct Option: Jsonable {
     public var delegatedIssuance: Bool
 }
 
-public enum VCIssuanceMode: String, Codable
+public enum VCIssuanceMode: String, Codable, Sendable
 {
     case DIRECT
     case PROXY

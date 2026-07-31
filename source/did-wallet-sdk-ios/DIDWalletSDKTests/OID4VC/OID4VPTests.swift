@@ -204,13 +204,22 @@ final class OID4VPTests: XCTestCase {
             .replacingOccurrences(of: "=", with: "")
     }
 
+    /// SD-JWT digests the US-ASCII bytes of the base64url disclosure, not the JSON it decodes to.
+    private func sdDigest(_ disclosure: String) -> String {
+        Data(SHA256.hash(data: Data(disclosure.utf8))).base64URLEncoded
+    }
+
     /// Builds a parseable (unsigned) SD-JWT compact string for matching tests.
+    ///
+    /// The payload lists every disclosure's digest in `_sd`, the way an issuer does — that is what
+    /// lets a claim be located from the payload rather than by disclosure name alone.
     private func makeSDJWT(vct: String, iss: String,
                            disclosures: [(salt: String, name: String, value: String)]) -> String {
         let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
-        let payload = b64url("{\"vct\":\"\(vct)\",\"iss\":\"\(iss)\",\"_sd_alg\":\"sha-256\"}")
-        let jwt = "\(header).\(payload).sig"
         let discs = disclosures.map { b64url("[\"\($0.salt)\",\"\($0.name)\",\"\($0.value)\"]") }
+        let sdList = discs.map { "\"\(sdDigest($0))\"" }.joined(separator: ",")
+        let payload = b64url("{\"vct\":\"\(vct)\",\"iss\":\"\(iss)\",\"_sd_alg\":\"sha-256\",\"_sd\":[\(sdList)]}")
+        let jwt = "\(header).\(payload).sig"
         return ([jwt] + discs).joined(separator: "~")
     }
 
@@ -261,6 +270,62 @@ final class OID4VPTests: XCTestCase {
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
             guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else { return XCTFail("got \(error)") }
+        }
+    }
+
+    // One stored credential the adapter cannot parse must not make the rest of the wallet
+    // unpresentable: the good credential still matches.
+    func testSDJWT_unparseableStoredCredentialIsSkipped() throws {
+        let vct = "https://credentials.example/identity"
+        let good = makeSDJWT(vct: vct, iss: "https://issuer.example",
+                             disclosures: [("s1", "family_name", "Kim")])
+        // No `typ` in the header — SDJWTCredentialAdapter.parse rejects it.
+        let broken = "\(b64url(#"{"alg":"ES256"}"#)).\(b64url(#"{"vct":"x"}"#)).sig~"
+
+        let creds = """
+        [ { "id": "id_card", "format": "dc+sd-jwt-did",
+            "meta": { "vct_values": ["\(vct)"] },
+            "claims": [ { "path": ["family_name"] } ] } ]
+        """
+        let infos = try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: creds),
+            sdJwtCredentials: [makeSdJwtItem(id: "broken", rawSdJwt: broken),
+                               makeSdJwtItem(id: "cred-1", rawSdJwt: good)]
+        )
+
+        let cis = try XCTUnwrap(infos["id_card"])
+        XCTAssertEqual(cis.map(\.credentialId), ["cred-1"])
+    }
+
+    // `meta` is optional in DCQL: a query that states no schema constraint still has to match, with
+    // `claims` alone deciding.
+    func testOpendidVc_queryWithoutMetaMatchesOnClaims() throws {
+        let vc = try makeCredential()
+        let claimCode = try XCTUnwrap(vc.credentialSubject.claims.first?.code)
+
+        let matching = """
+        [ { "id": "student_id", "format": "opendid_vc",
+            "claims": [ { "path": ["\(claimCode)"] } ] } ]
+        """
+        let infos = try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: matching),
+            credentials: [vc]
+        )
+        XCTAssertEqual(infos["student_id"]?.first?.credentialId, vc.id)
+        XCTAssertEqual(infos["student_id"]?.first?.claimCodes, [claimCode])
+
+        // A claim the credential does not carry still excludes it.
+        let notMatching = """
+        [ { "id": "student_id", "format": "opendid_vc",
+            "claims": [ { "path": ["claim_that_does_not_exist"] } ] } ]
+        """
+        XCTAssertThrowsError(try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: notMatching),
+            credentials: [vc]
+        )) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else {
+                return XCTFail("expected noMatchedCredentials, got \(error)")
+            }
         }
     }
 
@@ -702,6 +767,104 @@ final class OID4VPTests: XCTestCase {
                                                      holderJwk: holderJwk,
                                                      signDigest: { _ in Data(repeating: 0, count: 65) })
         XCTAssertEqual(token.split(separator: "~").count, 3, "expected issuer JWT + 1 disclosure + KB-JWT")
+    }
+
+    // MARK: - Claim paths, disclosure bytes and JSON scalars
+
+    /// Builds an SD-JWT whose `address` claim is itself selectively disclosable and hides
+    /// `street_address` behind a nested `_sd` digest — the shape a DCQL path query targets.
+    private func makeNestedSDJWT() -> (raw: String, address: String, street: String) {
+        let street = b64url(#"["s2","street_address","Sesame 1"]"#)
+        let address = b64url("[\"s1\",\"address\",{\"_sd\":[\"\(sdDigest(street))\"]}]")
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
+        let payload = b64url("""
+        {"vct":"https://credentials.example/identity","iss":"https://issuer.example",\
+        "nationality":"KR","_sd_alg":"sha-256","_sd":["\(sdDigest(address))"]}
+        """)
+        return (raw: "\(header).\(payload).sig~\(address)~\(street)", address: address, street: street)
+    }
+
+    private func vpToken(sdjwt: SDJWT, claimCodes: [String]) throws -> String {
+        try SDJWTPresenter.createVpToken(sdjwt: sdjwt,
+                                         claimCodes: claimCodes,
+                                         aud: "verifier",
+                                         nonce: "n",
+                                         holderJwk: P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk(),
+                                         signDigest: { _ in Data(repeating: 0, count: 65) })
+    }
+
+    // A nested path is what matching reports; presenting it needs the parent disclosure as well as
+    // the child, or the verifier cannot reach the claim.
+    func testPresenter_nestedPathDisclosesParentAndChild() throws {
+        let fixture = makeNestedSDJWT()
+        let token = try vpToken(sdjwt: SDJWT.parse(raw: fixture.raw),
+                                claimCodes: ["address.street_address"])
+
+        let segments = token.split(separator: "~").map(String.init)
+        XCTAssertEqual(segments.count, 4, "expected issuer JWT + 2 disclosures + KB-JWT: \(token)")
+        XCTAssertTrue(segments.contains(fixture.address), "parent disclosure missing")
+        XCTAssertTrue(segments.contains(fixture.street), "child disclosure missing")
+    }
+
+    // A claim the issuer left in the clear has no disclosure at all. That is not an error — the
+    // verifier already receives it — so the presentation carries no disclosure for it.
+    func testPresenter_plaintextClaimNeedsNoDisclosure() throws {
+        let token = try vpToken(sdjwt: SDJWT.parse(raw: makeNestedSDJWT().raw),
+                                claimCodes: ["nationality"])
+
+        XCTAssertEqual(token.split(separator: "~").count, 2,
+                       "expected issuer JWT + KB-JWT and no disclosure: \(token)")
+    }
+
+    // A path into a claim the credential does not hold is still rejected.
+    func testPresenter_unknownNestedPathThrows() throws {
+        let sdjwt = SDJWT.parse(raw: makeNestedSDJWT().raw)
+
+        XCTAssertThrowsError(try vpToken(sdjwt: sdjwt, claimCodes: ["address.country"])) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+                return XCTFail("expected invalidSelectedCredentials, got \(error)")
+            }
+        }
+    }
+
+    // The issuer's `_sd` digests are taken over the disclosure bytes as sent. Re-serializing the
+    // decoded value would change them, so a parsed disclosure must survive byte-for-byte.
+    func testDisclosure_keepsIssuerBytesAndDigest() throws {
+        // Spec-style spacing: a re-encode by this SDK's writer would drop the spaces.
+        let raw = b64url(#"["s1", "family_name", "Kim"]"#)
+        let disclosure = try XCTUnwrap(Disclosure.parse(raw: raw))
+
+        XCTAssertEqual(disclosure.getDisclosure(), raw, "issuer disclosure bytes were not preserved")
+        XCTAssertEqual(disclosure.digest(), sdDigest(raw), "digest must hash the base64url disclosure")
+
+        // A disclosure built in code has no issuer form and is serialized on demand.
+        let built = Disclosure(salt: "s1", claimName: "family_name", claimValue: .string("Kim"))
+        XCTAssertEqual(built.digest(), sdDigest(built.getDisclosure()))
+    }
+
+    // JSONSerialization hands back every scalar as NSNumber, and `as? Bool` also succeeds for 0 and
+    // 1 — a numeric claim of 0/1 must not turn into a boolean, or no value condition can match it.
+    func testAnyJSON_numericZeroAndOneStayNumbers() throws {
+        XCTAssertEqual(AnyJSON.fromFoundation(NSNumber(value: 1)), .number(1))
+        XCTAssertEqual(AnyJSON.fromFoundation(NSNumber(value: 0)), .number(0))
+        XCTAssertEqual(AnyJSON.fromFoundation(NSNumber(value: true)), .bool(true))
+        XCTAssertEqual(AnyJSON.fromFoundation(NSNumber(value: false)), .bool(false))
+
+        // The same via the parser the SD-JWT payload actually goes through.
+        let parsed = try JSONSerialization.jsonObject(with: Data(#"{"level":1,"active":true}"#.utf8))
+        let object = try XCTUnwrap(AnyJSON.fromFoundation(parsed)?.asObject)
+        XCTAssertEqual(object["level"], .number(1))
+        XCTAssertEqual(object["active"], .bool(true))
+    }
+
+    // A claim query on a numeric 0/1 value must match the credential holding it.
+    func testClaimMatching_numericOneMeetsValueCondition() throws {
+        let payload = try JSONSerialization.jsonObject(with: Data(#"{"level":1}"#.utf8)) as! [String: Any]
+        let query = try DCQLQuery(from: #"{"credentials":[{"id":"q","claims":[{"path":["level"],"values":[1]}]}]}"#)
+        let claimQuery = try XCTUnwrap(query.credentials?.first?.claims?.first)
+
+        XCTAssertTrue(ClaimMatchingHelper.meetsConditions(claimQuery: claimQuery,
+                                                          actualValue: payload["level"]!))
     }
 
     // Only the POST-based response modes are supported; anything else must not be sent in the clear.

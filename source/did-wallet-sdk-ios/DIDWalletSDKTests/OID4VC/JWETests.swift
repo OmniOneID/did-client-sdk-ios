@@ -68,9 +68,41 @@ final class JWETests: XCTestCase {
         XCTAssertEqual(decrypted, plaintext)
     }
 
-    // Note: a wrong-key / tampered-ciphertext decrypt currently hits a fatalError inside
-    // JWE.decrypt (its auth-failure path is not yet a thrown error), so it cannot be asserted
-    // as a throwing test here without crashing the runner. Covered once that path is error-ified.
+    // A tampered ciphertext fails the GCM tag check. AEAD cannot tell "wrong key" from "modified
+    // data" — and must not, or it becomes an oracle — so both surface as authenticationFailed.
+    func testTamperedCiphertextFailsAuthentication() throws {
+        let recipientPrivateKey = P256.KeyAgreement.PrivateKey()
+        let compact = try JWE.encrypt(plaintext: Data("secret payload".utf8),
+                                      to: recipientPrivateKey.publicKey.getPublicKeyJwk())
+
+        var segments = compact.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
+        var ciphertext = try XCTUnwrap(segments[3].base64URLDecoded)
+        // Flip one bit; the protected header (AAD), iv and tag stay intact so the SealedBox still
+        // builds and the failure lands on the tag check rather than on invalidSealedBox.
+        ciphertext[0] ^= 0x01
+        segments[3] = ciphertext.base64URLEncoded
+
+        let tampered = try JWE(compact: segments.joined(separator: "."))
+        XCTAssertThrowsError(try tampered.decrypt(using: recipientPrivateKey)) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05214" else {
+                return XCTFail("expected authenticationFailed, got \(error)")
+            }
+        }
+    }
+
+    // Decrypting with a key the JWE was not encrypted for derives a different CEK, which the tag
+    // check rejects the same way.
+    func testWrongRecipientKeyFailsAuthentication() throws {
+        let compact = try JWE.encrypt(plaintext: Data("secret payload".utf8),
+                                      to: P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk())
+
+        let strangerKey = P256.KeyAgreement.PrivateKey()
+        XCTAssertThrowsError(try JWE(compact: compact).decrypt(using: strangerKey)) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05214" else {
+                return XCTFail("expected authenticationFailed, got \(error)")
+            }
+        }
+    }
 
     // The recipient JWK's kid is echoed into the top-level protected header; the ephemeral epk
     // carries no kid. A recipient without a kid produces a header with no kid field.
@@ -87,6 +119,31 @@ final class JWETests: XCTestCase {
         let noKidJWK = P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk()
         let compactNoKid = try JWE.encrypt(plaintext: Data("x".utf8), to: noKidJWK)
         XCTAssertNil(try JWE(compact: compactNoKid).protectedHeader.kid)
+    }
+
+    // Every segment of a compact JWE is server-supplied. One that is not valid base64url must be
+    // reported as invalidJWE, never trap the app mid-issuance.
+    func testMalformedSegmentThrowsInsteadOfTrapping() throws {
+        let compact = try JWE.encrypt(plaintext: Data("x".utf8),
+                                      to: P256.KeyAgreement.PrivateKey().publicKey.getPublicKeyJwk())
+        var segments = compact.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
+
+        // A base64url segment whose length is ≡1 mod 4 cannot be decoded.
+        for index in [0, 2, 3, 4] {
+            var broken = segments
+            broken[index] = String(repeating: "A", count: 5)
+
+            XCTAssertThrowsError(try JWE(compact: broken.joined(separator: ".")),
+                                 "segment \(index) should be rejected") { error in
+                guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05210" else {
+                    return XCTFail("expected invalidJWE for segment \(index), got \(error)")
+                }
+            }
+        }
+
+        // The intact string still parses, so the test above is not passing for the wrong reason.
+        segments = compact.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
+        XCTAssertNoThrow(try JWE(compact: segments.joined(separator: ".")))
     }
 
     // A non-P-256 recipient key is rejected up front.

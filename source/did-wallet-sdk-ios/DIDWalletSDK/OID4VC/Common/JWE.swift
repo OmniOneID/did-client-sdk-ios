@@ -72,12 +72,24 @@ struct JWE
         }
         
         self.rawProtectedHeader = String(parts[0])
-        
-        self.protectedHeader = try JWEProtectedHeader.init(from: rawProtectedHeader.base64URLDecoded!)
-        self.encryptedKey = String(parts[1]).base64URLDecoded!
-        self.iv           = String(parts[2]).base64URLDecoded!
-        self.ciphertext   = String(parts[3]).base64URLDecoded!
-        self.authTag      = String(parts[4]).base64URLDecoded!
+
+        // Every segment comes from the server. A segment that is not valid base64url must surface as
+        // `invalidJWE`, not trap the app.
+        guard let protectedHeaderData = rawProtectedHeader.base64URLDecoded,
+              let encryptedKey        = String(parts[1]).base64URLDecoded,
+              let iv                  = String(parts[2]).base64URLDecoded,
+              let ciphertext          = String(parts[3]).base64URLDecoded,
+              let authTag             = String(parts[4]).base64URLDecoded
+        else
+        {
+            throw OID4VCManagerError.invalidJWE.getError()
+        }
+
+        self.protectedHeader = try JWEProtectedHeader.init(from: protectedHeaderData)
+        self.encryptedKey = encryptedKey
+        self.iv           = iv
+        self.ciphertext   = ciphertext
+        self.authTag      = authTag
     }
 
 }

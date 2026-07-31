@@ -16,7 +16,7 @@
 
 import Foundation
 
-public struct CommunicationClient//: CommunicationProtocol
+public struct CommunicationClient
 {
     
     public enum HTTPMethod : String

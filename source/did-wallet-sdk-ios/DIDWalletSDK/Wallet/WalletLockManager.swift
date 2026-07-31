@@ -15,12 +15,22 @@
  */
 
 import Foundation
+import os
 
 
 class WalletLockManager: WalletLockManagerImpl {
-    
+
+    /// The wallet's lock state.
+    ///
+    /// It is written on unlock/registration and read from wherever the app happens to be, so it is
+    /// kept behind a lock: a stale read here would mean treating a locked wallet as unlocked.
+    private static let lockState = OSAllocatedUnfairLock(initialState: true)
+
     // wallet status
-    internal static var isLock: Bool = true
+    internal static var isLock: Bool {
+        get { lockState.withLock { $0 } }
+        set { lockState.withLock { $0 = newValue } }
+    }
     
     init() {
         

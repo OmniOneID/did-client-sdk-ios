@@ -33,7 +33,7 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
     public let credentialConfigurationsSupported: [String: CredentialConfiguration]
 
     // MARK: - Flexible Type for Signing Algorithms (handles String and Int)
-    public enum SigningAlg: Codable {
+    public enum SigningAlg: Codable, Sendable {
         case string(String)
         case int(Int)
     }
@@ -66,7 +66,7 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
         public let oneTimeUse: Bool?
     }
 
-    public struct CredentialMetadata: Codable {
+    public struct CredentialMetadata: Codable, Sendable {
         public let claims: [ClaimDetail]?
         public let display: [DisplayInfo]?
     }

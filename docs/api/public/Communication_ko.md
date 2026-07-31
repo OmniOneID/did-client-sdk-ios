@@ -20,11 +20,12 @@ iOS Communication API
 
 - 주제: Communication
 - 작성: 박주현
-- 일자: 2025-09-09
-- 버전: v1.0.2
+- 일자: 2026-07-31
+- 버전: v2.0.0
 
 | 버전   | 일자       | 변경 내용        |
 | ------ | ---------- | ---------------- |
+| v2.0.0 | 2026-07-31 | doGet / doPost 제거 — sendRequest 사용 |
 | v1.0.2 | 2025-09-09 | 신규 통신 API 추가 |
 | v1.0.1 | 2025-05-23 | ZKP API 추가     |
 | v1.0.0 | 2024-10-18 | 초기 작성        |
@@ -34,12 +35,22 @@ iOS Communication API
 
 # 목차
 - [APIs](#api-목록)
-  - [1. doGet](#1-doget)
-  - [2. doPost](#2-dopost)
-  - [3. getZKPCredentialSchama](#3-getzkpcredentialschama)
-  - [4. getZKPCredentialDefinition](#4-getzkpcredentialdefinition)
-  - [5. sendRequest](#5-sendrequest)
-  - [6. sendRequest](#6-sendrequest)
+  - [1. getZKPCredentialSchama](#1-getzkpcredentialschama)
+  - [2. getZKPCredentialDefinition](#2-getzkpcredentialdefinition)
+  - [3. sendRequest](#3-sendrequest)
+  - [4. sendRequest](#4-sendrequest)
+
+
+## v2.0.0 에서 제거된 API
+
+`doGet(url:)` 과 `doPost(url:requestJsonData:)` 가 제거되었으며, `CommunicationProtocol` 과
+`ZKPCommunicationProtocol` 프로토콜도 함께 제거되었습니다. 대신 `sendRequest` 를 사용합니다.
+`doGet(url:)` 은 `sendRequest(urlString:httpMethod: .GET)` 으로, `doPost(url:requestJsonData:)` 는
+`sendRequest(urlString:requestJsonData:)` 로 대체됩니다.
+
+단순 치환은 아닙니다. 제거된 API 는 `Data` 를 반환하고 상태 코드가 200 이 아니면 예외를 던졌지만,
+raw `sendRequest` 오버로드는 `(Data, Int)` 를 반환하며 상태 코드 판정을 호출부에 맡깁니다.
+제네릭 `sendRequest<T: Jsonable>` 오버로드는 기존과 같이 200 이 아닐 때 예외를 던집니다.
 
 
 ## 캐시
@@ -51,66 +62,7 @@ iOS Communication API
 
 
 ## API 목록
-### 1. doGet
-
-#### Description
-`Http 요청 및 응답 기능 제공`
-`본 기능은 Deprecated되어 향후 기능이 제공되지 않을 수 있습니다`
-
-#### Declaration
-```swift
-public static func doGet(url: URL) async throws -> Data
-```
-
-
-#### Parameters
-| Parameter | Type   | Description                | **M/O** | **Note** |
-|-----------|--------|----------------------------|---------|----------|
-| urlString | Url    | 서버 URL                    |   M     |          |
-
-#### Returns
-| Type | Description                |**M/O**  | **Note**    |
-|------|----------------------------|---------|-------------|
-| Data | 응답 데이터                   |    M    |             |
-
-
-#### Usage
-```swift
-let responseData = try await CommnunicationClient.doGet(url: URL(string: URLs.TAS_URL + "/list/api/v1/vcplan/list")!)
-```
-
-<br>
-
-### 2. doPost
-
-#### Description
-`HTTP POST 요청 및 응답 기능을 제공합니다.`
-`본 기능은 Deprecated되어 향후 기능이 제공되지 않을 수 있습니다.`
-
-#### Declaration
-```swift
-func doPost(url: URL, requestJsonData: Data) async throws -> Data
-```
-
-#### Parameters
-| Parameter      | Type   | Description                | **M/O** | **Note** |
-|----------------|--------|----------------------------|---------|----------|
-| urlString      | URL    | 서버 URL                    |    M    |          |
-| requestJsonData| Data   | 요청 데이터                   |    M    |          |
-
-#### Returns
-| Type | Description                |**M/O**  |    **Note** |
-|------|----------------------------|---------|-------------|
-| Data | 응답 데이터                   |      M  |             |
-
-#### Usage
-```swift
-let reqAttDidDoc = RequestAttestedDIDDoc(id: id, attestedDIDDoc: attDIDDoc)
-let responseData = try await CommnunicationClient().doPost(url: URL(string:tasURL + "/tas/api/v1/request-register-wallet")!, requestJsonData: try reqAttDidDoc.toJsonData())
-```
-<br>
-
-### 3. getZKPCredentialSchama
+### 1. getZKPCredentialSchama
 
 #### Description
 `지정된 URL에서 GET 메서드를 사용하여 동기 방식으로 ZKPCredentialSchema 객체를 가져옵니다.`
@@ -141,7 +93,7 @@ let credSchema = try await CommnunicationClient.getZKPCredentialSchama(hostUrlSt
 
 <br>
 
-### 4. getZKPCredentialDefinition
+### 2. getZKPCredentialDefinition
 
 #### Description
 `지정된 URL에서 GET 메서드를 사용하여 동기 방식으로 ZKPCredentialDefinition 객체를 가져옵니다.`
@@ -172,7 +124,7 @@ let credDef = try await CommnunicationClient.getZKPCredentialDefinition(hostUrlS
 
 <br>
 
-### 5. sendRequest
+### 3. sendRequest
 
 #### Description
 ```
@@ -216,7 +168,7 @@ let response: SomeResponse = try await CommunicationClient.sendRequest(
 
 <br>
 
-### 6. sendRequest
+### 4. sendRequest
 
 #### Description
 ```

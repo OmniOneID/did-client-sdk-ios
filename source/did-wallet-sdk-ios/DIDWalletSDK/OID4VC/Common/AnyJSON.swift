@@ -19,7 +19,7 @@ import Foundation
 
 // MARK: - AnyJSON (lossless JSON value container)
 
-public enum AnyJSON: Codable, Equatable, Hashable {
+public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
     case null
     case bool(Bool)
     case number(Double)          // JSON numbers; keep as Double
@@ -49,11 +49,15 @@ public enum AnyJSON: Codable, Equatable, Hashable {
     // Create from Foundation JSON types
     public static func fromFoundation(_ value: Any) -> AnyJSON? {
         if value is NSNull { return .null }
-        if let b = value as? Bool { return .bool(b) }
+        // NSNumber must be inspected before any Bool cast. JSONSerialization returns every JSON
+        // scalar as NSNumber, and `as? Bool` also succeeds for the numbers 0 and 1 — testing Bool
+        // first would turn those numbers into booleans and break every value/min/max comparison.
+        // Only a CFBoolean is a real JSON boolean.
         if let n = value as? NSNumber {
-            // NSNumber can represent Bool too; make sure we didn't already catch Bool above
+            if CFGetTypeID(n as CFTypeRef) == CFBooleanGetTypeID() { return .bool(n.boolValue) }
             return .number(n.doubleValue)
         }
+        if let b = value as? Bool { return .bool(b) }
         if let s = value as? String { return .string(s) }
         if let a = value as? [Any] {
             return .array(a.compactMap { AnyJSON.fromFoundation($0) })

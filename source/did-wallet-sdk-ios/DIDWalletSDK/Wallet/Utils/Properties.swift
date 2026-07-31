@@ -28,6 +28,5 @@ public class Properties {
     
     public static func setWalletId(id: String) {
         defaults.setValue(id, forKey: "walletId")
-        UserDefaults.standard.synchronize()
     }
 }

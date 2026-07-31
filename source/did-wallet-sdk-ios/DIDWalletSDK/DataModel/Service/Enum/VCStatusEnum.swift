@@ -16,7 +16,7 @@
 
 import Foundation
 
-public enum VCStatusEnum: String, Codable {
+public enum VCStatusEnum: String, Codable, Sendable {
     case ACTIVE
     case INACTIVE
     case REVOKED

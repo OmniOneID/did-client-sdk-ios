@@ -37,7 +37,12 @@ public protocol FromSnake {}
 
 //MARK: - Jsonable
 /// Model to Json, and vice versa
-public protocol Jsonable : Codable
+///
+/// `Sendable` is part of the contract: these models are values the SDK hands across concurrency
+/// domains, and a public type's `Sendable` status is not inferred outside its module — the library
+/// has to state it. Conforming types must therefore be value types whose stored properties are
+/// themselves Sendable.
+public protocol Jsonable : Codable, Sendable
 {
     init(fromMultibase encoded: String) throws
     init(from jsonData: Data) throws

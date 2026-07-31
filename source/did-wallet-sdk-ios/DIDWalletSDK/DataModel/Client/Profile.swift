@@ -17,7 +17,7 @@
 import Foundation
 
 /// Profile type
-public enum ProfileType : String, Codable
+public enum ProfileType : String, Codable, Sendable
 {
     case IssueProfile
     case VerifyProfile
@@ -28,7 +28,7 @@ public enum ProfileType : String, Codable
 public struct LogoImage : Jsonable
 {
     /// Logo image type
-    public enum LogoImageType : String, Codable
+    public enum LogoImageType : String, Codable, Sendable
     {
         case jpg
         case png

@@ -16,7 +16,7 @@
 import Foundation
 
 /// Claim type
-public enum ClaimType : String, Codable
+public enum ClaimType : String, Codable, Sendable
 {
     case text
     case image
@@ -24,7 +24,7 @@ public enum ClaimType : String, Codable
 }
 
 /// Claim format
-public enum ClaimFormat : String, Codable
+public enum ClaimFormat : String, Codable, Sendable
 {
     //text
     case plain
@@ -42,7 +42,7 @@ public enum ClaimFormat : String, Codable
 }
 
 /// Value Location
-public enum Location : String, Codable
+public enum Location : String, Codable, Sendable
 {
     case inline
     case remote
@@ -50,7 +50,7 @@ public enum Location : String, Codable
 }
 
 /// Proof purpose
-public enum ProofPurpose : String, Codable
+public enum ProofPurpose : String, Codable, Sendable
 {
     case assertionMethod      = "assertionMethod"
     case authentication       = "authentication"
@@ -60,7 +60,7 @@ public enum ProofPurpose : String, Codable
 }
 
 /// Proof type
-public enum ProofType : String, Codable, AlgorithmTypeConvertible
+public enum ProofType : String, Codable, AlgorithmTypeConvertible, Sendable
 {
     public static var commonString: String
     {
@@ -81,13 +81,13 @@ public enum AlgorithmType : String, Codable
 }
 
 /// Credential schema type
-public enum CredentialSchemaType : String, Codable
+public enum CredentialSchemaType : String, Codable, Sendable
 {
     case osdSchemaCredential = "OsdSchemaCredential"
 }
 
 /// Elliptic curve type
-public enum ECType: String, Codable, ConvertibleToAlgorithmType
+public enum ECType: String, Codable, ConvertibleToAlgorithmType, Sendable
 {
     public static var commonString: String
     {
@@ -101,7 +101,7 @@ public enum ECType: String, Codable, ConvertibleToAlgorithmType
 /// Symmetric cipher type
 /// Integrated definition type for symmetric key encryption algorithm/size/mode of operation.
 /// This type is composed of three types. Those types are EncryptionType/SymmetricKeySize/EncryptionMode.
-public enum SymmetricCipherType : String, Codable
+public enum SymmetricCipherType : String, Codable, Sendable
 {
     case aes128CBC = "AES-128-CBC"
     case aes128ECB = "AES-128-ECB"
@@ -110,14 +110,14 @@ public enum SymmetricCipherType : String, Codable
 }
 
 /// Symmetric key encryption padding type.
-public enum SymmetricPaddingType : String , Codable
+public enum SymmetricPaddingType : String , Codable, Sendable
 {
     case noPad = "NOPAD"
     case pkcs5 = "PKCS5"
 }
 
 /// Indicate access method for Key
-public enum AuthType : Int, Codable
+public enum AuthType : Int, Codable, Sendable
 {
     case free = 1
     case pin  = 2
@@ -126,7 +126,7 @@ public enum AuthType : Int, Codable
 
 //MARK: - OptionSet
 /// Indicate access method for Key and presentation option. Similar to AuthType
-public struct VerifyAuthType : OptionSet, Sequence, Codable
+public struct VerifyAuthType : OptionSet, Sequence, Codable, Sendable
 {
     public let rawValue: Int
     

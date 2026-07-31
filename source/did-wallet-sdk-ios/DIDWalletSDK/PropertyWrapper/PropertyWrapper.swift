@@ -17,7 +17,7 @@
 import Foundation
 
 @propertyWrapper
-public struct UTCDatetime: Codable
+public struct UTCDatetime: Codable, Sendable
 {
     // ISO 8601: yyyy-MM-dd'T'HH:mm:ss(.fraction)?(Z)?
     private static let regEx =
@@ -66,7 +66,7 @@ public struct UTCDatetime: Codable
 
 
 @propertyWrapper
-public struct DIDVersionId : Codable
+public struct DIDVersionId : Codable, Sendable
 {
     private static let regEx : String = "^[0-9]+$"
     private var value : String

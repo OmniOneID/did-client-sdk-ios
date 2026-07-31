@@ -101,7 +101,7 @@ public struct DIDDocument : Jsonable, ProofsContainer
     }
     
     /// DID key type
-    public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible
+    public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible, Sendable
     {
         public static var commonString: String
         {
@@ -114,7 +114,7 @@ public struct DIDDocument : Jsonable, ProofsContainer
         
     }
      /// Service type
-    public enum DIDServiceType : String, Codable
+    public enum DIDServiceType : String, Codable, Sendable
     {
         case linkedDomains      = "LinkedDomains"
         case credentialRegistry = "CredentialRegistry"

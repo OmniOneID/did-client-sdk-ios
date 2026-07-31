@@ -35,6 +35,17 @@ Each module (repository) is managed independently, following these steps:
 3. **QA Validation**  
    - Perform QA validation on the Release branch, addressing any issues identified during the process.
    - Approve the Release once QA validation is complete.
+   - **Concurrency check.** The public data models declare `Sendable`, which consumers rely on when
+     they build under strict concurrency. In the Swift 5 language mode a broken conformance is only
+     a warning, so the regular build will not catch it — run the check explicitly and confirm it
+     reports no `stored property ... non-Sendable` warning:
+
+     ```sh
+     cd source/did-wallet-sdk-ios
+     xcodebuild build -scheme DIDWalletSDK \
+       -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' \
+       SWIFT_STRICT_CONCURRENCY=complete
+     ```
 
 4. **Merge into Main and Develop Branches**  
    - Merge the validated Release branch (release/QA-VX.Y.Z) into both `main` and `develop` branches.

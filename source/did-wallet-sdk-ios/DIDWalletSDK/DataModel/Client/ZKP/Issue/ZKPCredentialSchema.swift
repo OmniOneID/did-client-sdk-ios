@@ -59,7 +59,7 @@ public struct ZKPCredentialSchema : Jsonable
         }
         
         /// Attribute Value Type
-        public enum AttributeValueType : String, Codable
+        public enum AttributeValueType : String, Codable, Sendable
         {
             case String
             case Number

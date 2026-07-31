@@ -60,18 +60,7 @@ struct SDJWTPresenter
         }
         else
         {
-            let requested = Set(claimCodes)
-            selected = sdjwt.disclosures.filter { requested.contains($0.claimName ?? "") }
-
-            // A claim code with no disclosure would silently drop out of the presentation and be
-            // rejected by the verifier; fail here instead.
-            let missing = requested.subtracting(selected.compactMap { $0.claimName }).sorted()
-            guard missing.isEmpty
-            else
-            {
-                throw OID4VCManagerError.invalidSelectedCredentials(
-                    detail: "claim(s) \(missing.joined(separator: ", ")) are not disclosable in the credential").getError()
-            }
+            selected = try resolveDisclosures(sdjwt: sdjwt, claimCodes: claimCodes)
         }
 
         // sd_hash is computed over the PRESENTED SD-JWT — issuer JWT + selected disclosures with the
@@ -95,5 +84,206 @@ struct SDJWTPresenter
         return SDJWT(credentialJwt: sdjwt.credentialJwt,
                      disclosures: selected,
                      keyBindingJwt: keyBindingJwt).toString()
+    }
+
+    /// Resolves the claim codes DCQL matching produced to the disclosures the presentation must
+    /// carry.
+    ///
+    /// The two sides speak different name spaces. Matching reports a claim by its DCQL *path* —
+    /// `address.street_address`, `degrees[0].type` — while a disclosure knows only its own claim
+    /// name (`street_address`). Walking the issuer payload from the root translates one into the
+    /// other, and picks up every disclosure along the way: a nested claim is unreadable unless the
+    /// object holding it is disclosed too.
+    ///
+    /// A claim the issuer put in the JWT in the clear resolves to no disclosure at all. That is not
+    /// an error — the verifier receives it either way — so it contributes nothing to the selection.
+    ///
+    /// - Note: A path element containing `.` or `[` cannot be told apart from the separators, since
+    ///   the codes arrive as flat strings. Matching builds them with the same encoding, so ordinary
+    ///   claim names round-trip; exotic ones would need the structured path instead of a code.
+    /// - Throws: `OID4VCManagerError.invalidSelectedCredentials` when a code names a claim the
+    ///   credential does not hold, `.invalidJWS` when the issuer JWT payload cannot be read.
+    static func resolveDisclosures(sdjwt: SDJWT, claimCodes: [String]) throws -> [Disclosure]
+    {
+        let payload: [String: Any]
+        do
+        {
+            payload = try SimpleJWTDecoder.parse(sdjwt.credentialJwt).payload
+        }
+        catch
+        {
+            throw OID4VCManagerError.invalidJWS(
+                detail: "issuer JWT payload is not readable: \(error)").getError()
+        }
+
+        var digestToDisclosure: [String: Disclosure] = [:]
+        for disclosure in sdjwt.disclosures
+        {
+            digestToDisclosure[disclosure.digest()] = disclosure
+        }
+
+        var required: Set<String> = []
+        var missing: [String] = []
+
+        for code in claimCodes
+        {
+            let path = parsePath(code)
+
+            if let resolved = resolve(path: path,
+                                      payload: payload,
+                                      digestToDisclosure: digestToDisclosure)
+            {
+                required.formUnion(resolved.map { $0.getDisclosure() })
+            }
+            else if path.count == 1, case .key(let name) = path[0],
+                    let flat = sdjwt.disclosures.first(where: { $0.claimName == name })
+            {
+                // The payload does not reference this disclosure's digest, so the walk above cannot
+                // reach it. A top-level claim is still unambiguous by name, and dropping it would
+                // hand the verifier a presentation missing a claim the holder agreed to.
+                required.insert(flat.getDisclosure())
+            }
+            else
+            {
+                missing.append(code)
+            }
+        }
+
+        guard missing.isEmpty
+        else
+        {
+            throw OID4VCManagerError.invalidSelectedCredentials(
+                detail: "claim(s) \(missing.sorted().joined(separator: ", ")) are not disclosable in the credential").getError()
+        }
+
+        // Filtering the credential's own list keeps the issuer's disclosure order and drops the
+        // duplicates that overlapping paths produce.
+        return sdjwt.disclosures.filter { required.contains($0.getDisclosure()) }
+    }
+
+    /// One step of a claim code: an object member or an array element.
+    private enum PathStep
+    {
+        case key(String)
+        case index(Int)
+    }
+
+    /// Splits a claim code such as `degrees[0].type` into `[.key("degrees"), .index(0), .key("type")]`.
+    private static func parsePath(_ code: String) -> [PathStep]
+    {
+        var steps: [PathStep] = []
+
+        for segment in code.split(separator: ".", omittingEmptySubsequences: false)
+        {
+            var name = ""
+            var indexDigits = ""
+            var inBracket = false
+
+            for character in segment
+            {
+                switch character
+                {
+                case "[":
+                    inBracket = true
+                case "]":
+                    if inBracket
+                    {
+                        steps.append(.key(name))
+                        name = ""
+                        if let index = Int(indexDigits)
+                        {
+                            steps.append(.index(index))
+                        }
+                        indexDigits = ""
+                        inBracket = false
+                    }
+                default:
+                    if inBracket { indexDigits.append(character) } else { name.append(character) }
+                }
+            }
+
+            if !name.isEmpty { steps.append(.key(name)) }
+        }
+
+        return steps
+    }
+
+    /// Walks `payload` along `path`, collecting the disclosures needed to reach the value.
+    /// - Returns: The disclosures to present, or `nil` when the path does not exist in this
+    ///   credential. An empty array means the claim is in the clear.
+    private static func resolve(path: [PathStep],
+                                payload: [String: Any],
+                                digestToDisclosure: [String: Disclosure]) -> [Disclosure]?
+    {
+        guard !path.isEmpty else { return nil }
+
+        var current: Any = payload
+        var collected: [Disclosure] = []
+
+        for step in path
+        {
+            switch step
+            {
+            case .key(let key):
+                guard let object = current as? [String: Any] else { return nil }
+
+                if let value = object[key]
+                {
+                    current = value
+                }
+                else if let hidden = disclosedMember(named: key,
+                                                     in: object,
+                                                     digestToDisclosure: digestToDisclosure)
+                {
+                    collected.append(hidden.disclosure)
+                    current = hidden.value
+                }
+                else
+                {
+                    return nil
+                }
+
+            case .index(let index):
+                guard let array = current as? [Any], index >= 0, index < array.count else { return nil }
+
+                // A selectively disclosable array element is the placeholder {"...": "<digest>"}.
+                if let placeholder = array[index] as? [String: Any],
+                   let digest = placeholder["..."] as? String
+                {
+                    guard let disclosure = digestToDisclosure[digest] else { return nil }
+                    collected.append(disclosure)
+                    current = SDJWTCredentialAdapter.jsonToAny(disclosure.claimValue)
+                }
+                else
+                {
+                    current = array[index]
+                }
+            }
+        }
+
+        return collected
+    }
+
+    /// Finds the disclosure that reveals `name` among an object's `_sd` digests.
+    private static func disclosedMember(named name: String,
+                                        in object: [String: Any],
+                                        digestToDisclosure: [String: Disclosure]) -> (disclosure: Disclosure, value: Any)?
+    {
+        guard let digests = object["_sd"] as? [Any] else { return nil }
+
+        for entry in digests
+        {
+            guard let digest = entry as? String,
+                  let disclosure = digestToDisclosure[digest],
+                  disclosure.claimName == name
+            else
+            {
+                continue
+            }
+
+            return (disclosure, SDJWTCredentialAdapter.jsonToAny(disclosure.claimValue))
+        }
+
+        return nil
     }
 }

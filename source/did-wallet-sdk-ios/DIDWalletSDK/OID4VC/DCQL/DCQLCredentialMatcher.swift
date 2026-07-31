@@ -20,7 +20,7 @@ import CryptoKit
 
 // MARK: - DCQL Path Element
 
-public enum DCQLPathElement: Codable, Hashable {
+public enum DCQLPathElement: Codable, Hashable, Sendable {
     case key(String)
     case index(Int)
     case wildcard   // corresponds to null in Java path list
@@ -72,15 +72,22 @@ public enum DCQLCredentialMatcher {
         var infos: [ClientID: [ClaimInfo]] = [:]
 
         for query in queries {
-            guard let id = query.id,
-                  let meta = query.meta,
-                  let schemaIDs = meta["credential_schema_id_values"]?.asArray
-            else {
+            guard let id = query.id else {
                 continue
             }
 
-            let schemas = schemaIDs.compactMap { $0.asString }
-            let matched = credentials.filter { schemas.contains($0.credentialSchema.id) }
+            // `meta` is optional in DCQL. A query that states no `credential_schema_id_values` puts
+            // no schema constraint on the credential, so every stored credential stays a candidate
+            // and `query.claims` alone decides — the same "absent meta matches everything" rule the
+            // adapter-based path applies. Dropping the query instead would report "no match" for a
+            // spec-legal request.
+            let matched: [VerifiableCredential]
+            if let schemaIDs = query.meta?["credential_schema_id_values"]?.asArray {
+                let schemas = schemaIDs.compactMap { $0.asString }
+                matched = credentials.filter { schemas.contains($0.credentialSchema.id) }
+            } else {
+                matched = credentials
+            }
 
             if matched.isEmpty {
                 continue
@@ -298,8 +305,19 @@ extension DCQLCredentialMatcher
     {
         let queries = try validatedQueries(authRequest)
         let adapter = SDJWTCredentialAdapter()
-        let parsed: [(id: String, credential: ParsedCredential)] = try sdJwtCredentials.map {
-            (id: $0.id, credential: try adapter.parse($0.sdjwt.toString()))
+        // One unparseable stored credential must not make the whole wallet unpresentable: skip it
+        // and match the rest. A credential that cannot be parsed cannot satisfy a query anyway.
+        let parsed: [(id: String, credential: ParsedCredential)] = sdJwtCredentials.compactMap {
+            item in
+            do
+            {
+                return (id: item.id, credential: try adapter.parse(item.sdjwt.toString()))
+            }
+            catch
+            {
+                WalletLogger.error("skipping unparseable stored credential '\(item.id)': \(error)")
+                return nil
+            }
         }
         let infos = getMatchedSubmittables(parsedCredentials: parsed, queries: queries)
         return try finalize(infos, authRequest: authRequest)

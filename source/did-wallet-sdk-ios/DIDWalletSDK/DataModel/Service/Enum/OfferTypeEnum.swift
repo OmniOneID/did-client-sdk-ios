@@ -16,7 +16,7 @@
 
 import Foundation
 
-public enum OfferTypeEnum: String, Codable {
+public enum OfferTypeEnum: String, Codable, Sendable {
     case IssueOffer
     case VerifyOffer
     case RestoreDidOffer

@@ -24,16 +24,16 @@ public struct ZKProof : Jsonable
     public let requestedProof : RequestedProof
     public let identifiers : [Identifier]
     
-    public struct SubProof : Codable
+    public struct SubProof : Jsonable
     {
         public let primaryProof : PrimaryProof
         
-        public struct PrimaryProof : Codable
+        public struct PrimaryProof : Jsonable
         {
             public let eqProof : PrimaryEqualProof
             public let neProofs : [PrimaryPredicateInequalityProof]
             
-            public struct PrimaryEqualProof : Codable
+            public struct PrimaryEqualProof : Jsonable
             {
                 public let revealedAttrs : BigIntStringDictionary
                 public let aPrime : BigIntString
@@ -43,7 +43,7 @@ public struct ZKProof : Jsonable
                 public let m2 : BigIntString
             }
             
-            public struct PrimaryPredicateInequalityProof : Codable
+            public struct PrimaryPredicateInequalityProof : Jsonable
             {
                 public let u : BigIntStringDictionary
                 public let r : BigIntStringDictionary
@@ -55,13 +55,13 @@ public struct ZKProof : Jsonable
         }
     }
 
-    public struct AggregatedProof : Codable
+    public struct AggregatedProof : Jsonable
     {
         public let cHash : BigIntString
         public let cList : [[UInt8]]
     }
 
-    public struct RequestedProof : Codable
+    public struct RequestedProof : Jsonable
     {
         public let selfAttestedAttrs : StringDictionary
         public let predicates : RequestedAttrDictionary
@@ -70,20 +70,20 @@ public struct ZKProof : Jsonable
         
     }
     
-    public struct RequestedAttribute : Codable
+    public struct RequestedAttribute : Jsonable
     {
         public let subProofIndex : Int
         public let raw : String?
         public let encoded : String?
     }
 
-    public struct Identifier : Codable
+    public struct Identifier : Jsonable
     {
         public let credDefId : String
         public let schemaId : String
     }
     
-    public struct Predicate : Codable
+    public struct Predicate : Jsonable
     {
         public let pType : PredicateType
         public let pValue : Int

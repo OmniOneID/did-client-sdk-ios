@@ -58,20 +58,20 @@ public struct VerifiableCredential : Jsonable, Identifiable
     }
     
     /// Evidence Enumerator for Multitype array
-    public enum Evidence
+    public enum Evidence : Sendable
     {
         case documentVerification(DocumentVerificationEvidence)
     }
     
     /// Presence type
-    public enum Presence : String, Codable
+    public enum Presence : String, Codable, Sendable
     {
         case physical = "Physical"
         case digital  = "Digital"
     }
     
     /// Evidence type
-    public enum EvidenceType : String, Codable
+    public enum EvidenceType : String, Codable, Sendable
     {
         case documentVerification = "DocumentVerification"
     }

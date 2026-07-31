@@ -1159,7 +1159,7 @@ extension WalletService
         
         let sdJWT = SDJWT.parse(raw: rawCredential)
         let tempJWS = try JWS.init(from: sdJWT.credentialJwt)
-        let jwsHeader : JWSHeader = try .init(from: tempJWS.header.base64URLDecoded!)
+        let jwsHeader : JWSHeader = try tempJWS.protectedHeader
         
         guard let kid = jwsHeader.kid, let identifier = DIDUtility.parseDIDKeyIdentifier(kid)
         else
@@ -1224,7 +1224,13 @@ extension WalletService
         let sdJWT = SDJWT.parse(raw: credential)
         let (source, signature) = sdJWT.getSignSource()
 
-        let isValid = try Secp256R1Manager.verifyRawRepresentation(signature: signature.base64URLDecoded!,
+        guard let signatureData = signature.base64URLDecoded
+        else
+        {
+            throw OID4VCManagerError.invalidJWS(detail: "signature is not base64url").getError()
+        }
+
+        let isValid = try Secp256R1Manager.verifyRawRepresentation(signature: signatureData,
                                                                    message: source.data(using: .utf8)!,
                                                                    publicKey: publicKeyData)
         

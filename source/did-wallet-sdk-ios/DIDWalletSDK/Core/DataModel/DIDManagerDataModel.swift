@@ -38,7 +38,7 @@ public struct DIDKeyInfo {
 }
 
 /// A type that specifies the purpose of the keys to register in the DID document.
-public struct DIDMethodType : OptionSet
+public struct DIDMethodType : OptionSet, Sendable
 {
     public let rawValue: Int
     

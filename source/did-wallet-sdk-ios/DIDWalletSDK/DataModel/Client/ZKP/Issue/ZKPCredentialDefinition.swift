@@ -18,7 +18,7 @@
 import Foundation
 import OrderedCollections
 
-public enum CredentialType : String, Codable
+public enum CredentialType : String, Codable, Sendable
 {
     case cl  = "CL"
 }

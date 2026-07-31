@@ -79,16 +79,38 @@ public struct SDJWT: Jsonable {
 }
 
 /// A structure representing a disclosure within an SD-JWT.
-public struct Disclosure: Codable, Equatable {
+public struct Disclosure: Codable, Equatable, Sendable {
     public let salt: String
     public let claimName: String?
     public let claimValue: JSON
 
+    /// The issuer's disclosure string, exactly as it arrived.
+    ///
+    /// The credential's `_sd` digests are computed over these exact bytes, and JSON serialization is
+    /// not canonical — re-encoding the decoded value can change spacing or member order and would
+    /// make every digest mismatch at the verifier. A disclosure that was parsed from a credential is
+    /// therefore presented byte-for-byte. `nil` for a disclosure built in code, which has no
+    /// issuer-supplied form and is serialized on demand.
+    public let raw: String?
+
     /// Initializes a new instance of Disclosure.
     public init(salt: String, claimName: String?, claimValue: JSON) {
+        self.init(salt: salt, claimName: claimName, claimValue: claimValue, raw: nil)
+    }
+
+    init(salt: String, claimName: String?, claimValue: JSON, raw: String?) {
         self.salt = salt
         self.claimName = claimName
         self.claimValue = claimValue
+        self.raw = raw
+    }
+
+    /// Two disclosures are equal when they carry the same claim, regardless of how each was
+    /// serialized: `raw` is a transport detail, not part of the disclosure's identity.
+    public static func == (lhs: Disclosure, rhs: Disclosure) -> Bool {
+        return lhs.salt == rhs.salt
+            && lhs.claimName == rhs.claimName
+            && lhs.claimValue == rhs.claimValue
     }
 
     /// Converts the disclosure into its raw data representation.
@@ -105,15 +127,22 @@ public struct Disclosure: Codable, Equatable {
     }
 
     /// Returns the base64URL-encoded disclosure string.
+    ///
+    /// A parsed disclosure returns the issuer's original string; only a disclosure built in code is
+    /// serialized here.
     /// - Returns: The disclosure string.
     public func getDisclosure() -> String {
-        return self.toData().base64URLEncoded
+        return raw ?? self.toData().base64URLEncoded
     }
 
-    /// Returns a base64-encoded digest of the disclosure.
+    /// Returns a base64URL-encoded digest of the disclosure.
+    ///
+    /// SD-JWT hashes the US-ASCII bytes of the *base64url-encoded* disclosure, not the JSON those
+    /// bytes decode to, so the digest is taken over `getDisclosure()`. This is what the credential's
+    /// `_sd` entries hold, which is how a disclosure is matched to its digest.
     /// - Returns: The digest string.
     public func digest() -> String {
-        return self.toData().sha256().base64URLEncoded
+        return Data(self.getDisclosure().utf8).sha256().base64URLEncoded
     }
 
     /// Parses a raw disclosure string into a Disclosure structure.
@@ -136,12 +165,12 @@ public struct Disclosure: Codable, Equatable {
         if items.count == 3 {
             guard case let .string(claimName) = items[1] else { return nil }
             let claimValue = items[2]
-            return Disclosure(salt: salt, claimName: claimName, claimValue: claimValue)
+            return Disclosure(salt: salt, claimName: claimName, claimValue: claimValue, raw: raw)
         }
 
         if items.count == 2 {
             let claimValue = items[1]
-            return Disclosure(salt: salt, claimName: nil, claimValue: claimValue)
+            return Disclosure(salt: salt, claimName: nil, claimValue: claimValue, raw: raw)
         }
 
         return nil
