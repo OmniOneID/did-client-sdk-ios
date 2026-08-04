@@ -645,9 +645,13 @@ extension WalletAPI : ISecurityAuthService
         return try lockMnr.authenticateLock(passcode: passcode, isChanging: isChanging)
     }
     
-    /// Checks if the lock is enabled.
-    /// - Returns: A boolean value indicating whether the lock is enabled.
-    /// - Throws: An error if there is an issue checking the lock status.
+    /// Whether the wallet has an Unlock PIN registered.
+    ///
+    /// This is the persistent setup state, not the current locked/unlocked state: it stays `true`
+    /// after a successful `authenticateLock` and survives app restarts. Use it to decide whether an
+    /// unlock step applies at all; the per-session unlock state is not exposed.
+    /// - Returns: `true` if an Unlock PIN is registered for the wallet.
+    /// - Throws: An error if the lock registration state cannot be read.
     public func isLock() throws -> Bool
     {
         return try lockMnr.isRegLock()
@@ -747,8 +751,10 @@ extension WalletAPI : IOID4VPService
     /// - Parameters:
     ///   - hWalletToken: The wallet token; must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP`.
     ///   - authRequest: Verifier authorization request carrying the DCQL query.
-    /// - Returns: One `MatchedCredential` per matched credential, in DCQL declaration order. The
-    ///   app may narrow the list (credentials and disclosed claims) before calling `createVpToken`.
+    /// - Returns: One `MatchedCredential` per matched credential, in DCQL declaration order, each
+    ///   naming the claims it would disclose — the ones the query asked for, or all of them when it
+    ///   asked for the whole credential. The app may narrow the list (credentials and disclosed
+    ///   claims) before calling `createVpToken`.
     /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
     ///   `OID4VCManagerError` (055xx) when the query is invalid, its format is unsupported, or no
     ///   credential matches.

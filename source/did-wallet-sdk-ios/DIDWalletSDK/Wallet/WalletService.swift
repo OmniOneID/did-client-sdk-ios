@@ -201,8 +201,9 @@ class WalletService: WalletServiceImpl {
     /// 4. Flatten the match into one entry per credential, in DCQL declaration order.
     ///
     /// - Parameter authRequest: Verifier authorization request carrying the DCQL query.
-    /// - Returns: One `MatchedCredential` per matched credential; the app may narrow the list
-    ///   (credentials and disclosed claims) before calling `createVpToken`.
+    /// - Returns: One `MatchedCredential` per matched credential, each naming the claims it would
+    ///   disclose (all of the credential's when the query constrains none); the app may narrow the
+    ///   list (credentials and disclosed claims) before calling `createVpToken`.
     func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
     {
         let queries = try DCQLCredentialMatcher.validatedQueries(authRequest)

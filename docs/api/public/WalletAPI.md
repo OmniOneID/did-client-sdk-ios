@@ -1427,30 +1427,34 @@ try WalletAPI.shared.authenticateLock(hWalletToken: hWalletToken, passcode: "123
 ## 6.3. isLock
 
 ### Description
-`Check the lock type of the wallet.`
+`Whether the wallet has an Unlock PIN registered.`
+
+This reports whether the lock is **set up** — a persistent value backed by the stored lock key, not
+the wallet's current locked/unlocked state. It stays `true` after a successful `authenticateLock`,
+and it survives app restarts. Use it to decide whether an unlock step applies at all (for example,
+whether to present an unlock screen, or whether "change Unlock PIN" is available); the SDK does not
+expose the per-session unlock state.
 
 ### Declaration
 
 ```swift
-func isLock(hWalletToken: String) throws -> Bool
+func isLock() throws -> Bool
 ```
 
 ### Parameters
 
-| Name         | Type   | Description  | **M/O** | **Note** |
-|--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | M       |          |
+None.
 
 ### Returns
 
-| Type | Description                     | **M/O** | **Note** |
-|------|---------------------------------|---------|----------|
-| Bool | Returns the wallet lock type.   | M       |          |
+| Type | Description                                          | **M/O** | **Note** |
+|------|------------------------------------------------------|---------|----------|
+| Bool | `true` if an Unlock PIN is registered for the wallet. | M       | Not the current locked state |
 
 ### Usage
 
 ```swift
-let isLocked = try WalletAPI.shared.isLock(hWalletToken: hWalletToken);
+let isLockRegistered = try WalletAPI.shared.isLock();
 ```
 
 <br>

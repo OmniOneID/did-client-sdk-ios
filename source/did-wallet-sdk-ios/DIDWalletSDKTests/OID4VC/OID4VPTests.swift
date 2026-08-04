@@ -83,7 +83,34 @@ final class OID4VPTests: XCTestCase {
         let claimInfos = try XCTUnwrap(infos["student_id"])
         XCTAssertEqual(claimInfos.count, 1)
         XCTAssertEqual(claimInfos.first?.credentialId, vc.id)
-        XCTAssertEqual(claimInfos.first?.claimCodes, [], "claimCodes empty = disclose all claims")
+        XCTAssertEqual(claimInfos.first?.claimCodes,
+                       vc.credentialSubject.claims.map { $0.code }.sorted(),
+                       "a query constraining no claim names them all, never an empty list")
+    }
+
+    func testGetMatchedMetadata_emptyClaimsArrayNamesEveryClaim() throws {
+        let vc = try makeCredential()
+        let query = try DCQLQuery(from: """
+        {
+          "credentials": [
+            {
+              "id": "student_id",
+              "format": "dc+sd-jwt-did",
+              "meta": { "credential_schema_id_values": ["\(matchingSchemaID)"] },
+              "claims": []
+            }
+          ]
+        }
+        """)
+
+        let infos = DCQLCredentialMatcher.getMatchedMetadata(
+            credentials: [vc],
+            queries: query.credentials!
+        )
+
+        XCTAssertEqual(infos["student_id"]?.first?.claimCodes,
+                       vc.credentialSubject.claims.map { $0.code }.sorted(),
+                       "an empty claims array constrains nothing, same as an absent one")
     }
 
     func testGetMatchedMetadata_noMatch() throws {
@@ -386,6 +413,57 @@ final class OID4VPTests: XCTestCase {
         XCTAssertEqual(infos["q"]?.first?.claimCodes, ["family_name"])
     }
 
+    // A query that constrains no claim asks for the whole credential. Reporting that as an empty
+    // list left the app unable to tell it from a claim-level selection, so matching names every
+    // disclosable claim — nested ones included, by their DCQL path.
+    func testSDJWT_unconstrainedQueryNamesEveryDisclosableClaim() throws {
+        let creds = #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#
+        let infos = try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: creds),
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: makeNestedSDJWT().raw)]
+        )
+
+        XCTAssertEqual(infos["q"]?.first?.claimCodes,
+                       ["address", "address.street_address", "nationality"],
+                       "every claim the credential can disclose must be named")
+    }
+
+    // ...and those names must present exactly what the empty list used to: every disclosure.
+    func testSDJWT_unconstrainedClaimCodesPresentEveryDisclosure() throws {
+        let fixture = makeNestedSDJWT()
+        let sdjwt = SDJWT.parse(raw: fixture.raw)
+        let creds = #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#
+        let infos = try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: creds),
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: fixture.raw)]
+        )
+        let claimCodes = try XCTUnwrap(infos["q"]?.first?.claimCodes)
+
+        let segments = try vpToken(sdjwt: sdjwt, claimCodes: claimCodes)
+            .split(separator: "~").map(String.init)
+        XCTAssertTrue(segments.contains(fixture.address), "parent disclosure missing")
+        XCTAssertTrue(segments.contains(fixture.street), "nested disclosure missing")
+        XCTAssertEqual(segments.count,
+                       try vpToken(sdjwt: sdjwt, claimCodes: []).split(separator: "~").count,
+                       "the named set must disclose neither more nor less than the empty list did")
+    }
+
+    // A disclosure the issuer never referenced from `_sd` cannot be reached by walking the payload,
+    // but it is still presentable by name — so "all claims" has to include it.
+    func testSDJWT_unreferencedDisclosureIsNamed() throws {
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
+        let payload = b64url(#"{"vct":"https://vct.a","iss":"https://issuer.example","_sd_alg":"sha-256"}"#)
+        let orphan = b64url(#"["s1","family_name","Kim"]"#)
+
+        let creds = #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#
+        let infos = try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: creds),
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: "\(header).\(payload).sig~\(orphan)")]
+        )
+
+        XCTAssertEqual(infos["q"]?.first?.claimCodes, ["family_name"])
+    }
+
     // MARK: - credential_sets satisfaction gate
 
     /// Builds an SD-JWT matching-request whose `dcql_query` carries both `credentials` and the given
@@ -670,6 +748,22 @@ final class OID4VPTests: XCTestCase {
             [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: ["given_name"]),
              MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: ["number"])],
             "a selection missing a required claim was accepted")
+    }
+
+    // Where the query names no claim, the match lists the credential's whole claim set for display
+    // only. The holder may still withhold part of it — the freedom the empty list used to carry.
+    func testSelection_narrowingAnUnconstrainedQueryIsAllowed() throws {
+        let request = try authRequest(dcqlCredentialsJSON: """
+        [ { "id": "id_card", "format": "dc+sd-jwt-did" } ]
+        """)
+        let matched = [MatchedCredential(queryId: "id_card", credentialId: "cred-1",
+                                         claimCodes: ["family_name", "given_name"])]
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1",
+                                           claimCodes: ["family_name"])]
+
+        XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selection,
+                                                                    against: matched,
+                                                                    dcqlQuery: request.dcqlQuery))
     }
 
     // An empty claim list means full disclosure, so it always covers the required claims.

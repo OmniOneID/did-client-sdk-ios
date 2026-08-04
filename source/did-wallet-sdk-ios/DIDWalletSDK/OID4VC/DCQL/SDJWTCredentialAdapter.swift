@@ -91,6 +91,45 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
                                                         claimQueries: claimQueries)
     }
 
+    /// Every claim the SD-JWT can disclose, as DCQL path codes (`address`, `address.street_address`,
+    /// `degrees[0]`).
+    ///
+    /// Top-level claims are listed whether they are in the clear or selectively disclosable; below
+    /// that, only the nodes a disclosure hides are listed, because plaintext members ride along with
+    /// the parent that already appears. Every disclosure reachable from the issuer payload therefore
+    /// has a code naming it, so presenting the whole list presents the whole credential — the
+    /// nesting an empty list used to hide from the app.
+    public func allClaimNames(_ credential: ParsedCredential) -> Set<String> {
+        guard let sdjwt = credential.getNativeCredentialAs(SDJWT.self),
+              let payload = try? SimpleJWTDecoder.parse(sdjwt.credentialJwt).payload else {
+            return Set(credential.allClaims.keys)
+        }
+
+        var digestToDisclosure: [String: Disclosure] = [:]
+        for disclosure in sdjwt.disclosures {
+            digestToDisclosure[disclosure.digest()] = disclosure
+        }
+
+        var names: Set<String> = []
+        var usedDigests: Set<String> = []
+        collectClaimPaths(value: payload,
+                          prefix: nil,
+                          digestToDisclosure: digestToDisclosure,
+                          names: &names,
+                          usedDigests: &usedDigests)
+
+        // A disclosure whose digest the payload never references is unreachable by the walk above.
+        // It is still presentable by name (`SDJWTPresenter` resolves it the same way), so leaving it
+        // out would silently shrink what "all claims" means.
+        for disclosure in sdjwt.disclosures where !usedDigests.contains(disclosure.digest()) {
+            if let claimName = disclosure.claimName,
+               !SDJWTCredentialAdapter.reservedClaims.contains(claimName) {
+                names.insert(claimName)
+            }
+        }
+        return names
+    }
+
     public func matchesTrustedAuthorities(_ credential: ParsedCredential,
                                           trustedAuthorities: [DCQLQuery.TrustedAuthority]) -> Bool {
         if trustedAuthorities.isEmpty { return true }
@@ -153,6 +192,71 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
             if var nested = claimValue as? [String: Any] {
                 integrateDisclosuresIntoObject(parentObject: &nested, digestToDisclosure: digestToDisclosure)
                 parentObject[claimName] = nested
+            }
+        }
+    }
+
+    /// Walks the issuer payload, naming every claim node the way DCQL paths do and following each
+    /// `_sd` digest / array `{"...": digest}` placeholder into the disclosure it hides.
+    private func collectClaimPaths(value: Any,
+                                   prefix: String?,
+                                   digestToDisclosure: [String: Disclosure],
+                                   names: inout Set<String>,
+                                   usedDigests: inout Set<String>) {
+        if let object = value as? [String: Any] {
+            for (key, child) in object where key != "_sd" && key != "_sd_alg" {
+                if let prefix = prefix {
+                    // A plaintext member of an already-named claim needs no code of its own: it is
+                    // disclosed with its parent. Keep walking for disclosures buried under it.
+                    collectClaimPaths(value: child,
+                                      prefix: "\(prefix).\(key)",
+                                      digestToDisclosure: digestToDisclosure,
+                                      names: &names,
+                                      usedDigests: &usedDigests)
+                } else if !SDJWTCredentialAdapter.reservedClaims.contains(key) {
+                    names.insert(key)
+                    collectClaimPaths(value: child,
+                                      prefix: key,
+                                      digestToDisclosure: digestToDisclosure,
+                                      names: &names,
+                                      usedDigests: &usedDigests)
+                }
+            }
+
+            for entry in (object["_sd"] as? [Any]) ?? [] {
+                guard let digest = entry as? String,
+                      let disclosure = digestToDisclosure[digest],
+                      let claimName = disclosure.claimName else { continue }
+                usedDigests.insert(digest)
+                let path = prefix.map { "\($0).\(claimName)" } ?? claimName
+                names.insert(path)
+                collectClaimPaths(value: SDJWTCredentialAdapter.jsonToAny(disclosure.claimValue),
+                                  prefix: path,
+                                  digestToDisclosure: digestToDisclosure,
+                                  names: &names,
+                                  usedDigests: &usedDigests)
+            }
+            return
+        }
+
+        guard let array = value as? [Any], let prefix = prefix else { return }
+        for (index, element) in array.enumerated() {
+            let path = "\(prefix)[\(index)]"
+            if let placeholder = element as? [String: Any], let digest = placeholder["..."] as? String {
+                guard let disclosure = digestToDisclosure[digest] else { continue }
+                usedDigests.insert(digest)
+                names.insert(path)
+                collectClaimPaths(value: SDJWTCredentialAdapter.jsonToAny(disclosure.claimValue),
+                                  prefix: path,
+                                  digestToDisclosure: digestToDisclosure,
+                                  names: &names,
+                                  usedDigests: &usedDigests)
+            } else {
+                collectClaimPaths(value: element,
+                                  prefix: path,
+                                  digestToDisclosure: digestToDisclosure,
+                                  names: &names,
+                                  usedDigests: &usedDigests)
             }
         }
     }

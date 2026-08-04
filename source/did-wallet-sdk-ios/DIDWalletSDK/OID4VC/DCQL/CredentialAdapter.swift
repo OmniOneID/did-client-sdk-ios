@@ -42,9 +42,25 @@ public protocol CredentialAdapter {
     /// Matching claim names for the given DCQL claim queries (format-specific).
     func extractMatchingClaims(_ credential: ParsedCredential, claimQueries: [DCQLQuery.ClaimQuery]) -> Set<String>
 
+    /// Every claim the credential can disclose, named in the same space `extractMatchingClaims`
+    /// returns. Used when a query states no claim constraint: the match then reports the whole
+    /// disclosable set explicitly instead of an empty list that only means "everything" by
+    /// convention.
+    func allClaimNames(_ credential: ParsedCredential) -> Set<String>
+
     /// Whether the credential's issuer matches any of the trusted authorities.
     func matchesTrustedAuthorities(_ credential: ParsedCredential,
                                    trustedAuthorities: [DCQLQuery.TrustedAuthority]) -> Bool
+}
+
+public extension CredentialAdapter {
+
+    /// Default: the credential's top-level claim names, which is what
+    /// `ClaimMatchingHelper.extractMatchingClaimsByPath` reports for an unconstrained query.
+    /// A format whose claims nest below the top level overrides this.
+    func allClaimNames(_ credential: ParsedCredential) -> Set<String> {
+        Set(extractAllClaims(credential).keys)
+    }
 }
 
 /// Errors raised by the DCQL credential adapter layer.

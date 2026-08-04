@@ -1423,7 +1423,12 @@ try WalletAPI.shared.authenticateLock(hWalletToken: hWalletToken, passcode: "123
 ## 6.3. isLock
 
 ### Description
-`Wallet의 잠금 타입을 조회한다.`
+`Wallet에 Unlock PIN이 등록되어 있는지 조회한다.`
+
+잠금이 **설정되어 있는지**를 반환하며, 저장된 잠금 키에 기반한 영속 값이다. 현재 잠금 상태가 아니다 —
+`authenticateLock` 으로 해제한 뒤에도 `true` 이며 앱을 다시 실행해도 유지된다. 잠금 단계가 적용되는
+상황인지 판단할 때 사용한다(잠금 화면 표시 여부, "Change Unlock PIN" 메뉴 활성 여부 등). 세션 단위의
+해제 상태는 SDK가 공개하지 않는다.
 
 ### Declaration
 
@@ -1439,12 +1444,12 @@ N/A
 
 | Type    | Description                | **M/O** | **Note** |
 |---------|---------------------|---------|----------|
-| Bool | Wallet 잠금 타입을 반환한다. | M       |          |
+| Bool | Unlock PIN이 등록되어 있으면 `true`. | M       | 현재 잠금 상태가 아님 |
 
 ### Usage
 
 ```swift
-let isLocked = try WalletAPI.shared.isLock();
+let isLockRegistered = try WalletAPI.shared.isLock();
 ```
 
 <br>

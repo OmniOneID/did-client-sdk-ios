@@ -36,7 +36,8 @@ struct SDJWTPresenter
     /// a `signDigest` closure that signs the KB-JWT signing input with the holder key.
     /// - Parameters:
     ///   - sdjwt: The stored SD-JWT (issuer JWT + disclosures), as returned by the wallet.
-    ///   - claimCodes: The claim names to disclose. Empty discloses all of the credential's claims.
+    ///   - claimCodes: The claim names to disclose. Matching names them all, including the nested
+    ///     ones; an empty list is still honoured as "disclose everything".
     ///   - aud: The verifier audience — the request's `client_id`.
     ///   - nonce: The request's `nonce`, bound into the KB-JWT.
     ///   - holderJwk: The holder public key as a JWK, embedded in the KB-JWT protected header.

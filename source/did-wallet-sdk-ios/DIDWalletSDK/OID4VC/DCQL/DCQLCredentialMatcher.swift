@@ -58,8 +58,9 @@ public enum DCQLCredentialMatcher {
     ///
     /// For each `CredentialQuery`, the credentials whose `credentialSchema.id` is listed in the
     /// query's `meta["credential_schema_id_values"]` are collected and returned as `ClaimInfo`
-    /// entries keyed by the query id. `claimCodes` is left empty (= disclose all claims); per-claim
-    /// selective disclosure based on `query.claims` is not yet implemented.
+    /// entries keyed by the query id. `claimCodes` holds the claims the query asks for, or — when it
+    /// constrains no claim — every claim the credential carries, so the caller never has to read an
+    /// empty list as "everything".
     /// - Parameters:
     ///   - credentials: Stored credentials to match (provided by the caller).
     ///   - queries: The `credentials` array of the DCQL query.
@@ -93,8 +94,12 @@ public enum DCQLCredentialMatcher {
                 continue
             }
 
+            // A query that carries no usable claim query constrains no claim. `claims: []` and a
+            // list of path-less entries say the same thing as an absent `claims`.
+            let claimQueries = (query.claims ?? []).filter { $0.path?.isEmpty == false }
+
             let claimInfos: [ClaimInfo]
-            if let claimQueries = query.claims {
+            if !claimQueries.isEmpty {
                 // Per-claim selective disclosure: keep only credentials that satisfy every
                 // claim query, and disclose just the matched claim codes.
                 claimInfos = matched.compactMap { vc in
@@ -103,8 +108,10 @@ public enum DCQLCredentialMatcher {
                     return ClaimInfo(credentialId: vc.id, claimCodes: codes)
                 }
             } else {
-                // No claim constraints: disclose all claims (claimCodes empty).
-                claimInfos = matched.map { ClaimInfo(credentialId: $0.id, claimCodes: []) }
+                // No claim constraint: the whole credential is requested. Naming every claim instead
+                // of returning an empty list keeps "the verifier asked for all of this" readable to
+                // the app that has to show it, and distinguishable from a claim-level selection.
+                claimInfos = matched.map { ClaimInfo(credentialId: $0.id, claimCodes: allClaimCodes($0)) }
             }
 
             if claimInfos.isEmpty {
@@ -139,6 +146,11 @@ public enum DCQLCredentialMatcher {
         }
 
         return collected.sorted()
+    }
+
+    /// Every claim code the credential carries — what an unconstrained query resolves to.
+    private static func allClaimCodes(_ credential: VerifiableCredential) -> [String] {
+        credential.credentialSubject.claims.map { $0.code }.sorted()
     }
 
     /// Flattens a credential's claims into a `[code: value]` map. Because OmniOne credentials store
@@ -188,7 +200,8 @@ public enum DCQLCredentialMatcher {
 
     /// Returns the claim names to disclose if `credential` satisfies `query` (format + meta +
     /// trusted authorities + claims/claim_sets), or `nil` if it does not (ineligible).
-    /// An empty returned set means "no claim constraint" → disclose all claims.
+    /// A query that constrains no claim resolves to every claim the credential can disclose, not to
+    /// an empty set — see `CredentialAdapter.allClaimNames`.
     static func eligibleClaimNames(query: DCQLQuery.CredentialQuery,
                                    credential: ParsedCredential) -> Set<String>? {
         // Format
@@ -223,11 +236,13 @@ public enum DCQLCredentialMatcher {
             return nil
         }
         // claims (AND of all claim queries)
-        if let claims = query.claims, !claims.isEmpty {
+        let claims = (query.claims ?? []).filter { $0.path?.isEmpty == false }
+        if !claims.isEmpty {
             return matchAllClaims(claims, adapter: adapter, credential: credential)
         }
-        // No claim constraint → all claims
-        return []
+        // No claim constraint → name every disclosable claim rather than return an empty set, so the
+        // app can tell "the whole credential" from a claim-level selection.
+        return adapter.allClaimNames(credential)
     }
 
     /// Union of matched claim names if EVERY claim query matched at least one claim; else nil.
@@ -245,7 +260,8 @@ public enum DCQLCredentialMatcher {
 
     /// Format-agnostic matching entry point. Each supplied credential carries a caller-defined id
     /// (e.g. a wallet credential id) that is echoed back in `ClaimInfo.credentialId`.
-    /// `claimCodes` are the matched claim names (== claim codes for opendid_vc); empty = all claims.
+    /// `claimCodes` are the matched claim names (== claim codes for opendid_vc), or every
+    /// disclosable claim when the query constrains none.
     public static func getMatchedSubmittables(
         parsedCredentials: [(id: String, credential: ParsedCredential)],
         queries: [DCQLQuery.CredentialQuery]
@@ -378,12 +394,17 @@ extension DCQLCredentialMatcher
                                   against matched: [MatchedCredential],
                                   dcqlQuery: DCQLQuery) throws
     {
-        // allowed[queryId][credentialId] = claim codes the query requires (empty == no constraint).
+        // allowed[queryId][credentialId] = the claim codes that matched the query.
         var allowed: [String: [String: Set<String>]] = [:]
         for m in matched
         {
             allowed[m.queryId, default: [:]][m.credentialId] = Set(m.claimCodes)
         }
+
+        // Only a query that names claims makes them required. Where it names none, the match lists
+        // the credential's whole claim set for the app to display, and the holder stays free to
+        // withhold part of it — the freedom the previously empty list carried implicitly.
+        let claimConstrained = queryIdsConstrainingClaims(dcqlQuery)
 
         var seen: Set<String> = []
         for selected in selection
@@ -407,9 +428,11 @@ extension DCQLCredentialMatcher
                     detail: "credential '\(selected.credentialId)' is selected twice for query '\(selected.queryId)'").getError()
             }
 
-            // An empty claim selection discloses everything, so it always covers the query. Narrowing
-            // below what the query asked for is rejected here rather than by the verifier.
-            let missingClaims = selected.claimCodes.isEmpty
+            // An empty claim selection discloses everything, so it always covers the query. Where the
+            // query does name claims, narrowing below them is rejected here rather than by the
+            // verifier.
+            let unconstrained = selected.claimCodes.isEmpty || !claimConstrained.contains(selected.queryId)
+            let missingClaims = unconstrained
                 ? []
                 : requiredClaims.subtracting(selected.claimCodes).sorted()
             guard missingClaims.isEmpty
@@ -421,6 +444,23 @@ extension DCQLCredentialMatcher
         }
 
         try requireSelectionCoversQueries(selection, matched: allowed, dcqlQuery: dcqlQuery)
+    }
+
+    /// Ids of the credential queries that name the claims they want. A query whose `claims` is
+    /// absent, empty, or made only of path-less entries requests the credential as a whole and
+    /// constrains no individual claim.
+    private static func queryIdsConstrainingClaims(_ dcqlQuery: DCQLQuery) -> Set<String>
+    {
+        var ids: Set<String> = []
+        for query in dcqlQuery.credentials ?? []
+        {
+            guard let id = query.id else { continue }
+            if (query.claims ?? []).contains(where: { $0.path?.isEmpty == false })
+            {
+                ids.insert(id)
+            }
+        }
+        return ids
     }
 
     /// Enforces that dropping credentials did not leave a required credential query unanswered:
