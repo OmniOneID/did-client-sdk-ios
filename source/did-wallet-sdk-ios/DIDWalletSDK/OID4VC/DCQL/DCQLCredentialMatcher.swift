@@ -380,10 +380,16 @@ extension DCQLCredentialMatcher
     /// Validates a selection the app may have narrowed against the credentials that actually matched.
     ///
     /// `matchCredentials` returns what the wallet can present, but `MatchedCredential` is public and
-    /// the app is expected to drop credentials and claims for user consent. Everything the app hands
-    /// back is therefore untrusted: without this gate a selection that the verifier is bound to
-    /// reject (unmatched credential, missing required claim or query) would only fail after the
-    /// response has been sent.
+    /// the app is expected to drop credentials for user consent. Everything the app hands back is
+    /// therefore untrusted: without this gate a selection that the verifier is bound to reject
+    /// (unmatched credential, missing required claim or query) would only fail after the response
+    /// has been sent.
+    ///
+    /// Claims are not narrowable. Matching names every claim the request asks for — the credential's
+    /// whole claim set where the query constrains none — so the selection must carry at least those,
+    /// whatever the query's shape. An empty list no longer means "disclose everything": matching
+    /// never produces one, so it can only be a caller mistake and is rejected. Codes beyond the
+    /// matched set are left alone; the presenter rejects the ones the credential cannot disclose.
     ///
     /// - Parameters:
     ///   - selection: The credentials the app wants to present.
@@ -400,11 +406,6 @@ extension DCQLCredentialMatcher
         {
             allowed[m.queryId, default: [:]][m.credentialId] = Set(m.claimCodes)
         }
-
-        // Only a query that names claims makes them required. Where it names none, the match lists
-        // the credential's whole claim set for the app to display, and the holder stays free to
-        // withhold part of it — the freedom the previously empty list carried implicitly.
-        let claimConstrained = queryIdsConstrainingClaims(dcqlQuery)
 
         var seen: Set<String> = []
         for selected in selection
@@ -428,13 +429,17 @@ extension DCQLCredentialMatcher
                     detail: "credential '\(selected.credentialId)' is selected twice for query '\(selected.queryId)'").getError()
             }
 
-            // An empty claim selection discloses everything, so it always covers the query. Where the
-            // query does name claims, narrowing below them is rejected here rather than by the
-            // verifier.
-            let unconstrained = selected.claimCodes.isEmpty || !claimConstrained.contains(selected.queryId)
-            let missingClaims = unconstrained
-                ? []
-                : requiredClaims.subtracting(selected.claimCodes).sorted()
+            // Matching fills the claims, so an empty selection carries no meaning the caller could
+            // have intended — least of all full disclosure, which is what naming every code does.
+            guard !selected.claimCodes.isEmpty
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedCredentials(
+                    detail: "no claim selected for credential '\(selected.credentialId)' of query '\(selected.queryId)'").getError()
+            }
+
+            // Narrowing below the matched claims is rejected here rather than by the verifier.
+            let missingClaims = requiredClaims.subtracting(selected.claimCodes).sorted()
             guard missingClaims.isEmpty
             else
             {
@@ -444,23 +449,6 @@ extension DCQLCredentialMatcher
         }
 
         try requireSelectionCoversQueries(selection, matched: allowed, dcqlQuery: dcqlQuery)
-    }
-
-    /// Ids of the credential queries that name the claims they want. A query whose `claims` is
-    /// absent, empty, or made only of path-less entries requests the credential as a whole and
-    /// constrains no individual claim.
-    private static func queryIdsConstrainingClaims(_ dcqlQuery: DCQLQuery) -> Set<String>
-    {
-        var ids: Set<String> = []
-        for query in dcqlQuery.credentials ?? []
-        {
-            guard let id = query.id else { continue }
-            if (query.claims ?? []).contains(where: { $0.path?.isEmpty == false })
-            {
-                ids.insert(id)
-            }
-        }
-        return ids
     }
 
     /// Enforces that dropping credentials did not leave a required credential query unanswered:

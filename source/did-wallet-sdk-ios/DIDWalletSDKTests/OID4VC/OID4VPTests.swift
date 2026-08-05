@@ -428,7 +428,7 @@ final class OID4VPTests: XCTestCase {
                        "every claim the credential can disclose must be named")
     }
 
-    // ...and those names must present exactly what the empty list used to: every disclosure.
+    // ...and those names must present the whole credential: every disclosure it holds.
     func testSDJWT_unconstrainedClaimCodesPresentEveryDisclosure() throws {
         let fixture = makeNestedSDJWT()
         let sdjwt = SDJWT.parse(raw: fixture.raw)
@@ -443,9 +443,9 @@ final class OID4VPTests: XCTestCase {
             .split(separator: "~").map(String.init)
         XCTAssertTrue(segments.contains(fixture.address), "parent disclosure missing")
         XCTAssertTrue(segments.contains(fixture.street), "nested disclosure missing")
-        XCTAssertEqual(segments.count,
-                       try vpToken(sdjwt: sdjwt, claimCodes: []).split(separator: "~").count,
-                       "the named set must disclose neither more nor less than the empty list did")
+        // Issuer JWT + every disclosure the credential holds + KB-JWT: neither more nor less.
+        XCTAssertEqual(segments.count, sdjwt.disclosures.count + 2,
+                       "the named set must disclose every disclosure and no other segment")
     }
 
     // A disclosure the issuer never referenced from `_sd` cannot be reached by walking the payload,
@@ -721,24 +721,24 @@ final class OID4VPTests: XCTestCase {
     // A credential the query never matched must not be presentable by handing it to createVpToken.
     func testSelection_unmatchedCredentialThrows() throws {
         try assertSelectionThrows(
-            [MatchedCredential(queryId: "id_card", credentialId: "not-matched", claimCodes: []),
-             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: [])],
+            [MatchedCredential(queryId: "id_card", credentialId: "not-matched", claimCodes: ["family_name"]),
+             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: ["number"])],
             "a credential outside the match result was accepted")
     }
 
     // Same for a query id the request does not declare.
     func testSelection_unknownQueryIdThrows() throws {
         try assertSelectionThrows(
-            [MatchedCredential(queryId: "passport", credentialId: "cred-1", claimCodes: [])],
+            [MatchedCredential(queryId: "passport", credentialId: "cred-1", claimCodes: ["family_name"])],
             "an undeclared query id was accepted")
     }
 
     // Presenting one credential twice for a query would reach Core as a duplicate-identifier error.
     func testSelection_duplicateSelectionThrows() throws {
         try assertSelectionThrows(
-            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
-             MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
-             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: [])],
+            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: ["family_name"]),
+             MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: ["family_name"]),
+             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: ["number"])],
             "a duplicated credential was accepted")
     }
 
@@ -750,9 +750,9 @@ final class OID4VPTests: XCTestCase {
             "a selection missing a required claim was accepted")
     }
 
-    // Where the query names no claim, the match lists the credential's whole claim set for display
-    // only. The holder may still withhold part of it — the freedom the empty list used to carry.
-    func testSelection_narrowingAnUnconstrainedQueryIsAllowed() throws {
+    // A query naming no claim asks for the credential as a whole, so the claims matching filled in
+    // are as required as the ones an explicit `claims` would have named — narrowing them is refused.
+    func testSelection_narrowingAnUnconstrainedQueryThrows() throws {
         let request = try authRequest(dcqlCredentialsJSON: """
         [ { "id": "id_card", "format": "dc+sd-jwt-did" } ]
         """)
@@ -761,16 +761,35 @@ final class OID4VPTests: XCTestCase {
         let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1",
                                            claimCodes: ["family_name"])]
 
-        XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selection,
-                                                                    against: matched,
-                                                                    dcqlQuery: request.dcqlQuery))
+        XCTAssertThrowsError(
+            try DCQLCredentialMatcher.validateSelection(selection,
+                                                        against: matched,
+                                                        dcqlQuery: request.dcqlQuery),
+            "a selection dropping a claim of an unconstrained query was accepted"
+        ) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+                return XCTFail("expected invalidSelectedCredentials, got \(error)")
+            }
+        }
     }
 
-    // An empty claim list means full disclosure, so it always covers the required claims.
-    func testSelection_emptyClaimCodesMeansFullDisclosure() throws {
+    // Matching never returns an empty claim list, so one coming back in cannot be read as full
+    // disclosure — presenting everything is expressed by keeping every code matching named.
+    func testSelection_emptyClaimCodesThrows() throws {
+        try assertSelectionThrows(
+            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
+             MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: ["number"])],
+            "an empty claim list was accepted")
+    }
+
+    // Codes beyond the matched set are the app's business: the presenter rejects the ones the
+    // credential cannot disclose, so the gate only enforces that nothing required went missing.
+    func testSelection_extraClaimCodesPass() throws {
         let request = try selectionRequest()
-        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: []),
-                         MatchedCredential(queryId: "license", credentialId: "cred-2", claimCodes: [])]
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1",
+                                           claimCodes: ["family_name", "given_name"]),
+                         MatchedCredential(queryId: "license", credentialId: "cred-2",
+                                           claimCodes: ["number"])]
         XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selection,
                                                                     against: selectionMatched,
                                                                     dcqlQuery: request.dcqlQuery))
@@ -779,7 +798,7 @@ final class OID4VPTests: XCTestCase {
     // With no credential_sets every credential query is required, so dropping one is an error.
     func testSelection_droppedRequiredQueryThrows() throws {
         try assertSelectionThrows(
-            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: [])],
+            [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: ["family_name"])],
             "a dropped required query was accepted")
     }
 
@@ -794,7 +813,8 @@ final class OID4VPTests: XCTestCase {
             [ { "id": "identity", "required": true, "options": [ ["id_card"], ["license"] ] } ]
             """)
 
-        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: [])]
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1",
+                                           claimCodes: ["family_name"])]
         XCTAssertNoThrow(try DCQLCredentialMatcher.validateSelection(selection,
                                                                     against: selectionMatched,
                                                                     dcqlQuery: request.dcqlQuery))
@@ -811,7 +831,8 @@ final class OID4VPTests: XCTestCase {
             [ { "id": "both", "required": true, "options": [ ["id_card", "license"] ] } ]
             """)
 
-        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1", claimCodes: [])]
+        let selection = [MatchedCredential(queryId: "id_card", credentialId: "cred-1",
+                                           claimCodes: ["family_name"])]
         XCTAssertThrowsError(
             try DCQLCredentialMatcher.validateSelection(selection,
                                                         against: selectionMatched,
@@ -840,6 +861,20 @@ final class OID4VPTests: XCTestCase {
                                              holderJwk: holderJwk,
                                              signDigest: { _ in Data(repeating: 0, count: 65) })
         ) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+                return XCTFail("expected invalidSelectedCredentials, got \(error)")
+            }
+        }
+    }
+
+    // An empty list once meant "disclose everything". Matching now names every claim instead, so an
+    // empty one can only be a caller mistake — presenting it silently would leak the whole
+    // credential on what the caller may have meant as "nothing".
+    func testPresenter_emptyClaimCodesThrows() throws {
+        let sdjwt = SDJWT.parse(raw: makeSDJWT(vct: "https://credentials.example/identity",
+                                               iss: "https://issuer.example",
+                                               disclosures: [("s1", "family_name", "Kim")]))
+        XCTAssertThrowsError(try vpToken(sdjwt: sdjwt, claimCodes: [])) { error in
             guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
                 return XCTFail("expected invalidSelectedCredentials, got \(error)")
             }

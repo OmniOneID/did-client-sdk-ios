@@ -37,7 +37,8 @@ struct SDJWTPresenter
     /// - Parameters:
     ///   - sdjwt: The stored SD-JWT (issuer JWT + disclosures), as returned by the wallet.
     ///   - claimCodes: The claim names to disclose. Matching names them all, including the nested
-    ///     ones; an empty list is still honoured as "disclose everything".
+    ///     ones, so the list is never empty in the wallet flow; an empty one is a caller error, not
+    ///     a request for full disclosure.
     ///   - aud: The verifier audience — the request's `client_id`.
     ///   - nonce: The request's `nonce`, bound into the KB-JWT.
     ///   - holderJwk: The holder public key as a JWK, embedded in the KB-JWT protected header.
@@ -53,16 +54,15 @@ struct SDJWTPresenter
         signDigest: (_ digest: Data) throws -> Data
     ) throws -> String
     {
-        // Disclose only the agreed claims; an empty list discloses everything.
-        let selected: [Disclosure]
-        if claimCodes.isEmpty
-        {
-            selected = sdjwt.disclosures
-        }
+        // Disclose only the agreed claims. Full disclosure is expressed by naming every claim, so an
+        // empty list would silently present nothing the holder was shown — reject it instead.
+        guard !claimCodes.isEmpty
         else
         {
-            selected = try resolveDisclosures(sdjwt: sdjwt, claimCodes: claimCodes)
+            throw OID4VCManagerError.invalidSelectedCredentials(
+                detail: "no claim selected for the credential to present").getError()
         }
+        let selected = try resolveDisclosures(sdjwt: sdjwt, claimCodes: claimCodes)
 
         // sd_hash is computed over the PRESENTED SD-JWT — issuer JWT + selected disclosures with the
         // trailing '~', KB-JWT excluded — not over the original full credential.

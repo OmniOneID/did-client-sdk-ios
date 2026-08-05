@@ -753,8 +753,8 @@ extension WalletAPI : IOID4VPService
     ///   - authRequest: Verifier authorization request carrying the DCQL query.
     /// - Returns: One `MatchedCredential` per matched credential, in DCQL declaration order, each
     ///   naming the claims it would disclose — the ones the query asked for, or all of them when it
-    ///   asked for the whole credential. The app may narrow the list (credentials and disclosed
-    ///   claims) before calling `createVpToken`.
+    ///   asked for the whole credential. Before calling `createVpToken` the app may drop entries the
+    ///   holder refuses, but must leave each remaining entry's `claimCodes` intact.
     /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
     ///   `OID4VCManagerError` (055xx) when the query is invalid, its format is unsupported, or no
     ///   credential matches.
@@ -776,14 +776,16 @@ extension WalletAPI : IOID4VPService
     /// - Parameters:
     ///   - hWalletToken: The wallet token; must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP`.
     ///   - authRequest: Verifier authorization request the selection was matched against.
-    ///   - matchedCredentials: The credentials to present, as returned (and optionally narrowed)
-    ///     by `matchCredentials`.
+    ///   - matchedCredentials: The credentials to present, as returned by `matchCredentials` minus
+    ///     the entries the holder refused. Each entry keeps the `claimCodes` matching produced.
     ///   - passcode: PIN when the holder key is PIN-protected, otherwise nil (biometrics).
     /// - Returns: The transfer-ready response body.
     /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
-    ///   `WalletAPIError.verifyParameterFail` when the selection is empty or does not belong to the
-    ///   request, `OID4VCManagerError` (055xx) when a credential, holder key or response encryption
-    ///   key is missing or the format is unsupported.
+    ///   `WalletAPIError.verifyParameterFail` when the selection is empty,
+    ///   `OID4VCManagerError.invalidSelectedCredentials` when it does not belong to the request or
+    ///   an entry drops claims the request asked for, and the other `OID4VCManagerError`s (055xx)
+    ///   when a credential, holder key or response encryption key is missing or the format is
+    ///   unsupported.
     public func createVpToken(hWalletToken: String,
                               authRequest: AuthorizationRequest,
                               matchedCredentials: [MatchedCredential],

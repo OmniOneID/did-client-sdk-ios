@@ -19,8 +19,8 @@ import Foundation
 
 /// One matched credential for a single DCQL credential query: which stored credential
 /// (`credentialId`) satisfies the query (`queryId`) and which claims to disclose (`claimCodes`).
-/// Returned by `matchCredentials`; the app may filter or rebuild the list (hence the public
-/// initializer) before passing it to `createVpToken`.
+/// Returned by `matchCredentials`; the app may drop entries or rebuild the list (hence the public
+/// initializer) before passing it to `createVpToken`, but not narrow `claimCodes`.
 public struct MatchedCredential
 {
     /// The DCQL credential query id this match answers (`dcql_query.credentials[].id`).
@@ -33,8 +33,10 @@ public struct MatchedCredential
     /// asked for the credential as a whole — every claim it can disclose. The app can therefore
     /// show the holder exactly what leaves the wallet without knowing the credential's shape.
     ///
-    /// An empty list is still accepted on the way back in and discloses everything, so a caller
-    /// built against the earlier behaviour keeps working.
+    /// On the way back into `createVpToken` the list must still carry every matched claim: consent
+    /// is given per credential, not per claim, so withholding one means dropping the whole
+    /// `MatchedCredential`. An empty list is rejected — full disclosure is expressed by naming every
+    /// claim, which is exactly what matching returned.
     public let claimCodes: [String]
 
     public init(queryId: String, credentialId: String, claimCodes: [String])

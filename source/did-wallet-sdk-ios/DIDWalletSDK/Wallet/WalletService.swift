@@ -202,8 +202,8 @@ class WalletService: WalletServiceImpl {
     ///
     /// - Parameter authRequest: Verifier authorization request carrying the DCQL query.
     /// - Returns: One `MatchedCredential` per matched credential, each naming the claims it would
-    ///   disclose (all of the credential's when the query constrains none); the app may narrow the
-    ///   list (credentials and disclosed claims) before calling `createVpToken`.
+    ///   disclose (all of the credential's when the query constrains none); before calling
+    ///   `createVpToken` the app may drop entries, but not narrow their `claimCodes`.
     func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
     {
         let queries = try DCQLCredentialMatcher.validatedQueries(authRequest)
@@ -275,8 +275,8 @@ class WalletService: WalletServiceImpl {
     ///
     /// - Parameters:
     ///   - authRequest: Verifier authorization request the selection was matched against.
-    ///   - matchedCredentials: The credentials to present, as returned (and optionally narrowed)
-    ///     by `matchCredentials`.
+    ///   - matchedCredentials: The credentials to present, as returned by `matchCredentials` minus
+    ///     the entries the holder refused. Each entry keeps the `claimCodes` matching produced.
     ///   - passcode: PIN when the holder key is PIN-protected, otherwise nil (biometrics).
     /// - Returns: The transfer-ready response body.
     func createVpToken(authRequest: AuthorizationRequest,
@@ -289,7 +289,7 @@ class WalletService: WalletServiceImpl {
             throw WalletAPIError.verifyParameterFail("matchedCredentials").getError()
         }
 
-        // The app narrows the selection for user consent, so it is untrusted input: re-match the
+        // The app drops what the holder refused, so the selection is untrusted input: re-match the
         // request and gate the selection on it before anything is built or sent.
         try DCQLCredentialMatcher.validateSelection(matchedCredentials,
                                                     against: matchCredentials(authRequest: authRequest),
