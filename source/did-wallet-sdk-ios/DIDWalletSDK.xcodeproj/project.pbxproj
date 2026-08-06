@@ -45,6 +45,7 @@
 		AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0030000000000000E365 /* KBJWTPayload.swift */; };
 		AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0032000000000000E365 /* SDJWTPresenter.swift */; };
 		AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0044000000000000E365 /* MatchedCredential.swift */; };
+		AAAA0101000000000000E365 /* SDJWTClaimIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0100000000000000E365 /* SDJWTClaimIndex.swift */; };
 		AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
@@ -337,6 +338,7 @@
 		AAAA0030000000000000E365 /* KBJWTPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KBJWTPayload.swift; sourceTree = "<group>"; };
 		AAAA0032000000000000E365 /* SDJWTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTPresenter.swift; sourceTree = "<group>"; };
 		AAAA0044000000000000E365 /* MatchedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchedCredential.swift; sourceTree = "<group>"; };
+		AAAA0100000000000000E365 /* SDJWTClaimIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTClaimIndex.swift; sourceTree = "<group>"; };
 		AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCIIssuerList.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
@@ -928,6 +930,7 @@
 				C9623BE82F9F290D00641A5E /* JWS.swift */,
 				C91A34302F88E5E800F20388 /* SDJWT.swift */,
 				AAAA0044000000000000E365 /* MatchedCredential.swift */,
+				AAAA0100000000000000E365 /* SDJWTClaimIndex.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1586,6 +1589,7 @@
 				AAAA0031000000000000E365 /* KBJWTPayload.swift in Sources */,
 				AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */,
 				AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */,
+				AAAA0101000000000000E365 /* SDJWTClaimIndex.swift in Sources */,
 				AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */,
 				C98D25EE2DB09DF700B2E84D /* Secp256R1Manager.swift in Sources */,
 				C98D25EF2DB09DF700B2E84D /* StorageManager.swift in Sources */,

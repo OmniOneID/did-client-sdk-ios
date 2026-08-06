@@ -956,6 +956,141 @@ final class OID4VPTests: XCTestCase {
         }
     }
 
+    // MARK: - Claim names containing the code separators
+
+    /// An SD-JWT whose disclosed `profile` object hides a claim whose own name contains a dot.
+    private func makeNestedDottedSDJWT() -> (raw: String, parent: String, child: String) {
+        let child = b64url(#"["s2","a.b","v"]"#)
+        let parent = b64url("[\"s1\",\"profile\",{\"_sd\":[\"\(sdDigest(child))\"]}]")
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
+        let payload = b64url("""
+        {"vct":"https://credentials.example/identity","iss":"https://issuer.example",\
+        "_sd_alg":"sha-256","_sd":["\(sdDigest(parent))"]}
+        """)
+        return (raw: "\(header).\(payload).sig~\(parent)~\(child)", parent: parent, child: child)
+    }
+
+    /// An SD-JWT holding the same code twice: `address.street_address` as one flat claim, and the
+    /// nested `address` → `street_address` path that spells the same string.
+    private func makeAmbiguousSDJWT() -> String {
+        let flat = b64url(#"["s3","address.street_address","Flat"]"#)
+        let street = b64url(#"["s2","street_address","Nested"]"#)
+        let address = b64url("[\"s1\",\"address\",{\"_sd\":[\"\(sdDigest(street))\"]}]")
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
+        let payload = b64url("""
+        {"vct":"https://credentials.example/identity","iss":"https://issuer.example",\
+        "_sd_alg":"sha-256","_sd":["\(sdDigest(address))","\(sdDigest(flat))"]}
+        """)
+        return "\(header).\(payload).sig~\(address)~\(street)~\(flat)"
+    }
+
+    private func matchedCodes(rawSdJwt: String, dcqlCredentialsJSON: String) throws -> [String] {
+        let infos = try DCQLCredentialMatcher.matchCredentials(
+            authRequest: try authRequest(dcqlCredentialsJSON: dcqlCredentialsJSON),
+            sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: rawSdJwt)]
+        )
+        return try XCTUnwrap(infos["q"]?.first?.claimCodes)
+    }
+
+    // The field case: `address.street_address` issued as ONE top-level claim, not as a nested path.
+    // Nothing in the codes says which it is, so presenting them must not depend on reading them as
+    // paths — matching names the claim, and the same walk resolves the name back.
+    func testClaimCode_topLevelNameWithDotIsPresentable() throws {
+        let raw = makeSDJWT(vct: "https://credentials.example/identity", iss: "https://issuer.example",
+                            disclosures: [("s1", "address.street_address", "Shs"),
+                                          ("s2", "family_name", "Kim")])
+        let codes = try matchedCodes(rawSdJwt: raw,
+                                     dcqlCredentialsJSON: #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#)
+        XCTAssertEqual(codes, ["address.street_address", "family_name"])
+
+        let token = try vpToken(sdjwt: SDJWT.parse(raw: raw), claimCodes: codes)
+        XCTAssertEqual(token.split(separator: "~").count, 4,
+                       "expected issuer JWT + both disclosures + KB-JWT: \(token)")
+    }
+
+    // ...and the same claim named by a query, which is the path that was already broken before
+    // matching started filling unconstrained queries.
+    func testClaimCode_constrainedQueryOnNameWithDotIsPresentable() throws {
+        let raw = makeSDJWT(vct: "https://credentials.example/identity", iss: "https://issuer.example",
+                            disclosures: [("s1", "address.street_address", "Shs"),
+                                          ("s2", "family_name", "Kim")])
+        let codes = try matchedCodes(rawSdJwt: raw, dcqlCredentialsJSON: """
+        [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "path": ["address.street_address"] } ] } ]
+        """)
+        XCTAssertEqual(codes, ["address.street_address"])
+
+        let token = try vpToken(sdjwt: SDJWT.parse(raw: raw), claimCodes: codes)
+        XCTAssertEqual(token.split(separator: "~").count, 3,
+                       "expected issuer JWT + the named disclosure + KB-JWT: \(token)")
+    }
+
+    // `[` and `]` were consumed by the same parser, so a name carrying them fails the same way.
+    func testClaimCode_topLevelNameWithBracketIsPresentable() throws {
+        let raw = makeSDJWT(vct: "https://credentials.example/identity", iss: "https://issuer.example",
+                            disclosures: [("s1", "degrees[0]", "BSc")])
+        let codes = try matchedCodes(rawSdJwt: raw,
+                                     dcqlCredentialsJSON: #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#)
+        XCTAssertEqual(codes, ["degrees[0]"])
+
+        XCTAssertEqual(try vpToken(sdjwt: SDJWT.parse(raw: raw), claimCodes: codes)
+                        .split(separator: "~").count, 3)
+    }
+
+    // A dotted name below a disclosed parent: the code is `profile.a.b`, which no name-matching
+    // fallback can recognise — only the shared walk resolves it, parent disclosure included.
+    func testClaimCode_nestedNameWithDotIsPresentable() throws {
+        let fixture = makeNestedDottedSDJWT()
+        let codes = try matchedCodes(rawSdJwt: fixture.raw,
+                                     dcqlCredentialsJSON: #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#)
+        XCTAssertEqual(codes, ["profile", "profile.a.b"])
+
+        let segments = try vpToken(sdjwt: SDJWT.parse(raw: fixture.raw), claimCodes: codes)
+            .split(separator: "~").map(String.init)
+        XCTAssertTrue(segments.contains(fixture.parent), "parent disclosure missing")
+        XCTAssertTrue(segments.contains(fixture.child), "nested disclosure missing")
+    }
+
+    // When one code really does name two claims, no selection can say which the holder agreed to.
+    // Presenting either would disclose a claim they never singled out, so the presenter refuses.
+    func testClaimCode_ambiguousCodeThrows() throws {
+        let raw = makeAmbiguousSDJWT()
+        let codes = try matchedCodes(rawSdJwt: raw,
+                                     dcqlCredentialsJSON: #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#)
+        XCTAssertEqual(codes, ["address", "address.street_address"],
+                       "the colliding code is still listed once")
+
+        XCTAssertThrowsError(try vpToken(sdjwt: SDJWT.parse(raw: raw), claimCodes: codes)) { error in
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+                return XCTFail("expected invalidSelectedCredentials, got \(error)")
+            }
+        }
+    }
+
+    // A plaintext member of a disclosed object is not a consent item of its own — it is disclosed
+    // with its parent — but a verifier may still point a query at it, so it must stay resolvable.
+    func testClaimCode_plaintextMemberOfDisclosedObjectResolvesToParent() throws {
+        let address = b64url(#"["s1","address",{"street_address":"Sesame 1"}]"#)
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
+        let payload = b64url("""
+        {"vct":"https://credentials.example/identity","iss":"https://issuer.example",\
+        "_sd_alg":"sha-256","_sd":["\(sdDigest(address))"]}
+        """)
+        let raw = "\(header).\(payload).sig~\(address)"
+
+        XCTAssertEqual(try matchedCodes(rawSdJwt: raw,
+                                        dcqlCredentialsJSON: #"[ { "id": "q", "format": "dc+sd-jwt-did" } ]"#),
+                       ["address"],
+                       "the plaintext member rides along with its parent and is not listed again")
+
+        let codes = try matchedCodes(rawSdJwt: raw, dcqlCredentialsJSON: """
+        [ { "id": "q", "format": "dc+sd-jwt-did", "claims": [ { "path": ["address", "street_address"] } ] } ]
+        """)
+        XCTAssertEqual(codes, ["address.street_address"])
+        XCTAssertEqual(try vpToken(sdjwt: SDJWT.parse(raw: raw), claimCodes: codes)
+                        .split(separator: "~").count, 3,
+                       "reaching the member needs the parent disclosure and nothing else")
+    }
+
     // The issuer's `_sd` digests are taken over the disclosure bytes as sent. Re-serializing the
     // decoded value would change them, so a parsed disclosure must survive byte-for-byte.
     func testDisclosure_keepsIssuerBytesAndDigest() throws {
