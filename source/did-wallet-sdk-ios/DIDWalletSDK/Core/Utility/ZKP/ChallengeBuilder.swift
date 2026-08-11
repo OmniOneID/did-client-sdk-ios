@@ -16,7 +16,7 @@
  */
     
 import Foundation
-import OrderedCollections
+internal import OrderedCollections
 
 #if SWIFT_PACKAGE
     import BigIntKit
@@ -77,14 +77,14 @@ extension ChallengeBuilder
         return self
     }
     
-    func append(_ ordered : OrderedDictionary<String, BigInt>) -> Self
+    func append(_ ordered : OrderedStringMap<BigInt>) -> Self
     {
         let temp = ordered.reduce(into: Data()) { $0 += $1.value.data }
         storedData.append(temp)
         return self
     }
     
-    func append(_ ordered : OrderedDictionary<String, BigIntString>) -> Self
+    func append(_ ordered : OrderedStringMap<BigIntString>) -> Self
     {
         let temp = ordered.reduce(into: Data()) { $0 += $1.value.bigInt.data }
         storedData.append(temp)

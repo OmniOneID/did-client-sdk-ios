@@ -1,7 +1,7 @@
 #if canImport(Foundation)
 import Foundation
 #endif
-import OrderedCollections
+internal import OrderedCollections
 
 enum CBORError : Error {
     case unfinishedSequence

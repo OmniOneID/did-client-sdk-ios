@@ -11,7 +11,12 @@ let package = Package(
         .library(name: "DIDWalletSDK", targets: ["DIDWalletSDK"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-collections.git", exact: "1.1.4"),
+        // A range rather than an exact version: an exact requirement propagates into every
+        // consuming app's dependency graph, where it collides with anything else that needs a
+        // different swift-collections. The module is an implementation detail of this SDK — it is
+        // not part of the public interface — so any 1.x it resolves to is one this SDK can build
+        // against. The version this repository actually builds with is fixed by Package.resolved.
+        .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.4")),
     ],
     targets: [
         // Vendored attaswift/BigInt 5.5.1 prebuilt in Release as a binary

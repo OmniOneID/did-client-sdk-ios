@@ -97,7 +97,8 @@ public enum DCQLQueryValidator {
         let claimSetsPresent = credential.claimSets != nil
 
         if let claims = credential.claims {
-            validateClaims(claims, context, requireIds: claimSetsPresent, &result)
+            validateClaims(claims, context, requireIds: claimSetsPresent,
+                           format: credential.format, &result)
         }
 
         if let claimSets = credential.claimSets {
@@ -117,17 +118,35 @@ public enum DCQLQueryValidator {
         }
     }
 
-    private static func validateClaims(_ claims: [DCQLQuery.ClaimQuery], _ context: String, requireIds: Bool, _ result: inout ValidationResult) {
+    private static func validateClaims(_ claims: [DCQLQuery.ClaimQuery], _ context: String, requireIds: Bool,
+                                       format: String?, _ result: inout ValidationResult) {
+        // An mdoc element is addressed by namespace and element identifier. OID4VP 1.0 spells that
+        // as a two-element `path`, but earlier drafts — and deployed verifiers — send `namespace`
+        // plus `claim_name`. Both are accepted for mdoc, so a request in the older spelling is
+        // matched rather than rejected as malformed.
+        let mdocFormat = format.map { MdocCredentialAdapter.supportedFormats.contains($0) } ?? false
         var seenIds: Set<String> = []
         for (i, claim) in claims.enumerated() {
             let claimContext = "\(context).claims[\(i)]"
 
             guard let path = claim.path, !path.isEmpty else {
+                if mdocFormat, claim.namespace?.isEmpty == false, claim.claimName?.isEmpty == false {
+                    if let values = claim.values {
+                        validateValues(values, "\(claimContext).values", &result)
+                    }
+                    continue
+                }
                 result.addError("\(claimContext).path is required and cannot be empty")
                 continue
             }
 
             validatePath(path, "\(claimContext).path", &result)
+
+            // An mdoc path addresses exactly [namespace, element]; a deeper one has nothing to
+            // address, since element values are not navigated into.
+            if mdocFormat, path.count != 2 {
+                result.addError("\(claimContext).path for an mdoc must be [namespace, element]")
+            }
 
             if let values = claim.values {
                 validateValues(values, "\(claimContext).values", &result)

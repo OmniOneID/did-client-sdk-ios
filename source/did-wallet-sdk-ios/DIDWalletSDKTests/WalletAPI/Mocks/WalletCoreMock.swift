@@ -354,11 +354,11 @@ class WalletCoreMock: WalletCoreImpl {
         return true
     }
 
-    public func getAllOID4VCICredentials() throws -> [SdJwtCredentialItem] {
+    public func getAllOID4VCICredentials() throws -> [any CredentialItem] {
         return []
     }
 
-    public func getOID4VCICredentials(ids: [String]) throws -> [SdJwtCredentialItem] {
+    public func getOID4VCICredentials(ids: [String]) throws -> [any CredentialItem] {
         return []
     }
 

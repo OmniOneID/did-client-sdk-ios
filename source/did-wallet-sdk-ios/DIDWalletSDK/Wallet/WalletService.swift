@@ -238,10 +238,19 @@ class WalletService: WalletServiceImpl {
             return try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
                                                               credentials: walletCore.getAllCredentials())
         }
+        // The store holds every OID4VC format together, so each branch narrows to the credentials
+        // that can answer the query at all — a credential of another format never matches.
         if SDJWTPresenter.supportedFormats.contains(format)
         {
+            let sdJwtCredentials = try walletCore.getAllOID4VCICredentials().compactMap { $0 as? SdJwtCredentialItem }
             return try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
-                                                              sdJwtCredentials: walletCore.getAllOID4VCICredentials())
+                                                              sdJwtCredentials: sdJwtCredentials)
+        }
+        if MdocCredentialAdapter.supportedFormats.contains(format)
+        {
+            let mdocCredentials = try walletCore.getAllOID4VCICredentials().compactMap { $0 as? MdocCredentialItem }
+            return try DCQLCredentialMatcher.matchCredentials(authRequest: authRequest,
+                                                              mdocCredentials: mdocCredentials)
         }
         throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
     }
@@ -341,6 +350,10 @@ class WalletService: WalletServiceImpl {
         {
             return try sdJwtVpTokenElements(group: group, authRequest: authRequest, passcode: passcode)
         }
+        if MdocPresenter.supportedFormats.contains(format)
+        {
+            return try mdocVpTokenElements(group: group, authRequest: authRequest, passcode: passcode)
+        }
         throw OID4VCManagerError.unsupportedPresentationFormat(format: format).getError()
     }
 
@@ -358,13 +371,66 @@ class WalletService: WalletServiceImpl {
         return try JSONDecoder().decode(AnyJSON.self, from: vp.toJsonData())
     }
 
+    /// mdoc: one `DeviceResponse` per credential, each signed with the key the document is bound to.
+    ///
+    /// The response is bound to this request through the session transcript, which for
+    /// `direct_post.jwt` also commits to the verifier's encryption key — so the key is resolved here,
+    /// where the request lives, and handed to the presenter rather than looked up inside it.
+    private func mdocVpTokenElements(group: [MatchedCredential],
+                                     authRequest: AuthorizationRequest,
+                                     passcode: String?) throws -> [AnyJSON]
+    {
+        let items = try walletCore.getOID4VCICredentials(ids: group.map { $0.credentialId })
+            .compactMap { $0 as? MdocCredentialItem }
+
+        let responseEncryption: MdocPresenter.ResponseEncryption
+        if authRequest.responseMode == "direct_post.jwt"
+        {
+            let (jwk, _) = try OID4VPResponseUtil.parseResponseEncryption(from: authRequest.clientMetadata)
+            responseEncryption = .key(jwk)
+        }
+        else
+        {
+            responseEncryption = .none
+        }
+
+        return try group.map { mc in
+            // A credential stored in another format cannot answer an mdoc query, so it reads here
+            // as a credential that is not there.
+            guard let item = items.first(where: { $0.id == mc.credentialId })
+            else { throw OID4VCManagerError.credentialNotFound.getError() }
+
+            // Wallet-touching key ops live here (walletCore owner); the presenter stays pure.
+            guard try walletCore.isSavedKey(keyId: item.kid)
+            else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+
+            let token = try MdocPresenter.createVpToken(
+                mdoc: item.mdoc,
+                claimCodes: mc.claimCodes,
+                clientId: authRequest.clientId,
+                nonce: authRequest.nonce,
+                responseUri: authRequest.responseUri,
+                responseEncryption: responseEncryption,
+                signDigest: { digest in
+                    try self.walletCore.sign(keyId: item.kid,
+                                             pin: passcode?.data(using: .utf8),
+                                             data: digest,
+                                             type: DidDocumentType.HolderDidDocumnet)
+                })
+            return .string(token)
+        }
+    }
+
     /// SD-JWT: one presentation string per credential, each with its own key-bound KB-JWT.
     private func sdJwtVpTokenElements(group: [MatchedCredential],
                                       authRequest: AuthorizationRequest,
                                       passcode: String?) throws -> [AnyJSON]
     {
         let items = try walletCore.getOID4VCICredentials(ids: group.map { $0.credentialId })
+            .compactMap { $0 as? SdJwtCredentialItem }
         return try group.map { mc in
+            // A credential stored in another format cannot answer an SD-JWT query, so it reads
+            // here as a credential that is not there.
             guard let item = items.first(where: { $0.id == mc.credentialId })
             else { throw OID4VCManagerError.credentialNotFound.getError() }
 
@@ -1150,59 +1216,30 @@ extension WalletService
             throw OID4VCManagerError.invalidCredentialResponse.getError()
         }
 
-        // Verify
-//        @ValidURL var issuerURL = offer.credentialIssuer
-//
-//        let issuerJWK = try await getIssuerJWK(url: issuerURL)
-//
-//        let pubKey = try P256.Signing.PublicKey.init(
-//            xBase64URL: issuerJWK.x,
-//            yBase64URL: issuerJWK.y
-//        )
-        
-        let sdJWT = SDJWT.parse(raw: rawCredential)
-        let tempJWS = try JWS.init(from: sdJWT.credentialJwt)
-        let jwsHeader : JWSHeader = try tempJWS.protectedHeader
-        
-        guard let kid = jwsHeader.kid, let identifier = DIDUtility.parseDIDKeyIdentifier(kid)
-        else
-        {
-            throw OID4VCManagerError.notFoundKid.getError()
-        }
-        
-        
-        let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
-                                                                        did: identifier.did,
-                                                                        versionId: identifier.versionId)
-
-        guard let publicKeyMultibase = issuerDIDDoc.verificationMethod.filter({ $0.id == identifier.kid }).first.map(\.publicKeyMultibase)
-        else
-        {
-            throw OID4VCManagerError.notFoundKid.getError()
-        }
-        
-        
-        let publicKeyData = try MultibaseUtils.decode(encoded: publicKeyMultibase)
-        
-        switch credentialConfig.format
-        {
-        case .sdjwt:
-            try veryfySDJWT(credential: rawCredential,
-                            publicKeyData: publicKeyData)
-        case .mdoc:
-            () //TODO: Phase 2 — mdoc (mso_mdoc) signature verification
-        case .unknown(_):
-            ()
-        }
-
-        // Store — only supported formats are persisted; unsupported ones are rejected, not stored.
+        // Verify. Each format names its signer differently — an SD-JWT in a JWS header, an mdoc in
+        // a COSE header — so the credential is parsed and its key resolved inside the branch. Both
+        // land on the same DID key, which is why they share `issuerPublicKey`.
         let format : String
         switch credentialConfig.format
         {
         case .sdjwt:
+            let credentialJws = try JWS.init(from: SDJWT.parse(raw: rawCredential).credentialJwt)
+            let publicKeyData = try await issuerPublicKey(kid: try credentialJws.protectedHeader.kid,
+                                                          APIGatewayURL: APIGatewayURL)
+            try veryfySDJWT(credential: rawCredential, publicKeyData: publicKeyData)
             format = "dc+sd-jwt-did"
-        case .mdoc, .unknown:
-            throw OID4VCManagerError.unsupportedFormat(format: credentialConfig.format.rawValue).getError()
+
+        case .mdoc:
+            let mdoc = try Mdoc.parse(raw: rawCredential)
+            let publicKeyData = try await issuerPublicKey(kid: mdoc.issuerAuth.keyIdentifier,
+                                                          APIGatewayURL: APIGatewayURL)
+            try verifyMdoc(mdoc: mdoc, publicKeyData: publicKeyData, holderKeyId: authType)
+            format = "mso_mdoc-did"
+
+        case .unknown(let value):
+            // Unreachable: an unknown format is rejected before the credential is requested. The
+            // case is here so that adding a format cannot silently store an unverified credential.
+            throw OID4VCManagerError.unsupportedFormat(format: value).getError()
         }
 
         let credential = OID4VCICredential(
@@ -1222,6 +1259,104 @@ extension WalletService
 
 extension WalletService
 {
+    /// Resolves the key a credential was signed with, from the DID URL its header names.
+    ///
+    /// Both credential formats identify the issuer the same way — a DID URL naming a verification
+    /// method — so the walk from `kid` to key bytes is shared: parse the DID URL, fetch that
+    /// version of the DID Document, and take the multibase key of the method it points at.
+    /// - Parameters:
+    ///   - kid: The DID URL from the credential's signature header.
+    ///   - APIGatewayURL: The gateway that serves DID Documents.
+    /// - Returns: The verification key, decoded.
+    /// - Throws: `OID4VCManagerError.notFoundKid` when the credential names no key, or the
+    ///   document holds no method by that name.
+    private func issuerPublicKey(kid: String?, APIGatewayURL: String) async throws -> Data
+    {
+        guard let kid = kid, let identifier = DIDUtility.parseDIDKeyIdentifier(kid)
+        else
+        {
+            throw OID4VCManagerError.notFoundKid.getError()
+        }
+
+        let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                                       did: identifier.did,
+                                                                       versionId: identifier.versionId)
+
+        guard let publicKeyMultibase = issuerDIDDoc.verificationMethod.filter({ $0.id == identifier.kid }).first.map(\.publicKeyMultibase)
+        else
+        {
+            throw OID4VCManagerError.notFoundKid.getError()
+        }
+
+        return try MultibaseUtils.decode(encoded: publicKeyMultibase)
+    }
+
+    /// Checks an issued mdoc before it is stored.
+    ///
+    /// Four things have to hold, and each fails differently:
+    /// 1. the issuer signed the MSO — otherwise the document is not from this issuer;
+    /// 2. every element matches its digest in that MSO — otherwise an element was altered after
+    ///    signing, since the signature covers the digests rather than the elements;
+    /// 3. the document is inside its validity window;
+    /// 4. the MSO's `deviceKey` is the wallet key that proved possession during issuance —
+    ///    without this the document would store fine and then fail every presentation, because
+    ///    presenting means signing with the key the issuer bound it to.
+    ///
+    /// Everything is checked against the bytes as received. Re-encoding the document first would
+    /// produce valid CBOR whose digests and signature no longer match.
+    private func verifyMdoc(mdoc: Mdoc, publicKeyData: Data, holderKeyId: String) throws
+    {
+        guard mdoc.issuerAuth.algorithm == COSESign1.algES256
+        else
+        {
+            throw OID4VCManagerError.invalidMdoc(detail: "issuerAuth is not signed with ES256").getError()
+        }
+
+        let signatureInput = try mdoc.issuerAuth.signatureInput()
+        let isValid = try Secp256R1Manager.verifyRawRepresentation(signature: Data(mdoc.issuerAuth.signature),
+                                                                   message: Data(signatureInput),
+                                                                   publicKey: publicKeyData)
+        guard isValid else
+        {
+            throw OID4VCManagerError.failedToVerifySignature.getError()
+        }
+
+        try mdoc.verifyDigests()
+        try mdoc.verifyValidity(at: Date())
+        try verifyDeviceKey(mdoc.mso.deviceKey, matches: holderKeyId)
+    }
+
+    /// Checks that the MSO binds the document to the wallet key that signed the issuance proof.
+    ///
+    /// The COSE_Key carries the curve point in the clear, so the comparison is against the same
+    /// point taken from the wallet's own key rather than against an encoding of it.
+    private func verifyDeviceKey(_ deviceKey: CBOR, matches keyId: String) throws
+    {
+        guard case let .map(fields) = deviceKey,
+              case let .byteString(x)? = fields[.negativeInt(1)],
+              case let .byteString(y)? = fields[.negativeInt(2)]
+        else
+        {
+            throw OID4VCManagerError.invalidMdoc(detail: "deviceKey is not an EC2 COSE_Key").getError()
+        }
+
+        guard let keyInfo = try walletCore.getKeyInfos(ids: [keyId]).first
+        else
+        {
+            throw OID4VCManagerError.holderKeyNotFound.getError()
+        }
+
+        let compressedPublicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
+        let holderJwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
+
+        guard holderJwk.x.base64URLDecoded == Data(x),
+              holderJwk.y.base64URLDecoded == Data(y)
+        else
+        {
+            throw OID4VCManagerError.deviceKeyMismatch.getError()
+        }
+    }
+
     private func veryfySDJWT(credential : String, publicKeyData : Data) throws
     {
         let sdJWT = SDJWT.parse(raw: credential)

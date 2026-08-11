@@ -16,7 +16,7 @@
  */
     
 import Foundation
-import OrderedCollections
+internal import OrderedCollections
 
 #if SWIFT_PACKAGE
     import BigIntKit
@@ -29,7 +29,7 @@ struct KeyPairVerifier
         let n = publicKey.n.bigInt
         let s = publicKey.s.bigInt
         let z = publicKey.z.bigInt
-        let r : OrderedDictionary<String, BigInt> = publicKey.r.mapValues { $0.bigInt }
+        let r : OrderedStringMap<BigInt> = publicKey.r.mapValues { $0.bigInt }
         
         let proofC = keyProof.c.bigInt
         let xzCap = keyProof.xzCap.bigInt

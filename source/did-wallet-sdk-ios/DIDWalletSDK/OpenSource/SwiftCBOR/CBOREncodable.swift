@@ -1,7 +1,7 @@
 #if canImport(Foundation)
 import Foundation
 #endif
-import OrderedCollections
+internal import OrderedCollections
 
 protocol CBOREncodable {
     /// Optional function that can potentially serve as an opportunity to optimize encoding.

@@ -18,7 +18,6 @@
 import Foundation
 
 /// Registry of credential adapters. Selects the adapter for a format (or by content sniffing).
-/// Phase 1 registers SD-JWT and opendid_vc adapters. mdoc is added in Phase 2.
 public class CredentialAdapterRegistry {
 
     public static let shared = CredentialAdapterRegistry()
@@ -28,7 +27,7 @@ public class CredentialAdapterRegistry {
     private init() {
         registerAdapter(SDJWTCredentialAdapter())
         registerAdapter(VerifiableCredentialAdapter())
-        // Phase 2: registerAdapter(MDocCredentialAdapter())
+        registerAdapter(MdocCredentialAdapter())
     }
 
     public func registerAdapter(_ adapter: CredentialAdapter) {
@@ -51,6 +50,11 @@ public class CredentialAdapterRegistry {
         // opendid_vc is stored as a VerifiableCredential JSON object.
         if trimmed.hasPrefix("{") {
             return findAdapter("opendid_vc")
+        }
+        // An mdoc is base64url CBOR, which shares no marker with the two above; rather than guess
+        // from the alphabet, decode it — a string that parses as an IssuerSigned is an mdoc.
+        if (try? Mdoc.parse(raw: trimmed)) != nil {
+            return findAdapter("mso_mdoc-did")
         }
         return nil
     }

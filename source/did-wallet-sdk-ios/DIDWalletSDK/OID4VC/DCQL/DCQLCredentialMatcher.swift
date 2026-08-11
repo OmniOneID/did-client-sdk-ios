@@ -339,6 +339,33 @@ extension DCQLCredentialMatcher
         return try finalize(infos, authRequest: authRequest)
     }
 
+    /// Matches stored mdoc credentials against the request's DCQL query.
+    ///
+    /// Same shape as the SD-JWT overload — parse through the adapter, match, enforce
+    /// `credential_sets` — because the format only changes how a claim is addressed, not what
+    /// matching means.
+    static func matchCredentials(authRequest: AuthorizationRequest,
+                                 mdocCredentials: [MdocCredentialItem]) throws -> [ClientID: [ClaimInfo]]
+    {
+        let queries = try validatedQueries(authRequest)
+        let adapter = MdocCredentialAdapter()
+        // One unreadable stored document must not make the whole wallet unpresentable.
+        let parsed: [(id: String, credential: ParsedCredential)] = mdocCredentials.compactMap {
+            item in
+            do
+            {
+                return (id: item.id, credential: try adapter.parse(item.mdoc.toString()))
+            }
+            catch
+            {
+                WalletLogger.error("skipping unparseable stored credential '\(item.id)': \(error)")
+                return nil
+            }
+        }
+        let infos = getMatchedSubmittables(parsedCredentials: parsed, queries: queries)
+        return try finalize(infos, authRequest: authRequest)
+    }
+
     /// Validates the request's DCQL query and returns its credential queries.
     ///
     /// Callers that need the queries before matching (e.g. to resolve the presentation format) run

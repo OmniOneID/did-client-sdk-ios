@@ -16,7 +16,7 @@
  */
 
 import Foundation
-import OrderedCollections
+internal import OrderedCollections
 
 struct ZKPManager
 {

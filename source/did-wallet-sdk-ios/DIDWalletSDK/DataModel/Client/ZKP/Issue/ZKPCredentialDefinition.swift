@@ -16,7 +16,6 @@
  */
     
 import Foundation
-import OrderedCollections
 
 public enum CredentialType : String, Codable, Sendable
 {
@@ -43,7 +42,7 @@ public struct CredentialPrimaryPublicKey : Jsonable, OrderedJson
     public let n : BigIntString
     public let z : BigIntString
     public let s : BigIntString
-    public var r : OrderedDictionary<String, BigIntString>
+    public var r : OrderedStringMap<BigIntString>
     public let rctxt : BigIntString
 }
 

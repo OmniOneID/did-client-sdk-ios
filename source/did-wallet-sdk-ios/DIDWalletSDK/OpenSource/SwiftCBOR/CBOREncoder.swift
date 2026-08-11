@@ -1,7 +1,7 @@
 #if canImport(Foundation)
 import Foundation
 #endif
-import OrderedCollections
+internal import OrderedCollections
 
 let isBigEndian = Int(bigEndian: 42) == 42
 

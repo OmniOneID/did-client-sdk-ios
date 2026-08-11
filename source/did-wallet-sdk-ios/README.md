@@ -28,12 +28,11 @@ This document is a guide for using the OpenDID Wallet SDK, and provides function
     DIDWalletSDK.xcframework
     ```
 3. Set the frameworks to `Embed & Sign`.
-4. In the app project’s `Package Dependencies`, click the `+` to add the following items.
-    ```text
-    https://github.com/apple/swift-collections.git
-    Exact Version 1.1.4
-    ```
-5. In the **Choose Package Products** screen, select **OrderedCollections** and set **Add to Target** to your app target.
+
+> **Note for apps upgrading from `2.0.2` or earlier:** those versions also required adding
+> `swift-collections` (Exact Version 1.1.4) to the app's `Package Dependencies`. That step is no
+> longer needed — the library is now an internal implementation detail of the SDK — and the
+> declaration can be removed unless your app uses it directly.
 
 <br>
 
@@ -54,7 +53,7 @@ You can integrate the SDK directly into your Xcode project without manually copy
 
 ### Notes
 - When using SPM, manual XCFramework embedding is not required.
-- `swift-collections` is automatically resolved as a transitive dependency (if defined in `Package.swift`).
+- `swift-collections` is resolved automatically as a transitive dependency. It does not appear in the SDK's public API, so your app never has to declare or pin it.
 - Ensure your Xcode version supports Swift Package Manager (Xcode 12+ recommended).
 <br>
 

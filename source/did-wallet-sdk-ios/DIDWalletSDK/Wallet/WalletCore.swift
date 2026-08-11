@@ -493,7 +493,7 @@ extension WalletCore
         return true
     }
 
-    public func getAllOID4VCICredentials() throws -> [SdJwtCredentialItem]
+    public func getAllOID4VCICredentials() throws -> [any CredentialItem]
     {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -501,7 +501,7 @@ extension WalletCore
         return try oid4vcManager.getAllCredentials().map { try makeCredentialItem(from: $0) }
     }
 
-    public func getOID4VCICredentials(ids: [String]) throws -> [SdJwtCredentialItem]
+    public func getOID4VCICredentials(ids: [String]) throws -> [any CredentialItem]
     {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
@@ -524,9 +524,12 @@ extension WalletCore
     }
 
     /// Maps a stored `OID4VCICredential` (raw issuer output) to the public `CredentialItem` model,
-    /// dispatching on the stored `format` to pick the concrete item type. SD-JWT maps to
-    /// `SdJwtCredentialItem`; mdoc (`mso_mdoc`) has no concrete `CredentialItem` yet (Phase 2) and throws.
-    private func makeCredentialItem(from credential: OID4VCICredential) throws -> SdJwtCredentialItem
+    /// dispatching on the stored `format` to pick the concrete item type.
+    ///
+    /// The return type is the protocol rather than a concrete item because a wallet holds both
+    /// formats at once: one list can carry an SD-JWT and an mdoc, and the caller narrows to the
+    /// one it can act on.
+    private func makeCredentialItem(from credential: OID4VCICredential) throws -> any CredentialItem
     {
         switch credential.format
         {
@@ -538,6 +541,15 @@ extension WalletCore
                 kid: credential.kid,
                 credentialIdentifier: credential.credentialIdentifier,
                 sdjwt: SDJWT.parse(raw: credential.credential)
+            )
+        case "mso_mdoc-did":
+            return MdocCredentialItem(
+                id: credential.id,
+                format: .msoMdoc,
+                configurationId: credential.credentialConfigurationId,
+                kid: credential.kid,
+                credentialIdentifier: credential.credentialIdentifier,
+                mdoc: try Mdoc.parse(raw: credential.credential)
             )
         default:
             throw OID4VCManagerError.unsupportedFormat(format: credential.format).getError()

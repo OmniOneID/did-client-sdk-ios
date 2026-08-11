@@ -24,6 +24,7 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     case unsupportedId(id: String)
     case unsupportedFormat(format: String)
     case invalidJWS(detail: String)
+    case invalidMdoc(detail: String)
     //JWE(052xx)
     case invalidJWE
     case unsupportedAlgorithmJWE
@@ -39,6 +40,9 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     case notFoundKid
     case failedToVerifySignature
     case missingJWSHeaderKey
+    case mdocDigestMismatch(elementIdentifier: String)
+    case mdocOutsideValidityPeriod
+    case deviceKeyMismatch
     //OID4VP(055xx)
     case unsupportedPresentationFormat(format: String)
     case invalidDCQLQuery(detail: String)
@@ -61,6 +65,8 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05101", "Unsupported format : \(format)")
         case .invalidJWS(let detail):
             return ("05102", "Invalid JWS : \(detail)")
+        case .invalidMdoc(let detail):
+            return ("05103", "Invalid mdoc : \(detail)")
         case .invalidJWE:
             return ("05210", "Invalid JWE")
         case .unsupportedAlgorithmJWE:
@@ -85,6 +91,12 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05401", "Failed to verify signature")
         case .missingJWSHeaderKey:
             return ("05402", "No 'jwk' in the JWS header to verify with")
+        case .mdocDigestMismatch(let elementIdentifier):
+            return ("05403", "Element \(elementIdentifier) does not match its digest in the MSO")
+        case .mdocOutsideValidityPeriod:
+            return ("05404", "The mdoc is outside its validity period")
+        case .deviceKeyMismatch:
+            return ("05405", "The mdoc is bound to a key this wallet does not hold")
         case .unsupportedPresentationFormat(let format):
             return ("05500", "Presentation for format \(format) is not supported")
         case .invalidDCQLQuery(let detail):

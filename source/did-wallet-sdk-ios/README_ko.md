@@ -29,12 +29,10 @@ Open DID에 필요한 WalletToken, Lock/Unlock, Key, DID Document(DID 문서), V
     DIDWalletSDK.xcframework
     ```
 3. 프레임워크를 `Embed & Sign`으로 설정합니다.
-4. 앱 프로젝트의 `Package Dependencies`에서 `+`를 눌러 다음 항목을 추가합니다.
-    ```text
-    https://github.com/apple/swift-collections.git
-    Exact Version 1.1.4
-    ```
-5. **Choose Package Products** 화면에서 **OrderedCollections** 항목을 선택한 후, **Add to Target**을 앱 타겟으로 설정합니다.
+
+> **`2.0.2` 이하에서 올라오는 앱을 위한 안내:** 해당 버전까지는 앱의 `Package Dependencies`에
+> `swift-collections`(Exact Version 1.1.4)를 추가하는 단계가 필요했습니다. 이제 이 라이브러리는
+> SDK 내부 구현이 되어 그 단계가 필요 없으며, 앱이 직접 사용하지 않는다면 선언을 제거해도 됩니다.
 
 <br>
 
@@ -55,7 +53,7 @@ XCFramework를 수동으로 복사하지 않아도 Xcode에서 직접 패키지�
 
 ### 참고사항
 - SPM을 사용할 경우 XCFramework를 수동으로 추가할 필요가 없습니다.
-- `swift-collections`은 `Package.swift`에 정의되어 있다면 자동으로 의존성 처리됩니다.
+- `swift-collections`은 전이 의존성으로 자동 처리됩니다. SDK 공개 API에 노출되지 않으므로 앱이 직접 선언하거나 버전을 고정할 필요가 없습니다.
 - Swift Package Manager는 Xcode 12 이상을 권장합니다.
 <br>
 

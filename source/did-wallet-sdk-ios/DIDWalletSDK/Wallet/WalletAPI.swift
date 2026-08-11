@@ -713,14 +713,14 @@ extension WalletAPI : IOID4VCService
     }
     
 
-    public func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
+    public func getAllOID4VCs(hWalletToken: String) throws -> [any CredentialItem]
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
                                                purposes: [.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])
         return try walletCore.getAllOID4VCICredentials()
     }
 
-    public func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialItem]
+    public func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [any CredentialItem]
     {
         try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
                                                purposes: [.LIST_VC, .DETAIL_VC, .LIST_VC_AND_PRESENT_VP])

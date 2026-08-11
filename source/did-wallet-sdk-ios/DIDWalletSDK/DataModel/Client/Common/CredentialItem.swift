@@ -41,4 +41,14 @@ public struct SdJwtCredentialItem: CredentialItem
     public let sdjwt: SDJWT
 }
 
+public struct MdocCredentialItem: CredentialItem
+{
+    public let id: String
+    public let format: CredentialFormat
+    public let configurationId: String
+    public let kid: String
+    public let credentialIdentifier: String?
+    public let mdoc: Mdoc
+}
+
 

@@ -150,9 +150,9 @@ protocol IOID4VCService
                             credentialIdentifier: String?,
                             APIGatewayURL: String) async throws -> String
                             
-    func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
+    func getAllOID4VCs(hWalletToken: String) throws -> [any CredentialItem]
     func getOID4VCs(hWalletToken: String,
-                    ids: [String]) throws -> [SdJwtCredentialItem]
+                    ids: [String]) throws -> [any CredentialItem]
     func deleteOID4VCs(hWalletToken: String,
                        ids: [String]) throws
     var isAnyOID4VCSaved: Bool { get }

@@ -82,8 +82,8 @@ public protocol WalletCoreImpl {
     
     //MARK: Credential For OID4VCI
     func addOID4VCICredential(credential: OID4VCICredential) throws -> Bool
-    func getAllOID4VCICredentials() throws -> [SdJwtCredentialItem]
-    func getOID4VCICredentials(ids: [String]) throws -> [SdJwtCredentialItem]
+    func getAllOID4VCICredentials() throws -> [any CredentialItem]
+    func getOID4VCICredentials(ids: [String]) throws -> [any CredentialItem]
     func deleteOID4VCICredential(ids: [String]) throws -> Bool
     func isAnyOID4VCICredentialsSaved() -> Bool
 }

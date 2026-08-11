@@ -1,7 +1,7 @@
 #if canImport(Foundation)
 import Foundation
 #endif
-import OrderedCollections
+internal import OrderedCollections
 
 indirect enum CBOR : Equatable, Hashable, Sendable,
         ExpressibleByNilLiteral, ExpressibleByIntegerLiteral, ExpressibleByStringLiteral,
