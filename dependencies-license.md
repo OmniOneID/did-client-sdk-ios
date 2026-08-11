@@ -21,3 +21,9 @@ swift-collections(1.1.4)
 (https://github.com/apple/swift-collections)
 
 <br>
+
+**SwiftCBOR**
+SwiftCBOR(0.6.5)
+(https://github.com/niscy-eudiw/SwiftCBOR)
+
+<br>

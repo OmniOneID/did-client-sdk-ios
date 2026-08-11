@@ -20,11 +20,12 @@ iOS Wallet API
 
 - Subject: WalletAPI
 - Writer: 박주현
-- Date: 2025-10-13
-- Version: v2.0.1
+- Date: 2026-08-06
+- Version: v3.0.0
 
 | Version | Date       | History                               |
 | -------- | ---------- | -------------------------------------- |
+| v3.0.0   | 2026-08-06 | OID4VC 절 추가, 선언부를 SDK 기준으로 정정 |
 | v2.0.1   | 2025-10-13 | DID 관련 함수 및 authenticatePin 추가 |
 | v2.0.0   | 2025-05-27 | ZKP 관련 함수 추가                    |
 | v1.0.0   | 2024-10-18 | 초기 작성                             |
@@ -68,7 +69,8 @@ iOS Wallet API
         - [4.4. getCredentials](#44-getcredentials)
         - [4.5. deleteCredentials](#45-deletecredentials)
         - [4.6. createEncVp](#46-createencvp)
-        - [4.7. isAnyCredentialsSaved](#47-isanycredentialssaved)
+        - [4.7. createVp](#47-createvp)
+        - [4.8. isAnyCredentialsSaved](#48-isanycredentialssaved)
     - [5. ZKP](#5-zkp)
         - [5.1. createEncZKProof](#51-createenczkproof)
         - [5.2. searchZKPCredentials](#52-searchzkpcredentials)
@@ -83,7 +85,15 @@ iOS Wallet API
         - [6.4. changePin](#64-changepin)
         - [6.5. changeLock](#65-changelock)
         - [6.6. authenticatePin](#66-authenticatepin)
-    
+    - [7. OID4VC](#7-oid4vc)
+        - [7.1. requestIssueOID4VC](#71-requestissueoid4vc)
+        - [7.2. getAllOID4VCs](#72-getalloid4vcs)
+        - [7.3. getOID4VCs](#73-getoid4vcs)
+        - [7.4. deleteOID4VCs](#74-deleteoid4vcs)
+        - [7.5. isAnyOID4VCSaved](#75-isanyoid4vcsaved)
+        - [7.6. matchCredentials](#76-matchcredentials)
+        - [7.7. createVpToken](#77-createvptoken)
+
 - [Enumerators](#enumerators)
     - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
 
@@ -94,6 +104,8 @@ iOS Wallet API
     - [4. SignedDIDDoc](#4-signeddiddoc)
     - [5. SignedWalletInfo](#5-signedwalletinfo)
     - [6. DIDAuth](#6-didauth)
+    - [7. AuthorizationRequest](#7-authorizationrequest)
+    - [8. MatchedCredential](#8-matchedcredential)
 
 
 # API 목록
@@ -202,22 +214,23 @@ let success = try await WalletAPI.shared.createWallet(tasURL:TAS_URL, walletURL:
 ### Declaration
 
 ```swift
-func deleteWallet() throws -> Bool
+func deleteWallet(deleteAll: Bool) throws
 ```
 
 ### Parameters
 
+| Name      | Type | Description                                                                | **M/O** | **Note** |
+|-----------|------|---------------------------------------------------------------------------|---------|----------|
+| deleteAll | Bool | `true`이면 디바이스 DID Document와 디바이스 키까지 삭제하고 저장된 사용자·토큰·CA 패키지도 함께 지운다 | M | 홀더 DID Document·홀더 키·크리덴셜은 값과 무관하게 삭제된다 |
 
 ### Returns
 
-| Type    | Description                | **M/O** | **Note** |
-|---------|---------------------|---------|----------|
-| Bool | Wallet 삭제 성공 여부를 반환한다. | M       |          |
+Void
 
 ### Usage
 
 ```swift
-let success = try WalletAPI.deleteWallet()
+try WalletAPI.shared.deleteWallet(deleteAll: true)
 ```
 
 <br>
@@ -263,7 +276,7 @@ let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, "or
 ### Declaration
 
 ```swift
-func createNonceForWalletToken(walletTokenData: WalletTokenData) throws -> String
+func createNonceForWalletToken(walletTokenData: WalletTokenData, APIGatewayURL: String) async throws -> String
 ```
 
 ### Parameters
@@ -271,6 +284,7 @@ func createNonceForWalletToken(walletTokenData: WalletTokenData) throws -> Strin
 | Name           | Type           | Description                  | **M/O** | **Note** |
 |----------------|----------------|-----------------------|---------|----------|
 | walletTokenData | WalletTokenData | 월렛 토큰 데이터      | M       |[WalletTokenData](#2-wallettokendata)          |
+| APIGatewayURL  | String         | nonce를 요청할 API Gateway URL | M   |          |
 
 ### Returns
 
@@ -282,7 +296,8 @@ func createNonceForWalletToken(walletTokenData: WalletTokenData) throws -> Strin
 
 ```swift
 let walletTokenData = try WalletTokenData.init(from: responseData)
-let nonce = try WalletAPI.shared.createNonceForWalletToken(walletTokenData: walletTokenData);
+let nonce = try await WalletAPI.shared.createNonceForWalletToken(walletTokenData: walletTokenData,
+                                                                 APIGatewayURL: "https://api.example.com");
 ```
 
 <br>
@@ -326,7 +341,7 @@ let success = try WalletAPI.shared.bindUser(hWalletToken: hWalletToken);
 ### Declaration
 
 ```swift
-public unbindUser(hWalletToken: String) throws -> Bool
+func unbindUser(hWalletToken: String) throws -> Bool
 ```
 
 ### Parameters
@@ -357,19 +372,18 @@ let success = try WalletAPI.shared.unbindUser(hWalletToken: hWalletToken);
 ### Declaration
 
 ```swift
-func String requestRegisterUser(TasURL: String, id: String, txId: String, hWalletToken: String, serverToken: String, signedDIDDoc: SignedDidDoc) throws -> _RequestRegisterUser
+func requestRegisterUser(tasURL: String, txId: String, hWalletToken: String, serverToken: String, signedDIDDoc: SignedDIDDoc) async throws -> _RequestRegisterUser
 ```
 
 ### Parameters
 
 | Name         | Type           | Description                        | **M/O** | **Note** |
 |--------------|----------------|-----------------------------|---------|----------|
-| TasURL | String         | TAS URL                   | M       |          |
-| id | String         | message id                   | M       |          |
+| tasURL | String         | TAS URL                   | M       |          |
 | txId     | String       | 거래코드               | M       |          |
 | hWalletToken | String         | 월렛토큰                   | M       |          |
 | serverToken     | String       | 서버토큰                | M       |          |
-| signedDIDDoc|SignedDidDoc | 서명된 DID Document 객체   | M       |[SignedDIDDoc](#4-signeddiddoc)          |
+| signedDIDDoc|SignedDIDDoc | 서명된 DID Document 객체   | M       |[SignedDIDDoc](#4-signeddiddoc)          |
 
 ### Returns
 
@@ -380,7 +394,7 @@ func String requestRegisterUser(TasURL: String, id: String, txId: String, hWalle
 ### Usage
 
 ```swift
-let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL: TAS_URL, id: "messageId", txId: "txId", hWalletToken: hWalletToken, serverToken: hServerToken, signedDIDDoc: signedDidDoc);
+let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL: TAS_URL, txId: "txId", hWalletToken: hWalletToken, serverToken: hServerToken, signedDIDDoc: signedDidDoc);
 ```
 
 <br>
@@ -427,14 +441,14 @@ let signedInfo = try WalletAPI.shared.getSignedWalletInfo();
 ### Declaration
 
 ```swift
-func createDIDDocument(hWalletToken: String) throws -> DIDDocument
+func createHolderDIDDocument(hWalletToken: String) throws -> DIDDocument
 ```
 
 ### Parameters
 
 | Name          | Type   | Description                       | **M/O** | **Note** |
 |---------------|--------|----------------------------|---------|----------|
-| hWalletToken  | String | 월렛토큰                  | O       |          |
+| hWalletToken  | String | 월렛토큰                  | M       |          |
 
 
 ### Returns
@@ -459,25 +473,25 @@ let didDoc = try WalletAPI.shared.createHolderDIDDocument(hWalletToken: hWalletT
 ### Declaration
 
 ```swift
-func createSignedDIDDoc(hWalletToken: String, passcode: String) throws -> SignedDIDDoc
+func createSignedDIDDoc(passcode: String? = nil) throws -> SignedDIDDoc
 ```
 
 ### Parameters
 
-| Name          | Type   | Description                       | **M/O** | **Note** |
-|---------------|--------|----------------------------|---------|----------|
-| hWalletToken  | String | 월렛토큰                  | M       |          |
+| Name      | Type    | Description                                            | **M/O** | **Note** |
+|-----------|---------|--------------------------------------------------------|---------|----------|
+| passcode  | String? | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil`        | O       |          |
 
 ### Returns
 
 | Type            | Description                  | **M/O** | **Note** |
 |-----------------|-----------------------|---------|----------|
-| SignedDidDoc | 서명된 DID Document 객체   | M       |[SignedDIDDoc](#4-signeddiddoc)          |
+| SignedDIDDoc | 서명된 DID Document 객체   | M       |[SignedDIDDoc](#4-signeddiddoc)          |
 
 ### Usage
 
 ```swift
-let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(hWalletToken: hWalletToken);
+let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(passcode: passcode);
 ```
 
 <br>
@@ -490,14 +504,14 @@ let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(hWalletToken: hWallet
 ### Declaration
 
 ```swift
-func getDIDDocument(type: Int) throws -> DIDDocument
+func getDidDocument(type: DidDocumentType) throws -> DIDDocument
 ```
 
 ### Parameters
 
-| Name | Type | Description                               | **M/O** | **Note** |
-|------|------|-------------------------------------------|---------|----------|
-| type | Enum | 1 : deviceKey DID 문서, 2 : holder DID 문서 | M       |          |
+| Name | Type            | Description                                                            | **M/O** | **Note** |
+|------|-----------------|------------------------------------------------------------------------|---------|----------|
+| type | DidDocumentType | `.DeviceDidDocument` : deviceKey DID 문서, `.HolderDidDocumnet` : holder DID 문서 | M | |
 
 
 ### Returns
@@ -710,7 +724,7 @@ print("Signature valid:", isValid)
 ### Declaration
 
 ```swift
-func getSignedDIDAuth(authNonce: String, didType: DidDocumentType, passcode: String ?= nil) throws -> DIDAuth?
+func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth
 ```
 
 ### Parameters
@@ -718,8 +732,7 @@ func getSignedDIDAuth(authNonce: String, didType: DidDocumentType, passcode: Str
 | Name          | Type   | Description                       | **M/O** | **Note** |
 |---------------|--------|----------------------------|---------|----------|
 | authNonce  | String | profile의 auth nonce                  | M       |          |
-| didType  | DIDDocumentType | did 타입                  | M       |          |
-| passcode  | String | 유저 패스코드                  | M       |          |
+| passcode  | String? | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil`  | O       |          |
 
 ### Returns
 
@@ -730,7 +743,7 @@ func getSignedDIDAuth(authNonce: String, didType: DidDocumentType, passcode: Str
 ### Usage
 
 ```swift
-let signedDIDAuth = try WalletAPI.shared.getSignedDIDAuth(authNonce: authNunce, didType: DidDocumentType.holderDIDDcument, passcode: passcode);
+let signedDIDAuth = try WalletAPI.shared.getSignedDidAuth(authNonce: authNonce, passcode: passcode);
 ```
 
 <br>
@@ -934,34 +947,32 @@ let response = try await WalletAPI.shared.requestRestoreUser(
 ### Declaration
 
 ```swift
-func requestIssueVc(tasURL: String, id: String, hWalletToken: String, didAuth: DIDAuth, issueProfile: _RequestIssueProfile, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _requestIssueVc?)
+func requestIssueVc(url: String, hWalletToken: String, didAuth: DIDAuth, issuerProfile: _RequestIssueProfile, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
 ```
 
 ### Parameters
 
-| Name           | Type                 | Description            | **M/O** | **Note**                |
-|----------------|----------------------|------------------------|---------|-------------------------|
-| tasURL         | String               | TAS URL                | M       |                         |
-| id             | String               | message ID             | M       |                         |
-| hWalletToken   | String               | 월렛토큰               | M       |                         |
-| didAuth        | DIDAuth              | 거래코드               | M       |                         |
-| issueProfile   | _RequestIssueProfile | issue profile 정보     | M       |                         |
-| refId          | String               | 참조번호               | M       |                         |
-| serverToken    | String               |                        | M       | 데이터모델 참조          |
-| APIGatewayURL  | String               |                        | M       | [DIDAuth](#6-didauth)   |
+| Name           | Type                 | Description                  | **M/O** | **Note**                |
+|----------------|----------------------|------------------------------|---------|-------------------------|
+| url            | String               | 발급 요청을 보낼 TAS 엔드포인트 URL | M   |                         |
+| hWalletToken   | String               | 월렛토큰                     | M       |                         |
+| didAuth        | DIDAuth              | DIDAuth                      | M       | [DIDAuth](#6-didauth)   |
+| issuerProfile  | _RequestIssueProfile | issuer profile 정보          | M       |                         |
+| refId          | String               | 참조번호                     | M       |                         |
+| serverToken    | String?              | TAS 서버 접근용 서버토큰      | O       | 데이터모델 참조          |
+| APIGatewayURL  | String               | APIGateway URL               | M       |                         |
 
 ### Returns
 
-| Type    | Description                | **M/O** | **Note** |
-|---------|---------------------|---------|----------|
-| String | VC ID | M       |성공 시 발급된 VC의 ID를 반환한다          |
-| String | VC | M       |성공 시 발급된 VC를 반환한다          |
+| Type            | Description | **M/O** | **Note** |
+|-----------------|-------------|---------|----------|
+| String          | VC ID       | M       |성공 시 발급된 VC의 ID를 반환한다          |
+| _RequestIssueVc | VC          | M       |성공 시 발급된 VC를 반환한다          |
 
 ### Usage
 
 ```swift
-(vcId, issueVC) = try await WalletAPI.shared.requestIssueVc(tasURL: TAS_URL, id: 
-"messageId", hWalletToken: hWalletToken, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: hServerToken, APIGatewayURL: API_URL);
+(vcId, issueVC) = try await WalletAPI.shared.requestIssueVc(url: TAS_URL, hWalletToken: hWalletToken, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: hServerToken, APIGatewayURL: API_URL);
 ```
 
 <br>
@@ -974,22 +985,21 @@ func requestIssueVc(tasURL: String, id: String, hWalletToken: String, didAuth: D
 ### Declaration
 
 ```swift
-func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String? = nil) async throws -> _RequestRevokeVc
+func requestRevokeVc(hWalletToken: String, url: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String? = nil) async throws -> _RequestRevokeVc
 ```
 
 ### Parameters
 
-| Name         | Type                 | Description        | **M/O** | **Note**              |
-| ------------ | -------------------- | ------------------ | ------- | --------------------- |
-| hWalletToken | String               | 월렛토큰           | M       |                       |
-| tasURL       | String               | TAS URL            | M       |                       |
-| authType     | String               | message ID         | M       |                       |
-| didAuth      | DIDAuth              | 거래코드           | M       |                       |
-| vcId         | _RequestIssueProfile | issue profile 정보 | M       |                       |
-| issuerNonce  | String               | 참조번호           | M       |                       |
-| txId         | String               |                    | M       | 데이터모델 참조       |
-| serverToken  | String               |                    | M       | [DIDAuth](#6-didauth) |
-| passcode     | String               |                    | M       | [DIDAuth](#6-didauth) |
+| Name         | Type           | Description                       | **M/O** | **Note**              |
+| ------------ | -------------- | --------------------------------- | ------- | --------------------- |
+| hWalletToken | String         | 월렛토큰                          | M       |                       |
+| url          | String         | 폐기 요청을 보낼 TAS 엔드포인트 URL | M      |                       |
+| authType     | VerifyAuthType | 폐기 시 홀더 인증 방식             | M       | 데이터모델 참조       |
+| vcId         | String         | 폐기할 VC의 ID                    | M       |                       |
+| issuerNonce  | String         | 폐기 거래의 issuer nonce          | M       |                       |
+| txId         | String         | 거래코드                          | M       |                       |
+| serverToken  | String?        | TAS 서버 접근용 서버토큰           | O       |                       |
+| passcode     | String?        | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil` | O | |
 
 ### Returns
 
@@ -1001,7 +1011,7 @@ func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: Verify
 
 ```swift
 let revokeVc = try await WalletAPI.shared.requestRevokeVc(hWalletToken: self.hWalletToken,
-                                                                tasURL: URLs.TAS_URL + "/tas/api/v1/request-revoke-vc",
+                                                                url: URLs.TAS_URL + "/tas/api/v1/request-revoke-vc",
                                                                 authType: authType,
                                                                 vcId: super.vcId,
                                                                 issuerNonce: super.issuerNonce,
@@ -1112,36 +1122,80 @@ let result = try WalletAPI.shared.deleteCredentials(hWalletToken: hWalletToken, 
 ### Declaration
 
 ```swift
-func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile, passcode: String? = nil) throws -> (AccE2e, Data)
+func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo], verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data)
 ```
 
 ### Parameters
 
-| Name         | Type               | Description        | **M/O** | **Note**        |
-| ------------ | ------------------ | ------------------ | ------- | --------------- |
-| hWalletToken | String             | 월렛토큰           | M       |                 |
-| vcId         | String             | VC ID              | M       |                 |
-| claimCode    | List&lt;String&gt; | 제출할 클레임 코드 | M       |                 |
-| reqE2e       | ReqE2e             | E2E 암복호화 정보  | M       | 데이터모델 참조 |
-| passcode     | String             | 서명용 PIN         | M       |                 |
-| nonce        | String             | nonce              | M       |                 |
+| Name            | Type            | Description                        | **M/O** | **Note**        |
+| --------------- | --------------- | ---------------------------------- | ------- | --------------- |
+| hWalletToken    | String          | 월렛토큰                            | M       |                 |
+| claimInfos      | [ClaimInfo]     | 제출할 크리덴셜과 클레임 코드        | M       | 데이터모델 참조 |
+| verifierProfile | _RequestProfile | E2E 암복호화 정보를 포함한 검증자 프로파일 | M   | 데이터모델 참조 |
+| APIGatewayURL   | String          | APIGateway URL                     | M       |                 |
+| passcode        | String?         | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil` | O | |
 
 ### Returns
 
 | Type   | Description    | **M/O** | **Note**         |
 | ------ | -------------- | ------- | ---------------- |
-| AccE2e | 암호화 객체    | M       | acce2e, encVp... |
-| EncVP  | 암호화 VP 객체 | M       | acce2e, encVp... |
+| AccE2e | 암호화 객체    | M       | acce2e           |
+| Data   | 암호화 VP 객체 | M       | encVp            |
 
 ### Usage
 
 ```swift
-(accE2e, encVp) = try WalletAPI.shared.createEncVp(hWalletToken:hWalletToken, claimInfos:claimInfos, verifierProfile: verifierProfile, passcode: passcode)
+(accE2e, encVp) = try await WalletAPI.shared.createEncVp(hWalletToken: hWalletToken,
+                                                         claimInfos: claimInfos,
+                                                         verifierProfile: verifierProfile,
+                                                         APIGatewayURL: API_URL,
+                                                         passcode: passcode)
 ```
 
 <br>
 
-## 4.7. isAnyCredentialsSaved
+## 4.7. createVp
+
+### Description
+`암호화하지 않은 Verifiable Presentation을 생성한다.`
+
+`createEncVp`와 같은 선택 정보를 받지만, 검증자용으로 봉인하는 대신 VP 객체를 그대로 반환한다.
+OmniOne E2E 채널이 아닌 경로로 전달할 때 — 예를 들어 호출자가 직접 인코딩할 때 — 사용한다.
+
+### Declaration
+
+```swift
+func createVp(hWalletToken: String, claimInfos: [ClaimInfo], passcode: String? = nil, verifierNonce: String, challenge: OIDV4VPChallenge? = nil) throws -> VerifiablePresentation
+```
+
+### Parameters
+
+| Name          | Type              | Description                        | **M/O** | **Note**        |
+| ------------- | ----------------- | ---------------------------------- | ------- | --------------- |
+| hWalletToken  | String            | 월렛토큰                            | M       |                 |
+| claimInfos    | [ClaimInfo]       | 제출할 크리덴셜과 클레임 코드        | M       | 데이터모델 참조 |
+| passcode      | String?           | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil` | O | |
+| verifierNonce | String            | presentation proof에 바인딩할 nonce | M       |                 |
+| challenge     | OIDV4VPChallenge? | nonce 대신 바인딩할 `domain`/`challenge` 쌍 | O | 데이터모델 참조 |
+
+### Returns
+
+| Type                   | Description | **M/O** | **Note**        |
+|------------------------|-------------|---------|-----------------|
+| VerifiablePresentation | VP 객체      | M       | 데이터모델 참조 |
+
+### Usage
+
+```swift
+let vp = try WalletAPI.shared.createVp(hWalletToken: hWalletToken,
+                                       claimInfos: claimInfos,
+                                       passcode: passcode,
+                                       verifierNonce: verifierNonce)
+```
+
+<br>
+
+## 4.8. isAnyCredentialsSaved
 
 ### Description
 `지갑에 VC가 있는지 확인한다.`
@@ -1396,26 +1450,37 @@ let success = try WalletAPI.shared.registerLock(hWalletToken: hWalletToken, pass
 ### Description
 `Wallet의 Unlock을 위한 인증을 수행한다.`
 
+패스코드를 변경하는 과정에서 기존 패스코드를 확인할 때는 `isChanging: true`로 호출한다. 패스코드
+검증 방식은 동일하지만 Wallet의 잠금/해제 상태는 그대로 유지된다 — 홀더가 기존 PIN을 증명했다는
+이유만으로 잠긴 Wallet이 풀리지 않는다.
+
 ### Declaration
 
 ```swift
-func authenticateLock(hWalletToken: String, passcode: String) throws -> Data?
+@discardableResult
+func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data?
 ```
 
 ### Parameters
 
-| Name         | Type   | Description                        | **M/O** | **Note** |
-|--------------|--------|-----------------------------|---------|----------|
-| passcode     | String |Unlock PIN               | M       | registerLock 시 설정한 PIN          | 
+| Name       | Type   | Description                        | **M/O** | **Note** |
+|------------|--------|------------------------------------|---------|----------|
+| passcode   | String | Unlock PIN                         | M       | registerLock 시 설정한 PIN |
+| isChanging | Bool   | `true`면 잠금 상태를 바꾸지 않고 패스코드만 검증한다 | O | 기본값 `false` |
 
 ### Returns
 
-Void
+| Type  | Description                                   | **M/O** | **Note** |
+|-------|-----------------------------------------------|---------|----------|
+| Data? | 패스코드가 맞으면 인증 데이터, 아니면 `nil`      | O       |          |
 
 ### Usage
 
 ```swift
-try WalletAPI.shared.authenticateLock(hWalletToken: hWalletToken, passcode: "123456");
+try WalletAPI.shared.authenticateLock(passcode: "123456");
+
+// 패스코드 변경 전 기존 PIN 확인 — Wallet은 잠긴 상태를 유지한다
+try WalletAPI.shared.authenticateLock(passcode: oldPasscode, isChanging: true);
 ```
 
 <br>
@@ -1462,7 +1527,7 @@ let isLockRegistered = try WalletAPI.shared.isLock();
 ### Declaration
 
 ```swift
-public func changePIN(id: String, oldPIN: String, newPIN: String) throws
+public func changePin(id: String, oldPIN: String, newPIN: String) throws
 ```
 
 ### Parameters
@@ -1480,7 +1545,7 @@ N/A
 ### Usage
 
 ```swift
-try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
+try WalletAPI.shared.changePin(id: "pin", oldPIN: oldPIN, newPIN: passcode)
 ```
 
 <br>
@@ -1543,6 +1608,255 @@ Void
 let pinID = "pin"
 let pin = "password"
 try WalletAPI.shared.authenticatePin(id: pinID, pin: pin)
+```
+
+<br>
+
+## 7. OID4VC
+
+OpenID4VCI(발급)와 OpenID4VP(제출). 이 절로 발급받은 크리덴셜은 4절의 W3C 크리덴셜과 별도로
+저장되며, `getAllCredentials`가 아니라 `getAllOID4VCs`로 조회한다.
+
+## 7.1. requestIssueOID4VC
+
+### Description
+`OpenID4VCI로 크리덴셜 발급을 요청하고 Wallet에 저장한다.`
+
+### Declaration
+
+```swift
+func requestIssueOID4VC(hWalletToken: String, metadata: IssuerMetadataResponse, token: TokenResponse, passcode: String?, configurationId: String, credentialIdentifier: String?, APIGatewayURL: String) async throws -> String
+```
+
+### Parameters
+
+| Name                 | Type                   | Description                                | **M/O** | **Note** |
+|----------------------|------------------------|--------------------------------------------|---------|----------|
+| hWalletToken         | String                 | 월렛토큰                                    | M       | `ISSUE_VC` 권한 필요 |
+| metadata             | IssuerMetadataResponse | 발급 가능한 크리덴셜을 기술한 issuer 메타데이터 | M    |          |
+| token                | TokenResponse          | issuer 토큰 엔드포인트에서 받은 액세스 토큰    | M       |          |
+| passcode             | String?                | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil` | O | |
+| configurationId      | String                 | 발급받을 `credential_configuration_id`       | M       | issuer 메타데이터가 제공하는 값이어야 한다 |
+| credentialIdentifier | String?                | 토큰 응답이 `credential_identifier`를 제공할 때의 값 | O | |
+| APIGatewayURL        | String                 | APIGateway URL                             | M       |          |
+
+### Returns
+
+| Type   | Description               | **M/O** | **Note** |
+|--------|---------------------------|---------|----------|
+| String | Wallet에 저장된 크리덴셜의 ID | M      |          |
+
+### Usage
+
+```swift
+let credentialId = try await WalletAPI.shared.requestIssueOID4VC(hWalletToken: hWalletToken,
+                                                                 metadata: issuerMetadata,
+                                                                 token: tokenResponse,
+                                                                 passcode: passcode,
+                                                                 configurationId: configurationId,
+                                                                 credentialIdentifier: nil,
+                                                                 APIGatewayURL: API_URL)
+```
+
+<br>
+
+## 7.2. getAllOID4VCs
+
+### Description
+`Wallet에 저장된 모든 OID4VC 크리덴셜을 조회한다.`
+
+### Declaration
+
+```swift
+func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
+```
+
+### Parameters
+
+| Name         | Type   | Description | **M/O** | **Note** |
+|--------------|--------|-------------|---------|----------|
+| hWalletToken | String | 월렛토큰     | M       | `LIST_VC`, `DETAIL_VC`, `LIST_VC_AND_PRESENT_VP` 중 하나의 권한 필요 |
+
+### Returns
+
+| Type                  | Description                | **M/O** | **Note** |
+|-----------------------|----------------------------|---------|----------|
+| [SdJwtCredentialItem] | 저장된 모든 SD-JWT 크리덴셜 | M       | 없으면 빈 배열 |
+
+### Usage
+
+```swift
+let credentials = try WalletAPI.shared.getAllOID4VCs(hWalletToken: hWalletToken)
+```
+
+<br>
+
+## 7.3. getOID4VCs
+
+### Description
+`ID로 OID4VC 크리덴셜을 조회한다.`
+
+### Declaration
+
+```swift
+func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialItem]
+```
+
+### Parameters
+
+| Name         | Type     | Description        | **M/O** | **Note** |
+|--------------|----------|--------------------|---------|----------|
+| hWalletToken | String   | 월렛토큰            | M       | `LIST_VC`, `DETAIL_VC`, `LIST_VC_AND_PRESENT_VP` 중 하나의 권한 필요 |
+| ids          | [String] | 조회할 크리덴셜 ID  | M       |          |
+
+### Returns
+
+| Type                  | Description       | **M/O** | **Note** |
+|-----------------------|-------------------|---------|----------|
+| [SdJwtCredentialItem] | 조회된 크리덴셜    | M       |          |
+
+### Usage
+
+```swift
+let credentials = try WalletAPI.shared.getOID4VCs(hWalletToken: hWalletToken, ids: [credentialId])
+```
+
+<br>
+
+## 7.4. deleteOID4VCs
+
+### Description
+`ID로 OID4VC 크리덴셜을 삭제한다.`
+
+### Declaration
+
+```swift
+func deleteOID4VCs(hWalletToken: String, ids: [String]) throws
+```
+
+### Parameters
+
+| Name         | Type     | Description       | **M/O** | **Note** |
+|--------------|----------|-------------------|---------|----------|
+| hWalletToken | String   | 월렛토큰           | M       | `REMOVE_VC` 권한 필요 |
+| ids          | [String] | 삭제할 크리덴셜 ID | M       |          |
+
+### Returns
+
+Void
+
+### Usage
+
+```swift
+try WalletAPI.shared.deleteOID4VCs(hWalletToken: hWalletToken, ids: [credentialId])
+```
+
+<br>
+
+## 7.5. isAnyOID4VCSaved
+
+### Description
+`Wallet에 저장된 OID4VC 크리덴셜이 하나라도 있는지 확인한다.`
+
+### Declaration
+
+```swift
+public var isAnyOID4VCSaved: Bool
+```
+
+### Returns
+
+| Type | Description                                            | **M/O** | **Note** |
+| ---- | ------------------------------------------------------ | ------- | -------- |
+| Bool | OID4VC 크리덴셜이 하나 이상 있으면 `true`, 아니면 `false` | M       |          |
+
+### Usage
+
+```swift
+if WalletAPI.shared.isAnyOID4VCSaved {
+    // 크리덴셜 목록 표시
+}
+```
+
+<br>
+
+## 7.6. matchCredentials
+
+### Description
+`검증자의 DCQL 쿼리를 만족하는 저장된 크리덴셜을 찾는다.`
+
+반환값이 곧 동의 화면에 보여줄 내용이다. 매칭된 크리덴셜마다 한 항목씩, Wallet에서 나갈 클레임의
+이름이 이미 채워져 있다. `createVpToken`을 호출하기 전에 앱은 홀더가 거부한 항목을 뺄 수 있지만,
+남긴 항목은 그대로 넘겨야 한다.
+
+### Declaration
+
+```swift
+func matchCredentials(hWalletToken: String, authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+```
+
+### Parameters
+
+| Name         | Type                 | Description                          | **M/O** | **Note** |
+|--------------|----------------------|--------------------------------------|---------|----------|
+| hWalletToken | String               | 월렛토큰                              | M       | `PRESENT_VP` 또는 `LIST_VC_AND_PRESENT_VP` 권한 필요 |
+| authRequest  | AuthorizationRequest | DCQL 쿼리를 담은 검증자 인가 요청       | M       | [AuthorizationRequest](#7-authorizationrequest) |
+
+### Returns
+
+| Type                | Description                              | **M/O** | **Note** |
+|---------------------|------------------------------------------|---------|----------|
+| [MatchedCredential] | 매칭된 크리덴셜마다 한 항목, DCQL 선언 순서 | M       | [MatchedCredential](#8-matchedcredential) |
+
+### Usage
+
+```swift
+let matched = try WalletAPI.shared.matchCredentials(hWalletToken: hWalletToken,
+                                                    authRequest: authRequest)
+```
+
+<br>
+
+## 7.7. createVpToken
+
+### Description
+`선택한 크리덴셜로 vp_token을 담은 인가 응답 본문을 생성한다.`
+
+반환되는 데이터는 그대로 전송 가능하다. 요청의 `response_uri`로
+`application/x-www-form-urlencoded`로 POST하면 된다. `direct_post.jwt`인 경우 `client_metadata`의
+검증자 키로 JWE 봉인된 본문이 반환된다.
+
+동의는 클레임 단위가 아니라 크리덴셜 단위다. 클레임을 빼고 싶으면 해당 `MatchedCredential`을 통째로
+제거해야 하며, 남긴 항목은 `matchCredentials`가 만든 `claimCodes`를 그대로 유지해야 한다.
+
+### Declaration
+
+```swift
+func createVpToken(hWalletToken: String, authRequest: AuthorizationRequest, matchedCredentials: [MatchedCredential], passcode: String?) throws -> Data
+```
+
+### Parameters
+
+| Name               | Type                 | Description                              | **M/O** | **Note** |
+|--------------------|----------------------|------------------------------------------|---------|----------|
+| hWalletToken       | String               | 월렛토큰                                  | M       | `PRESENT_VP` 또는 `LIST_VC_AND_PRESENT_VP` 권한 필요 |
+| authRequest        | AuthorizationRequest | 선택의 근거가 된 인가 요청                 | M       | [AuthorizationRequest](#7-authorizationrequest) |
+| matchedCredentials | [MatchedCredential]  | 제출할 크리덴셜. `matchCredentials` 반환값에서 거부된 항목을 뺀 것 | M | [MatchedCredential](#8-matchedcredential) |
+| passcode           | String?              | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil` | O | |
+
+### Returns
+
+| Type | Description           | **M/O** | **Note** |
+|------|-----------------------|---------|----------|
+| Data | 전송 가능한 응답 본문   | M       | `authRequest.responseUri`로 POST |
+
+### Usage
+
+```swift
+let body = try WalletAPI.shared.createVpToken(hWalletToken: hWalletToken,
+                                              authRequest: authRequest,
+                                              matchedCredentials: selected,
+                                              passcode: passcode)
 ```
 
 <br>
@@ -1734,4 +2048,69 @@ public struct DIDAuth: Jsonable {
 | did       | String | 인증 대상자의 DID    | M       |          |
 | authNonce | String | DID Auth 용 nonce    | M       |          |
 | proof     | Proof  | authentication proof | M       |          |
+<br>
+
+## 7. AuthorizationRequest
+
+### Description
+
+`검증자로부터 받은 OpenID4VP 인가 요청.`
+
+### Declaration
+
+```swift
+public struct AuthorizationRequest: Jsonable, FromSnake {
+    public let responseUri: String
+    public let nonce: String
+    public let state: String
+    public let clientId: String
+    public let responseType: String
+    public let responseMode: String
+    public let dcqlQuery: DCQLQuery
+    public let clientMetadata: [String: AnyJSON]
+    public let iat: Int
+}
+```
+
+### Property
+
+| Name           | Type              | Description                                    | **M/O** | **Note** |
+| -------------- | ----------------- | ---------------------------------------------- | ------- | -------- |
+| responseUri    | String            | 응답 본문을 POST할 엔드포인트                    | M       |          |
+| nonce          | String            | presentation에 바인딩되는 검증자 nonce           | M       |          |
+| state          | String            | 응답에 그대로 실어 보내는 검증자 state           | M       |          |
+| clientId       | String            | 검증자 식별자. presentation의 audience로 쓰인다  | M       |          |
+| responseType   | String            | OAuth response type                            | M       |          |
+| responseMode   | String            | `direct_post` 또는 `direct_post.jwt`            | M       | 그 외 값은 거부된다 (`MSDKWLT05509`) |
+| dcqlQuery      | DCQLQuery         | 매칭 대상 크리덴셜 쿼리                          | M       |          |
+| clientMetadata | [String: AnyJSON] | 검증자 메타데이터. `direct_post.jwt`의 응답 암호화 키를 담는다 | M | |
+| iat            | Int               | 요청 발행 시각                                   | M       |          |
+<br>
+
+## 8. MatchedCredential
+
+### Description
+
+`하나의 DCQL 크리덴셜 쿼리에 대해 매칭된 크리덴셜 한 건.`
+
+`matchCredentials`가 반환하고 `createVpToken`에 그대로 전달한다. 앱은 홀더가 거부한 항목을 빼거나
+public 이니셜라이저로 목록을 다시 구성할 수 있지만, 항목의 `claimCodes`를 좁혀서는 안 된다.
+
+### Declaration
+
+```swift
+public struct MatchedCredential {
+    public let queryId: String
+    public let credentialId: String
+    public let claimCodes: [String]
+}
+```
+
+### Property
+
+| Name         | Type     | Description                                              | **M/O** | **Note** |
+| ------------ | -------- | -------------------------------------------------------- | ------- | -------- |
+| queryId      | String   | 이 매칭이 답하는 DCQL 크리덴셜 쿼리 id (`dcql_query.credentials[].id`) | M | |
+| credentialId | String   | 매칭된 저장 크리덴셜 id                                    | M       |          |
+| claimCodes   | [String] | 공개할 클레임. 쿼리가 요구한 클레임이거나, 크리덴셜 전체를 요구했다면 공개 가능한 모든 클레임 | M | 불투명 값이다. 표시·대조에만 쓰고 쪼개거나 조립하지 않는다 |
 <br>

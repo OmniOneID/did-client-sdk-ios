@@ -27,16 +27,21 @@ let package = Package(
         .target(
             name: "DIDWalletSDK",
             dependencies: [
-                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "OrderedCollections", package: "swift-collections"),
                 "BigIntKit",
             ],
             path: "source/did-wallet-sdk-ios/DIDWalletSDK",
             exclude: [
                 "OpenSource/BigInt",
+                "OpenSource/SwiftCBOR/README.md",
                 "DIDWalletSDK.h"
             ],
             resources: [
-                .process("Wallet/CoreData/WalletModel.xcdatamodeld")
+                .process("Wallet/CoreData/WalletModel.xcdatamodeld"),
+                // Ship the vendored libraries' license texts, as the
+                // xcframework build does.
+                .copy("OpenSource/RNJSON/LICENSE.txt"),
+                .copy("OpenSource/SwiftCBOR/UNLICENSE")
             ]
         ),
 

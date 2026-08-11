@@ -27,11 +27,17 @@ public struct MatchedCredential
     public let queryId: String
     /// The matched stored credential id.
     public let credentialId: String
-    /// The claims to disclose, named as DCQL path codes.
+    /// The claims to disclose, as opaque codes.
     ///
     /// `matchCredentials` always fills this: the claims the query asked for, or — when the query
     /// asked for the credential as a whole — every claim it can disclose. The app can therefore
     /// show the holder exactly what leaves the wallet without knowing the credential's shape.
+    ///
+    /// A code is a label to display and an identity to compare — nothing more. The SDK both produces
+    /// it and resolves it back to the claim, so the app must never split one on `.` / `[]` or build
+    /// one from parts: a claim named `"address.street_address"` in one piece is a different claim
+    /// from `address` → `street_address`, and only the side that walked the credential can tell them
+    /// apart.
     ///
     /// On the way back into `createVpToken` the list must still carry every matched claim: consent
     /// is given per credential, not per claim, so withholding one means dropping the whole

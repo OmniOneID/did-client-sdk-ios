@@ -203,7 +203,8 @@ class WalletService: WalletServiceImpl {
     /// - Parameter authRequest: Verifier authorization request carrying the DCQL query.
     /// - Returns: One `MatchedCredential` per matched credential, each naming the claims it would
     ///   disclose (all of the credential's when the query constrains none); before calling
-    ///   `createVpToken` the app may drop entries, but not narrow their `claimCodes`.
+    ///   `createVpToken` the app may drop entries, but not narrow their `claimCodes` — the codes are
+    ///   opaque to the app, to display and compare but never to split or assemble.
     func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
     {
         let queries = try DCQLCredentialMatcher.validatedQueries(authRequest)
@@ -268,7 +269,8 @@ class WalletService: WalletServiceImpl {
     /// 3. Regroup the selection by DCQL query id, preserving first-seen order.
     /// 4. Per query, resolve its presentation format and build the `vp_token` element —
     ///    `OID4VCManagerError.invalidDCQLQuery`, `.unsupportedPresentationFormat`,
-    ///    `.credentialNotFound`, `.holderKeyNotFound`.
+    ///    `.credentialNotFound`, `.holderKeyNotFound`, and `.invalidSelectedCredentials` when a code
+    ///    resolves to no claim of its credential or to more than one.
     /// 5. Assemble the response body and, for `direct_post.jwt`, JWE-seal it —
     ///    `OID4VCManagerError.unsupportedResponseMode`, `.missingVerifierEncryptionKey`,
     ///    `.unsupportedResponseEncryption`.

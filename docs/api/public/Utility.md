@@ -20,11 +20,12 @@ iOS Utility API
 
 - Topic: Utility
 - Author: Woosang Kim
-- Date: 2024-08-30
-- Version: v1.0.0
+- Date: 2026-08-06
+- Version: v1.0.1
 
 | Version | Date       | Changes                  |
 | ------- | ---------- | ------------------------ |
+| v1.0.1  | 2026-08-06 | Correct pbkdf2 iterations type |
 | v1.0.0  | 2024-08-30 | Initial version          |
 
 <div style="page-break-after: always;"></div>
@@ -180,7 +181,7 @@ Derives a key using the PBKDF2 algorithm.
 
 ```swift
 // Declaration in Swift
-static func pbkdf2(password: Data, salt: Data, iterations: UInt, derivedKeyLength: UInt) throws -> Data
+static func pbkdf2(password: Data, salt: Data, iterations: UInt32, derivedKeyLength: UInt) throws -> Data
 ```
 
 #### Parameters
@@ -189,7 +190,7 @@ static func pbkdf2(password: Data, salt: Data, iterations: UInt, derivedKeyLengt
 |-------------------|------|----------------------------------------------|---------|----------|
 | password          | Data | Password used as the seed for key derivation  | M       |          |
 | salt              | Data | Salt used in the key derivation process       | M       |          |
-| iterations        | UInt | Number of hash iterations for key derivation  | M       |          |
+| iterations        | UInt32 | Number of hash iterations for key derivation | M       |          |
 | derivedKeyLength  | UInt | Byte length of the derived key                | M       |          |
 
 #### Returns

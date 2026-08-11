@@ -20,11 +20,12 @@ iOS WalletAPIError
 
 - Topic: WalletAPIError
 - Author: Dongjun Park
-- Date: 2024-10-18
-- Version: v1.0.0
+- Date: 2026-08-06
+- Version: v2.0.2
 
 | Version | Date       | Changes                  |
 | --------| ---------- | ------------------------ |
+| v2.0.2  | 2026-08-06 | Fixed VP error code prefix |
 | v2.0.1  | 2025-10-01 | Add lock-related error   |
 | v1.0.0  | 2024-10-18 | Initial version          |
 
@@ -155,4 +156,4 @@ public struct WalletSDKError: Error {
 ## 8. VP
 | Error Code   | Error Message                        | Description                       | Action Required                   |
 |--------------|--------------------------------------|-----------------------------------|-----------------------------------|
-| MSDKWLS05070 | Failed to submit credential                 | submit credential fail            | Check credential submit process   |
+| MSDKWLT05070 | Failed to submit credential          | submit credential fail            | Check credential submit process   |

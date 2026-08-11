@@ -20,11 +20,12 @@ iOS DIDManager API
 
 - Topic: DIDManager
 - Author: JooHyun Park
-- Date: 2025-09-09
-- Version: v1.0.1
+- Date: 2026-08-06
+- Version: v1.0.2
 
 | Version | Date       | Change Details                 |
 |---------|------------|--------------------------------|
+| v1.0.2  | 2026-08-06 | Correct resetChanges declaration |
 | v1.0.1  | 2025-09-09 | Add document versioning function |
 | v1.0.0  | 2024-08-28 | Initial version                |
 
@@ -532,14 +533,14 @@ try didManager.removeService(serviceId: serviceId)
 ### Description
 ```
 To reset changes, the "Temporary DIDDocument object" is initialized to nil.
-An error occurs if there is no saved DID document file. In other words, it can only be used when a saved DID document file exists.
+It never fails: calling it when there are no pending changes simply leaves the manager unchanged.
 ```
 
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public mutating func removeService(serviceId: String) throws
+public mutating func resetChanges()
 ```
 
 ### Parameters

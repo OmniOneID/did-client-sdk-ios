@@ -146,7 +146,7 @@ extension IssuerMetadataResponse.SupportedFormat {
         switch value {
         case "dc+sd-jwt-did":
             self = .sdjwt(value)
-        case "mso-mdoc-did":
+        case "mso_mdoc-did":
             self = .mdoc(value)
         default:
             self = .unknown(value)

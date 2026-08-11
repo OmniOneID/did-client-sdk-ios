@@ -89,8 +89,11 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
                                                         claimQueries: claimQueries)
     }
 
-    /// Every claim the SD-JWT can disclose, as DCQL path codes (`address`, `address.street_address`,
-    /// `degrees[0]`).
+    /// Every claim the SD-JWT can disclose, as codes shaped after the DCQL paths that name them
+    /// (`address`, `address.street_address`, `degrees[0]`).
+    ///
+    /// The shape is how the code is built, not how it is read: nothing parses a code back into a
+    /// path, so a claim whose own name contains a separator names itself.
     ///
     /// Top-level claims are listed whether they are in the clear or selectively disclosable; below
     /// that, only the nodes a disclosure hides are listed, because plaintext members ride along with

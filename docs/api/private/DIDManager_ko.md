@@ -20,11 +20,12 @@ iOS DIDManager API
 
 - 주제: DIDManager
 - 작성: 박주현
-- 일자: 2025-09-09
-- 버전: v1.0.1
+- 일자: 2026-08-06
+- 버전: v1.0.2
 
 | 버전             | 일자        | 변경 내용                 |
 | --------------- | ---------- | -----------------------|
+| v1.0.2          | 2026-08-06 | resetChanges 선언 정정     |
 | v1.0.1          | 2025-09-09 | 문서 버전 증가 기능 추가     |
 | v1.0.0          | 2024-08-28 | 초기 작성                |
 
@@ -531,14 +532,14 @@ try didManager.removeService(serviceId: serviceId)
 ### Description
 ```
 변경사항을 초기화하기 위해 “임시 DIDDocument 객체”를 nil로 초기화 한다.
-저장된 DID 문서 파일이 없는 경우에는 에러가 발생한다. 즉, 저장된 DID 문서 파일이 있는 경우에만 사용 가능하다.
+에러가 발생하지 않는다. 변경사항이 없는 상태에서 호출해도 아무 것도 바뀌지 않는다.
 ```
 
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public mutating func resetChanges() throws
+public mutating func resetChanges()
 ```
 
 ### Parameters

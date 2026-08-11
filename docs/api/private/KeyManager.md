@@ -20,11 +20,12 @@ iOS KeyManager API
 
 - Subject: KeyManager
 - Writer: JooHyun Park
-- Date: 2025-10-13
-- Version: v1.0.1
+- Date: 2026-08-06
+- Version: v1.0.2
 
 | Version  | Date       | History                      |
 | -------- | ---------- | ---------------------------- |
+| v1.0.2   | 2026-08-06 | Correct isKeySaved declaration |
 | v1.0.1   | 2025-10-13 | Add AuthenticatePin function |
 | v1.0.0   | 2024-08-28 | Initial                      |
 
@@ -126,7 +127,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-func isKeySaved(id : String) -> Bool
+func isKeySaved(id : String) throws -> Bool
 ```
 
 ### Parameters

@@ -20,11 +20,12 @@ iOS WalletCoreError
 
 - Topic: WalletCoreError
 - Author: JooHyun Park
-- Date: 2025-09-09
-- Version: v1.0.2
+- Date: 2026-08-06
+- Version: v2.0.0
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
+| v2.0.0           | 2026-08-06 | Add OID4VCManager error  |
 | v1.0.2           | 2025-09-09 | Fixed DID-related error  |
 | v1.0.1           | 2025-04-28 | Add ZKP Error            |
 | v1.0.0           | 2024-08-28 | Initial version          |
@@ -55,20 +56,26 @@ iOS WalletCoreError
     - [5.4. GetCredential(044xx)](#54-getcredential)
     - [5.5. SearchCredentials(045xx)](#55-searchcredential)
     - [5.6. Proof(046xx)](#56-proof)
-  - [6. StorageManager](#6-storagemanager)
-    - [6.1. Save(101xx)](#61-save101xx)
-    - [6.2. Update(102xx)](#62-update102xx)
-    - [6.3. Remove(103xx)](#63-remove103xx)
-    - [6.4. Find(104xx)](#64-find104xx)
-    - [6.5. Item type(105xx)](#65-item-type105xx)
-    - [6.6. ETC.(109xx)](#66-etc109xx)
-  - [7. Signable](#7-signable)
-    - [7.1. KeyPair(111xx)](#71-keypair111xx)
-    - [7.2. Signature(112xx)](#72-signature112xx)
-  - [8. SecureEnclave](#8-secureenclave)
-    - [8.1. KeyPair(121xx)](#81-keypair121xx)
-    - [8.2. Signature(122xx)](#82-signature122xx)
-    - [8.3. Encryption(123xx)](#83-encryption123xx)
+  - [6. OID4VCManager](#6-oid4vcmanager)
+    - [6.1. Common(051xx)](#61-common051xx)
+    - [6.2. JWE(052xx)](#62-jwe052xx)
+    - [6.3. OID4VCI(053xx)](#63-oid4vci053xx)
+    - [6.4. Verify(054xx)](#64-verify054xx)
+    - [6.5. OID4VP(055xx)](#65-oid4vp055xx)
+  - [7. StorageManager](#7-storagemanager)
+    - [7.1. Save(101xx)](#71-save101xx)
+    - [7.2. Update(102xx)](#72-update102xx)
+    - [7.3. Remove(103xx)](#73-remove103xx)
+    - [7.4. Find(104xx)](#74-find104xx)
+    - [7.5. Item type(105xx)](#75-item-type105xx)
+    - [7.6. ETC.(109xx)](#76-etc109xx)
+  - [8. Signable](#8-signable)
+    - [8.1. KeyPair(111xx)](#81-keypair111xx)
+    - [8.2. Signature(112xx)](#82-signature112xx)
+  - [9. SecureEnclave](#9-secureenclave)
+    - [9.1. KeyPair(121xx)](#91-keypair121xx)
+    - [9.2. Signature(122xx)](#92-signature122xx)
+    - [9.3. Encryption(123xx)](#93-encryption123xx)
 
 # Model
 ## WalletCoreError
@@ -266,9 +273,74 @@ public struct WalletCoreError: Error {
 
 <br>
 
-## 6. StorageManager
+## 6. OID4VCManager
 
-### 6.1. Save(101xx)
+Errors raised by the OpenID4VCI (issuance) and OpenID4VP (presentation) layer. They surface through
+`requestIssueOID4VC`, `matchCredentials` and `createVpToken`.
+
+### 6.1. Common(051xx)
+
+| Error Code   | Error Message                        | Description                       | Action Required                       |
+|--------------|--------------------------------------|-----------------------------------|---------------------------------------|
+| MSDKWLT05100 | Unsupported in : {id}                | The requested credential configuration id is not offered by the issuer | Use an id listed in the issuer metadata |
+| MSDKWLT05101 | Unsupported format : {format}        | The credential format is not one the SDK can issue, store or present   | Use a supported format                  |
+| MSDKWLT05102 | Invalid JWS : {detail}               | A JWS could not be decoded, or its payload could not be read           | Depend on detail error cases            |
+
+<br>
+
+### 6.2. JWE(052xx)
+
+| Error Code   | Error Message                        | Description                       | Action Required                       |
+|--------------|--------------------------------------|-----------------------------------|---------------------------------------|
+| MSDKWLT05210 | Invalid JWE                          | The token is not a well-formed compact JWE | Check the token is complete and not truncated |
+| MSDKWLT05211 | Unsupported algorithm for JWE        | `alg` is not `ECDH-ES`, or the token carries an encrypted key (key wrapping) | Use direct ECDH-ES |
+| MSDKWLT05212 | Unsupported JWE key                  | The ephemeral or recipient key is not an EC P-256 key | Use a P-256 key                |
+| MSDKWLT05213 | invalid SealedBox                    | Ciphertext, IV and tag could not be assembled into a sealed box | Check the token is not truncated |
+| MSDKWLT05214 | Authentication failed                | The AEAD tag did not verify — wrong key or tampered ciphertext | Check the recipient key         |
+| MSDKWLT05215 | Failed to encrypt                    | Content encryption failed         | -                                     |
+| MSDKWLT05216 | Key derivation failed                | ECDH-ES key agreement or the Concat KDF step failed | Check the recipient public key |
+| MSDKWLT05217 | Invalid KDF input                    | The key-derivation inputs are malformed | -                                 |
+
+<br>
+
+### 6.3. OID4VCI(053xx)
+
+| Error Code   | Error Message                        | Description                       | Action Required                       |
+|--------------|--------------------------------------|-----------------------------------|---------------------------------------|
+| MSDKWLT05300 | Invalid credential response          | The issuer's credential response is missing or malformed | Check the issuer response      |
+
+<br>
+
+### 6.4. Verify(054xx)
+
+| Error Code   | Error Message                             | Description                       | Action Required                       |
+|--------------|-------------------------------------------|-----------------------------------|---------------------------------------|
+| MSDKWLT05400 | Not found kid for verify                  | The JWS header carries no `kid` to resolve a verification key | -                 |
+| MSDKWLT05401 | Failed to verify signature                | The signature did not verify with the resolved key | Check the signer's key           |
+| MSDKWLT05402 | No 'jwk' in the JWS header to verify with | Verification was asked to use the embedded key, but the header carries none | Pass the verification key explicitly |
+
+<br>
+
+### 6.5. OID4VP(055xx)
+
+| Error Code   | Error Message                                     | Description                       | Action Required                       |
+|--------------|---------------------------------------------------|-----------------------------------|---------------------------------------|
+| MSDKWLT05500 | Presentation for format {format} is not supported  | No presenter is registered for the credential format the query asks for | Use a credential of a supported format |
+| MSDKWLT05501 | Invalid DCQL query: {detail}                       | The verifier's `dcql_query` is malformed or self-inconsistent | Check the verifier's request  |
+| MSDKWLT05502 | No credentials matched the request                 | No stored credential satisfies the query | Issue a credential that satisfies it |
+| MSDKWLT05503 | Required credential_sets not satisfied: {detail}   | A required `credential_sets` option cannot be filled by the matches | Issue the missing credential |
+| MSDKWLT05504 | Matched credential not found                       | A selected credential id is no longer in the wallet | Re-run `matchCredentials`     |
+| MSDKWLT05505 | Holder signing key not found                       | The holder key needed to sign the presentation is missing | Create the holder key   |
+| MSDKWLT05506 | No verifier encryption key found in client_metadata for direct_post.jwt | The request asks for an encrypted response but supplies no key | Check the verifier's `client_metadata` |
+| MSDKWLT05507 | Unsupported response encryption ({detail})         | The verifier asks for a key-agreement or content-encryption algorithm the SDK does not implement | Use `ECDH-ES` with `A128GCM`/`A256GCM` |
+| MSDKWLT05508 | Invalid selected credentials: {detail}             | The selection does not belong to the request, is empty, drops claims the query asked for, or a claim code names more than one claim | Pass back what `matchCredentials` returned, dropping whole entries only |
+| MSDKWLT05509 | Unsupported response_mode : {mode}                 | The request's `response_mode` is neither `direct_post` nor `direct_post.jwt` | Use a POST-based response mode |
+
+<br>
+
+## 7. StorageManager
+
+### 7.1. Save(101xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                       |
 |--------------|--------------------------------------|-----------------------------------|---------------------------------------|
@@ -277,7 +349,7 @@ public struct WalletCoreError: Error {
 
 <br>
 
-### 6.2. Update(102xx)
+### 7.2. Update(102xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                       |
 |--------------|--------------------------------------|-----------------------------------|---------------------------------------|
@@ -285,7 +357,7 @@ public struct WalletCoreError: Error {
 
 <br>
 
-### 6.3. Remove(103xx)
+### 7.3. Remove(103xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                       |
 |--------------|--------------------------------------|-----------------------------------|---------------------------------------|
@@ -294,7 +366,7 @@ public struct WalletCoreError: Error {
 
 <br>
 
-### 6.4. Find(104xx)
+### 7.4. Find(104xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                       |
 |--------------|--------------------------------------|-----------------------------------|---------------------------------------|
@@ -304,7 +376,7 @@ public struct WalletCoreError: Error {
 
 <br>
 
-### 6.5. Item type(105xx)
+### 7.5. Item type(105xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                       |
 |--------------|--------------------------------------|-----------------------------------|---------------------------------------|
@@ -315,7 +387,7 @@ public struct WalletCoreError: Error {
 
 <br>
 
-### 6.6. ETC.(109xx)
+### 7.6. ETC.(109xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                       |
 |--------------|--------------------------------------|-----------------------------------|---------------------------------------|
@@ -323,9 +395,9 @@ public struct WalletCoreError: Error {
 
 <br>
 
-## 7. Signable
+## 8. Signable
 
-### 7.1. KeyPair(111xx)
+### 8.1. KeyPair(111xx)
 
 | Error Code   | Error Message                        | Description                       | Action Required                   |
 |--------------|--------------------------------------|-----------------------------------|-----------------------------------|
@@ -335,7 +407,7 @@ public struct WalletCoreError: Error {
 
 <br>
 
-### 7.2. Signature(112xx)
+### 8.2. Signature(112xx)
 
 | Error Code   | Error Message                               | Description                       | Action Required                   |
 |--------------|---------------------------------------------|-----------------------------------|-----------------------------------|
@@ -345,9 +417,9 @@ public struct WalletCoreError: Error {
 
 <br>
 
-## 8. SecureEnclave
+## 9. SecureEnclave
 
-### 8.1. KeyPair(121xx)
+### 9.1. KeyPair(121xx)
 
 | Error Code   | Error Message                                            | Description                                        | Action Required                   |
 |--------------|----------------------------------------------------------|----------------------------------------------------|-----------------------------------|
@@ -359,7 +431,7 @@ public struct WalletCoreError: Error {
 
   <br>
 
-### 8.2. Signature(122xx)
+### 9.2. Signature(122xx)
 
 | Error Code   | Error Message                   | Description                       | Action Required                   |
 |--------------|---------------------------------|-----------------------------------|-----------------------------------|
@@ -367,7 +439,7 @@ public struct WalletCoreError: Error {
 
   <br>
 
-### 8.3. Encryption(123xx)
+### 9.3. Encryption(123xx)
 
 | Error Code   | Error Message                                 | Description                       | Action Required                   |
 |--------------|-----------------------------------------------|-----------------------------------|-----------------------------------|

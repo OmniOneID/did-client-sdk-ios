@@ -35,6 +35,7 @@
 		7CDED8062C784EE6009CE791 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDED8052C784EE6009CE791 /* MockData.swift */; };
 		AAAA0004000000000000E365 /* OID4VPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0003000000000000E365 /* OID4VPTests.swift */; };
 		AAAA0006000000000000E365 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0005000000000000E365 /* JWETests.swift */; };
+		AAAA0213000000000000E365 /* CBORVendorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0212000000000000E365 /* CBORVendorTests.swift */; };
 		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
 		AAAA0013000000000000E365 /* CredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0012000000000000E365 /* CredentialAdapter.swift */; };
 		AAAA0015000000000000E365 /* CredentialAdapterRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */; };
@@ -46,6 +47,14 @@
 		AAAA0033000000000000E365 /* SDJWTPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0032000000000000E365 /* SDJWTPresenter.swift */; };
 		AAAA0045000000000000E365 /* MatchedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0044000000000000E365 /* MatchedCredential.swift */; };
 		AAAA0101000000000000E365 /* SDJWTClaimIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0100000000000000E365 /* SDJWTClaimIndex.swift */; };
+		AAAA0201000000000000E365 /* CBOR.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0200000000000000E365 /* CBOR.swift */; };
+		AAAA0203000000000000E365 /* CBORDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0202000000000000E365 /* CBORDecoder.swift */; };
+		AAAA0205000000000000E365 /* CBOREncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0204000000000000E365 /* CBOREncodable.swift */; };
+		AAAA0207000000000000E365 /* CBOREncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0206000000000000E365 /* CBOREncoder.swift */; };
+		AAAA0209000000000000E365 /* CBORInputStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0208000000000000E365 /* CBORInputStream.swift */; };
+		AAAA020B000000000000E365 /* CBOROptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA020A000000000000E365 /* CBOROptions.swift */; };
+		AAAA020D000000000000E365 /* CBORUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA020C000000000000E365 /* CBORUtil.swift */; };
+		AAAA020F000000000000E365 /* FixedWidthInteger+Bytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA020E000000000000E365 /* FixedWidthInteger+Bytes.swift */; };
 		AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */; };
 		C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3B922DAF909C00292BFD /* Digest+Extension.swift */; };
 		C90D3BDD2DAFA61400292BFD /* VerifiablePresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3BD82DAFA61400292BFD /* VerifiablePresentation.swift */; };
@@ -143,6 +152,7 @@
 		C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9712A5D2C91887400DE37D1 /* CoreData.framework */; };
 		C97A625D2EC32BC100F3789D /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = C97A625C2EC32BC100F3789D /* LICENSE.md */; };
 		C97A625F2EC32BCA00F3789D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = C97A625E2EC32BCA00F3789D /* LICENSE.txt */; };
+		AAAA0301000000000000E365 /* UNLICENSE in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0300000000000000E365 /* UNLICENSE */; };
 		C97BAFC02FFDECA30057319A /* CredentialItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97BAFBF2FFDEBAB0057319A /* CredentialItem.swift */; };
 		C97CF63F2FADA00200299576 /* AuthorizationRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C97CF63E2FAD9FFF00299576 /* AuthorizationRequest.swift */; };
 		C980BAE83011E1B00032DC08 /* OID4VCManagerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C980BAE73011E1AA0032DC08 /* OID4VCManagerError.swift */; };
@@ -177,7 +187,6 @@
 		C98D52563000BDB600DD48AC /* JWE.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D52553000BDB300DD48AC /* JWE.swift */; };
 		AAAA0047000000000000E365 /* OID4VPResponseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */; };
 		C98D82A82FA0811600AF5BC2 /* CNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D82A72FA0810E00AF5BC2 /* CNonce.swift */; };
-		C98D83322FA0857700AF5BC2 /* SwiftCBOR in Frameworks */ = {isa = PBXBuildFile; productRef = C98D83312FA0857700AF5BC2 /* SwiftCBOR */; };
 		C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */; };
 		C9CF5DAE2DAF41540078DFFA /* CommnunicationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */; };
 		C9CF5DAF2DAF41540078DFFA /* CommnunicationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */; };
@@ -328,6 +337,7 @@
 		7CDED8052C784EE6009CE791 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		AAAA0003000000000000E365 /* OID4VPTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPTests.swift; sourceTree = "<group>"; };
 		AAAA0005000000000000E365 /* JWETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWETests.swift; sourceTree = "<group>"; };
+		AAAA0212000000000000E365 /* CBORVendorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBORVendorTests.swift; sourceTree = "<group>"; };
 		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
 		AAAA0012000000000000E365 /* CredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA0014000000000000E365 /* CredentialAdapterRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapterRegistry.swift; sourceTree = "<group>"; };
@@ -339,6 +349,16 @@
 		AAAA0032000000000000E365 /* SDJWTPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTPresenter.swift; sourceTree = "<group>"; };
 		AAAA0044000000000000E365 /* MatchedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchedCredential.swift; sourceTree = "<group>"; };
 		AAAA0100000000000000E365 /* SDJWTClaimIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDJWTClaimIndex.swift; sourceTree = "<group>"; };
+		AAAA0200000000000000E365 /* CBOR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOR.swift; sourceTree = "<group>"; };
+		AAAA0202000000000000E365 /* CBORDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBORDecoder.swift; sourceTree = "<group>"; };
+		AAAA0204000000000000E365 /* CBOREncodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOREncodable.swift; sourceTree = "<group>"; };
+		AAAA0206000000000000E365 /* CBOREncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOREncoder.swift; sourceTree = "<group>"; };
+		AAAA0208000000000000E365 /* CBORInputStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBORInputStream.swift; sourceTree = "<group>"; };
+		AAAA020A000000000000E365 /* CBOROptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOROptions.swift; sourceTree = "<group>"; };
+		AAAA020C000000000000E365 /* CBORUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBORUtil.swift; sourceTree = "<group>"; };
+		AAAA020E000000000000E365 /* FixedWidthInteger+Bytes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Bytes.swift"; sourceTree = "<group>"; };
+		AAAA0210000000000000E365 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		AAAA0300000000000000E365 /* UNLICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = UNLICENSE; sourceTree = "<group>"; };
 		AAAA0050000000000000E365 /* OID4VCIIssuerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VCIIssuerList.swift; sourceTree = "<group>"; };
 		C90D3B922DAF909C00292BFD /* Digest+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Digest+Extension.swift"; sourceTree = "<group>"; };
 		C90D3B952DAFA61400292BFD /* DidDocumentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidDocumentType.swift; sourceTree = "<group>"; };
@@ -571,7 +591,6 @@
 			files = (
 				C9712A5E2C91887400DE37D1 /* CoreData.framework in Frameworks */,
 				C9EB1A8E2DB772CF00D152EE /* OrderedCollections in Frameworks */,
-				C98D83322FA0857700AF5BC2 /* SwiftCBOR in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -956,6 +975,7 @@
 				C95C738D2F99E5C30031E365 /* OID4VCITests.swift */,
 				AAAA0003000000000000E365 /* OID4VPTests.swift */,
 				AAAA0005000000000000E365 /* JWETests.swift */,
+				AAAA0212000000000000E365 /* CBORVendorTests.swift */,
 			);
 			path = OID4VC;
 			sourceTree = "<group>";
@@ -1142,8 +1162,26 @@
 			children = (
 				C9EB197D2DB75F1900D152EE /* RNJSON */,
 				C9EB19942DB75F1900D152EE /* BigInt */,
+				AAAA0211000000000000E365 /* SwiftCBOR */,
 			);
 			path = OpenSource;
+			sourceTree = "<group>";
+		};
+		AAAA0211000000000000E365 /* SwiftCBOR */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA0300000000000000E365 /* UNLICENSE */,
+				AAAA0210000000000000E365 /* README.md */,
+				AAAA0200000000000000E365 /* CBOR.swift */,
+				AAAA0202000000000000E365 /* CBORDecoder.swift */,
+				AAAA0204000000000000E365 /* CBOREncodable.swift */,
+				AAAA0206000000000000E365 /* CBOREncoder.swift */,
+				AAAA0208000000000000E365 /* CBORInputStream.swift */,
+				AAAA020A000000000000E365 /* CBOROptions.swift */,
+				AAAA020C000000000000E365 /* CBORUtil.swift */,
+				AAAA020E000000000000E365 /* FixedWidthInteger+Bytes.swift */,
+			);
+			path = SwiftCBOR;
 			sourceTree = "<group>";
 		};
 		C9EB197D2DB75F1900D152EE /* RNJSON */ = {
@@ -1440,7 +1478,6 @@
 			mainGroup = 7CB8D8222BC917370063D094;
 			packageReferences = (
 				C9EB1A8C2DB772CF00D152EE /* XCRemoteSwiftPackageReference "swift-collections" */,
-				C98D83302FA0857700AF5BC2 /* XCRemoteSwiftPackageReference "SwiftCBOR" */,
 			);
 			productRefGroup = 7CB8D82D2BC917370063D094 /* Products */;
 			projectDirPath = "";
@@ -1470,6 +1507,7 @@
 			files = (
 				C97A625F2EC32BCA00F3789D /* LICENSE.txt in Resources */,
 				C97A625D2EC32BC100F3789D /* LICENSE.md in Resources */,
+				AAAA0301000000000000E365 /* UNLICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1497,6 +1535,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAAA0201000000000000E365 /* CBOR.swift in Sources */,
+				AAAA0203000000000000E365 /* CBORDecoder.swift in Sources */,
+				AAAA0205000000000000E365 /* CBOREncodable.swift in Sources */,
+				AAAA0207000000000000E365 /* CBOREncoder.swift in Sources */,
+				AAAA0209000000000000E365 /* CBORInputStream.swift in Sources */,
+				AAAA020B000000000000E365 /* CBOROptions.swift in Sources */,
+				AAAA020D000000000000E365 /* CBORUtil.swift in Sources */,
+				AAAA020F000000000000E365 /* FixedWidthInteger+Bytes.swift in Sources */,
 				7CA9829B2C85CEBA00EDF367 /* KeyChainWrapper.swift in Sources */,
 				C97CF63F2FADA00200299576 /* AuthorizationRequest.swift in Sources */,
 				C90D3B932DAF90A100292BFD /* Digest+Extension.swift in Sources */,
@@ -1746,6 +1792,7 @@
 				C95C738E2F99E5C30031E365 /* OID4VCITests.swift in Sources */,
 				AAAA0004000000000000E365 /* OID4VPTests.swift in Sources */,
 				AAAA0006000000000000E365 /* JWETests.swift in Sources */,
+				AAAA0213000000000000E365 /* CBORVendorTests.swift in Sources */,
 				7CDED8002C7830ED009CE791 /* WalletCoreMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2128,14 +2175,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C98D83302FA0857700AF5BC2 /* XCRemoteSwiftPackageReference "SwiftCBOR" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/unrelentingtech/SwiftCBOR.git";
-			requirement = {
-				kind = exactVersion;
-				version = 0.6.0;
-			};
-		};
 		C9EB1A8C2DB772CF00D152EE /* XCRemoteSwiftPackageReference "swift-collections" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-collections.git";
@@ -2147,11 +2186,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C98D83312FA0857700AF5BC2 /* SwiftCBOR */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C98D83302FA0857700AF5BC2 /* XCRemoteSwiftPackageReference "SwiftCBOR" */;
-			productName = SwiftCBOR;
-		};
 		C9EB1A8D2DB772CF00D152EE /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C9EB1A8C2DB772CF00D152EE /* XCRemoteSwiftPackageReference "swift-collections" */;

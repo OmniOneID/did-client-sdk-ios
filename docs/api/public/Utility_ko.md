@@ -20,11 +20,12 @@ iOS Utility API
 
 - 주제: Utility
 - 작성: 김우상
-- 일자: 2024-08-30
-- 버전: v1.0.0
+- 일자: 2026-08-06
+- 버전: v1.0.1
 
 | 버전   | 일자       | 변경 내용                 |
 | ------ | ---------- | -------------------------|
+| v1.0.1 | 2026-08-06 | pbkdf2 iterations 타입 정정 |
 | v1.0.0 | 2024-08-30 | 초기 작성                 |
 
 
@@ -185,7 +186,7 @@ PBKDF2 알고리즘으로 키를 파생한다.
 
 ```swift
 // Declaration in Swift
-static func pbkdf2(password: Data, salt: Data, iterations: UInt, derivedKeyLength: UInt) throws -> Data
+static func pbkdf2(password: Data, salt: Data, iterations: UInt32, derivedKeyLength: UInt) throws -> Data
 ```
 
 #### Parameters
@@ -194,7 +195,7 @@ static func pbkdf2(password: Data, salt: Data, iterations: UInt, derivedKeyLengt
 |-----------|--------|----------------------------|---------|---------------------|
 | password  | Data   | 키 파생의 seed가 되는 password | M       |                     |
 | salt      | Data   | 키 파생 과정에 사용될 salt      | M       |                     |
-| iterations | UInt  | 키 파생 과정에 사용될 해시 반복 횟수 | M      |                     |
+| iterations | UInt32 | 키 파생 과정에 사용될 해시 반복 횟수 | M      |                     |
 | derivedKeyLength | UInt | 키 파생 결과물의 byte 길이 | M       |                     |
 
 #### Returns

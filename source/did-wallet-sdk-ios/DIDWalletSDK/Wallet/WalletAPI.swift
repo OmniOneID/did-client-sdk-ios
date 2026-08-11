@@ -754,7 +754,8 @@ extension WalletAPI : IOID4VPService
     /// - Returns: One `MatchedCredential` per matched credential, in DCQL declaration order, each
     ///   naming the claims it would disclose — the ones the query asked for, or all of them when it
     ///   asked for the whole credential. Before calling `createVpToken` the app may drop entries the
-    ///   holder refuses, but must leave each remaining entry's `claimCodes` intact.
+    ///   holder refuses, but must leave each remaining entry's `claimCodes` intact: the codes are
+    ///   opaque to the app, to display and compare but never to split or assemble.
     /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
     ///   `OID4VCManagerError` (055xx) when the query is invalid, its format is unsupported, or no
     ///   credential matches.
@@ -782,10 +783,12 @@ extension WalletAPI : IOID4VPService
     /// - Returns: The transfer-ready response body.
     /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
     ///   `WalletAPIError.verifyParameterFail` when the selection is empty,
-    ///   `OID4VCManagerError.invalidSelectedCredentials` when it does not belong to the request or
-    ///   an entry drops claims the request asked for, and the other `OID4VCManagerError`s (055xx)
-    ///   when a credential, holder key or response encryption key is missing or the format is
-    ///   unsupported.
+    ///   `OID4VCManagerError.invalidSelectedCredentials` when it does not belong to the request, an
+    ///   entry drops claims the request asked for, or a code names more than one claim of its
+    ///   credential — the last is raised here rather than by `matchCredentials`, since it is what
+    ///   the code has to resolve to that is unclear, not what it matched. The other
+    ///   `OID4VCManagerError`s (055xx) follow when a credential, holder key or response encryption
+    ///   key is missing or the format is unsupported.
     public func createVpToken(hWalletToken: String,
                               authRequest: AuthorizationRequest,
                               matchedCredentials: [MatchedCredential],

@@ -20,11 +20,12 @@ iOS Wallet API
 
 - Subject: WalletAPI
 - Writer: JooHyun Park
-- Date: 2025-10-13
-- Version: v2.0.1
+- Date: 2026-08-06
+- Version: v3.0.0
 
 | Version | Date       | History                                               |
 | -------- | ---------- | ----------------------------------------------------- |
+| v3.0.0   | 2026-08-06 | Add OID4VC section; correct declarations to match the SDK |
 | v2.0.1   | 2025-09-11 | Add DID-related function and authenticatePin          |
 | v2.0.0   | 2025-05-27 | Add ZKP-related function                              |
 | v1.0.0   | 2024-10-18 | Initial                                              |
@@ -67,7 +68,8 @@ iOS Wallet API
         - [4.4. getCredentials](#44-getcredentials)
         - [4.5. deleteCredentials](#45-deletecredentials)
         - [4.6. createEncVp](#46-createencvp)
-        - [4.7. isAnyCredentialsSaved](#47-isanycredentialssaved)
+        - [4.7. createVp](#47-createvp)
+        - [4.8. isAnyCredentialsSaved](#48-isanycredentialssaved)
     - [5. ZKP](#5-zkp)
         - [5.1. createEncZKProof](#51-createenczkproof)
         - [5.2. searchZKPCredentials](#52-searchzkpcredentials)
@@ -82,6 +84,14 @@ iOS Wallet API
         - [6.4. changePin](#64-changepin)
         - [6.5. changeLock](#65-changelock)
         - [6.6. authenticatePin](#66-authenticatepin)
+    - [7. OID4VC](#7-oid4vc)
+        - [7.1. requestIssueOID4VC](#71-requestissueoid4vc)
+        - [7.2. getAllOID4VCs](#72-getalloid4vcs)
+        - [7.3. getOID4VCs](#73-getoid4vcs)
+        - [7.4. deleteOID4VCs](#74-deleteoid4vcs)
+        - [7.5. isAnyOID4VCSaved](#75-isanyoid4vcsaved)
+        - [7.6. matchCredentials](#76-matchcredentials)
+        - [7.7. createVpToken](#77-createvptoken)
 
 - [Enumerators](#enumerators)
     - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
@@ -93,6 +103,8 @@ iOS Wallet API
     - [4. SignedDIDDoc](#4-signeddiddoc)
     - [5. SignedWalletInfo](#5-signedwalletinfo)
     - [6. DIDAuth](#6-didauth)
+    - [7. AuthorizationRequest](#7-authorizationrequest)
+    - [8. MatchedCredential](#8-matchedcredential)
 
 
 # API List
@@ -195,27 +207,28 @@ let success = try await WalletAPI.shared.createWallet(tasURL:TAS_URL, walletURL:
 ## 2.3. deleteWallet
 
 ### Description
-`Delete DeviceKey Wallet..`
+`Delete DeviceKey Wallet.`
 
 ### Declaration
 
 ```swift
-func deleteWallet() throws -> Bool
+func deleteWallet(deleteAll: Bool) throws
 ```
 
 ### Parameters
 
+| Name      | Type | Description                                                          | **M/O** | **Note** |
+|-----------|------|----------------------------------------------------------------------|---------|----------|
+| deleteAll | Bool | `true` additionally removes the device DID document and device keys, and clears the stored user, token and CA package | M | The holder DID document, holder keys and all credentials are deleted either way |
 
 ### Returns
 
-| Type | Description                                    | **M/O** | **Note** |
-|------|------------------------------------------------|---------|----------|
-| Bool | Returns whether the wallet deletion was successful. | M       |          |
+Void
 
 ### Usage
 
 ```swift
-let success = try WalletAPI.deleteWallet()
+try WalletAPI.shared.deleteWallet(deleteAll: true)
 ```
 
 <br>
@@ -261,7 +274,7 @@ let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, "or
 ### Declaration
 
 ```swift
-func createNonceForWalletToken(walletTokenData: WalletTokenData) throws -> String
+func createNonceForWalletToken(walletTokenData: WalletTokenData, APIGatewayURL: String) async throws -> String
 ```
 
 ### Parameters
@@ -269,6 +282,7 @@ func createNonceForWalletToken(walletTokenData: WalletTokenData) throws -> Strin
 | Name           | Type           | Description         | **M/O** | **Note**                          |
 |----------------|----------------|---------------------|---------|-----------------------------------|
 | walletTokenData | WalletTokenData | Wallet Token Data   | M       | [WalletTokenData](#2-wallettokendata) |
+| APIGatewayURL  | String         | API Gateway URL the nonce is requested from | M | |
 
 ### Returns
 
@@ -280,7 +294,8 @@ func createNonceForWalletToken(walletTokenData: WalletTokenData) throws -> Strin
 
 ```swift
 let walletTokenData = try WalletTokenData.init(from: responseData)
-let nonce = try WalletAPI.shared.createNonceForWalletToken(walletTokenData: walletTokenData);
+let nonce = try await WalletAPI.shared.createNonceForWalletToken(walletTokenData: walletTokenData,
+                                                                APIGatewayURL: "https://api.example.com");
 ```
 
 <br>
@@ -324,10 +339,10 @@ let success = try WalletAPI.shared.bindUser(hWalletToken: hWalletToken);
 ### Declaration
 
 ```swift
-public unbindUser(hWalletToken: String) throws -> Bool
+func unbindUser(hWalletToken: String) throws -> Bool
 ```
 
-### Parametersx
+### Parameters
 
 | Name         | Type   | Description  | **M/O** | **Note** |
 |--------------|--------|--------------|---------|----------|
@@ -356,19 +371,18 @@ let success = try WalletAPI.shared.unbindUser(hWalletToken: hWalletToken);
 ### Declaration
 
 ```swift
-func String requestRegisterUser(TasURL: String, id: String, txId: String, hWalletToken: String, serverToken: String, signedDIDDoc: SignedDidDoc) throws -> _RequestRegisterUser
+func requestRegisterUser(tasURL: String, txId: String, hWalletToken: String, serverToken: String, signedDIDDoc: SignedDIDDoc) async throws -> _RequestRegisterUser
 ```
 
 ### Parameters
 
 | Name         | Type         | Description                | **M/O** | **Note**                        |
 | ------------ | ------------ | -------------------------- | ------- | ------------------------------- |
-| TasURL       | String       | TAS URL                    | M       |                                 |
-| id           | String       | message id                 | M       |                                 |
+| tasURL       | String       | TAS URL                    | M       |                                 |
 | txId         | String       | Transaction Code           | M       |                                 |
 | hWalletToken | String       | Wallet Token               | M       |                                 |
 | serverToken  | String       | Server Token               | M       |                                 |
-| signedDIDDoc | SignedDidDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
+| signedDIDDoc | SignedDIDDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
 
 ### Returns
 
@@ -379,7 +393,7 @@ func String requestRegisterUser(TasURL: String, id: String, txId: String, hWalle
 ### Usage
 
 ```swift
-let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL: TAS_URL, id: "messageId", txId: "txId", hWalletToken: hWalletToken, serverToken: hServerToken, signedDIDDoc: signedDidDoc);
+let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL: TAS_URL, txId: "txId", hWalletToken: hWalletToken, serverToken: hServerToken, signedDIDDoc: signedDidDoc);
 ```
 
 <br>
@@ -392,14 +406,12 @@ let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL
 ### Declaration
 
 ```swift
-func getSignedWalletInfo(String hWalletToken) throws -> SignedWalletInfo
+func getSignedWalletInfo() throws -> SignedWalletInfo
 ```
 
 ### Parameters
 
-| Name         | Type   | Description    | **M/O** | **Note** |
-|--------------|--------|----------------|---------|----------|
-| hWalletToken | String | Wallet Token   | M       |          |
+None.
 
 ### Returns
 
@@ -410,7 +422,7 @@ func getSignedWalletInfo(String hWalletToken) throws -> SignedWalletInfo
 ### Usage
 
 ```swift
-let signedInfo = try WalletAPI.shared.getSignedWalletInfo(hWalletToken: hWalletToken);
+let signedInfo = try WalletAPI.shared.getSignedWalletInfo();
 ```
 
 <br>
@@ -461,25 +473,25 @@ let didDoc = try WalletAPI.shared.createHolderDIDDocument(hWalletToken: hWalletT
 ### Declaration
 
 ```swift
-func createSignedDIDDoc(hWalletToken: String, passcode: String) throws -> SignedDIDDoc
+func createSignedDIDDoc(passcode: String? = nil) throws -> SignedDIDDoc
 ```
 
 ### Parameters
 
-| Name         | Type   | Description  | **M/O** | **Note** |
-|--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | M       |          |
+| Name     | Type    | Description                                   | **M/O** | **Note** |
+|----------|---------|-----------------------------------------------|---------|----------|
+| passcode | String? | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
 
 ### Returns
 
-| Type        | Description                 | **M/O** | **Note**                    |
-|-------------|-----------------------------|---------|-----------------------------|
-| SignedDidDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
+| Type         | Description                | **M/O** | **Note**                        |
+|--------------|----------------------------|---------|---------------------------------|
+| SignedDIDDoc | Signed DID Document Object | M       | [SignedDIDDoc](#4-signeddiddoc) |
 
 ### Usage
 
 ```swift
-let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(hWalletToken: hWalletToken);
+let signedDidDoc = try WalletAPI.shared.createSignedDIDDoc(passcode: passcode);
 ```
 
 <br>
@@ -712,17 +724,15 @@ print("Signature valid:", isValid)
 ### Declaration
 
 ```swift
-func getSignedDIDAuth(hWalletToken: String, authNonce: String, didType: DidDocumentType, passcode: String ?= nil) throws -> DIDAuth
+func getSignedDidAuth(authNonce: String, passcode: String? = nil) throws -> DIDAuth
 ```
 
 ### Parameters
 
-| Name         | Type            | Description        | **M/O** | **Note** |
-| ------------ | --------------- | ------------------ | ------- | -------- |
-| hWalletToken | String          | Wallet Token       | M       |          |
-| authNonce    | String          | profile auth nonce | M       |          |
-| didType      | DIDDocumentType | did type           | M       |          |
-| passcode     | String          | user passcode      | M       |          |
+| Name      | Type    | Description                                   | **M/O** | **Note** |
+| --------- | ------- | --------------------------------------------- | ------- | -------- |
+| authNonce | String  | profile auth nonce                            | M       |          |
+| passcode  | String? | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
 
 ### Returns
 
@@ -733,7 +743,7 @@ func getSignedDIDAuth(hWalletToken: String, authNonce: String, didType: DidDocum
 ### Usage
 
 ```swift
-let signedDIDAuth = try WalletAPI.shared.getSignedDIDAuth(hWalletToken: hWalletToken, authNonce: authNunce, didType: DidDocumentType.holderDIDDcument, passcode: passcode);
+let signedDIDAuth = try WalletAPI.shared.getSignedDidAuth(authNonce: authNonce, passcode: passcode);
 ```
 
 <br>
@@ -939,32 +949,32 @@ let response = try await WalletAPI.shared.requestRestoreUser(
 ### Declaration
 
 ```swift
-func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issueProfile: _RequestIssueProfile, refId: String, serverToken: String, APIGatewayURL: String) async throws -> (String, _requestIssueVc?)
+func requestIssueVc(url: String, hWalletToken: String, didAuth: DIDAuth, issuerProfile: _RequestIssueProfile, refId: String, serverToken: String?, APIGatewayURL: String) async throws -> (String, _RequestIssueVc?)
 ```
 
 ### Parameters
 
-| Name         | Type                 | Description                        | **M/O** | **Note**               |
-|--------------|----------------------|------------------------------------|---------|------------------------|
-| tasURL       | String               | TAS URL                            | M       |                        |
-| hWalletToken | String               | Wallet Token                       | M       |                        |
-| didAuth      | DIDAuth              | DIDAuth                            | M       | [DIDAuth](#6-didauth)  |
-| issueProfile | _RequestIssueProfile | issuer profile information         | M       |                        |
-| refId        | String               | reference ID                       | M       |                        |
-| serverToken  | String               | Server token for accessing the TAS server | M | reference DIDDataModel |
-| APIGatewayURL| String               | APIGateway URL                     | M       |                        |
+| Name          | Type                 | Description                        | **M/O** | **Note**               |
+|---------------|----------------------|------------------------------------|---------|------------------------|
+| url           | String               | TAS endpoint URL for the issuance request | M |                     |
+| hWalletToken  | String               | Wallet Token                       | M       |                        |
+| didAuth       | DIDAuth              | DIDAuth                            | M       | [DIDAuth](#6-didauth)  |
+| issuerProfile | _RequestIssueProfile | issuer profile information         | M       |                        |
+| refId         | String               | reference ID                       | M       |                        |
+| serverToken   | String?              | Server token for accessing the TAS server | O | reference DIDDataModel |
+| APIGatewayURL | String               | APIGateway URL                     | M       |                        |
 
 ### Returns
 
 | Type            | Description | **M/O** | **Note**                                   |
 | --------------- | ----------- | ------- | ------------------------------------------ |
 | String          | VC ID       | M       | Returns the ID of the VC issued on success |
-| _requestIssueVc | VC          | M       | Returns the VC issued on success           |
+| _RequestIssueVc | VC          | M       | Returns the VC issued on success           |
 
 ### Usage
 
 ```swift
-(vcId, issueVC) = try await WalletAPI.shared.requestIssueVc(tasURL: TAS_URL, hWalletToken: hWalletToken, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: hServerToken, APIGatewayURL: API_URL);
+(vcId, issueVC) = try await WalletAPI.shared.requestIssueVc(url: TAS_URL, hWalletToken: hWalletToken, didAuth: didAuth, issuerProfile: issuerProfile, refId: refId, serverToken: hServerToken, APIGatewayURL: API_URL);
 ```
 
 <br>
@@ -977,22 +987,21 @@ func requestIssueVc(tasURL: String, hWalletToken: String, didAuth: DIDAuth, issu
 ### Declaration
 
 ```swift
-func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String, passcode: String? = nil) async throws -> _RequestRevokeVc
+func requestRevokeVc(hWalletToken: String, url: String, authType: VerifyAuthType, vcId: String, issuerNonce: String, txId: String, serverToken: String?, passcode: String? = nil) async throws -> _RequestRevokeVc
 ```
 
 ### Parameters
 
-| Name         | Type                 | Description              | **M/O** | **Note**               |
-| ------------ | -------------------- | ------------------------ | ------- | ---------------------- |
-| hWalletToken | String               | Wallet Token             | M       |                        |
-| tasURL       | String               | TAS URL                  | M       |                        |
-| authType     | String               | authType                 | M       |                        |
-| didAuth      | DIDAuth              | didAUth                  | M       | DIDDataModel reference |
-| vcId         | _RequestIssueProfile | issue profile infomation | M       | DIDDataModel reference |
-| issuerNonce  | String               | reference ID             | M       |                        |
-| txId         | String               |                          | M       |                        |
-| serverToken  | String               |                          | M       |                        |
-| passcode     | String               |                          | M       |                        |
+| Name         | Type           | Description                                   | **M/O** | **Note**               |
+| ------------ | -------------- | --------------------------------------------- | ------- | ---------------------- |
+| hWalletToken | String         | Wallet Token                                  | M       |                        |
+| url          | String         | TAS endpoint URL for the revocation request   | M       |                        |
+| authType     | VerifyAuthType | How the holder authenticates the revocation   | M       | DIDDataModel reference |
+| vcId         | String         | ID of the VC to revoke                        | M       |                        |
+| issuerNonce  | String         | Issuer nonce for the revocation transaction   | M       |                        |
+| txId         | String         | Transaction Code                              | M       |                        |
+| serverToken  | String?        | Server token for accessing the TAS server     | O       |                        |
+| passcode     | String?        | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
 
 ### Returns
 
@@ -1004,7 +1013,7 @@ func  func requestRevokeVc(hWalletToken:String, tasURL: String, authType: Verify
 
 ```swift
 let revokeVc = try await WalletAPI.shared.requestRevokeVc(hWalletToken: self.hWalletToken,
-                                                                tasURL: URLs.TAS_URL + "/tas/api/v1/request-revoke-vc",
+                                                                url: URLs.TAS_URL + "/tas/api/v1/request-revoke-vc",
                                                                 authType: authType,
                                                                 vcId: super.vcId,
                                                                 issuerNonce: super.issuerNonce,
@@ -1115,35 +1124,81 @@ let result = try WalletAPI.shared.deleteCredentials(hWalletToken: hWalletToken, 
 ### Declaration
 
 ```swift
-func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo]? = nil, verifierProfile: _RequestProfile, passcode: String? = nil) throws -> (AccE2e, Data)
+func createEncVp(hWalletToken: String, claimInfos: [ClaimInfo], verifierProfile: _RequestProfile, APIGatewayURL: String, passcode: String? = nil) async throws -> (AccE2e, Data)
 ```
 
 ### Parameters
 
-| Name         | Type             | Description                           | **M/O** | **Note**               |
-| ------------ | ---------------- | ------------------------------------- | ------- | ---------------------- |
-| hWalletToken | String           | Wallet Token                          | M       |                        |
-| claimCode    | array[ClaimInfo] | Claim Code to Submit                  | M       |                        |
-| reqE2e       | ReqE2e           | E2E encryption/decryption information | M       | DIDDataModel reference |
-| passcode     | String           | PIN for signing                       | M       |                        |
-| nonce        | String           | nonce                                 | M       |                        |
+| Name            | Type             | Description                                 | **M/O** | **Note**               |
+| --------------- | ---------------- | ------------------------------------------- | ------- | ---------------------- |
+| hWalletToken    | String           | Wallet Token                                | M       |                        |
+| claimInfos      | [ClaimInfo]      | Credentials and claim codes to present      | M       | DIDDataModel reference |
+| verifierProfile | _RequestProfile  | Verifier profile, including the E2E encryption information | M | DIDDataModel reference |
+| APIGatewayURL   | String           | APIGateway URL                              | M       |                        |
+| passcode        | String?          | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
 
 ### Returns
 
 | Type    | Description              | **M/O** | **Note**          |
 |---------|--------------------------|---------|-------------------|
 | AccE2e  | Cryptographic Object     | M       |acce2e             |
-| EncVP   | Encrypted VP Object      | M       |encVp              |
+| Data    | Encrypted VP Object      | M       |encVp              |
 
 ### Usage
 
 ```swift
-(accE2e, encVp) = try WalletAPI.shared.createEncVp(hWalletToken:hWalletToken, claimInfos:claimInfos, verifierProfile: verifierProfile, passcode: passcode)
+(accE2e, encVp) = try await WalletAPI.shared.createEncVp(hWalletToken: hWalletToken,
+                                                         claimInfos: claimInfos,
+                                                         verifierProfile: verifierProfile,
+                                                         APIGatewayURL: API_URL,
+                                                         passcode: passcode)
 ```
 
 <br>
 
-## 4.7. isAnyCredentialsSaved
+## 4.7. createVp
+
+### Description
+`Generate a Verifiable Presentation without encrypting it.`
+
+Same selection input as `createEncVp`, but the VP is returned as an object instead of being sealed
+for a verifier. Use it when the transport is not the OmniOne E2E channel — for example when the
+caller encodes the VP itself.
+
+### Declaration
+
+```swift
+func createVp(hWalletToken: String, claimInfos: [ClaimInfo], passcode: String? = nil, verifierNonce: String, challenge: OIDV4VPChallenge? = nil) throws -> VerifiablePresentation
+```
+
+### Parameters
+
+| Name          | Type              | Description                                 | **M/O** | **Note**               |
+| ------------- | ----------------- | ------------------------------------------- | ------- | ---------------------- |
+| hWalletToken  | String            | Wallet Token                                | M       |                        |
+| claimInfos    | [ClaimInfo]       | Credentials and claim codes to present      | M       | DIDDataModel reference |
+| passcode      | String?           | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
+| verifierNonce | String            | Nonce bound into the presentation proof     | M       |                        |
+| challenge     | OIDV4VPChallenge? | `domain`/`challenge` pair to bind instead of the plain nonce | O | DIDDataModel reference |
+
+### Returns
+
+| Type                   | Description | **M/O** | **Note** |
+|------------------------|-------------|---------|----------|
+| VerifiablePresentation | VP object   | M       | DIDDataModel reference |
+
+### Usage
+
+```swift
+let vp = try WalletAPI.shared.createVp(hWalletToken: hWalletToken,
+                                       claimInfos: claimInfos,
+                                       passcode: passcode,
+                                       verifierNonce: verifierNonce)
+```
+
+<br>
+
+## 4.8. isAnyCredentialsSaved
 
 ### Description
 `Checks whether any credentials are saved in the wallet.`
@@ -1399,27 +1454,37 @@ let success = try WalletAPI.shared.registerLock(hWalletToken: hWalletToken, pass
 ### Description
 `Perform authentication to unlock the wallet.`
 
+Pass `isChanging: true` when the passcode is being verified as a step of changing it. The passcode is
+checked exactly the same way, but the wallet's locked/unlocked state is left untouched — a locked
+wallet does not become unlocked as a side effect of the holder proving the old PIN.
+
 ### Declaration
 
 ```swift
-func authenticateLock(hWalletToken: String, passcode: String) throws -> Data?
+@discardableResult
+func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data?
 ```
 
 ### Parameters
 
-| Name         | Type   | Description  | **M/O** | **Note**                  |
-| ------------ | ------ | ------------ | ------- | ------------------------- |
-| hWalletToken | String | Wallet Token | M       |                           |
-| passcode     | String | Unlock PIN   | M       | PIN set when registerLock |
+| Name       | Type   | Description  | **M/O** | **Note**                  |
+| ---------- | ------ | ------------ | ------- | ------------------------- |
+| passcode   | String | Unlock PIN   | M       | PIN set when registerLock |
+| isChanging | Bool   | `true` verifies the passcode without changing the lock state | O | Defaults to `false` |
 
 ### Returns
 
-Void
+| Type  | Description                                                | **M/O** | **Note** |
+|-------|------------------------------------------------------------|---------|----------|
+| Data? | The authenticated data if the passcode is correct, otherwise `nil` | O | |
 
 ### Usage
 
 ```swift
-try WalletAPI.shared.authenticateLock(hWalletToken: hWalletToken, passcode: "123456");
+try WalletAPI.shared.authenticateLock(passcode: "123456");
+
+// Verifying the old PIN before changing it — the wallet stays locked
+try WalletAPI.shared.authenticateLock(passcode: oldPasscode, isChanging: true);
 ```
 
 <br>
@@ -1467,7 +1532,7 @@ let isLockRegistered = try WalletAPI.shared.isLock();
 ### Declaration
 
 ```swift
-public func changePIN(id: String, oldPIN: String, newPIN: String) throws
+public func changePin(id: String, oldPIN: String, newPIN: String) throws
 ```
 
 ### Parameters
@@ -1485,7 +1550,7 @@ N/A
 ### Usage
 
 ```swift
-try WalletAPI.shared.changePIN(id: "pin", oldPIN: oldPIN, newPIN: passcode)
+try WalletAPI.shared.changePin(id: "pin", oldPIN: oldPIN, newPIN: passcode)
 ```
 
 <br>
@@ -1548,6 +1613,257 @@ Void
 let pinID = "pin"
 let pin = "password"
 try WalletAPI.shared.authenticatePin(id: pinID, pin: pin)
+```
+
+<br>
+
+## 7. OID4VC
+
+OpenID4VCI (issuance) and OpenID4VP (presentation). Credentials issued through this section are
+stored separately from the W3C credentials of section 4 and are listed with `getAllOID4VCs`, not
+`getAllCredentials`.
+
+## 7.1. requestIssueOID4VC
+
+### Description
+`Request issuance of a credential over OpenID4VCI and store it in the wallet.`
+
+### Declaration
+
+```swift
+func requestIssueOID4VC(hWalletToken: String, metadata: IssuerMetadataResponse, token: TokenResponse, passcode: String?, configurationId: String, credentialIdentifier: String?, APIGatewayURL: String) async throws -> String
+```
+
+### Parameters
+
+| Name                 | Type                   | Description                                        | **M/O** | **Note** |
+|----------------------|------------------------|----------------------------------------------------|---------|----------|
+| hWalletToken         | String                 | Wallet Token                                       | M       | Must allow `ISSUE_VC` |
+| metadata             | IssuerMetadataResponse | Issuer metadata describing the offered credentials | M       |          |
+| token                | TokenResponse          | Access token obtained from the issuer's token endpoint | M   |          |
+| passcode             | String?                | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
+| configurationId      | String                 | `credential_configuration_id` to issue             | M       | Must be one the issuer metadata offers |
+| credentialIdentifier | String?                | `credential_identifier` when the token response lists them | O | |
+| APIGatewayURL        | String                 | APIGateway URL                                     | M       |          |
+
+### Returns
+
+| Type   | Description                             | **M/O** | **Note** |
+|--------|-----------------------------------------|---------|----------|
+| String | ID of the credential stored in the wallet | M     |          |
+
+### Usage
+
+```swift
+let credentialId = try await WalletAPI.shared.requestIssueOID4VC(hWalletToken: hWalletToken,
+                                                                 metadata: issuerMetadata,
+                                                                 token: tokenResponse,
+                                                                 passcode: passcode,
+                                                                 configurationId: configurationId,
+                                                                 credentialIdentifier: nil,
+                                                                 APIGatewayURL: API_URL)
+```
+
+<br>
+
+## 7.2. getAllOID4VCs
+
+### Description
+`Look up all OID4VC credentials stored in the wallet.`
+
+### Declaration
+
+```swift
+func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
+```
+
+### Parameters
+
+| Name         | Type   | Description  | **M/O** | **Note** |
+|--------------|--------|--------------|---------|----------|
+| hWalletToken | String | Wallet Token | M       | Must allow `LIST_VC`, `DETAIL_VC` or `LIST_VC_AND_PRESENT_VP` |
+
+### Returns
+
+| Type                  | Description                  | **M/O** | **Note** |
+|-----------------------|------------------------------|---------|----------|
+| [SdJwtCredentialItem] | All stored SD-JWT credentials | M      | Empty when none are saved |
+
+### Usage
+
+```swift
+let credentials = try WalletAPI.shared.getAllOID4VCs(hWalletToken: hWalletToken)
+```
+
+<br>
+
+## 7.3. getOID4VCs
+
+### Description
+`Look up OID4VC credentials by id.`
+
+### Declaration
+
+```swift
+func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialItem]
+```
+
+### Parameters
+
+| Name         | Type     | Description               | **M/O** | **Note** |
+|--------------|----------|---------------------------|---------|----------|
+| hWalletToken | String   | Wallet Token              | M       | Must allow `LIST_VC`, `DETAIL_VC` or `LIST_VC_AND_PRESENT_VP` |
+| ids          | [String] | Credential IDs to look up | M       |          |
+
+### Returns
+
+| Type                  | Description             | **M/O** | **Note** |
+|-----------------------|-------------------------|---------|----------|
+| [SdJwtCredentialItem] | The matching credentials | M      |          |
+
+### Usage
+
+```swift
+let credentials = try WalletAPI.shared.getOID4VCs(hWalletToken: hWalletToken, ids: [credentialId])
+```
+
+<br>
+
+## 7.4. deleteOID4VCs
+
+### Description
+`Delete OID4VC credentials by id.`
+
+### Declaration
+
+```swift
+func deleteOID4VCs(hWalletToken: String, ids: [String]) throws
+```
+
+### Parameters
+
+| Name         | Type     | Description              | **M/O** | **Note** |
+|--------------|----------|--------------------------|---------|----------|
+| hWalletToken | String   | Wallet Token             | M       | Must allow `REMOVE_VC` |
+| ids          | [String] | Credential IDs to delete | M       |          |
+
+### Returns
+
+Void
+
+### Usage
+
+```swift
+try WalletAPI.shared.deleteOID4VCs(hWalletToken: hWalletToken, ids: [credentialId])
+```
+
+<br>
+
+## 7.5. isAnyOID4VCSaved
+
+### Description
+`Checks whether any OID4VC credential is saved in the wallet.`
+
+### Declaration
+
+```swift
+public var isAnyOID4VCSaved: Bool
+```
+
+### Returns
+
+| Type | Description                                                              | **M/O** | **Note** |
+| ---- | ------------------------------------------------------------------------ | ------- | -------- |
+| Bool | `true` if at least one OID4VC credential is saved, otherwise `false`      | M       |          |
+
+### Usage
+
+```swift
+if WalletAPI.shared.isAnyOID4VCSaved {
+    // show the credential list
+}
+```
+
+<br>
+
+## 7.6. matchCredentials
+
+### Description
+`Finds the stored credentials that satisfy the verifier's DCQL query.`
+
+The result is what the consent screen shows: one entry per matched credential, each already naming
+the claims that would leave the wallet. Before calling `createVpToken` the app may drop the entries
+the holder refuses, but it must pass the remaining entries back unchanged.
+
+### Declaration
+
+```swift
+func matchCredentials(hWalletToken: String, authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+```
+
+### Parameters
+
+| Name         | Type                 | Description                                  | **M/O** | **Note** |
+|--------------|----------------------|----------------------------------------------|---------|----------|
+| hWalletToken | String               | Wallet Token                                 | M       | Must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP` |
+| authRequest  | AuthorizationRequest | Verifier authorization request carrying the DCQL query | M | [AuthorizationRequest](#7-authorizationrequest) |
+
+### Returns
+
+| Type                 | Description                                                | **M/O** | **Note** |
+|----------------------|------------------------------------------------------------|---------|----------|
+| [MatchedCredential]  | One entry per matched credential, in DCQL declaration order | M      | [MatchedCredential](#8-matchedcredential) |
+
+### Usage
+
+```swift
+let matched = try WalletAPI.shared.matchCredentials(hWalletToken: hWalletToken,
+                                                    authRequest: authRequest)
+```
+
+<br>
+
+## 7.7. createVpToken
+
+### Description
+`Builds the authorization response body carrying the vp_token for the selected credentials.`
+
+The returned data is transfer-ready: POST it to the request's `response_uri` as
+`application/x-www-form-urlencoded`. For `direct_post.jwt` the body is JWE-sealed with the
+verifier's key from `client_metadata`.
+
+Consent is given per credential, not per claim: to withhold a claim the app drops the whole
+`MatchedCredential`, and each remaining entry must keep the `claimCodes` that `matchCredentials`
+produced.
+
+### Declaration
+
+```swift
+func createVpToken(hWalletToken: String, authRequest: AuthorizationRequest, matchedCredentials: [MatchedCredential], passcode: String?) throws -> Data
+```
+
+### Parameters
+
+| Name               | Type                 | Description                                          | **M/O** | **Note** |
+|--------------------|----------------------|------------------------------------------------------|---------|----------|
+| hWalletToken       | String               | Wallet Token                                         | M       | Must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP` |
+| authRequest        | AuthorizationRequest | The request the selection was matched against        | M       | [AuthorizationRequest](#7-authorizationrequest) |
+| matchedCredentials | [MatchedCredential]  | The credentials to present, as returned by `matchCredentials` minus the refused entries | M | [MatchedCredential](#8-matchedcredential) |
+| passcode           | String?              | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
+
+### Returns
+
+| Type | Description                     | **M/O** | **Note** |
+|------|---------------------------------|---------|----------|
+| Data | Transfer-ready response body    | M       | POST to `authRequest.responseUri` |
+
+### Usage
+
+```swift
+let body = try WalletAPI.shared.createVpToken(hWalletToken: hWalletToken,
+                                              authRequest: authRequest,
+                                              matchedCredentials: selected,
+                                              passcode: passcode)
 ```
 
 <br>
@@ -1739,4 +2055,70 @@ public struct DIDAuth: Jsonable {
 | did       | String | DID of the person being authenticated | M       |          |
 | authNonce | String | Nonce for DID Auth                    | M       |          |
 | proof     | Proof  | authentication proof                  | M       |          |
+<br>
+
+## 7. AuthorizationRequest
+
+### Description
+
+`OpenID4VP authorization request received from the verifier.`
+
+### Declaration
+
+```swift
+public struct AuthorizationRequest: Jsonable, FromSnake {
+    public let responseUri: String
+    public let nonce: String
+    public let state: String
+    public let clientId: String
+    public let responseType: String
+    public let responseMode: String
+    public let dcqlQuery: DCQLQuery
+    public let clientMetadata: [String: AnyJSON]
+    public let iat: Int
+}
+```
+
+### Property
+
+| Name           | Type                 | Description                                              | **M/O** | **Note** |
+| -------------- | -------------------- | -------------------------------------------------------- | ------- | -------- |
+| responseUri    | String               | Endpoint the response body is POSTed to                  | M       |          |
+| nonce          | String               | Verifier nonce, bound into the presentation              | M       |          |
+| state          | String               | Verifier state, echoed back in the response              | M       |          |
+| clientId       | String               | Verifier identifier; used as the presentation audience   | M       |          |
+| responseType   | String               | OAuth response type                                      | M       |          |
+| responseMode   | String               | `direct_post` or `direct_post.jwt`                       | M       | Other modes are rejected (`MSDKWLT05509`) |
+| dcqlQuery      | DCQLQuery            | The credential query to match against                    | M       |          |
+| clientMetadata | [String: AnyJSON]    | Verifier metadata; carries the response-encryption key for `direct_post.jwt` | M | |
+| iat            | Int                  | Issued-at timestamp of the request                       | M       |          |
+<br>
+
+## 8. MatchedCredential
+
+### Description
+
+`One matched credential for a single DCQL credential query.`
+
+Returned by `matchCredentials` and passed back to `createVpToken`. The app may drop entries the
+holder refuses, or rebuild the list through the public initializer, but must not narrow an entry's
+`claimCodes`.
+
+### Declaration
+
+```swift
+public struct MatchedCredential {
+    public let queryId: String
+    public let credentialId: String
+    public let claimCodes: [String]
+}
+```
+
+### Property
+
+| Name         | Type     | Description                                                   | **M/O** | **Note** |
+| ------------ | -------- | ------------------------------------------------------------- | ------- | -------- |
+| queryId      | String   | The DCQL credential query id this match answers (`dcql_query.credentials[].id`) | M | |
+| credentialId | String   | The matched stored credential id                              | M       |          |
+| claimCodes   | [String] | The claims to disclose — the ones the query asked for, or every claim the credential can disclose when it asked for the whole credential | M | Opaque values: display and compare them, never split or assemble them |
 <br>
