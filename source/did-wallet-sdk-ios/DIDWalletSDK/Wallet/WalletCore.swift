@@ -533,7 +533,7 @@ extension WalletCore
     {
         switch credential.format
         {
-        case "dc+sd-jwt-did":
+        case CredentialFormat.sdJwtVc.token:
             return SdJwtCredentialItem(
                 id: credential.id,
                 format: .sdJwtVc,
@@ -542,7 +542,7 @@ extension WalletCore
                 credentialIdentifier: credential.credentialIdentifier,
                 sdjwt: SDJWT.parse(raw: credential.credential)
             )
-        case "mso_mdoc-did":
+        case CredentialFormat.msoMdoc.token:
             return MdocCredentialItem(
                 id: credential.id,
                 format: .msoMdoc,

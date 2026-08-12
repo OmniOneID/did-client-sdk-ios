@@ -43,7 +43,7 @@ Each module (repository) is managed independently, following these steps:
      ```sh
      cd source/did-wallet-sdk-ios
      xcodebuild build -scheme DIDWalletSDK \
-       -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' \
+       -destination 'platform=iOS Simulator,name=iPhone 17' \
        SWIFT_STRICT_CONCURRENCY=complete
      ```
 

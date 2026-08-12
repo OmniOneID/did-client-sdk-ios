@@ -40,6 +40,8 @@
 		AAAA0315000000000000E365 /* MdocCredentialAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0314000000000000E365 /* MdocCredentialAdapterTests.swift */; };
 		AAAA0331000000000000E365 /* MdocPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0330000000000000E365 /* MdocPresenterTests.swift */; };
 		AAAA0361000000000000E365 /* SdJwtConsentItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0360000000000000E365 /* SdJwtConsentItemTests.swift */; };
+		AAAA0381000000000000E365 /* CredentialFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0380000000000000E365 /* CredentialFormatTests.swift */; };
+		AAAA0371000000000000E365 /* IssuerDidTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0370000000000000E365 /* IssuerDidTests.swift */; };
 		AAAA0333000000000000E365 /* JWKThumbprintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0332000000000000E365 /* JWKThumbprintTests.swift */; };
 		AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0308000000000000E365 /* MdocFixtures.swift */; };
 		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
@@ -357,6 +359,8 @@
 		AAAA0314000000000000E365 /* MdocCredentialAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocCredentialAdapterTests.swift; sourceTree = "<group>"; };
 		AAAA0330000000000000E365 /* MdocPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocPresenterTests.swift; sourceTree = "<group>"; };
 		AAAA0360000000000000E365 /* SdJwtConsentItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SdJwtConsentItemTests.swift; sourceTree = "<group>"; };
+		AAAA0380000000000000E365 /* CredentialFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialFormatTests.swift; sourceTree = "<group>"; };
+		AAAA0370000000000000E365 /* IssuerDidTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerDidTests.swift; sourceTree = "<group>"; };
 		AAAA0332000000000000E365 /* JWKThumbprintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWKThumbprintTests.swift; sourceTree = "<group>"; };
 		AAAA0308000000000000E365 /* MdocFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocFixtures.swift; sourceTree = "<group>"; };
 		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
@@ -910,6 +914,7 @@
 			children = (
 				C90D3C202DAFA66C00292BFD /* DataModelTests.swift */,
 				AAAA0350000000000000E365 /* OrderedStringMapTests.swift */,
+				AAAA0380000000000000E365 /* CredentialFormatTests.swift */,
 				AAAA0352000000000000E365 /* ChallengeOrderTests.swift */,
 			);
 			path = DataModel;
@@ -1026,6 +1031,7 @@
 				AAAA0314000000000000E365 /* MdocCredentialAdapterTests.swift */,
 				AAAA0330000000000000E365 /* MdocPresenterTests.swift */,
 				AAAA0360000000000000E365 /* SdJwtConsentItemTests.swift */,
+				AAAA0370000000000000E365 /* IssuerDidTests.swift */,
 				AAAA0332000000000000E365 /* JWKThumbprintTests.swift */,
 				AAAA030A000000000000E365 /* Fixtures */,
 			);
@@ -1840,6 +1846,7 @@
 				7CAB251D2C74A25F00F18610 /* WalletServiceMock.swift in Sources */,
 				C90D3C212DAFA66C00292BFD /* DataModelTests.swift in Sources */,
 				AAAA0351000000000000E365 /* OrderedStringMapTests.swift in Sources */,
+				AAAA0381000000000000E365 /* CredentialFormatTests.swift in Sources */,
 				AAAA0353000000000000E365 /* ChallengeOrderTests.swift in Sources */,
 				C9F294B42DB0BA21005376E1 /* Secp256R1ManagerTests.swift in Sources */,
 				C9F294B52DB0BA21005376E1 /* SecureEncryptorTests.swift in Sources */,
@@ -1859,6 +1866,7 @@
 				AAAA0315000000000000E365 /* MdocCredentialAdapterTests.swift in Sources */,
 				AAAA0331000000000000E365 /* MdocPresenterTests.swift in Sources */,
 				AAAA0361000000000000E365 /* SdJwtConsentItemTests.swift in Sources */,
+				AAAA0371000000000000E365 /* IssuerDidTests.swift in Sources */,
 				AAAA0333000000000000E365 /* JWKThumbprintTests.swift in Sources */,
 				AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */,
 				7CDED8002C7830ED009CE791 /* WalletCoreMock.swift in Sources */,

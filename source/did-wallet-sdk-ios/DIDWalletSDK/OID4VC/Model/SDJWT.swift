@@ -67,6 +67,21 @@ public struct SDJWT: Jsonable {
         return jwt
     }
     
+    /// The DID of the issuer that signed this credential, for a screen that names who issued it.
+    ///
+    /// Read from the issuer JWT's `kid` rather than from the payload's `iss`. Both are covered by
+    /// the signature, but they answer different questions: `iss` is what the issuer wrote about
+    /// itself, while `kid` is the key the signature was actually checked against at issuance. Where
+    /// the two disagree, `kid` is the one with a verification behind it.
+    ///
+    /// `nil` when the credential JWT cannot be read or its `kid` is not a DID URL — neither happens
+    /// for a credential this SDK stored, since issuance needs that DID to verify at all. Mirrors
+    /// `Mdoc.issuerDid`, so a screen can name the issuer of either format the same way.
+    public var issuerDid: String? {
+        guard let kid = try? JWS(from: credentialJwt).protectedHeader.kid else { return nil }
+        return DIDUtility.parseDIDKeyIdentifier(kid)?.did
+    }
+
     /// Every claim the holder can be asked to consent to, each carrying the code that names it.
     ///
     /// The codes come from the same walk the presenter reads them back through, which is what an

@@ -44,6 +44,22 @@ public struct Mdoc: Sendable, Equatable {
     /// The issuer's signature over the MSO.
     let issuerAuth: COSESign1
 
+    /// The DID of the issuer that signed this document, for a screen that names who issued it.
+    ///
+    /// The value is trusted by way of verification rather than by the bytes themselves. The `kid`
+    /// it comes from sits in `issuerAuth`'s unprotected header, which the signature does not cover,
+    /// but issuance resolved that DID to a key and checked the signature against it — a substituted
+    /// `kid` names a different key and fails that check. It follows that the property means nothing
+    /// on a document that was only parsed: read it from a stored credential, which was verified
+    /// when it was stored.
+    ///
+    /// `nil` when the document carries no `kid`, or one that is not a DID URL this SDK can read.
+    /// Neither happens for a credential this SDK stored, since issuance needs the DID to verify at
+    /// all.
+    public var issuerDid: String? {
+        return issuerAuth.keyIdentifier.flatMap { DIDUtility.parseDIDKeyIdentifier($0)?.did }
+    }
+
     /// The MSO the issuer signed, decoded.
     let mso: MobileSecurityObject
 

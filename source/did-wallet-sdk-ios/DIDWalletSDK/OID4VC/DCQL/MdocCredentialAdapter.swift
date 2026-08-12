@@ -25,7 +25,7 @@ import Foundation
 /// through. Value conditions are still shared, since those are format-independent.
 public class MdocCredentialAdapter: CredentialAdapter {
 
-    static let supportedFormats: Set<String> = ["mso_mdoc-did"]
+    static let supportedFormats: Set<String> = [CredentialFormat.msoMdoc.token]
 
     public init() {}
 
@@ -56,7 +56,7 @@ public class MdocCredentialAdapter: CredentialAdapter {
         }
 
         return ParsedCredential(
-            format: "mso_mdoc-did",
+            format: CredentialFormat.msoMdoc.token,
             rawCredential: rawCredential,
             baseClaims: claims,
             allClaims: claims,

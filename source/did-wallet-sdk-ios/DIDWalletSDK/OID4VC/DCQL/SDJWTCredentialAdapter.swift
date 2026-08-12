@@ -21,7 +21,7 @@ import Foundation
 /// Reuses the SDK's `SDJWT` parser, `Disclosure`, and `SimpleJWTDecoder`.
 public class SDJWTCredentialAdapter: CredentialAdapter {
 
-    private static let supportedFormats: Set<String> = ["dc+sd-jwt-did"]
+    private static let supportedFormats: Set<String> = [CredentialFormat.sdJwtVc.token]
 
     // Defined by the claim index so naming and presenting skip exactly the same claims.
     private static let reservedClaims: Set<String> = SDJWTClaimIndex.reservedClaims

@@ -275,8 +275,7 @@ public enum DCQLQueryValidator {
     }
 
     private static func validateFormat(_ format: String, _ context: String, _ result: inout ValidationResult) {
-        let supported: Set<String> = ["dc+sd-jwt-did","opendid_vc","vc+sd-jwt","sd-jwt","jwt_vc_json","jwt_vc","ldp_vc"]
-        if !supported.contains(format) {
+        if !CredentialFormat.isKnown(token: format) {
             result.addWarning("\(context).format '\(format)' may not be supported")
         }
     }

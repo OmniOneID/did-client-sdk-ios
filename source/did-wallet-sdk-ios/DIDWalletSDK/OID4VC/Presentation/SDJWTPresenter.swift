@@ -28,7 +28,7 @@ import CryptoKit
 struct SDJWTPresenter
 {
     /// SD-JWT credential format tokens this presenter can handle.
-    static let supportedFormats: Set<String> = ["dc+sd-jwt-did"]
+    static let supportedFormats: Set<String> = [CredentialFormat.sdJwtVc.token]
 
     init() {}
 

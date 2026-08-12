@@ -89,7 +89,7 @@ did-client-sdk-ios
 | Language         | Swift 5.8                   |
 | IDE              | Xcode 26.0.1                |
 | Compatibility    | iOS 17.0 and higher         |
-| Test Environment | iPhone 15 (17.5) Simulator  |
+| Test Environment | iPhone 17 (26.5) Simulator  |
 
 ## Libraries
 

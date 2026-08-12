@@ -35,7 +35,7 @@ internal import OrderedCollections
 struct MdocPresenter
 {
     /// mdoc credential format tokens this presenter can handle.
-    static let supportedFormats: Set<String> = ["mso_mdoc-did"]
+    static let supportedFormats: Set<String> = [CredentialFormat.msoMdoc.token]
 
     /// `DeviceResponse.version`, and the only version this SDK emits.
     private static let deviceResponseVersion = "1.0"

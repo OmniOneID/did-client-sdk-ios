@@ -1227,14 +1227,14 @@ extension WalletService
             let publicKeyData = try await issuerPublicKey(kid: try credentialJws.protectedHeader.kid,
                                                           APIGatewayURL: APIGatewayURL)
             try veryfySDJWT(credential: rawCredential, publicKeyData: publicKeyData)
-            format = "dc+sd-jwt-did"
+            format = CredentialFormat.sdJwtVc.token
 
         case .mdoc:
             let mdoc = try Mdoc.parse(raw: rawCredential)
             let publicKeyData = try await issuerPublicKey(kid: mdoc.issuerAuth.keyIdentifier,
                                                           APIGatewayURL: APIGatewayURL)
             try verifyMdoc(mdoc: mdoc, publicKeyData: publicKeyData, holderKeyId: authType)
-            format = "mso_mdoc-did"
+            format = CredentialFormat.msoMdoc.token
 
         case .unknown(let value):
             // Unreachable: an unknown format is rejected before the credential is requested. The

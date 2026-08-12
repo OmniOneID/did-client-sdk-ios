@@ -144,9 +144,9 @@ extension IssuerMetadataResponse.SupportedFormat {
     public init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self)
         switch value {
-        case "dc+sd-jwt-did":
+        case CredentialFormat.sdJwtVc.token:
             self = .sdjwt(value)
-        case "mso_mdoc-did":
+        case CredentialFormat.msoMdoc.token:
             self = .mdoc(value)
         default:
             self = .unknown(value)

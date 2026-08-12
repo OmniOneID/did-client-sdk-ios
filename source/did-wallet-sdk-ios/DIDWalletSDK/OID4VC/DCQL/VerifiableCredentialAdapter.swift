@@ -22,7 +22,7 @@ import Foundation
 /// matcher output can be used directly as `ClaimInfo.claimCodes`.
 public class VerifiableCredentialAdapter: CredentialAdapter {
 
-    public static let format = "opendid_vc"
+    public static let format = CredentialFormat.vcdm.token
 
     public init() {}
 

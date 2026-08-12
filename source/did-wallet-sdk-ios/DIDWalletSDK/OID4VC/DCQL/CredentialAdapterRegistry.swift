@@ -45,16 +45,16 @@ public class CredentialAdapterRegistry {
 
         // SD-JWT compact form contains '~' disclosure separators.
         if trimmed.contains("~") {
-            return findAdapter("dc+sd-jwt-did")
+            return findAdapter(CredentialFormat.sdJwtVc.token)
         }
         // opendid_vc is stored as a VerifiableCredential JSON object.
         if trimmed.hasPrefix("{") {
-            return findAdapter("opendid_vc")
+            return findAdapter(CredentialFormat.vcdm.token)
         }
         // An mdoc is base64url CBOR, which shares no marker with the two above; rather than guess
         // from the alphabet, decode it — a string that parses as an IssuerSigned is an mdoc.
         if (try? Mdoc.parse(raw: trimmed)) != nil {
-            return findAdapter("mso_mdoc-did")
+            return findAdapter(CredentialFormat.msoMdoc.token)
         }
         return nil
     }
