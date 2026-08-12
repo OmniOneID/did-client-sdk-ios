@@ -67,6 +67,39 @@ public struct SDJWT: Jsonable {
         return jwt
     }
     
+    /// Every claim the holder can be asked to consent to, each carrying the code that names it.
+    ///
+    /// The codes come from the same walk the presenter reads them back through, which is what an
+    /// app cannot reproduce by parsing disclosures itself: whether a claim rides along with a
+    /// parent already listed, whether it is in the clear, and whether one code names two claims are
+    /// all decided by that walk.
+    ///
+    /// Ordered by code, because the issuer payload is a JSON object and has no order of its own —
+    /// a screen drawn from the raw walk would reshuffle between runs.
+    /// - Returns: The consentable claims, sorted by code.
+    /// - Throws: `OID4VCManagerError.invalidJWS` when the issuer JWT payload cannot be read.
+    public func consentItems() throws -> [SdJwtConsentItem] {
+        let payload: [String: Any]
+        do {
+            payload = try SimpleJWTDecoder.parse(credentialJwt).payload
+        } catch {
+            throw OID4VCManagerError.invalidJWS(
+                detail: "issuer JWT payload is not readable: \(error)").getError()
+        }
+
+        let index = SDJWTClaimIndex.build(sdjwt: self, payload: payload)
+        return index.entries
+            .filter { $0.value.isConsentItem }
+            .map { code, entry in
+                SdJwtConsentItem(code: code,
+                                 claimName: entry.claimName,
+                                 value: entry.value,
+                                 isAmbiguous: entry.isAmbiguous,
+                                 isSelectivelyDisclosable: !entry.disclosures.isEmpty)
+            }
+            .sorted { $0.code < $1.code }
+    }
+
     public func getSignSource() -> (String, String)
     {
         var separated = credentialJwt.components(separatedBy: ".")
@@ -76,6 +109,36 @@ public struct SDJWT: Jsonable {
         
         return (source, signature)
     }
+}
+
+/// One claim of an SD-JWT, as the holder is asked to consent to it.
+///
+/// `code` is the value that travels: matching names claims with it, the holder's selection is
+/// expressed in it, and `createVpToken` resolves it back to the disclosures it needs. It is
+/// opaque — display it and compare it, but never split it on `.` or `[]`, and never assemble one:
+/// a claim named `"address.street_address"` in one piece is a different claim from `address` →
+/// `street_address`, and only the side that walked the credential can tell them apart.
+public struct SdJwtConsentItem: Sendable, Equatable {
+
+    /// The claim code. Hand this back in `MatchedCredential.claimCodes` unchanged.
+    public let code: String
+
+    /// The last segment of the code, for a screen that shows a label rather than a path.
+    public let claimName: String
+
+    /// The claim's value.
+    public let value: AnyJSON
+
+    /// Whether this code names more than one claim of the credential. Presenting it fails rather
+    /// than guessing which one the holder meant.
+    public let isAmbiguous: Bool
+
+    /// Whether withholding the claim actually hides it.
+    ///
+    /// `false` means the issuer left it in the clear: the verifier reads it from the issuer JWT
+    /// whether or not the holder selects it. A screen that offered it as a choice would promise
+    /// something the format cannot deliver.
+    public let isSelectivelyDisclosable: Bool
 }
 
 /// A structure representing a disclosure within an SD-JWT.

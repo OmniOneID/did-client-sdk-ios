@@ -18,6 +18,7 @@
 
 import XCTest
 import CryptoKit
+import OrderedCollections
 @testable import DIDWalletSDK
 
 /// Reads a real issued mdoc (`MdocFixtures.pidIssuerSigned`) rather than a document this SDK
@@ -171,6 +172,125 @@ final class MdocTests: XCTestCase {
         XCTAssertNoThrow(try mdoc.verifyValidity(at: validity.validUntil))
         XCTAssertThrowsError(try mdoc.verifyValidity(at: validity.validFrom.addingTimeInterval(-1)))
         XCTAssertThrowsError(try mdoc.verifyValidity(at: validity.validUntil.addingTimeInterval(1)))
+    }
+
+    // MARK: - Consent items
+
+    /// The wallet screen is drawn from this list, so it has to name every element the document can
+    /// disclose — one row per element, no more and no less.
+    func testConsentItemsNameEveryElement() throws {
+        let mdoc = try parsed()
+
+        let items = mdoc.consentItems
+
+        XCTAssertEqual(items.count, 26)
+        XCTAssertEqual(Set(items.map { $0.code }), try XCTUnwrap(mdoc.namespaces[namespace]).keys.reduce(into: Set<String>()) {
+            $0.insert(MdocClaimIndex.code(namespace: namespace, elementIdentifier: $1))
+        })
+        XCTAssertTrue(items.allSatisfy { $0.namespace == namespace })
+        XCTAssertFalse(items.contains { $0.isAmbiguous })
+    }
+
+    /// `namespaces` is a `Dictionary`, so a screen built from it reshuffles between runs. The
+    /// consent list is the issuer's own order, which is stable.
+    func testConsentItemOrderIsStableAndFollowsTheIssuer() throws {
+        let mdoc = try parsed()
+
+        let first = mdoc.consentItems.map { $0.elementIdentifier }
+        let second = mdoc.consentItems.map { $0.elementIdentifier }
+
+        XCTAssertEqual(first, second)
+        // The issuer signed issuance_date, birth_date, … in this order.
+        XCTAssertEqual(Array(first.prefix(3)),
+                       ["issuance_date", "birth_date", "personal_administrative_number"])
+    }
+
+    /// The codes on screen and the codes the presenter resolves are one set, which is the whole
+    /// point of publishing them rather than letting an app assemble `"namespace.element"`.
+    func testConsentItemCodesArePresentable() throws {
+        let mdoc = try parsed()
+        let portrait = try XCTUnwrap(mdoc.consentItems.first { $0.elementIdentifier == "portrait" })
+
+        XCTAssertEqual(portrait.value, mdoc.namespaces[namespace]?["portrait"])
+
+        let selected = try MdocPresenter.resolveElements(mdoc: mdoc, claimCodes: [portrait.code])
+        XCTAssertEqual(selected[namespace]?.map { $0.elementIdentifier }, ["portrait"])
+    }
+
+    /// Two elements whose namespace and identifier join to the same string. No deployed document
+    /// type does this, but the wallet must fail closed rather than disclose whichever one it
+    /// happened to index first — and the screen has to be able to say so before asking.
+    func testCollidingElementsAreMarkedAmbiguousAndCannotBePresented() throws {
+        let mdoc = try Mdoc.parse(raw: MdocTests.syntheticDocument(elements: [
+            ("a.b", "c"),   // code "a.b.c"
+            ("a", "b.c")    // code "a.b.c" as well
+        ]))
+
+        let items = mdoc.consentItems
+        XCTAssertEqual(items.count, 2)
+        XCTAssertEqual(Set(items.map { $0.code }), ["a.b.c"])
+        XCTAssertTrue(items.allSatisfy { $0.isAmbiguous })
+
+        XCTAssertThrowsError(try MdocPresenter.resolveElements(mdoc: mdoc, claimCodes: ["a.b.c"]))
+    }
+
+    /// Builds an `IssuerSigned` carrying the given (namespace, element) pairs. The MSO is
+    /// structurally complete but not signed — `parse` decodes, it does not verify.
+    private static func syntheticDocument(elements: [(namespace: String, identifier: String)]) -> String {
+        var nameSpaces = OrderedDictionary<CBOR, CBOR>()
+        for (index, element) in elements.enumerated() {
+            let item = CBOR.map([
+                "digestID": .unsignedInt(UInt64(index)),
+                "random": .byteString([UInt8](repeating: 0, count: 16)),
+                "elementIdentifier": .utf8String(element.identifier),
+                "elementValue": .utf8String("value-\(index)")
+            ])
+            let tagged = CBOR.tagged(CBOR.Tag(rawValue: 24), .byteString(item.encode()))
+            var list = nameSpaces[.utf8String(element.namespace)].flatMap { entry -> [CBOR] in
+                if case let .array(existing) = entry { return existing }
+                return []
+            } ?? []
+            list.append(tagged)
+            nameSpaces[.utf8String(element.namespace)] = .array(list)
+        }
+
+        let timestamp = CBOR.tagged(CBOR.Tag(rawValue: 0), .utf8String("2026-08-11T00:00:00Z"))
+        let mso = CBOR.map([
+            "version": .utf8String("1.0"),
+            "digestAlgorithm": .utf8String("SHA-256"),
+            "docType": .utf8String("test.doc"),
+            "valueDigests": .map(["test.doc": .map([:])]),
+            "deviceKeyInfo": .map(["deviceKey": .map([:])]),
+            "validityInfo": .map([
+                "signed": timestamp,
+                "validFrom": timestamp,
+                "validUntil": timestamp
+            ])
+        ])
+        let issuerAuth = CBOR.array([
+            .byteString(CBOR.map([.unsignedInt(1): .negativeInt(6)]).encode()),
+            .map([:]),
+            .byteString(CBOR.tagged(CBOR.Tag(rawValue: 24), .byteString(mso.encode())).encode()),
+            .byteString([UInt8](repeating: 0, count: 64))
+        ])
+
+        let issuerSigned = CBOR.map([
+            "issuerAuth": issuerAuth,
+            "nameSpaces": .map(nameSpaces)
+        ])
+        return Data(issuerSigned.encode()).base64URLEncoded
+    }
+
+    func testStoredItemAnswersTheSameAsItsDocument() throws {
+        let mdoc = try parsed()
+        let item = MdocCredentialItem(id: "id",
+                                      format: .msoMdoc,
+                                      configurationId: "config",
+                                      kid: "pin",
+                                      credentialIdentifier: nil,
+                                      mdoc: mdoc)
+
+        XCTAssertEqual(item.consentItems, mdoc.consentItems)
     }
 
     func testRejectsInputThatIsNotAnIssuerSigned() {

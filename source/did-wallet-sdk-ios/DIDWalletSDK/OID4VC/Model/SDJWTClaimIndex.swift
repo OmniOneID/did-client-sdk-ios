@@ -31,13 +31,20 @@ import Foundation
 /// either choice would present a claim the holder did not single out.
 struct SDJWTClaimIndex
 {
-    /// What one claim code costs to present.
+    /// What one claim code costs to present, and what it holds.
     struct Entry
     {
         /// The disclosures the presentation must carry: the claim's own, plus every ancestor that
         /// hides it. Empty when the issuer left the claim in the clear — the verifier reads it from
         /// the issuer JWT either way.
         let disclosures: Set<String>
+
+        /// The last segment of the code, for a screen that shows a label rather than a path:
+        /// the member name, or `[n]` for an array element.
+        let claimName: String
+
+        /// The claim's value.
+        let value: AnyJSON
 
         /// Whether the code stands on its own in the holder's consent list. A plaintext member of a
         /// claim that is already listed is disclosed with its parent, so it is indexed (a verifier
@@ -94,6 +101,8 @@ struct SDJWTClaimIndex
                 continue
             }
             index.insert(code: claimName,
+                         claimName: claimName,
+                         value: disclosure.claimValue.jsonToAny,
                          disclosures: [disclosure.getDisclosure()],
                          isConsentItem: true)
         }
@@ -105,17 +114,27 @@ struct SDJWTClaimIndex
     /// Records one code. A code reached twice by the same disclosure requirement is the same claim;
     /// reached twice with different requirements it names two claims, which no selection can tell
     /// apart.
-    private mutating func insert(code: String, disclosures: Set<String>, isConsentItem: Bool)
+    private mutating func insert(code: String,
+                                 claimName: String,
+                                 value: Any,
+                                 disclosures: Set<String>,
+                                 isConsentItem: Bool)
     {
         guard let existing = entries[code]
         else
         {
             entries[code] = Entry(disclosures: disclosures,
+                                  claimName: claimName,
+                                  value: AnyJSON.fromFoundation(value) ?? .null,
                                   isConsentItem: isConsentItem,
                                   isAmbiguous: false)
             return
         }
+        // The first reading wins: a code that names two claims is marked rather than merged, and
+        // showing the value it first resolved to is no more wrong than showing the other one.
         entries[code] = Entry(disclosures: existing.disclosures,
+                              claimName: existing.claimName,
+                              value: existing.value,
                               isConsentItem: existing.isConsentItem || isConsentItem,
                               isAmbiguous: existing.isAmbiguous || existing.disclosures != disclosures)
     }
@@ -134,12 +153,14 @@ struct SDJWTClaimIndex
                 if let prefix = prefix
                 {
                     code = "\(prefix).\(key)"
-                    insert(code: code, disclosures: ancestors, isConsentItem: false)
+                    insert(code: code, claimName: key, value: child,
+                           disclosures: ancestors, isConsentItem: false)
                 }
                 else if !SDJWTClaimIndex.reservedClaims.contains(key)
                 {
                     code = key
-                    insert(code: code, disclosures: ancestors, isConsentItem: true)
+                    insert(code: code, claimName: key, value: child,
+                           disclosures: ancestors, isConsentItem: true)
                 }
                 else
                 {
@@ -164,7 +185,8 @@ struct SDJWTClaimIndex
                 usedDigests.insert(digest)
                 let code = prefix.map { "\($0).\(claimName)" } ?? claimName
                 let required = ancestors.union([disclosure.getDisclosure()])
-                insert(code: code, disclosures: required, isConsentItem: true)
+                insert(code: code, claimName: claimName, value: disclosure.claimValue.jsonToAny,
+                       disclosures: required, isConsentItem: true)
                 // Only the structure matters here; number typing is irrelevant to the walk.
                 walk(value: disclosure.claimValue.jsonToAny,
                      prefix: code,
@@ -187,7 +209,8 @@ struct SDJWTClaimIndex
                 guard let disclosure = digestToDisclosure[digest] else { continue }
                 usedDigests.insert(digest)
                 let required = ancestors.union([disclosure.getDisclosure()])
-                insert(code: code, disclosures: required, isConsentItem: true)
+                insert(code: code, claimName: "[\(position)]", value: disclosure.claimValue.jsonToAny,
+                       disclosures: required, isConsentItem: true)
                 walk(value: disclosure.claimValue.jsonToAny,
                      prefix: code,
                      ancestors: required,
@@ -196,7 +219,8 @@ struct SDJWTClaimIndex
             }
             else
             {
-                insert(code: code, disclosures: ancestors, isConsentItem: false)
+                insert(code: code, claimName: "[\(position)]", value: element,
+                       disclosures: ancestors, isConsentItem: false)
                 walk(value: element,
                      prefix: code,
                      ancestors: ancestors,

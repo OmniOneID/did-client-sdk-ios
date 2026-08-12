@@ -39,6 +39,14 @@ public struct SdJwtCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let sdjwt: SDJWT
+
+    /// Every claim the holder can be asked to consent to, sorted by code.
+    ///
+    /// Reading it can fail because an SD-JWT's claims live in its issuer JWT payload, which is
+    /// parsed on demand — unlike an mdoc, whose elements were already decoded when it was parsed.
+    public var consentItems: [SdJwtConsentItem] {
+        get throws { try sdjwt.consentItems() }
+    }
 }
 
 public struct MdocCredentialItem: CredentialItem
@@ -49,6 +57,12 @@ public struct MdocCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let mdoc: Mdoc
+
+    /// Every element the holder can be asked to consent to, in the issuer's order.
+    ///
+    /// The stored item and the document it holds answer this the same way; the property is here so
+    /// a screen built from a wallet listing does not have to reach through to `mdoc` first.
+    public var consentItems: [MdocConsentItem] { mdoc.consentItems }
 }
 
 

@@ -39,6 +39,7 @@
 		AAAA0307000000000000E365 /* MdocTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0306000000000000E365 /* MdocTests.swift */; };
 		AAAA0315000000000000E365 /* MdocCredentialAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0314000000000000E365 /* MdocCredentialAdapterTests.swift */; };
 		AAAA0331000000000000E365 /* MdocPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0330000000000000E365 /* MdocPresenterTests.swift */; };
+		AAAA0361000000000000E365 /* SdJwtConsentItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0360000000000000E365 /* SdJwtConsentItemTests.swift */; };
 		AAAA0333000000000000E365 /* JWKThumbprintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0332000000000000E365 /* JWKThumbprintTests.swift */; };
 		AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0308000000000000E365 /* MdocFixtures.swift */; };
 		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
@@ -355,6 +356,7 @@
 		AAAA0306000000000000E365 /* MdocTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocTests.swift; sourceTree = "<group>"; };
 		AAAA0314000000000000E365 /* MdocCredentialAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocCredentialAdapterTests.swift; sourceTree = "<group>"; };
 		AAAA0330000000000000E365 /* MdocPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocPresenterTests.swift; sourceTree = "<group>"; };
+		AAAA0360000000000000E365 /* SdJwtConsentItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SdJwtConsentItemTests.swift; sourceTree = "<group>"; };
 		AAAA0332000000000000E365 /* JWKThumbprintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWKThumbprintTests.swift; sourceTree = "<group>"; };
 		AAAA0308000000000000E365 /* MdocFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocFixtures.swift; sourceTree = "<group>"; };
 		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
@@ -1023,6 +1025,7 @@
 				AAAA0306000000000000E365 /* MdocTests.swift */,
 				AAAA0314000000000000E365 /* MdocCredentialAdapterTests.swift */,
 				AAAA0330000000000000E365 /* MdocPresenterTests.swift */,
+				AAAA0360000000000000E365 /* SdJwtConsentItemTests.swift */,
 				AAAA0332000000000000E365 /* JWKThumbprintTests.swift */,
 				AAAA030A000000000000E365 /* Fixtures */,
 			);
@@ -1855,6 +1858,7 @@
 				AAAA0307000000000000E365 /* MdocTests.swift in Sources */,
 				AAAA0315000000000000E365 /* MdocCredentialAdapterTests.swift in Sources */,
 				AAAA0331000000000000E365 /* MdocPresenterTests.swift in Sources */,
+				AAAA0361000000000000E365 /* SdJwtConsentItemTests.swift in Sources */,
 				AAAA0333000000000000E365 /* JWKThumbprintTests.swift in Sources */,
 				AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */,
 				7CDED8002C7830ED009CE791 /* WalletCoreMock.swift in Sources */,

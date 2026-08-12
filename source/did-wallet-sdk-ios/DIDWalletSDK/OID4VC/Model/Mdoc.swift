@@ -118,6 +118,40 @@ public struct Mdoc: Sendable, Equatable {
         return issuerSigned
     }
 
+    /// Every element the holder can be asked to consent to, each carrying the code that names it.
+    ///
+    /// A wallet screen has to show a row per element and then hand back the codes the holder
+    /// agreed to. Both halves need the same naming, so the codes here are built by the same type
+    /// the presenter reads them back through — an app that assembled `"namespace.element"` itself
+    /// would be a second implementation of that naming, and the two would disagree exactly where it
+    /// matters (see `isAmbiguous`).
+    ///
+    /// The order is the issuer's: elements come in the order they were signed, namespaces in name
+    /// order. `namespaces` cannot give that — it is a `Dictionary`, so its iteration order differs
+    /// from run to run, and a screen drawn from it would reshuffle itself.
+    public var consentItems: [MdocConsentItem] {
+        var codeCounts: [String: Int] = [:]
+        for (namespace, namespaceItems) in items {
+            for item in namespaceItems {
+                let code = MdocClaimIndex.code(namespace: namespace,
+                                               elementIdentifier: item.elementIdentifier)
+                codeCounts[code, default: 0] += 1
+            }
+        }
+
+        return items.keys.sorted().flatMap { namespace -> [MdocConsentItem] in
+            (items[namespace] ?? []).map { item in
+                let code = MdocClaimIndex.code(namespace: namespace,
+                                               elementIdentifier: item.elementIdentifier)
+                return MdocConsentItem(code: code,
+                                       namespace: namespace,
+                                       elementIdentifier: item.elementIdentifier,
+                                       value: item.elementValue,
+                                       isAmbiguous: (codeCounts[code] ?? 0) > 1)
+            }
+        }
+    }
+
     /// Checks every element against the digest the issuer signed for it.
     ///
     /// The issuer's signature covers the MSO, and the MSO covers the elements only through these
@@ -147,6 +181,35 @@ public struct Mdoc: Sendable, Equatable {
             throw OID4VCManagerError.mdocOutsideValidityPeriod.getError()
         }
     }
+}
+
+/// One element of an mdoc, as the holder is asked to consent to it.
+///
+/// `code` is the value that travels: matching names claims with it, the holder's selection is
+/// expressed in it, and `createVpToken` resolves it back to this element. It is opaque — display
+/// it and compare it, but never split it apart or build one from `namespace` and
+/// `elementIdentifier`, which are here to render the row, not to reconstruct the code.
+public struct MdocConsentItem: Sendable, Equatable {
+
+    /// The claim code. Hand this back in `MatchedCredential.claimCodes` unchanged.
+    public let code: String
+
+    /// The namespace the element belongs to.
+    public let namespace: String
+
+    /// The element's identifier within its namespace.
+    public let elementIdentifier: String
+
+    /// The value the issuer put in the element.
+    public let value: MdocElementValue
+
+    /// Whether this code names more than one element of the document.
+    ///
+    /// When it does, no selection can say which one the holder meant, so presenting it fails rather
+    /// than guessing. It takes an element identifier containing the code separator to happen, which
+    /// no deployed document type does — but a screen that offered the row anyway would collect a
+    /// consent the wallet cannot honour.
+    public let isAmbiguous: Bool
 }
 
 /// The validity window an issuer states in the MSO.
