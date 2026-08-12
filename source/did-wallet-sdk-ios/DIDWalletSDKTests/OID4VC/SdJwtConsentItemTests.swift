@@ -50,15 +50,71 @@ final class SdJwtConsentItemTests: XCTestCase {
 
     // MARK: - The list
 
-    func testNamesEveryConsentableClaimSortedByCode() throws {
+    func testNamesEveryConsentableClaim() throws {
         let sdjwt = SDJWT.parse(raw: nestedSDJWT().raw)
 
         let items = try sdjwt.consentItems()
 
+        XCTAssertEqual(Set(items.map { $0.code }),
+                       ["address", "address.street_address", "nationality"])
+        XCTAssertEqual(items.first { $0.code == "address.street_address" }?.claimName,
+                       "street_address")
+    }
+
+    // MARK: - Order
+
+    /// The list follows the credential, the way `Mdoc.consentItems` follows the order the issuer
+    /// signed its elements in. `nestedSDJWT` writes `address` then `street_address`.
+    func testOrderFollowsTheIssuersDisclosures() throws {
+        let sdjwt = SDJWT.parse(raw: nestedSDJWT().raw)
+
+        let disclosed = try sdjwt.consentItems()
+            .filter { $0.isSelectivelyDisclosable }
+            .map { $0.code }
+
+        XCTAssertEqual(disclosed, ["address", "address.street_address"])
+    }
+
+    /// Reversing the disclosures reverses the list -- code order would not move at all, which is
+    /// what tells the two orderings apart.
+    func testADifferentDisclosureOrderIsADifferentList() throws {
+        let fixture = nestedSDJWT()
+        let reversed = SDJWT(credentialJwt: SDJWT.parse(raw: fixture.raw).credentialJwt,
+                             disclosures: SDJWT.parse(raw: fixture.raw).disclosures.reversed())
+
+        let disclosed = try reversed.consentItems()
+            .filter { $0.isSelectivelyDisclosable }
+            .map { $0.code }
+
+        XCTAssertEqual(disclosed, ["address.street_address", "address"])
+    }
+
+    /// A nested claim sits at its own disclosure, not at the parent's -- the parent is in its
+    /// `disclosures` too, and taking that position would stack the two rows together.
+    func testANestedClaimSitsAtItsOwnDisclosure() throws {
+        let street = b64url(#"["s2","street_address","Sesame 1"]"#)
+        let address = b64url("[\"s1\",\"address\",{\"_sd\":[\"\(digest(street))\"]}]")
+        let email = b64url(#"["s3","email","a@b.c"]"#)
+        let header = b64url(#"{"alg":"ES256","typ":"dc+sd-jwt-did"}"#)
+        let payload = b64url("""
+        {"vct":"https://vct.a","iss":"https://issuer.example","_sd_alg":"sha-256",\
+        "_sd":["\(digest(address))","\(digest(email))"]}
+        """)
+        // The issuer put `email` between the parent and the nested child.
+        let sdjwt = SDJWT.parse(raw: "\(header).\(payload).sig~\(address)~\(email)~\(street)")
+
+        XCTAssertEqual(try sdjwt.consentItems().map { $0.code },
+                       ["address", "email", "address.street_address"])
+    }
+
+    /// A claim in the clear has no disclosure and so no position. It goes last rather than being
+    /// given one it does not have.
+    func testPlaintextClaimsComeAfterTheDisclosedOnes() throws {
+        let items = try SDJWT.parse(raw: nestedSDJWT().raw).consentItems()
+
         XCTAssertEqual(items.map { $0.code },
                        ["address", "address.street_address", "nationality"])
-        XCTAssertEqual(items.map { $0.claimName },
-                       ["address", "street_address", "nationality"])
+        XCTAssertEqual(items.last?.isSelectivelyDisclosable, false)
     }
 
     /// The consent list and the matcher's codes are one set — that is the whole reason the walk is

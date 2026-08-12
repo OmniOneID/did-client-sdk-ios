@@ -89,9 +89,19 @@ public struct SDJWT: Jsonable {
     /// parent already listed, whether it is in the clear, and whether one code names two claims are
     /// all decided by that walk.
     ///
-    /// Ordered by code, because the issuer payload is a JSON object and has no order of its own —
-    /// a screen drawn from the raw walk would reshuffle between runs.
-    /// - Returns: The consentable claims, sorted by code.
+    /// Ordered the way the issuer wrote the credential down: each claim sits where its own
+    /// disclosure sits in the credential, matching how `Mdoc.consentItems` follows the order the
+    /// issuer signed its elements in. Whatever the order came from, it is fixed per credential, so
+    /// a screen drawn from it does not reshuffle between runs.
+    ///
+    /// One caveat on how much that order means. SD-JWT gives the tilde-separated disclosures no
+    /// defined order — RFC 9901 constrains only the digests inside `_sd`, which the issuer must
+    /// write in an order that hides the original one. So this is the order the issuer's serializer
+    /// produced, not necessarily an order it chose for reading.
+    ///
+    /// Claims the issuer left in the clear have no disclosure and therefore no position; they come
+    /// after the rest, ordered by code among themselves.
+    /// - Returns: The consentable claims, in disclosure order.
     /// - Throws: `OID4VCManagerError.invalidJWS` when the issuer JWT payload cannot be read.
     public func consentItems() throws -> [SdJwtConsentItem] {
         let payload: [String: Any]
@@ -102,17 +112,31 @@ public struct SDJWT: Jsonable {
                 detail: "issuer JWT payload is not readable: \(error)").getError()
         }
 
+        var positions: [String: Int] = [:]
+        for (position, disclosure) in disclosures.enumerated() {
+            positions[disclosure.getDisclosure()] = position
+        }
+
         let index = SDJWTClaimIndex.build(sdjwt: self, payload: payload)
         return index.entries
             .filter { $0.value.isConsentItem }
             .map { code, entry in
-                SdJwtConsentItem(code: code,
-                                 claimName: entry.claimName,
-                                 value: entry.value,
-                                 isAmbiguous: entry.isAmbiguous,
-                                 isSelectivelyDisclosable: !entry.disclosures.isEmpty)
+                (position: entry.ownDisclosure.flatMap { positions[$0] },
+                 item: SdJwtConsentItem(code: code,
+                                        claimName: entry.claimName,
+                                        value: entry.value,
+                                        isAmbiguous: entry.isAmbiguous,
+                                        isSelectivelyDisclosable: !entry.disclosures.isEmpty))
             }
-            .sorted { $0.code < $1.code }
+            .sorted { left, right in
+                switch (left.position, right.position) {
+                case let (l?, r?): return l == r ? left.item.code < right.item.code : l < r
+                case (nil, _?):    return false
+                case (_?, nil):    return true
+                case (nil, nil):   return left.item.code < right.item.code
+                }
+            }
+            .map { $0.item }
     }
 
     public func getSignSource() -> (String, String)

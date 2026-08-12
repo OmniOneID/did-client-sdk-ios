@@ -46,6 +46,15 @@ struct SDJWTClaimIndex
         /// The claim's value.
         let value: AnyJSON
 
+        /// The one disclosure that hides this claim itself, as opposed to the ancestors in
+        /// `disclosures` that hide the branch it sits on. `nil` for a claim the issuer left in the
+        /// clear, which no disclosure carries.
+        ///
+        /// Kept apart from the set because the set has no order and no way to say which member is
+        /// the claim's own — and ordering a consent list by where the issuer put each claim needs
+        /// exactly that one.
+        let ownDisclosure: String?
+
         /// Whether the code stands on its own in the holder's consent list. A plaintext member of a
         /// claim that is already listed is disclosed with its parent, so it is indexed (a verifier
         /// may still point at it) but not listed again.
@@ -104,6 +113,7 @@ struct SDJWTClaimIndex
                          claimName: claimName,
                          value: disclosure.claimValue.jsonToAny,
                          disclosures: [disclosure.getDisclosure()],
+                         ownDisclosure: disclosure.getDisclosure(),
                          isConsentItem: true)
         }
         return index
@@ -118,6 +128,7 @@ struct SDJWTClaimIndex
                                  claimName: String,
                                  value: Any,
                                  disclosures: Set<String>,
+                                 ownDisclosure: String? = nil,
                                  isConsentItem: Bool)
     {
         guard let existing = entries[code]
@@ -126,15 +137,18 @@ struct SDJWTClaimIndex
             entries[code] = Entry(disclosures: disclosures,
                                   claimName: claimName,
                                   value: AnyJSON.fromFoundation(value) ?? .null,
+                                  ownDisclosure: ownDisclosure,
                                   isConsentItem: isConsentItem,
                                   isAmbiguous: false)
             return
         }
         // The first reading wins: a code that names two claims is marked rather than merged, and
-        // showing the value it first resolved to is no more wrong than showing the other one.
+        // showing the value it first resolved to is no more wrong than showing the other one. Its
+        // position follows for the same reason — the row is already marked unpresentable.
         entries[code] = Entry(disclosures: existing.disclosures,
                               claimName: existing.claimName,
                               value: existing.value,
+                              ownDisclosure: existing.ownDisclosure,
                               isConsentItem: existing.isConsentItem || isConsentItem,
                               isAmbiguous: existing.isAmbiguous || existing.disclosures != disclosures)
     }
@@ -186,7 +200,8 @@ struct SDJWTClaimIndex
                 let code = prefix.map { "\($0).\(claimName)" } ?? claimName
                 let required = ancestors.union([disclosure.getDisclosure()])
                 insert(code: code, claimName: claimName, value: disclosure.claimValue.jsonToAny,
-                       disclosures: required, isConsentItem: true)
+                       disclosures: required, ownDisclosure: disclosure.getDisclosure(),
+                       isConsentItem: true)
                 // Only the structure matters here; number typing is irrelevant to the walk.
                 walk(value: disclosure.claimValue.jsonToAny,
                      prefix: code,
@@ -210,7 +225,8 @@ struct SDJWTClaimIndex
                 usedDigests.insert(digest)
                 let required = ancestors.union([disclosure.getDisclosure()])
                 insert(code: code, claimName: "[\(position)]", value: disclosure.claimValue.jsonToAny,
-                       disclosures: required, isConsentItem: true)
+                       disclosures: required, ownDisclosure: disclosure.getDisclosure(),
+                       isConsentItem: true)
                 walk(value: disclosure.claimValue.jsonToAny,
                      prefix: code,
                      ancestors: required,

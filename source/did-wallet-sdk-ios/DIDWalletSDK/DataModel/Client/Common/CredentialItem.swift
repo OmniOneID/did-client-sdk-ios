@@ -83,7 +83,7 @@ public struct SdJwtCredentialItem: CredentialItem
     /// The DID of the issuer that signed this credential. See `SDJWT.issuerDid`.
     public var issuerDid: String? { sdjwt.issuerDid }
 
-    /// Every claim the holder can be asked to consent to, sorted by code.
+    /// Every claim the holder can be asked to consent to, in the order the issuer wrote them.
     ///
     /// Reading it can fail because an SD-JWT's claims live in its issuer JWT payload, which is
     /// parsed on demand — unlike an mdoc, whose elements were already decoded when it was parsed.

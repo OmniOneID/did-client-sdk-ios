@@ -36,6 +36,17 @@
   preserve existing wallets has to migrate the value out of `UserDefaults.standard` before the first
   call into the SDK, or re-create the wallet.
 
+- `CredentialPrimaryPublicKey.r` is an `OrderedStringMap<BigIntString>` instead of an
+  `OrderedCollections.OrderedDictionary<String, BigIntString>`. Subscripting, iteration and `keys`
+  read the same, and the JSON encoding is unchanged; only code that spells the type out or calls
+  swift-collections' own API (`elements`, `index(forKey:)`) has to change.
+
+  Why: that property was the sole place a swift-collections type reached the public interface, and
+  it obliged every consuming app to declare and pin the package to compile against the SDK. The
+  library is an implementation detail — with an SDK-owned type in the signature it is now linked
+  statically and never named, so an app using the XCFramework can drop the declaration entirely and
+  an app using SPM no longer has to agree with the SDK on a version.
+
 ### Removed
 - `CommunicationClient.doGet(url:)` and `CommunicationClient.doPost(url:requestJsonData:)`, together
   with the `CommunicationProtocol` and `ZKPCommunicationProtocol` protocols. Both methods were
@@ -55,26 +66,83 @@
   `setLogLevel(_:)` and the log methods.
 
 ### Fixed
-- SD-JWT disclosures are presented with the issuer's original bytes instead of being re-serialized,
-  and a disclosure's digest is now taken over the base64url-encoded disclosure as SD-JWT specifies.
-  Presentations of credentials whose disclosures were not byte-identical to this SDK's encoding were
-  rejected by the verifier, and nested claims did not resolve.
-- A DCQL claim path (`address.street_address`) reported by credential matching now resolves to the
-  disclosures that reveal it, including the parent object's. Presenting a nested or plaintext claim
-  previously failed after the holder had already consented.
-- Numeric claim values of `0` and `1` are no longer read as booleans, so DCQL `values` / `value` /
-  `min` / `max` conditions match them.
-- A stored credential that cannot be parsed is skipped instead of aborting the match for every other
-  credential in the wallet.
-- A DCQL credential query without `meta` is matched on its claim constraints instead of being
-  dropped; `meta` is optional in DCQL.
-- A malformed JWE, credential JWT header or signature from a server raises an error instead of
-  trapping: issuance no longer crashes on a malformed response.
 - The logger's configuration (`WalletLogger.setEnable`/`setLogLevel`) and the wallet's lock state are
   read and written through a lock instead of unsynchronized mutable statics. Method signatures are
   unchanged.
 
 ### Added
+
+**OpenID4VC.** An OpenID4VCI / OpenID4VP layer, new in this release: the wallet can be issued
+credentials by an OpenID4VCI issuer, keep them alongside the OmniOne W3C credentials it already
+held, and answer an OpenID4VP request from a verifier. Two credential formats are supported,
+IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
+
+- **Issuance and storage.** `WalletAPI.requestIssueOID4VC(...)` obtains a credential from an issuer
+  and stores it only after verifying it — the issuer signature against the key its `kid` resolves
+  to in the issuer's DID document, and, for an mdoc, the element digests, the validity window and
+  the binding to the wallet's own key. `getAllOID4VCs`, `getOID4VCs(ids:)`, `deleteOID4VCs(ids:)`
+  and `isAnyOID4VCSaved` manage what is stored.
+
+  The listing APIs return `[any CredentialItem]`, not a concrete type: one wallet holds both
+  formats, so a list mixes `SdJwtCredentialItem` and `MdocCredentialItem` and the caller narrows to
+  what it can act on.
+
+- **Presentation.** `matchCredentials(hWalletToken:authRequest:)` answers a DCQL query with the
+  stored credentials that satisfy it, and `createVpToken(...)` builds the authorization response for
+  the holder's selection — a KB-JWT presentation for SD-JWT, a `DeviceResponse` for mdoc — returning
+  a body that is ready to send, JWE-sealed when the request asks for `direct_post.jwt`.
+
+  What a presentation carries is what the issuer signed, byte for byte: an SD-JWT disclosure travels
+  as the issuer wrote it rather than re-serialized, and its digest is taken over that base64url
+  string, because a verifier checks the bytes and not the JSON they decode to. The mdoc path holds
+  the same line, moving issuer-signed items across unchanged.
+
+  Matching follows DCQL where the spec is easy to read past: `meta` is optional, so a query without
+  it is matched on its claim constraints; a claim value of `0` or `1` is a number and not a boolean,
+  so `values` / `value` / `min` / `max` see it; a path into a nested or plaintext claim
+  (`address.street_address`) resolves to every disclosure that reveals it, the parent object's
+  included; and a stored credential that will not parse is skipped rather than abandoning the match
+  for every other credential in the wallet.
+
+  A match names its claims as opaque codes (`MatchedCredential.claimCodes`). The SDK both produces a
+  code and resolves it back to the claim, so a code is a label to show and an identity to compare
+  and nothing else: splitting one on `.` or `[]`, or assembling one from parts, picks out a
+  different claim than the holder agreed to.
+
+- **Consent listing.** `Mdoc.consentItems` and `SDJWT.consentItems()` — mirrored on the two
+  `CredentialItem` types — enumerate everything a credential can be asked to disclose, each row
+  carrying the code the presentation will be expressed in. Both list in the order the issuer wrote
+  the credential — the order its elements were signed in for an mdoc, the order its disclosures
+  arrived in for an SD-JWT — so a screen drawn from either does not reorder itself between runs.
+  `SdJwtConsentItem.isSelectivelyDisclosable`
+  reports whether withholding a claim actually hides it, since an issuer may leave a claim in the
+  clear; `isAmbiguous` marks a code that names more than one claim, which cannot be presented.
+
+- **Issuer identity.** `Mdoc.issuerDid` and `SDJWT.issuerDid`, likewise mirrored, name the issuer
+  whose key the credential's signature was checked against. Read from the signature's key
+  identifier rather than from a self-asserted claim, and reported the same way for both formats.
+
+- **Format tokens.** `CredentialFormat.token` and `CredentialFormat.init?(token:)` convert between
+  the enum and the DCQL `format` string, the initializer also accepting the aliases a verifier may
+  send. An app that has to branch on a request's format need not carry the literals itself.
+
+- **JWS.** `JWS` is public — `protectedHeader`, `payloadData`, `verify()` and
+  `verify(publicKey:)` — because fetching an authorization request and posting its response stay
+  with the app. `verify()` checks the signature against a `jwk` carried in the header, which
+  authenticates nothing on its own; when the header names a `kid`, resolve the signer's key and use
+  `verify(publicKey:)`, leaving the trust decision where it belongs.
+
+- **Errors.** `OID4VCManagerError` raises coded errors across the flow: `051xx` for malformed input,
+  `052xx` for JWE, `053xx` for the credential response, `054xx` for verification (including the mdoc
+  checks `05403`–`05405`) and `055xx` for presentation.
+
+- `authenticateLock(passcode:isChanging:)` takes an `isChanging` flag, default `false`, so a
+  passcode-change flow can verify the current passcode without disturbing the wallet's lock state.
+  Existing call sites keep compiling.
+
+- `OrderedStringMap`, an insertion-ordered string-keyed map the SDK owns. See the note on
+  `CredentialPrimaryPublicKey.r` under Breaking Changes.
+
 - Public data models declare `Sendable`. Beyond `Jsonable` (above), the enums and value types those
   models are built from — `AnyJSON`, `UTCDatetime`, `DIDVersionId`, `DIDMethodType`, `Disclosure`,
   `VerifyAuthType`, `ZKProof`'s nested proof types, the `DIDDocument` / `VerifiableCredential` /
