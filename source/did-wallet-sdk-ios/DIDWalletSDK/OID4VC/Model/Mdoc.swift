@@ -60,6 +60,19 @@ public struct Mdoc: Sendable, Equatable {
         return issuerAuth.keyIdentifier.flatMap { DIDUtility.parseDIDKeyIdentifier($0)?.did }
     }
 
+    /// Where this document's revocation status is published, from the MSO the issuer signed.
+    ///
+    /// `nil` when the document carries no status list reference — the base standards make the claim
+    /// optional, and documents issued before an issuer started publishing status will not have one.
+    /// A reference the issuer wrote but wrote wrongly is a parse failure rather than a `nil`, so
+    /// this reads as "no status to check" and never as "a status we gave up on".
+    ///
+    /// Reading the list the reference points at, and deciding what a revoked or suspended entry
+    /// means for the holder, are the app's. See `StatusListReference`.
+    public var status: StatusListReference? {
+        return mso.status
+    }
+
     /// The MSO the issuer signed, decoded.
     let mso: MobileSecurityObject
 
@@ -391,6 +404,8 @@ struct MobileSecurityObject: Equatable {
     let valueDigests: [String: [UInt64: Data]]
     /// The holder key the document is bound to, as a COSE_Key.
     let deviceKey: CBOR
+    /// Where the document's revocation status is published, when it publishes one.
+    let status: StatusListReference?
 
     static func decode(_ issuerAuth: COSESign1) throws -> MobileSecurityObject {
         guard let payload = issuerAuth.payload else {
@@ -442,7 +457,8 @@ struct MobileSecurityObject: Equatable {
                                     docType: docType,
                                     validityInfo: try MobileSecurityObject.validity(mso["validityInfo"]),
                                     valueDigests: valueDigests,
-                                    deviceKey: deviceKey)
+                                    deviceKey: deviceKey,
+                                    status: try StatusListReference.decode(mso: mso["status"]))
     }
 
     private static func validity(_ item: CBOR?) throws -> MdocValidityInfo {

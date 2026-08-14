@@ -90,6 +90,14 @@ public struct SdJwtCredentialItem: CredentialItem
     public var consentItems: [SdJwtConsentItem] {
         get throws { try sdjwt.consentItems() }
     }
+
+    /// Where this credential's revocation status is published. See `SDJWT.status()`.
+    ///
+    /// Throws for the same reason `consentItems` does: the answer is in the issuer JWT payload,
+    /// which is read on demand.
+    public var status: StatusListReference? {
+        get throws { try sdjwt.status() }
+    }
 }
 
 public struct MdocCredentialItem: CredentialItem
@@ -109,6 +117,12 @@ public struct MdocCredentialItem: CredentialItem
     /// The stored item and the document it holds answer this the same way; the property is here so
     /// a screen built from a wallet listing does not have to reach through to `mdoc` first.
     public var consentItems: [MdocConsentItem] { mdoc.consentItems }
+
+    /// Where this document's revocation status is published. See `Mdoc.status`.
+    ///
+    /// Non-throwing where the SD-JWT item's is not, because an mdoc's MSO was decoded when the
+    /// document was parsed; anything unreadable in it failed then.
+    public var status: StatusListReference? { mdoc.status }
 }
 
 

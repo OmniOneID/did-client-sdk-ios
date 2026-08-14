@@ -101,16 +101,28 @@ public struct SDJWT: Jsonable {
     ///
     /// Claims the issuer left in the clear have no disclosure and therefore no position; they come
     /// after the rest, ordered by code among themselves.
+    /// Where this credential's revocation status is published, from the issuer-signed payload.
+    ///
+    /// A function rather than a property because the payload is only decoded on demand: an
+    /// `SDJWT` holds the issuer JWT as a string until something asks it a question about the
+    /// claims inside. `Mdoc.status` is a property for the mirror-image reason — an mdoc is decoded
+    /// in full when it is parsed, so its answer is already in hand.
+    ///
+    /// `nil` when the credential carries no status list reference; the base standards make the
+    /// claim optional. A reference the issuer wrote but wrote wrongly throws instead, so a `nil`
+    /// always means "nothing to check" rather than "something we could not read".
+    ///
+    /// - Returns: The reference, or `nil` when the credential publishes no status.
+    /// - Throws: `OID4VCManagerError.invalidJWS` when the payload cannot be read, or when it holds
+    ///           a `status` that cannot be understood.
+    public func status() throws -> StatusListReference? {
+        return try StatusListReference.decode(payload: decodedPayload())
+    }
+
     /// - Returns: The consentable claims, in disclosure order.
     /// - Throws: `OID4VCManagerError.invalidJWS` when the issuer JWT payload cannot be read.
     public func consentItems() throws -> [SdJwtConsentItem] {
-        let payload: [String: Any]
-        do {
-            payload = try SimpleJWTDecoder.parse(credentialJwt).payload
-        } catch {
-            throw OID4VCManagerError.invalidJWS(
-                detail: "issuer JWT payload is not readable: \(error)").getError()
-        }
+        let payload = try decodedPayload()
 
         var positions: [String: Int] = [:]
         for (position, disclosure) in disclosures.enumerated() {
@@ -137,6 +149,19 @@ public struct SDJWT: Jsonable {
                 }
             }
             .map { $0.item }
+    }
+
+    /// The issuer JWT's payload, decoded.
+    ///
+    /// - Returns: The payload claims.
+    /// - Throws: `OID4VCManagerError.invalidJWS` when the JWT cannot be read.
+    private func decodedPayload() throws -> [String: Any] {
+        do {
+            return try SimpleJWTDecoder.parse(credentialJwt).payload
+        } catch {
+            throw OID4VCManagerError.invalidJWS(
+                detail: "issuer JWT payload is not readable: \(error)").getError()
+        }
     }
 
     public func getSignSource() -> (String, String)

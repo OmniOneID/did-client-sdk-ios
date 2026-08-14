@@ -234,9 +234,64 @@ final class MdocTests: XCTestCase {
         XCTAssertThrowsError(try MdocPresenter.resolveElements(mdoc: mdoc, claimCodes: ["a.b.c"]))
     }
 
+    /// The reference the issuer publishes status under, as it arrives: `status_list` at the top of
+    /// the MSO, an unsigned `idx` and a text `uri`.
+    func testStatusListReferenceIsReadFromTheMSO() throws {
+        let mdoc = try Mdoc.parse(raw: MdocTests.syntheticDocument(
+            elements: [("test.doc", "a")],
+            status: .map(["status_list": .map(["idx": .unsignedInt(7),
+                                               "uri": .utf8String("https://issuer.example/status-lists/2")])])))
+
+        XCTAssertEqual(mdoc.status, StatusListReference(uri: "https://issuer.example/status-lists/2", idx: 7))
+    }
+
+    /// Documents issued before the issuer published status lists carry no `status`, and they have
+    /// to keep parsing — the wallet re-reads stored documents on every listing, so rejecting them
+    /// would take credentials the holder already owns out of reach.
+    func testDocumentWithoutStatusParsesAndReportsNoReference() throws {
+        XCTAssertNil(try Mdoc.parse(raw: MdocFixtures.pidIssuerSigned).status)
+        XCTAssertNil(try Mdoc.parse(raw: MdocTests.syntheticDocument(elements: [("test.doc", "a")])).status)
+    }
+
+    /// A `status` written wrongly is the issuer getting it wrong, not the document declining to
+    /// publish one. Returning `nil` there would read as "nothing to check" and quietly let a
+    /// revocable document past the check it was supposed to get.
+    func testMalformedStatusIsRejectedRatherThanReadAsAbsent() {
+        let malformed: [CBOR] = [
+            .utf8String("revoked"),                                              // status is not a map
+            .map(["status_list": .utf8String("https://issuer.example/2#7")]),    // entry is not a map
+            .map(["status_list": .map(["idx": .unsignedInt(7)])]),               // no uri
+            .map(["status_list": .map(["uri": .utf8String("https://issuer.example/2")])]),  // no idx
+            .map(["status_list": .map(["idx": .negativeInt(0),                   // idx is not unsigned
+                                       "uri": .utf8String("https://issuer.example/2")])]),
+            .map(["status_list": .map(["idx": .unsignedInt(7),                   // uri names nothing
+                                       "uri": .utf8String("")])])
+        ]
+        for status in malformed {
+            XCTAssertThrowsError(try Mdoc.parse(raw: MdocTests.syntheticDocument(
+                elements: [("test.doc", "a")], status: status)), "\(status)")
+        }
+    }
+
+    /// A status mechanism this SDK does not read is not a malformed one. The MSO parses, and the
+    /// document simply has no status list to point at.
+    func testStatusWithoutAStatusListIsNotAFailure() throws {
+        let mdoc = try Mdoc.parse(raw: MdocTests.syntheticDocument(
+            elements: [("test.doc", "a")],
+            status: .map(["identifier_list": .map(["id": .utf8String("x"),
+                                                   "uri": .utf8String("https://issuer.example/ids/1")])])))
+
+        XCTAssertNil(mdoc.status)
+    }
+
     /// Builds an `IssuerSigned` carrying the given (namespace, element) pairs. The MSO is
     /// structurally complete but not signed — `parse` decodes, it does not verify.
-    private static func syntheticDocument(elements: [(namespace: String, identifier: String)]) -> String {
+    ///
+    /// - Parameters:
+    ///   - elements: The (namespace, identifier) pairs to write into `nameSpaces`.
+    ///   - status: The MSO's `status` member, written only when given.
+    private static func syntheticDocument(elements: [(namespace: String, identifier: String)],
+                                          status: CBOR? = nil) -> String {
         var nameSpaces = OrderedDictionary<CBOR, CBOR>()
         for (index, element) in elements.enumerated() {
             let item = CBOR.map([
@@ -255,7 +310,7 @@ final class MdocTests: XCTestCase {
         }
 
         let timestamp = CBOR.tagged(CBOR.Tag(rawValue: 0), .utf8String("2026-08-11T00:00:00Z"))
-        let mso = CBOR.map([
+        var msoFields: OrderedDictionary<CBOR, CBOR> = [
             "version": .utf8String("1.0"),
             "digestAlgorithm": .utf8String("SHA-256"),
             "docType": .utf8String("test.doc"),
@@ -266,7 +321,11 @@ final class MdocTests: XCTestCase {
                 "validFrom": timestamp,
                 "validUntil": timestamp
             ])
-        ])
+        ]
+        if let status {
+            msoFields["status"] = status
+        }
+        let mso = CBOR.map(msoFields)
         let issuerAuth = CBOR.array([
             .byteString(CBOR.map([.unsignedInt(1): .negativeInt(6)]).encode()),
             .map([:]),

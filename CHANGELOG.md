@@ -122,6 +122,18 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   whose key the credential's signature was checked against. Read from the signature's key
   identifier rather than from a self-asserted claim, and reported the same way for both formats.
 
+- **Revocation status reference.** `Mdoc.status` and `SDJWT.status()`, mirrored on the two
+  `CredentialItem` types, report where a credential says its revocation status is published — an
+  IETF Token Status List entry, as `StatusListReference` with a `uri` and an `idx`. Both formats
+  answer in that one type, so an app reads the reference the same way whichever it holds, without
+  decoding an MSO out of CBOR itself.
+
+  The SDK exposes the reference and stops there: fetching the status list token and deciding what a
+  revoked or suspended entry means for the holder are the app's. `nil` means the credential
+  publishes no status, which the base standards allow and older credentials do; a reference the
+  issuer wrote but wrote wrongly throws instead of reading as absent, so `nil` never stands in for a
+  check that was skipped.
+
 - **Format tokens.** `CredentialFormat.token` and `CredentialFormat.init?(token:)` convert between
   the enum and the DCQL `format` string, the initializer also accepting the aliases a verifier may
   send. An app that has to branch on a request's format need not carry the literals itself.
