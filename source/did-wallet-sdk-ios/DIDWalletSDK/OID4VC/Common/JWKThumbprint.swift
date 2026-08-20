@@ -27,15 +27,19 @@ import Foundation
 /// change its thumbprint.
 enum JWKThumbprint
 {
-    /// The SHA-256 thumbprint of an EC key, base64url-encoded.
+    /// The SHA-256 thumbprint of an EC key, as the raw digest.
+    ///
+    /// The digest is returned rather than a base64url string because the callers that carry a
+    /// thumbprint disagree on how to write it down — CBOR structures carry the bytes, JSON ones the
+    /// base64url of the same bytes — and only one of those can be the value this returns.
     ///
     /// Only EC keys are computed here because that is the only key type this SDK exchanges; another
     /// key type has a different required-member set and would need its own canonical form.
     /// - Parameter jwk: The key to identify.
-    /// - Returns: The base64url thumbprint.
+    /// - Returns: The 32-byte thumbprint.
     /// - Throws: `OID4VCManagerError.unsupportedJWEKey` when the key is not an EC key this SDK
     ///   can canonicalize.
-    static func sha256(of jwk: JWK) throws -> String
+    static func sha256(of jwk: JWK) throws -> Data
     {
         guard jwk.kty == .ec, jwk.crv == .p256
         else
@@ -46,6 +50,6 @@ enum JWKThumbprint
         // RFC 7638 §3.2: for an EC key the required members are crv, kty, x, y — in this order,
         // which is also their lexicographic order.
         let canonical = "{\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"\(jwk.x)\",\"y\":\"\(jwk.y)\"}"
-        return Data(canonical.utf8).sha256().base64URLEncoded
+        return Data(canonical.utf8).sha256()
     }
 }

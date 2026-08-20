@@ -172,6 +172,44 @@ struct MdocPresenter
         return selected
     }
 
+    /// `SessionTranscript` for OID4VP (OpenID4VP 1.0, Annex B.2.6.1): the two transports ISO defines
+    /// are unused, and the third element carries the handover that binds this response to this
+    /// request.
+    ///
+    /// Nothing of this structure travels with the response — the verifier rebuilds it from the
+    /// request it sent — so every field has to be the type the CDDL names rather than an equivalent
+    /// spelling of the same value. `jwkThumbprint` in particular is a `bstr` of the digest, not the
+    /// base64url text a JSON member would carry.
+    static func sessionTranscript(clientId: String,
+                                  nonce: String,
+                                  responseUri: String,
+                                  responseEncryption: ResponseEncryption) throws -> CBOR
+    {
+        let thumbprint: CBOR
+        switch responseEncryption
+        {
+        case .none:
+            thumbprint = .null
+        case .key(let jwk):
+            thumbprint = .byteString([UInt8](try JWKThumbprint.sha256(of: jwk)))
+        }
+
+        // OpenID4VPHandoverInfo — positional, so its encoding does not depend on map ordering.
+        let handoverInfo = CBOR.array([
+            .utf8String(clientId),
+            .utf8String(nonce),
+            thumbprint,
+            .utf8String(responseUri)
+        ])
+        let handoverInfoHash = Data(handoverInfo.encode()).sha256()
+
+        return .array([
+            .null,  // DeviceEngagementBytes — not used over OID4VP
+            .null,  // EReaderKeyBytes — not used over OID4VP
+            .array([.utf8String("OpenID4VPHandover"), .byteString([UInt8](handoverInfoHash))])
+        ])
+    }
+
     // MARK: - Private
 
     /// The `IssuerSigned` to send: the issuer's own `issuerAuth`, and only the selected items —
@@ -209,38 +247,6 @@ struct MdocPresenter
             .map(unprotected),
             issuerAuth.payload.map { CBOR.byteString($0) } ?? .null,
             .byteString(issuerAuth.signature)
-        ])
-    }
-
-    /// `SessionTranscript` for OID4VP (OpenID4VP 1.0, Annex B): the two transports ISO defines are
-    /// unused, and the third element carries the handover that binds this response to this request.
-    private static func sessionTranscript(clientId: String,
-                                          nonce: String,
-                                          responseUri: String,
-                                          responseEncryption: ResponseEncryption) throws -> CBOR
-    {
-        let thumbprint: CBOR
-        switch responseEncryption
-        {
-        case .none:
-            thumbprint = .null
-        case .key(let jwk):
-            thumbprint = .utf8String(try JWKThumbprint.sha256(of: jwk))
-        }
-
-        // OpenID4VPHandoverInfo — positional, so its encoding does not depend on map ordering.
-        let handoverInfo = CBOR.array([
-            .utf8String(clientId),
-            .utf8String(nonce),
-            thumbprint,
-            .utf8String(responseUri)
-        ])
-        let handoverInfoHash = Data(handoverInfo.encode()).sha256()
-
-        return .array([
-            .null,  // DeviceEngagementBytes — not used over OID4VP
-            .null,  // EReaderKeyBytes — not used over OID4VP
-            .array([.utf8String("OpenID4VPHandover"), .byteString([UInt8](handoverInfoHash))])
         ])
     }
 

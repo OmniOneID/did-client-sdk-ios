@@ -205,6 +205,40 @@ final class MdocPresenterTests: XCTestCase {
         XCTAssertNotEqual(clear.signer.digests, sealed.signer.digests)
     }
 
+    /// The session transcript is the one part of a presentation the verifier rebuilds instead of
+    /// receiving, so bytes that differ from its own make every signature over them verify against
+    /// the wrong input — silently, and only at the verifier.
+    ///
+    /// Pinned to the non-normative `OpenID4VPHandover` vector of OpenID4VP 1.0 Appendix B.2.6.1:
+    /// element order, CBOR types (`jwkThumbprint` is a `bstr` of the digest, not its base64url) and
+    /// what the hash is taken over are all checked against the standard rather than against us.
+    func testTheHandoverMatchesTheSpecVector() throws {
+        // The example encryption key of Appendix B.2.6.1; its thumbprint is the third element.
+        let jwk = JWK(crv: .p256,
+                      kty: .ec,
+                      x: "DxiH5Q4Yx3UrukE2lWCErq8N8bqC9CHLLrAwLz5BmE0",
+                      y: "XtLM4-3h5o3HUH0MHVJV0kyq0iBlrBwlh8qEDMZ4-Pc")
+
+        let transcript = try MdocPresenter.sessionTranscript(
+            clientId: "x509_san_dns:example.com",
+            nonce: "exc7gBkxjx1rdc9udRrveKvSsJIq80avlXeLHhGwqtA",
+            responseUri: "https://example.com/response",
+            responseEncryption: .key(jwk))
+
+        let view = OrderedDictionaryView(transcript)
+        XCTAssertEqual(view[0]?.isNull, true)    // DeviceEngagementBytes — unused over OID4VP
+        XCTAssertEqual(view[1]?.isNull, true)    // EReaderKeyBytes — unused over OID4VP
+
+        let handover = try XCTUnwrap(view[2]).cbor
+        XCTAssertEqual(hex(handover.encode()),
+                       "82714f70656e494434565048616e646f7665725820"
+                       + "048bc053c00442af9b8eed494cefdd9d95240d254b046b11b68013722aad38ac")
+    }
+
+    private func hex(_ bytes: [UInt8]) -> String {
+        return bytes.map { String(format: "%02x", $0) }.joined()
+    }
+
     // MARK: - Selection
 
     func testRejectsASelectionTheDocumentCannotDisclose() throws {

@@ -22,6 +22,7 @@ import CryptoKit
 
 /// A thumbprint is only useful if two implementations that never met agree on it, so what these
 /// tests pin is the canonical form (RFC 7638 §3.2) rather than a value this SDK happens to produce.
+/// The value itself is the raw digest: how it is written down is the caller's business.
 final class JWKThumbprintTests: XCTestCase {
 
     /// The EC key from RFC 7515 A.3.
@@ -35,7 +36,7 @@ final class JWKThumbprintTests: XCTestCase {
     /// against a recorded output.
     func testHashesTheCanonicalFormRFC7638Defines() throws {
         let canonical = "{\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"\(key.x)\",\"y\":\"\(key.y)\"}"
-        let expected = Data(SHA256.hash(data: Data(canonical.utf8))).base64URLEncoded
+        let expected = Data(SHA256.hash(data: Data(canonical.utf8)))
 
         XCTAssertEqual(try JWKThumbprint.sha256(of: key), expected)
     }
