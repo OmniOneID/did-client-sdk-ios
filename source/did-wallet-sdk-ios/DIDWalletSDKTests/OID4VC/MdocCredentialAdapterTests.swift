@@ -37,6 +37,24 @@ final class MdocCredentialAdapterTests: XCTestCase {
         return try DCQLQuery.ClaimQuery(from: json)
     }
 
+    /// One mdoc credential query over this fixture's doctype, carrying the given claim constraints.
+    private func query(claims: String, claimSets: String? = nil) throws -> DCQLQuery.CredentialQuery {
+        let sets = claimSets.map { ", \"claim_sets\": \($0)" } ?? ""
+        let dcql = try DCQLQuery(from: """
+        {
+          "credentials": [
+            {
+              "id": "pid",
+              "format": "mso_mdoc-did",
+              "meta": { "doctype_value": "\(docType)" },
+              "claims": \(claims)\(sets)
+            }
+          ]
+        }
+        """)
+        return try XCTUnwrap(dcql.credentials?.first)
+    }
+
     // MARK: - Parsing
 
     func testParsesClaimsNestedUnderTheirNamespace() throws {
@@ -211,6 +229,70 @@ final class MdocCredentialAdapterTests: XCTestCase {
 
         XCTAssertNil(DCQLCredentialMatcher.eligibleClaimNames(query: query.credentials![0],
                                                               credential: credential))
+    }
+
+    /// The spelling a verifier happens to use must not change what leaves the wallet. Matching once
+    /// dropped the `namespace` + `claim_name` pair for having no path, which read as "this query
+    /// constrains no claim" and named all 26 elements — a request for two.
+    func testEligibleClaimNamesHonoursTheOlderMdocClaimSpelling() throws {
+        let credential = try parsed()
+        let expected: Set<String> = [
+            MdocClaimIndex.code(namespace: namespace, elementIdentifier: "family_name"),
+            MdocClaimIndex.code(namespace: namespace, elementIdentifier: "given_name")
+        ]
+
+        let byNamespace = try query(claims: """
+        [ { "namespace": "\(namespace)", "claim_name": "family_name" },
+          { "namespace": "\(namespace)", "claim_name": "given_name" } ]
+        """)
+        let byPath = try query(claims: """
+        [ { "path": ["\(namespace)", "family_name"] },
+          { "path": ["\(namespace)", "given_name"] } ]
+        """)
+
+        XCTAssertEqual(DCQLCredentialMatcher.eligibleClaimNames(query: byNamespace, credential: credential),
+                       expected)
+        XCTAssertEqual(DCQLCredentialMatcher.eligibleClaimNames(query: byPath, credential: credential),
+                       expected)
+    }
+
+    /// A claim query the credential cannot satisfy makes it ineligible. Read as "no constraint", the
+    /// same query would have made every credential eligible and disclosed all of it.
+    func testEligibleClaimNamesRejectsAnElementTheDocumentLacks() throws {
+        let credential = try parsed()
+        let query = try query(claims: """
+        [ { "namespace": "\(namespace)", "claim_name": "driving_privileges" } ]
+        """)
+
+        XCTAssertNil(DCQLCredentialMatcher.eligibleClaimNames(query: query, credential: credential))
+    }
+
+    func testEligibleClaimNamesAppliesValueConditionsInTheOlderSpelling() throws {
+        let credential = try parsed()
+        let met = try query(claims: """
+        [ { "namespace": "\(namespace)", "claim_name": "given_name", "values": ["Raon"] } ]
+        """)
+        let unmet = try query(claims: """
+        [ { "namespace": "\(namespace)", "claim_name": "given_name", "values": ["NotRaon"] } ]
+        """)
+
+        XCTAssertEqual(DCQLCredentialMatcher.eligibleClaimNames(query: met, credential: credential),
+                       [MdocClaimIndex.code(namespace: namespace, elementIdentifier: "given_name")])
+        XCTAssertNil(DCQLCredentialMatcher.eligibleClaimNames(query: unmet, credential: credential))
+    }
+
+    /// `claim_sets` resolves its ids against the same claim queries, so the older spelling has to
+    /// hold up there too.
+    func testEligibleClaimNamesHonoursTheOlderSpellingInAClaimSet() throws {
+        let credential = try parsed()
+        let query = try query(claims: """
+        [ { "id": "a", "namespace": "\(namespace)", "claim_name": "family_name" },
+          { "id": "b", "namespace": "\(namespace)", "claim_name": "given_name" } ]
+        """, claimSets: #"[["a", "b"]]"#)
+
+        XCTAssertEqual(DCQLCredentialMatcher.eligibleClaimNames(query: query, credential: credential),
+                       [MdocClaimIndex.code(namespace: namespace, elementIdentifier: "family_name"),
+                        MdocClaimIndex.code(namespace: namespace, elementIdentifier: "given_name")])
     }
 
     // MARK: - Query validation

@@ -49,7 +49,7 @@ public struct DCQLQuery: Jsonable, FromSnake
     {
         public var id: String?
         /// For JSON-based credentials (SD-JWT, W3C VC): path to the claim.
-        /// Not used for mdoc format.
+        /// An mdoc element is also addressable this way, as `[namespace, element]`.
         public var path: [DCQLPathElement]?
         /// For mdoc credentials: the namespace of the claim.
         /// e.g., "org.iso.18013.5.1"
@@ -63,6 +63,21 @@ public struct DCQLQuery: Jsonable, FromSnake
         public var max: AnyJSON?
         public var min: AnyJSON?
 
+        /// Whether this query names a claim at all.
+        ///
+        /// Which spelling names one depends on the credential: a JSON-based credential is addressed
+        /// by `path`, an mdoc element by `namespace` + `claim_name` — OID4VP 1.0 §6.4.2 spells the
+        /// latter as a two-element `path`, and deployed verifiers still send the older pair, so both
+        /// name a claim. A query in neither spelling names none, which is what separates "this query
+        /// constrains no claim" from "this query constrains a claim the credential must satisfy".
+        public var addressesAClaim: Bool
+        {
+            if path?.isEmpty == false
+            {
+                return true
+            }
+            return namespace?.isEmpty == false && claimName?.isEmpty == false
+        }
     }
 
     /// Trusted authority for credential issuer validation.

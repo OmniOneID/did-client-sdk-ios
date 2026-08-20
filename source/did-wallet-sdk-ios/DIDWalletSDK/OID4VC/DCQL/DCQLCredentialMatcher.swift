@@ -235,8 +235,11 @@ public enum DCQLCredentialMatcher {
             }
             return nil
         }
-        // claims (AND of all claim queries)
-        let claims = (query.claims ?? []).filter { $0.path?.isEmpty == false }
+        // claims (AND of all claim queries). Filtering on "names a claim" rather than on "has a
+        // path" is what lets the mdoc spelling through: an mdoc claim query carries a namespace and
+        // an element name and no path, and dropping it here would turn a request for two elements
+        // into a request for the whole document.
+        let claims = (query.claims ?? []).filter { $0.addressesAClaim }
         if !claims.isEmpty {
             return matchAllClaims(claims, adapter: adapter, credential: credential)
         }
