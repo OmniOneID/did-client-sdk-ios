@@ -207,8 +207,8 @@
 		AAAA0047000000000000E365 /* OID4VPResponseUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */; };
 		C98D82A82FA0811600AF5BC2 /* CNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = C98D82A72FA0810E00AF5BC2 /* CNonce.swift */; };
 		C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */; };
-		C9CF5DAE2DAF41540078DFFA /* CommnunicationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */; };
-		C9CF5DAF2DAF41540078DFFA /* CommnunicationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */; };
+		C9CF5DAE2DAF41540078DFFA /* CommunicationClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAA2DAF41540078DFFA /* CommunicationClient.swift */; };
+		C9CF5DAF2DAF41540078DFFA /* CommunicationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DAB2DAF41540078DFFA /* CommunicationProtocol.swift */; };
 		C9CF5DB92DAF7A250078DFFA /* MultibaseUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DB72DAF7A250078DFFA /* MultibaseUtils.swift */; };
 		C9CF5DBA2DAF7A250078DFFA /* CryptoUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DB62DAF7A250078DFFA /* CryptoUtils.swift */; };
 		C9CF5DBB2DAF7A250078DFFA /* DigestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9CF5DB82DAF7A250078DFFA /* DigestUtils.swift */; };
@@ -528,8 +528,8 @@
 		C98D52553000BDB300DD48AC /* JWE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWE.swift; sourceTree = "<group>"; };
 		AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OID4VPResponseUtil.swift; sourceTree = "<group>"; };
 		C98D82A72FA0810E00AF5BC2 /* CNonce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CNonce.swift; sourceTree = "<group>"; };
-		C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationClient.swift; sourceTree = "<group>"; };
-		C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommnunicationProtocol.swift; sourceTree = "<group>"; };
+		C9CF5DAA2DAF41540078DFFA /* CommunicationClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunicationClient.swift; sourceTree = "<group>"; };
+		C9CF5DAB2DAF41540078DFFA /* CommunicationProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunicationProtocol.swift; sourceTree = "<group>"; };
 		C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunicationAPIError.swift; sourceTree = "<group>"; };
 		C9CF5DB62DAF7A250078DFFA /* CryptoUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoUtils.swift; sourceTree = "<group>"; };
 		C9CF5DB72DAF7A250078DFFA /* MultibaseUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultibaseUtils.swift; sourceTree = "<group>"; };
@@ -1433,8 +1433,8 @@
 		C9F415062DAE60F900C04A1A /* Communication */ = {
 			isa = PBXGroup;
 			children = (
-				C9CF5DAA2DAF41540078DFFA /* CommnunicationClient.swift */,
-				C9CF5DAB2DAF41540078DFFA /* CommnunicationProtocol.swift */,
+				C9CF5DAA2DAF41540078DFFA /* CommunicationClient.swift */,
+				C9CF5DAB2DAF41540078DFFA /* CommunicationProtocol.swift */,
 				C9CF5DAC2DAF41540078DFFA /* CommunicationAPIError.swift */,
 			);
 			path = Communication;
@@ -1620,7 +1620,7 @@
 				7CA9829C2C85CEBA00EDF367 /* Properties.swift in Sources */,
 				C9CF5DAD2DAF41540078DFFA /* CommunicationAPIError.swift in Sources */,
 				C90D3C1B2DAFA62200292BFD /* PropertyWrapper.swift in Sources */,
-				C9CF5DAE2DAF41540078DFFA /* CommnunicationClient.swift in Sources */,
+				C9CF5DAE2DAF41540078DFFA /* CommunicationClient.swift in Sources */,
 				C9EB19952DB75F1900D152EE /* Words and Bits.swift in Sources */,
 				C9EB1A8A2DB7714C00D152EE /* CredentialValues.swift in Sources */,
 				C91A34232F88E0B500F20388 /* CredentialOfferRequest.swift in Sources */,
@@ -1663,7 +1663,7 @@
 				C9EB19AD2DB75F1900D152EE /* String Conversion.swift in Sources */,
 				C9EB19AE2DB75F1900D152EE /* Strideable.swift in Sources */,
 				C9EB19AF2DB75F1900D152EE /* BigUInt.swift in Sources */,
-				C9CF5DAF2DAF41540078DFFA /* CommnunicationProtocol.swift in Sources */,
+				C9CF5DAF2DAF41540078DFFA /* CommunicationProtocol.swift in Sources */,
 				C98D25E22DB09DF700B2E84D /* SecureEncryptor.swift in Sources */,
 				C98D25E32DB09DF700B2E84D /* VCManagerDataModel.swift in Sources */,
 				C98D25E42DB09DF700B2E84D /* WalletCoreEnums.swift in Sources */,

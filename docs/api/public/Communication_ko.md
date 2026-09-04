@@ -87,7 +87,7 @@ public static func getZKPCredentialSchama(hostUrlString : String, id : String) a
 
 #### Usage
 ```swift
-let credSchema = try await CommnunicationClient.getZKPCredentialSchama(hostUrlString: APIGatewayURL,
+let credSchema = try await CommunicationClient.getZKPCredentialSchama(hostUrlString: APIGatewayURL,
                                                                        id: credSchemaId)
 ```
 
@@ -118,7 +118,7 @@ public static func getZKPCredentialDefinition(hostUrlString : String, id : Strin
 
 #### Usage
 ```swift
-let credDef = try await CommnunicationClient.getZKPCredentialDefinition(hostUrlString: APIGatewayURL,
+let credDef = try await CommunicationClient.getZKPCredentialDefinition(hostUrlString: APIGatewayURL,
                                                                         id: credDefId)
 ```
 
