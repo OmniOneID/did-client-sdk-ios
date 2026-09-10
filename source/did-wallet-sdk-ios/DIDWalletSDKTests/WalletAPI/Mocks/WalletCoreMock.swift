@@ -15,6 +15,7 @@
  */
 
 import Foundation
+import LocalAuthentication
 @testable import DIDWalletSDK
 
 class WalletCoreMock: WalletCoreImpl {
@@ -167,15 +168,39 @@ class WalletCoreMock: WalletCoreImpl {
         }
     }
     
-    public func sign(keyId: String, pin: Data? = nil, data: Data, type: DidDocumentType) throws -> Data {
+    public func canKeyAgree(keyId: String) throws -> Bool {
+        if try WalletLockManager().isRegLock() && WalletLockManagerMock.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.canKeyAgree(id: keyId)
+    }
+
+    public func keyAgreement(keyId: String,
+                             pin: Data?,
+                             publicKey: Data,
+                             context: LAContext? = nil) throws -> Data {
+        if try WalletLockManager().isRegLock() && WalletLockManagerMock.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.keyAgreement(id: keyId,
+                                                 pin: pin,
+                                                 publicKey: publicKey,
+                                                 context: context)
+    }
+
+    public func sign(keyId: String,
+                     pin: Data? = nil,
+                     data: Data,
+                     type: DidDocumentType,
+                     context: LAContext? = nil) throws -> Data {
         if try WalletLockManager().isRegLock() && WalletLockManagerMock.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
 
         if type == DidDocumentType.DeviceDidDocument {
-            return try deviceKeyManager.sign(id: keyId, digest: data)
+            return try deviceKeyManager.sign(id: keyId, digest: data, context: context)
         } else {
-            return try holderKeyManager.sign(id: keyId, pin: pin, digest: data)
+            return try holderKeyManager.sign(id: keyId, pin: pin, digest: data, context: context)
         }
     }
     

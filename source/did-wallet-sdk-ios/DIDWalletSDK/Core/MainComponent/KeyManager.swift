@@ -16,7 +16,7 @@
 
 import Foundation
 
-
+import CryptoKit
 import LocalAuthentication
 
 struct KeyManager
@@ -466,7 +466,86 @@ struct KeyManager
     ///   - pin: (Optional)Pin of key
     ///   - digest: Data to sign
     /// - Returns: Signature value
-    func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
+    /// Whether the key behind `id` can perform ECDH.
+    ///
+    /// A Secure Enclave key is asked about itself: a key generated before `PURPOSE_AGREE_KEY`-style
+    /// attributes were requested cannot do key exchange, and no wallet-side wiring changes that. A
+    /// software key always can — its private key is reached the same way signing reaches it, which
+    /// means a PIN-protected key needs its PIN at `keyAgreement` time just as it does to sign.
+    /// Capability is the key's; supplying the PIN is the caller's.
+    func canKeyAgree(id : String) throws -> Bool
+    {
+        if id.isEmpty
+        {
+            throw C.invalidParameter(code: .keyManager, name: "id").getError()
+        }
+        guard let walletItem = try storageManager.getItems(by: [id]).first
+        else
+        {
+            return false
+        }
+        switch walletItem.meta.accessMethod
+        {
+        case .secureEnclaveNone, .secureEnclaveAny, .secureEnclaveCurrentSet:
+            return SecureEnclaveManager.canKeyAgree(group: groupName, identifier: id)
+        case .walletNone, .walletPin:
+            return true
+        }
+    }
+
+    /// The raw ECDH shared secret between the key behind `id` and `publicKey`.
+    ///
+    /// - Parameters:
+    ///   - id: Key name.
+    ///   - pin: The PIN, for a PIN-protected software key. Ignored for every other key kind, as in
+    ///     `sign`.
+    ///   - publicKey: The peer's public key as an uncompressed point (`0x04‖x‖y`).
+    ///   - context: An authentication context to reuse, for a Secure Enclave key that asks the user
+    ///     to confirm. One context across several key uses means one confirmation.
+    func keyAgreement(id : String,
+                      pin : Data? = nil,
+                      publicKey : Data,
+                      context : LAContext? = nil) throws -> Data
+    {
+        if id.isEmpty
+        {
+            throw C.invalidParameter(code: .keyManager, name: "id").getError()
+        }
+        if publicKey.isEmpty
+        {
+            throw C.invalidParameter(code: .keyManager, name: "publicKey").getError()
+        }
+
+        let walletItem = try storageManager.getItems(by: [id]).first!
+
+        switch walletItem.meta.accessMethod
+        {
+        case .walletNone, .walletPin:
+            let privateKey = try softwarePrivateKey(keyInfo: walletItem.meta,
+                                                    detailKeyInfo: walletItem.item,
+                                                    pin: pin)
+            return try sharedSecret(privateKey: privateKey, publicKey: publicKey)
+        case .secureEnclaveCurrentSet:
+            let domainState = try getDomainState()
+            if domainState != walletItem.item.domainState!
+            {
+                throw E.userBiometricsChanged.getError()
+            }
+            fallthrough
+        case .secureEnclaveNone, .secureEnclaveAny:
+            return try SecureEnclaveManager.keyAgreement(group: groupName,
+                                                         identifier: id,
+                                                         publicKey: publicKey,
+                                                         context: context)
+        }
+    }
+
+    /// - Parameter context: An authentication context to reuse for a Secure Enclave key, so that a
+    ///   confirmation already given covers this signature too. See `keyAgreement`.
+    func sign(id : String,
+              pin : Data? = nil,
+              digest : Data,
+              context : LAContext? = nil) throws -> Data
     {
         if id.isEmpty
         {
@@ -489,46 +568,9 @@ struct KeyManager
         {
         case .walletNone, .walletPin:
             let keyAlgorithm = try getKeyAlgorithm(algorithmType: keyInfo.algorithmType)
-            
-            var priKey : Data
-            do
-            {
-                priKey = try MultibaseUtils.decode(encoded: detailKeyInfo.privateKey!)
-            }
-            catch
-            {
-                throw C.failToDecode(code: .keyManager,
-                                     name: "Data(R)").getError()
-            }
-            
-            if keyInfo.accessMethod == .walletPin
-            {
-                guard let password = pin, !password.isEmpty
-                else
-                {
-                    throw C.invalidParameter(code: .keyManager,
-                                             name: "pin").getError()
-                }
-                
-                let decrypted = try decryptAES256ViaPBKDF2(encryptResult: EncryptResult(encrypted: priKey,
-                                                                                        salt: detailKeyInfo.salt!),
-                                                           password: password)
-                
-                let publicKey : Data
-                do
-                {
-                    publicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
-                }
-                catch
-                {
-                    throw C.failToDecode(code: .keyManager,
-                                         name: "Data(U)").getError()
-                }
-                
-                try keyAlgorithm.checkKeyPairMatch(privateKey: decrypted,
-                                                   publicKey: publicKey)
-                priKey = decrypted
-            }
+            let priKey = try softwarePrivateKey(keyInfo: keyInfo,
+                                                detailKeyInfo: detailKeyInfo,
+                                                pin: pin)
             
             return try keyAlgorithm.sign(privateKey: priKey,
                                          digest: digest)
@@ -543,7 +585,8 @@ struct KeyManager
         case .secureEnclaveNone, .secureEnclaveAny:
             return try SecureEnclaveManager.sign(group: groupName,
                                                  identifier: id,
-                                                 digest: digest)
+                                                 digest: digest,
+                                                 context: context)
         }
     }
     
@@ -570,6 +613,106 @@ struct KeyManager
 
 fileprivate extension KeyManager
 {
+    /// The private key of a software key, decrypted when the wallet protects it with a PIN.
+    ///
+    /// Shared by signing and key agreement: both need the same scalar, and a key kept for one and
+    /// unreachable for the other would be a difference with no reason behind it.
+    ///
+    /// - Parameters:
+    ///   - keyInfo: The key's metadata, which says whether a PIN protects it.
+    ///   - detailKeyInfo: The stored key material.
+    ///   - pin: Required for a `.walletPin` key, unused otherwise.
+    /// - Returns: The raw 32-byte private key.
+    func softwarePrivateKey(keyInfo : KeyInfo,
+                            detailKeyInfo : DetailKeyInfo,
+                            pin : Data?) throws -> Data
+    {
+        var priKey : Data
+        do
+        {
+            priKey = try MultibaseUtils.decode(encoded: detailKeyInfo.privateKey!)
+        }
+        catch
+        {
+            throw C.failToDecode(code: .keyManager,
+                                 name: "Data(R)").getError()
+        }
+        
+        guard keyInfo.accessMethod == .walletPin
+        else
+        {
+            return priKey
+        }
+        
+        guard let password = pin, !password.isEmpty
+        else
+        {
+            throw C.invalidParameter(code: .keyManager,
+                                     name: "pin").getError()
+        }
+        
+        let decrypted = try decryptAES256ViaPBKDF2(encryptResult: EncryptResult(encrypted: priKey,
+                                                                                salt: detailKeyInfo.salt!),
+                                                   password: password)
+        
+        let publicKey : Data
+        do
+        {
+            publicKey = try MultibaseUtils.decode(encoded: keyInfo.publicKey)
+        }
+        catch
+        {
+            throw C.failToDecode(code: .keyManager,
+                                 name: "Data(U)").getError()
+        }
+        
+        // The PIN is only known to be right by what it decrypts to: a wrong PIN yields a scalar
+        // that does not match the stored public key.
+        try getKeyAlgorithm(algorithmType: keyInfo.algorithmType)
+            .checkKeyPairMatch(privateKey: decrypted,
+                               publicKey: publicKey)
+        
+        return decrypted
+    }
+    
+    /// The raw ECDH output for a software key.
+    ///
+    /// Raw, with no KDF applied: mdoc authentication derives `EMacKey` from Z itself, so a variant
+    /// that folds a KDF in here would produce the wrong input. This is the software counterpart of
+    /// `SecureEnclaveManager.keyAgreement`, which asks for `ecdhKeyExchangeStandard` for the same
+    /// reason.
+    ///
+    /// - Parameters:
+    ///   - privateKey: The raw 32-byte private key.
+    ///   - publicKey: The peer's public key as an uncompressed point (`0x04‖x‖y`).
+    func sharedSecret(privateKey : Data, publicKey : Data) throws -> Data
+    {
+        let agreementKey : P256.KeyAgreement.PrivateKey
+        do
+        {
+            agreementKey = try .init(rawRepresentation: privateKey)
+        }
+        catch
+        {
+            throw SignableError.invalidPrivateKey.getError()
+        }
+        
+        let peer : P256.KeyAgreement.PublicKey
+        do
+        {
+            peer = try .init(x963Representation: publicKey)
+        }
+        catch
+        {
+            throw C.invalidParameter(code: .keyManager,
+                                     name: "publicKey").getError()
+        }
+        
+        let secret = try agreementKey.sharedSecretFromKeyAgreement(with: peer)
+        
+        return secret.withUnsafeBytes { Data($0) }
+    }
+    
     func getKeyAlgorithm(algorithmType : AlgorithmType) throws -> SignableProtocol
     {
         switch algorithmType

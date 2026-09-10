@@ -15,6 +15,7 @@
  */
 
 import Foundation
+import LocalAuthentication
 
 class WalletCore: WalletCoreImpl {
     
@@ -165,18 +166,49 @@ class WalletCore: WalletCoreImpl {
         try holderKeyManager.authenticatePin(id: id, pin: pin.data(using: .utf8)!)
     }
     
-    public func sign(keyId: String, pin: Data? = nil, data: Data, type: DidDocumentType) throws -> Data {
+    public func sign(keyId: String,
+                     pin: Data? = nil,
+                     data: Data,
+                     type: DidDocumentType,
+                     context: LAContext? = nil) throws -> Data {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()
         }
 
         if type == DidDocumentType.DeviceDidDocument {
-            return try deviceKeyManager.sign(id: keyId, digest: data)
+            return try deviceKeyManager.sign(id: keyId, digest: data, context: context)
         } else {
-            return try holderKeyManager.sign(id: keyId, pin: pin, digest: data)
+            return try holderKeyManager.sign(id: keyId, pin: pin, digest: data, context: context)
         }
     }
     
+    /// Whether the holder key behind `keyId` can perform ECDH.
+    ///
+    /// Behind the same lock gate as signing: the answer is about a key this wallet holds.
+    public func canKeyAgree(keyId: String) throws -> Bool {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.canKeyAgree(id: keyId)
+    }
+
+    /// The raw ECDH shared secret between the holder key and `publicKey` (uncompressed point).
+    ///
+    /// `pin` is needed for a PIN-protected software key, the same as it is to sign with one.
+    /// `context` lets one user confirmation cover every key use of a single submission.
+    public func keyAgreement(keyId: String,
+                             pin: Data?,
+                             publicKey: Data,
+                             context: LAContext? = nil) throws -> Data {
+        if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
+            throw WalletAPIError.lockedWallet.getError()
+        }
+        return try holderKeyManager.keyAgreement(id: keyId,
+                                                 pin: pin,
+                                                 publicKey: publicKey,
+                                                 context: context)
+    }
+
     public func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool {
         if try WalletLockManager().isRegLock() && WalletLockManager.isLock {
             throw WalletAPIError.lockedWallet.getError()

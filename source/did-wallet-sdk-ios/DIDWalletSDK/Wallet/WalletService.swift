@@ -16,6 +16,7 @@
 
 import Foundation
 import CryptoKit
+import LocalAuthentication
 
 class WalletService: WalletServiceImpl {
     
@@ -317,6 +318,116 @@ class WalletService: WalletServiceImpl {
 
         // Assemble the authorization response and, for direct_post.jwt, JWE-seal it.
         return try OID4VPResponseUtil.encodeResponseBody(authRequest: authRequest, vpToken: vpToken)
+    }
+
+    // MARK: - Proximity (ISO/IEC 18013-5)
+
+    /// Finds the stored documents that can answer a proximity request.
+    ///
+    /// Every mdoc the wallet holds is a candidate; whether one can fill anything is decided by the
+    /// matcher. Documents outside their validity window are **not** filtered out — that judgement
+    /// belongs to the reader, and the holder may have nothing else to offer.
+    func matchMdocRequest(deviceRequest: Data) throws -> [MdocRequestedDocument]
+    {
+        let docRequests = try MdocDeviceRequestDecoder.decode([UInt8](deviceRequest))
+        return try MdocRequestMatcher.match(docRequests: docRequests,
+                                            candidates: try mdocCandidates())
+    }
+
+    /// Builds the `DeviceResponse` for what the holder agreed to.
+    ///
+    /// The request is matched again here rather than trusted: the app returns a selection the
+    /// holder pruned, and only a fresh match says what this wallet could actually have offered.
+    func createDeviceResponse(deviceRequest: Data,
+                              sessionTranscript: Data,
+                              selected: [MdocRequestedDocument],
+                              passcode: String?) throws -> MdocDeviceResponse
+    {
+        let matched = try matchMdocRequest(deviceRequest: deviceRequest)
+        try MdocProximityResponseBuilder.validate(selected: selected, against: matched)
+
+        let items = try walletCore.getAllOID4VCICredentials().compactMap { $0 as? MdocCredentialItem }
+        var documents: [String: Mdoc] = [:]
+        var keyIds: [String: String] = [:]
+        for element in selected
+        {
+            guard let item = items.first(where: { $0.id == element.credentialId })
+            else { throw OID4VCManagerError.credentialNotFound.getError() }
+            guard try walletCore.isSavedKey(keyId: item.kid)
+            else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+
+            documents[element.credentialId] = item.mdoc
+            keyIds[element.credentialId] = item.kid
+        }
+
+        // One authentication context for the whole submission: a Secure Enclave key that asks the
+        // user to confirm asks once, not once per document (5장). It dies with this call.
+        return try MdocProximityResponseBuilder.build(
+            selected: selected,
+            documents: documents,
+            sessionTranscript: [UInt8](sessionTranscript),
+            keys: WalletKeyOperations(walletCore: walletCore,
+                                      keyIds: keyIds,
+                                      passcode: passcode,
+                                      context: LAContext()))
+    }
+
+    /// Every stored mdoc, as a matching candidate.
+    private func mdocCandidates() throws -> [MdocRequestMatcher.Candidate]
+    {
+        return try walletCore.getAllOID4VCICredentials()
+            .compactMap { $0 as? MdocCredentialItem }
+            .map { .init(credentialId: $0.id, mdoc: $0.mdoc) }
+    }
+
+    /// The wallet's keys, as the response builder needs them.
+    ///
+    /// The passcode is captured here rather than passed down: it belongs to this one call, and the
+    /// builder has no business holding it.
+    private struct WalletKeyOperations: MdocDeviceKeyOperations
+    {
+        let walletCore: any WalletCoreImpl
+        let keyIds: [String: String]
+        let passcode: String?
+        /// Shared by every key use of this submission, so one confirmation covers them all.
+        let context: LAContext
+
+        func canKeyAgree(credentialId: String) throws -> Bool
+        {
+            guard let keyId = keyIds[credentialId] else { return false }
+            return try walletCore.canKeyAgree(keyId: keyId)
+        }
+
+        func keyAgreement(credentialId: String, readerPublicKey: [UInt8]) throws -> [UInt8]
+        {
+            guard let keyId = keyIds[credentialId]
+            else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+            do
+            {
+                return [UInt8](try walletCore.keyAgreement(keyId: keyId,
+                                                            pin: passcode?.data(using: .utf8),
+                                                            publicKey: Data(readerPublicKey),
+                                                            context: context))
+            }
+            catch let error as WalletCoreError
+                where error.code == SecureEnclaveError.keyAgreementUnsupported.getError().code
+            {
+                // The key cannot do ECDH after all: the one failure the builder may answer with a
+                // signature instead.
+                throw MdocDeviceKeyError.keyAgreementUnsupported
+            }
+        }
+
+        func sign(credentialId: String, digest: Data) throws -> Data
+        {
+            guard let keyId = keyIds[credentialId]
+            else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+            return try walletCore.sign(keyId: keyId,
+                                       pin: passcode?.data(using: .utf8),
+                                       data: digest,
+                                       type: DidDocumentType.HolderDidDocumnet,
+                                       context: context)
+        }
     }
 
     /// Regroups the selection by DCQL query id, preserving first-seen order (deterministic).

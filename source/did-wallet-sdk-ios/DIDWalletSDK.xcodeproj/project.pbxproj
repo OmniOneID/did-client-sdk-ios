@@ -44,6 +44,9 @@
 		AAAA0381000000000000E365 /* CredentialFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0380000000000000E365 /* CredentialFormatTests.swift */; };
 		AAAA0371000000000000E365 /* IssuerDidTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0370000000000000E365 /* IssuerDidTests.swift */; };
 		AAAA0333000000000000E365 /* JWKThumbprintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0332000000000000E365 /* JWKThumbprintTests.swift */; };
+		AAAA03C4000000000000E365 /* MdocProximityRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03C3000000000000E365 /* MdocProximityRequestTests.swift */; };
+		AAAA03D4000000000000E365 /* MdocProximityResponseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03D3000000000000E365 /* MdocProximityResponseTests.swift */; };
+		AAAA03B3000000000000E365 /* MdocDeviceAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03B2000000000000E365 /* MdocDeviceAuthTests.swift */; };
 		AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0308000000000000E365 /* MdocFixtures.swift */; };
 		AAAA0011000000000000E365 /* ParsedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0010000000000000E365 /* ParsedCredential.swift */; };
 		AAAA0013000000000000E365 /* CredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0012000000000000E365 /* CredentialAdapter.swift */; };
@@ -61,6 +64,9 @@
 		AAAA0311000000000000E365 /* MdocClaimIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0310000000000000E365 /* MdocClaimIndex.swift */; };
 		AAAA0321000000000000E365 /* MdocPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0320000000000000E365 /* MdocPresenter.swift */; };
 		AAAA0323000000000000E365 /* JWKThumbprint.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0322000000000000E365 /* JWKThumbprint.swift */; };
+		AAAA03C2000000000000E365 /* MdocProximityRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03C1000000000000E365 /* MdocProximityRequest.swift */; };
+		AAAA03D2000000000000E365 /* MdocProximityResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03D1000000000000E365 /* MdocProximityResponse.swift */; };
+		AAAA03B1000000000000E365 /* MdocDeviceAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03B0000000000000E365 /* MdocDeviceAuth.swift */; };
 		AAAA0313000000000000E365 /* MdocCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0312000000000000E365 /* MdocCredentialAdapter.swift */; };
 		AAAA0305000000000000E365 /* COSE.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0304000000000000E365 /* COSE.swift */; };
 		AAAA0201000000000000E365 /* CBOR.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0200000000000000E365 /* CBOR.swift */; };
@@ -365,6 +371,9 @@
 		AAAA0380000000000000E365 /* CredentialFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialFormatTests.swift; sourceTree = "<group>"; };
 		AAAA0370000000000000E365 /* IssuerDidTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IssuerDidTests.swift; sourceTree = "<group>"; };
 		AAAA0332000000000000E365 /* JWKThumbprintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWKThumbprintTests.swift; sourceTree = "<group>"; };
+		AAAA03C3000000000000E365 /* MdocProximityRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocProximityRequestTests.swift; sourceTree = "<group>"; };
+		AAAA03D3000000000000E365 /* MdocProximityResponseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocProximityResponseTests.swift; sourceTree = "<group>"; };
+		AAAA03B2000000000000E365 /* MdocDeviceAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocDeviceAuthTests.swift; sourceTree = "<group>"; };
 		AAAA0308000000000000E365 /* MdocFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocFixtures.swift; sourceTree = "<group>"; };
 		AAAA0010000000000000E365 /* ParsedCredential.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParsedCredential.swift; sourceTree = "<group>"; };
 		AAAA0012000000000000E365 /* CredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialAdapter.swift; sourceTree = "<group>"; };
@@ -382,6 +391,9 @@
 		AAAA0310000000000000E365 /* MdocClaimIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocClaimIndex.swift; sourceTree = "<group>"; };
 		AAAA0320000000000000E365 /* MdocPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocPresenter.swift; sourceTree = "<group>"; };
 		AAAA0322000000000000E365 /* JWKThumbprint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWKThumbprint.swift; sourceTree = "<group>"; };
+		AAAA03C1000000000000E365 /* MdocProximityRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocProximityRequest.swift; sourceTree = "<group>"; };
+		AAAA03D1000000000000E365 /* MdocProximityResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocProximityResponse.swift; sourceTree = "<group>"; };
+		AAAA03B0000000000000E365 /* MdocDeviceAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocDeviceAuth.swift; sourceTree = "<group>"; };
 		AAAA0312000000000000E365 /* MdocCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocCredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA0304000000000000E365 /* COSE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COSE.swift; sourceTree = "<group>"; };
 		AAAA0200000000000000E365 /* CBOR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOR.swift; sourceTree = "<group>"; };
@@ -933,6 +945,7 @@
 				C91A34132F88D7F300F20388 /* DCQL */,
 				AAAA001C000000000000E365 /* Storage */,
 				AAAA0034000000000000E365 /* Presentation */,
+				AAAA03C0000000000000E365 /* Proximity */,
 			);
 			path = OID4VC;
 			sourceTree = "<group>";
@@ -955,6 +968,15 @@
 			path = DCQL;
 			sourceTree = "<group>";
 		};
+		AAAA03C0000000000000E365 /* Proximity */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA03C1000000000000E365 /* MdocProximityRequest.swift */,
+				AAAA03D1000000000000E365 /* MdocProximityResponse.swift */,
+			);
+			path = Proximity;
+			sourceTree = "<group>";
+		};
 		C91A341C2F88DC9D00F20388 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -962,6 +984,7 @@
 				C91A34322F88EFDD00F20388 /* JWK.swift */,
 				AAAA0304000000000000E365 /* COSE.swift */,
 				AAAA0322000000000000E365 /* JWKThumbprint.swift */,
+				AAAA03B0000000000000E365 /* MdocDeviceAuth.swift */,
 				C91A341D2F88DCAB00F20388 /* AnyJSON.swift */,
 				AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */,
 			);
@@ -1039,6 +1062,9 @@
 				AAAA03A2000000000000E365 /* SdJwtStatusTests.swift */,
 				AAAA0370000000000000E365 /* IssuerDidTests.swift */,
 				AAAA0332000000000000E365 /* JWKThumbprintTests.swift */,
+				AAAA03C3000000000000E365 /* MdocProximityRequestTests.swift */,
+				AAAA03D3000000000000E365 /* MdocProximityResponseTests.swift */,
+				AAAA03B2000000000000E365 /* MdocDeviceAuthTests.swift */,
 				AAAA030A000000000000E365 /* Fixtures */,
 			);
 			path = OID4VC;
@@ -1706,6 +1732,9 @@
 				AAAA0311000000000000E365 /* MdocClaimIndex.swift in Sources */,
 				AAAA0321000000000000E365 /* MdocPresenter.swift in Sources */,
 				AAAA0323000000000000E365 /* JWKThumbprint.swift in Sources */,
+				AAAA03C2000000000000E365 /* MdocProximityRequest.swift in Sources */,
+				AAAA03D2000000000000E365 /* MdocProximityResponse.swift in Sources */,
+				AAAA03B1000000000000E365 /* MdocDeviceAuth.swift in Sources */,
 				AAAA0313000000000000E365 /* MdocCredentialAdapter.swift in Sources */,
 				AAAA0305000000000000E365 /* COSE.swift in Sources */,
 				AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */,
@@ -1876,6 +1905,9 @@
 				AAAA03A3000000000000E365 /* SdJwtStatusTests.swift in Sources */,
 				AAAA0371000000000000E365 /* IssuerDidTests.swift in Sources */,
 				AAAA0333000000000000E365 /* JWKThumbprintTests.swift in Sources */,
+				AAAA03C4000000000000E365 /* MdocProximityRequestTests.swift in Sources */,
+				AAAA03D4000000000000E365 /* MdocProximityResponseTests.swift in Sources */,
+				AAAA03B3000000000000E365 /* MdocDeviceAuthTests.swift in Sources */,
 				AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */,
 				7CDED8002C7830ED009CE791 /* WalletCoreMock.swift in Sources */,
 			);

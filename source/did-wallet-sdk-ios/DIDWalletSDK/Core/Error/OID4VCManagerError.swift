@@ -54,6 +54,16 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     case unsupportedResponseEncryption(detail: String)
     case invalidSelectedCredentials(detail: String)
     case unsupportedResponseMode(mode: String)
+    //Proximity, ISO/IEC 18013-5(056xx)
+    //  0560x: shown to the user, 0561x: the app's bug, 0562x: bytes handed to us are wrong
+    case noMatchedMdocDocuments
+    case emptyMdocSelection
+    case invalidSelectedMdocDocuments(detail: String)
+    case emptyMdocClaimCodes
+    case duplicateSelectedMdocDocument
+    case duplicateMdocClaimCode
+    case invalidDeviceRequest(detail: String)
+    case invalidSessionTranscript(detail: String)
 
 
     func getCodeAndMessage() -> (String, String) {
@@ -117,6 +127,23 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
             return ("05508", "Invalid selected credentials: \(detail)")
         case .unsupportedResponseMode(let mode):
             return ("05509", "Unsupported response_mode : \(mode)")
+
+        case .noMatchedMdocDocuments:
+            return ("05600", "No stored document can answer any docRequest")
+        case .emptyMdocSelection:
+            return ("05610", "No document was selected")
+        case .invalidSelectedMdocDocuments(let detail):
+            return ("05611", "Invalid selected mdoc documents: \(detail)")
+        case .emptyMdocClaimCodes:
+            return ("05612", "A selected document carries no claim code")
+        case .duplicateSelectedMdocDocument:
+            return ("05613", "The same document is selected twice for the same docRequest")
+        case .duplicateMdocClaimCode:
+            return ("05614", "A selected document names the same claim code twice")
+        case .invalidDeviceRequest(let detail):
+            return ("05620", "Invalid DeviceRequest: \(detail)")
+        case .invalidSessionTranscript(let detail):
+            return ("05621", "Invalid SessionTranscript: \(detail)")
         }
     }
 }

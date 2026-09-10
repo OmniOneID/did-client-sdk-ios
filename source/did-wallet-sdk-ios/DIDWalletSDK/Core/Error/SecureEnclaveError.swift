@@ -26,6 +26,8 @@ enum SecureEnclaveError : WalletCoreErrorProcotol
     case createSignature(detail : Error)
     case createEncryptedData(detail : Error)
     case createDecryptedData(detail : Error)
+    case keyAgreementUnsupported
+    case keyAgreement(detail : Error)
     
     func getCodeAndMessage() -> (String, String) {
         switch self 
@@ -49,6 +51,11 @@ enum SecureEnclaveError : WalletCoreErrorProcotol
             return ("12300", "Cannot create encrypted data : \(detail)")
         case .createDecryptedData(let detail):
             return ("12301", "Cannot create decrypted data : \(detail)")
+            //Key agreement(124xx)
+        case .keyAgreementUnsupported:
+            return ("12400", "The key cannot perform key agreement")
+        case .keyAgreement(let detail):
+            return ("12401", "Key agreement failed : \(detail)")
         }
     }
 }

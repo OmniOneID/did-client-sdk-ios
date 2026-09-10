@@ -88,7 +88,7 @@ struct MdocPresenter
         }
 
         let selected = try resolveElements(mdoc: mdoc, claimCodes: claimCodes)
-        let issuerSigned = issuerSignedStructure(mdoc: mdoc, selected: selected)
+        let issuerSigned = try issuerSignedStructure(mdoc: mdoc, selected: selected)
 
         let sessionTranscript = try sessionTranscript(clientId: clientId,
                                                       nonce: nonce,
@@ -214,8 +214,10 @@ struct MdocPresenter
 
     /// The `IssuerSigned` to send: the issuer's own `issuerAuth`, and only the selected items —
     /// each still the bytes the issuer signed.
-    private static func issuerSignedStructure(mdoc: Mdoc,
-                                              selected: [String: [MdocIssuerSignedItem]]) -> CBOR
+    /// Internal rather than private: the proximity path builds the same structure, and one encoder
+    /// for issuer bytes is the point — two would be free to drift.
+    static func issuerSignedStructure(mdoc: Mdoc,
+                                      selected: [String: [MdocIssuerSignedItem]]) throws -> CBOR
     {
         var nameSpaces = OrderedDictionary<CBOR, CBOR>()
         // The document's own namespace order, not the selection's, so the same selection always
@@ -223,9 +225,19 @@ struct MdocPresenter
         for namespace in mdoc.items.keys.sorted()
         {
             guard let items = selected[namespace], !items.isEmpty else { continue }
-            nameSpaces[.utf8String(namespace)] = .array(items.map { item in
+            nameSpaces[.utf8String(namespace)] = .array(try items.map { item in
                 // The item bytes carry their own tag 24 wrapper: they are moved, never rebuilt.
-                (try? CBOR.decode(item.itemBytes)).flatMap { $0 } ?? .null
+                //
+                // Bytes that will not decode mean the stored document is not what it was when it
+                // was verified. Writing a placeholder instead would hand the verifier a document
+                // that fails its digest check, which reads as the holder having tampered with it.
+                guard let decoded = try CBOR.decode(item.itemBytes)
+                else
+                {
+                    throw OID4VCManagerError.invalidMdoc(
+                        detail: "IssuerSignedItemBytes of '\(item.elementIdentifier)' is not CBOR").getError()
+                }
+                return decoded
             })
         }
 

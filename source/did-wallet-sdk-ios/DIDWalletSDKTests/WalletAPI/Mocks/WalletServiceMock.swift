@@ -41,6 +41,19 @@ class WalletServiceMock : WalletServiceImpl
     }
 
     //TODO: future
+    func matchMdocRequest(deviceRequest: Data) throws -> [DIDWalletSDK.MdocRequestedDocument] {
+        return []
+    }
+
+    //TODO: future
+    func createDeviceResponse(deviceRequest: Data,
+                              sessionTranscript: Data,
+                              selected: [DIDWalletSDK.MdocRequestedDocument],
+                              passcode: String?) throws -> DIDWalletSDK.MdocDeviceResponse {
+        return DIDWalletSDK.MdocDeviceResponse(response: Data(), authMethods: [:])
+    }
+
+    //TODO: future
     func requestZKProof(hWalletToken: String, selectedReferents: [DIDWalletSDK.UserReferent], proofParam: DIDWalletSDK.ZKProofParam, proofRequestProfile: DIDWalletSDK._RequestProofRequestProfile?, APIGatewayURL: String) async throws -> (DIDWalletSDK.AccE2e, Data) {
         return (DIDWalletSDK.AccE2e.init(publicKey: "", iv: ""), Data())
     }

@@ -15,6 +15,7 @@
  */
 
 import Foundation
+import LocalAuthentication
 
 
 
@@ -45,7 +46,9 @@ public protocol WalletCoreImpl {
     func isAnyKeysSaved() throws -> Bool
     func changePin(id: String, oldPIN: String, newPIN: String) throws
     func authenticatePin(id: String, pin: String) throws
-    func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType) throws -> Data
+    func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType, context: LAContext?) throws -> Data
+    func canKeyAgree(keyId: String) throws -> Bool
+    func keyAgreement(keyId: String, pin: Data?, publicKey: Data, context: LAContext?) throws -> Data
     func verify(publicKey:Data, data: Data, signature: Data) throws -> Bool
     
     //MARK: DID Document
@@ -107,6 +110,11 @@ public protocol WalletServiceImpl {
     ) throws -> VerifiablePresentation
 
     func matchCredentials(authRequest: AuthorizationRequest) throws -> [MatchedCredential]
+    func matchMdocRequest(deviceRequest: Data) throws -> [MdocRequestedDocument]
+    func createDeviceResponse(deviceRequest: Data,
+                              sessionTranscript: Data,
+                              selected: [MdocRequestedDocument],
+                              passcode: String?) throws -> MdocDeviceResponse
 
     func createVpToken(authRequest: AuthorizationRequest,
                        matchedCredentials: [MatchedCredential],
@@ -141,4 +149,18 @@ public protocol WalletServiceImpl {
                             configurationId: String,
                             credentialIdentifier: String?,
                             APIGatewayURL: String) async throws -> String
+}
+
+/// Key operations without an authentication context.
+///
+/// Only the proximity path holds a context (one user confirmation for a whole submission); every
+/// other caller lets the system ask for itself, which is what `nil` means here.
+extension WalletCoreImpl {
+    func sign(keyId: String, pin: Data?, data: Data, type: DidDocumentType) throws -> Data {
+        return try sign(keyId: keyId, pin: pin, data: data, type: type, context: nil)
+    }
+
+    func keyAgreement(keyId: String, pin: Data?, publicKey: Data) throws -> Data {
+        return try keyAgreement(keyId: keyId, pin: pin, publicKey: publicKey, context: nil)
+    }
 }

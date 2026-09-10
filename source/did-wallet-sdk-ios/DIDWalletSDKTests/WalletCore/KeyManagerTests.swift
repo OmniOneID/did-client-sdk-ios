@@ -15,6 +15,8 @@
  */
 
 import XCTest
+import CryptoKit
+import LocalAuthentication
 @testable import DIDWalletSDK
 
 final class KeyManagerTests: XCTestCase {
@@ -139,6 +141,117 @@ final class KeyManagerTests: XCTestCase {
         try testGetKeyInfosByKeyType()
     }
     
+    /// A software key does ECDH, and the secret is the one the peer arrives at.
+    ///
+    /// Checked against the other side of the exchange rather than a recorded value: agreeing with
+    /// the peer is the whole property, and a wrong-but-stable secret would satisfy a fixture.
+    func testKeyAgreement() throws
+    {
+        try testGenerateKey()
+
+        XCTAssertTrue(try keyManager.canKeyAgree(id: freeID))
+        XCTAssertTrue(try keyManager.canKeyAgree(id: pinID))
+
+        let peer = P256.KeyAgreement.PrivateKey()
+        let peerPublicKey = peer.publicKey.x963Representation
+
+        for (id, pin) in [(freeID, nil as Data?), (pinID, pinData)]
+        {
+            let secret = try keyManager.keyAgreement(id: id,
+                                                     pin: pin,
+                                                     publicKey: peerPublicKey)
+
+            let walletPublicKey = try MultibaseUtils.decode(
+                encoded: try keyManager.getKeyInfos(ids: [id])[0].publicKey)
+            let expected = try peer.sharedSecretFromKeyAgreement(
+                with: try P256.KeyAgreement.PublicKey(
+                    compactRepresentation: walletPublicKey[1...]))
+
+            XCTAssertEqual(secret, expected.withUnsafeBytes { Data($0) })
+            XCTAssertEqual(secret.count, 32)
+        }
+    }
+
+    /// The Secure Enclave path, run for real: `SecKeyCopyKeyExchangeResult` against a peer that
+    /// computes the same secret from the other side.
+    ///
+    /// The private half never leaves the enclave, so the only way to know the secret is right is
+    /// that the peer -- holding an ordinary CryptoKit key -- arrives at the same bytes.
+    func testKeyAgreementWithASecureEnclaveKey() throws
+    {
+        try testGenerateKey()
+
+        XCTAssertTrue(try keyManager.canKeyAgree(id: bioID))
+
+        let peer = P256.KeyAgreement.PrivateKey()
+        let secret = try keyManager.keyAgreement(id: bioID,
+                                                publicKey: peer.publicKey.x963Representation)
+
+        let enclavePublicKey = try MultibaseUtils.decode(
+            encoded: try keyManager.getKeyInfos(ids: [bioID])[0].publicKey)
+        let expected = try peer.sharedSecretFromKeyAgreement(
+            with: try P256.KeyAgreement.PublicKey(
+                compactRepresentation: enclavePublicKey[1...]))
+
+        XCTAssertEqual(secret, expected.withUnsafeBytes { Data($0) })
+        XCTAssertEqual(secret.count, 32)
+    }
+
+    /// One authentication context, both key uses.
+    ///
+    /// The prompt itself cannot be exercised here -- this suite's enclave key carries no biometry
+    /// flag, and a real prompt needs a device. What is checked is the wiring: the context reaches
+    /// the keychain query and both operations still produce correct output through it. A context
+    /// the query rejected would fail the lookup, not silently ignore it.
+    func testSecureEnclaveOperationsShareOneAuthenticationContext() throws
+    {
+        try testGenerateKey()
+
+        let context = LAContext()
+        let digest = DigestUtils.getDigest(source: "Test".data(using: .utf8)!,
+                                           digestEnum: .sha256)
+
+        let signature = try keyManager.sign(id: bioID, digest: digest, context: context)
+        let peer = P256.KeyAgreement.PrivateKey()
+        let secret = try keyManager.keyAgreement(id: bioID,
+                                                publicKey: peer.publicKey.x963Representation,
+                                                context: context)
+
+        let publicKey = try MultibaseUtils.decode(
+            encoded: try keyManager.getKeyInfos(ids: [bioID])[0].publicKey)
+        XCTAssertTrue(try keyManager.verify(algorithmType: .secp256r1,
+                                            publicKey: publicKey,
+                                            digest: digest,
+                                            signature: signature))
+
+        let expected = try peer.sharedSecretFromKeyAgreement(
+            with: try P256.KeyAgreement.PublicKey(compactRepresentation: publicKey[1...]))
+        XCTAssertEqual(secret, expected.withUnsafeBytes { Data($0) })
+    }
+
+    /// The PIN gates key agreement exactly as it gates signing: without it there is no private key
+    /// to agree with, and the caller hears that rather than getting a wrong secret.
+    func testKeyAgreementNeedsThePinOfAPinKey() throws
+    {
+        try testGenerateKey()
+
+        let peerPublicKey = P256.KeyAgreement.PrivateKey().publicKey.x963Representation
+
+        XCTAssertThrowsError(try keyManager.keyAgreement(id: pinID, publicKey: peerPublicKey))
+        XCTAssertThrowsError(try keyManager.keyAgreement(id: pinID,
+                                                        pin: newPinData,
+                                                        publicKey: peerPublicKey))
+    }
+
+    /// A peer point that is not a P-256 point is refused, not fed to the curve.
+    func testKeyAgreementRejectsAMalformedPeerKey() throws
+    {
+        try testGenerateKey()
+
+        XCTAssertThrowsError(try keyManager.keyAgreement(id: freeID,
+                                                         publicKey: Data(repeating: 0x04, count: 65)))
+    }
+
     func testVerify() throws
     {
         let plainData = "Test".data(using: .utf8)!

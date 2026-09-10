@@ -340,6 +340,126 @@ final class MdocTests: XCTestCase {
         return Data(issuerSigned.encode()).base64URLEncoded
     }
 
+    // MARK: - Reader test vector: mso/value-digests
+
+    private static let digestVectorNamespace = "org.iso.18013.5.1"
+
+    /// The three `IssuerSignedItemBytes` of the reader's `mso/value-digests` vector, digestID 1-3.
+    private static let digestVectorItems = [
+        "d8185852a46672616e646f6d5001010101010101010101010101010101686469676573744944016c656c" +
+        "656d656e7456616c756563446f6571656c656d656e744964656e7469666965726b66616d696c795f6e61" +
+        "6d65",
+        "d818584fa46672616e646f6d5002020202020202020202020202020202686469676573744944026c656c" +
+        "656d656e7456616c7565f571656c656d656e744964656e7469666965726b6167655f6f7665725f3138",
+        "d818588da46672616e646f6d5003030303030303030303030303030303686469676573744944036c656c" +
+        "656d656e7456616c75655840000000000000000000000000000000000000000000000000000000000000" +
+        "0000000000000000000000000000000000000000000000000000000000000000000071656c656d656e74" +
+        "4964656e74696669657268706f727472616974",
+    ]
+
+    /// The digests the reader expects the MSO to carry for them.
+    private static let digestVectorDigests: [UInt64: String] = [
+        1: "eda73d0987af3d848f50e416db7603385c6a339ab55cd91ed9680cc5ff3b8ccf",
+        2: "2d1820b11eb9d553b215d5f1cbdcfe6b374f72f6fa0f18f74bd214f88e05723e",
+        3: "1c9f10321d31c9c8599a5a1091a146f49affc65a560afbf3a5aeddfd689a8472",
+    ]
+
+    /// The digest is taken over the item bytes as received -- our hash of the reader's bytes is the
+    /// digest the reader recorded. An implementation that rebuilt the item before hashing would
+    /// disagree here even though both sides hold the same document.
+    func testItemDigestsMatchTheReaderVector() throws {
+        for (index, item) in MdocTests.digestVectorItems.enumerated() {
+            let digest = Data(SHA256.hash(data: Data(MdocTests.hexBytes(item))))
+            XCTAssertEqual(MdocTests.hex(digest),
+                           MdocTests.digestVectorDigests[UInt64(index + 1)])
+        }
+    }
+
+    /// The same bytes through the real check: a document whose MSO carries the reader's digests
+    /// verifies.
+    func testVerifyDigestsAcceptsTheReaderVectorDocument() throws {
+        let mdoc = try Mdoc.parse(raw: MdocTests.digestVectorDocument(
+            digestNamespace: MdocTests.digestVectorNamespace,
+            digests: MdocTests.digestVectorDigests))
+
+        XCTAssertNoThrow(try mdoc.verifyDigests())
+    }
+
+    /// The lookup is the pair `(namespace, digestID)`, not either half alone.
+    ///
+    /// Right digests under the wrong namespace leave the elements uncovered, and right digests
+    /// under swapped digestIDs cover the wrong elements. Both are rejected -- an element whose
+    /// digest is not checked is an element the issuer never signed.
+    func testVerifyDigestsIsKeyedByNamespaceAndDigestID() throws {
+        let wrongNamespace = try Mdoc.parse(raw: MdocTests.digestVectorDocument(
+            digestNamespace: "org.iso.23220.photoID.1",
+            digests: MdocTests.digestVectorDigests))
+        XCTAssertThrowsError(try wrongNamespace.verifyDigests())
+
+        var swapped = MdocTests.digestVectorDigests
+        swapped[1] = MdocTests.digestVectorDigests[2]
+        swapped[2] = MdocTests.digestVectorDigests[1]
+        let swappedIds = try Mdoc.parse(raw: MdocTests.digestVectorDocument(
+            digestNamespace: MdocTests.digestVectorNamespace,
+            digests: swapped))
+        XCTAssertThrowsError(try swappedIds.verifyDigests())
+    }
+
+    /// An `IssuerSigned` carrying the vector's items, with the given digests written into the MSO.
+    ///
+    /// The MSO is structurally complete but unsigned -- `parse` decodes and `verifyDigests` checks
+    /// hashes; neither looks at the signature.
+    private static func digestVectorDocument(digestNamespace: String,
+                                             digests: [UInt64: String]) -> String {
+        let items = digestVectorItems.compactMap { (try? CBOR.decode(hexBytes($0))) ?? nil }
+
+        var digestEntries = OrderedDictionary<CBOR, CBOR>()
+        for digestID in digests.keys.sorted() {
+            digestEntries[.unsignedInt(digestID)] = .byteString(hexBytes(digests[digestID]!))
+        }
+
+        let timestamp = CBOR.tagged(CBOR.Tag(rawValue: 0), .utf8String("2026-08-11T00:00:00Z"))
+        let mso = CBOR.map([
+            "version": .utf8String("1.0"),
+            "digestAlgorithm": .utf8String("SHA-256"),
+            "docType": .utf8String("org.iso.18013.5.1.mDL"),
+            "valueDigests": .map([.utf8String(digestNamespace): .map(digestEntries)]),
+            "deviceKeyInfo": .map(["deviceKey": .map([:])]),
+            "validityInfo": .map([
+                "signed": timestamp,
+                "validFrom": timestamp,
+                "validUntil": timestamp
+            ])
+        ])
+        let issuerAuth = CBOR.array([
+            .byteString(CBOR.map([.unsignedInt(1): .negativeInt(6)]).encode()),
+            .map([:]),
+            .byteString(CBOR.tagged(CBOR.Tag(rawValue: 24), .byteString(mso.encode())).encode()),
+            .byteString([UInt8](repeating: 0, count: 64))
+        ])
+        let issuerSigned = CBOR.map([
+            "issuerAuth": issuerAuth,
+            "nameSpaces": .map([.utf8String(digestVectorNamespace): .array(items)])
+        ])
+
+        return Data(issuerSigned.encode()).base64URLEncoded
+    }
+
+    private static func hexBytes(_ string: String) -> [UInt8] {
+        var out: [UInt8] = []
+        var index = string.startIndex
+        while index < string.endIndex {
+            let next = string.index(index, offsetBy: 2)
+            out.append(UInt8(string[index ..< next], radix: 16)!)
+            index = next
+        }
+        return out
+    }
+
+    private static func hex(_ data: Data) -> String {
+        return data.map { String(format: "%02x", $0) }.joined()
+    }
+
     func testStoredItemAnswersTheSameAsItsDocument() throws {
         let mdoc = try parsed()
         let item = MdocCredentialItem(id: "id",

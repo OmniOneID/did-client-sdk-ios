@@ -789,6 +789,54 @@ extension WalletAPI : IOID4VPService
     ///   the code has to resolve to that is unclear, not what it matched. The other
     ///   `OID4VCManagerError`s (055xx) follow when a credential, holder key or response encryption
     ///   key is missing or the format is unsupported.
+    /// Finds the documents that can answer an ISO/IEC 18013-5 proximity request.
+    ///
+    /// A document is returned when it can fill **at least one** requested element; what it cannot
+    /// fill is listed in `missing`, so the consent screen can show both. Whether a partial answer
+    /// is enough is the reader's business rule, not this SDK's.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: A token whose purpose is `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP`.
+    ///   - deviceRequest: The `DeviceRequest` CBOR, as the transport SDK decrypted it.
+    /// - Returns: One element per (request, document) pair that can answer something, ordered by
+    ///   request index and then credential id.
+    /// - Throws: `noMatchedMdocDocuments` when no request has a candidate.
+    public func matchMdocRequest(hWalletToken: String,
+                                 deviceRequest: Data) throws -> [MdocRequestedDocument]
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        return try walletService.matchMdocRequest(deviceRequest: deviceRequest)
+    }
+
+    /// Builds the `DeviceResponse` for the documents and elements the holder agreed to.
+    ///
+    /// The app expresses consent by pruning what `matchMdocRequest` returned: drop a code to
+    /// withhold an element, drop an element of the array to withhold a document. Refusing
+    /// everything is expressed by **not calling this** and letting the transport SDK end the
+    /// session; an empty `selected` is rejected.
+    ///
+    /// - Parameters:
+    ///   - deviceRequest: The same request bytes, matched again here rather than trusted.
+    ///   - sessionTranscript: The transcript from the transport SDK, used **as received**.
+    ///   - selected: The pruned result of `matchMdocRequest`.
+    ///   - passcode: The holder key's PIN, or nil on the biometric path. Asked once for the call.
+    /// - Returns: The plaintext `DeviceResponse` and how each document was authenticated. The
+    ///   transport SDK encrypts it before sending.
+    public func createDeviceResponse(hWalletToken: String,
+                                     deviceRequest: Data,
+                                     sessionTranscript: Data,
+                                     selected: [MdocRequestedDocument],
+                                     passcode: String? = nil) throws -> MdocDeviceResponse
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        return try walletService.createDeviceResponse(deviceRequest: deviceRequest,
+                                                      sessionTranscript: sessionTranscript,
+                                                      selected: selected,
+                                                      passcode: passcode)
+    }
+
     public func createVpToken(hWalletToken: String,
                               authRequest: AuthorizationRequest,
                               matchedCredentials: [MatchedCredential],

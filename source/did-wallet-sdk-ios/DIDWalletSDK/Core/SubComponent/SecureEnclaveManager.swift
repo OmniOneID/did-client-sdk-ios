@@ -15,6 +15,7 @@
  */
 
 import Foundation
+import LocalAuthentication
 import Security
 
 //MARK: Life-cycle
@@ -137,9 +138,87 @@ struct SecureEnclaveManager
 //MARK: Signable
 extension SecureEnclaveManager
 {
+    /// Whether the stored key can perform ECDH.
+    ///
+    /// Asked of the key itself: a Secure Enclave key created before key agreement was requested
+    /// cannot do it however new the device is, so an OS-version check would give the wrong answer.
+    static func canKeyAgree(group: String, identifier: String) -> Bool
+    {
+        guard let keyPair = try? secKey(group: group, identifier: identifier) else { return false }
+        return SecKeyIsAlgorithmSupported(keyPair, .keyExchange, .ecdhKeyExchangeStandard)
+    }
+
+    /// The raw ECDH shared secret with the given public key.
+    ///
+    /// `ecdhKeyExchangeStandard` and not an X963 variant: the mdoc MAC key is derived with HKDF
+    /// over the raw Z, so a KDF applied here would produce the wrong input.
+    ///
+    /// - Parameter publicKey: The peer's public key as an uncompressed point (`0x04‖x‖y`).
+    /// - Throws: `SecureEnclaveError.keyAgreementUnsupported` when the key cannot do ECDH — the one
+    ///   condition the mdoc path treats as "fall back to a signature".
+    ///   `context` is carried into the key lookup, so a confirmation already given in this call is
+    ///   not asked for again.
+    static func keyAgreement(group: String,
+                             identifier: String,
+                             publicKey: Data,
+                             context: LAContext? = nil) throws -> Data
+    {
+        let keyPair = try secKey(group: group, identifier: identifier, context: context)
+
+        guard SecKeyIsAlgorithmSupported(keyPair, .keyExchange, .ecdhKeyExchangeStandard)
+        else
+        {
+            throw E.keyAgreementUnsupported.getError()
+        }
+
+        var error: Unmanaged<CFError>?
+        guard let peer = SecKeyCreateWithData(publicKey as CFData,
+                                              [kSecAttrKeyType: kSecAttrKeyTypeECSECPrimeRandom,
+                                               kSecAttrKeyClass: kSecAttrKeyClassPublic,
+                                               kSecAttrKeySizeInBits: 256] as CFDictionary,
+                                              &error)
+        else
+        {
+            throw E.keyAgreement(detail: error!.toError()).getError()
+        }
+
+        guard let shared = SecKeyCopyKeyExchangeResult(keyPair,
+                                                       .ecdhKeyExchangeStandard,
+                                                       peer,
+                                                       [:] as CFDictionary,
+                                                       &error) as? Data
+        else
+        {
+            throw E.keyAgreement(detail: error!.toError()).getError()
+        }
+        return shared
+    }
+
+    /// Looks up a stored key pair.
+    private static func secKey(group: String,
+                               identifier: String,
+                               context: LAContext? = nil) throws -> SecKey
+    {
+        var keyPairRef: CFTypeRef?
+        let status = SecItemCopyMatching(makeQueryToSearchSecKey(label: group,
+                                                                 identifier: identifier,
+                                                                 useRef: true,
+                                                                 context: context),
+                                         &keyPairRef)
+        guard status == errSecSuccess, let keyPair = keyPairRef
+        else
+        {
+            throw E.notExistKey.getError()
+        }
+        return keyPair as! SecKey
+    }
+
+    /// - Parameter context: Carried into the key lookup so one user confirmation can cover several
+    ///   key uses within a single call. `nil` lets the system ask on its own.
     static func sign(group: String,
                      identifier: String,
-                     digest : Data) throws -> Data
+                     digest : Data,
+                     context: LAContext? = nil) throws -> Data
     {
         if group.isEmpty
         {
@@ -162,7 +241,8 @@ extension SecureEnclaveManager
         
         let status = SecItemCopyMatching(makeQueryToSearchSecKey(label: group,
                                                                  identifier: identifier,
-                                                                 useRef: true),
+                                                                 useRef: true,
+                                                                 context: context),
                                          &keyPairRef)
         
         if status != errSecSuccess
@@ -332,9 +412,14 @@ extension SecureEnclaveManager
 //MARK: Private Function
 fileprivate extension SecureEnclaveManager
 {
+    /// - Parameter context: The authentication context to judge the key's access control with.
+    ///   A context that has already authenticated once is not asked again, which is how one user
+    ///   confirmation covers several key uses. Passing it to a key that requires no authentication
+    ///   does nothing.
     static func makeQueryToSearchSecKey(label: String,
                                         identifier: String? = nil,
-                                        useRef: Bool = false) -> NSDictionary
+                                        useRef: Bool = false,
+                                        context: LAContext? = nil) -> NSDictionary
     {
         let query: NSMutableDictionary =
         [
@@ -347,6 +432,11 @@ fileprivate extension SecureEnclaveManager
         if let identifier = identifier
         {
             query[kSecAttrApplicationTag] = identifier.data(using: .utf8)!
+        }
+        
+        if let context = context
+        {
+            query[kSecUseAuthenticationContext] = context
         }
         
         return query
@@ -367,14 +457,18 @@ fileprivate extension SecureEnclaveManager
         
         var controlFlag: SecAccessControlCreateFlags = .privateKeyUsage
         
+        // `kSecUseAuthenticationUI` is not set here. It belongs to `SecItem*` queries rather than
+        // to key generation, its documented values are strings (`…UIAllow` / `…UIFail` /
+        // `…UISkip`) rather than a boolean, and `…UIAllow` -- what a boolean was standing in for --
+        // is the default anyway. Generating a key does not use its private half, so nothing here
+        // asks the user to confirm; the confirmation for a biometric key is asked by `KeyManager`
+        // before it gets this far, and by the system when the key is later used.
         switch accessMethod
         {
         case .currentSet:
             controlFlag.insert(.biometryCurrentSet)
-            attributes[kSecUseAuthenticationUI] = true
         case .any:
             controlFlag.insert(.biometryAny)
-            attributes[kSecUseAuthenticationUI] = true
         default:
             break;
         }
