@@ -160,7 +160,9 @@ enum MdocProximityResponseBuilder
     /// - Parameters:
     ///   - selected: What the holder agreed to, already checked against `matched`.
     ///   - documents: `credentialId` → the stored document.
-    ///   - sessionTranscript: The transcript **as received**, spliced into the signature input.
+    ///   - sessionTranscript: The transcript **as received** from the transport SDK — either
+    ///     `SessionTranscriptBytes` (`#6.24(bstr .cbor SessionTranscript)`) or the bare
+    ///     `SessionTranscript` array. Neither form is re-encoded; see `SessionTranscriptInput`.
     ///   - keys: The wallet's key operations.
     /// - Returns: The plaintext response and the method used per document.
     static func build(selected: [MdocRequestedDocument],
@@ -168,7 +170,7 @@ enum MdocProximityResponseBuilder
                       sessionTranscript: [UInt8],
                       keys: MdocDeviceKeyOperations) throws -> MdocDeviceResponse
     {
-        let readerPublicKey = try readerPublicKey(sessionTranscript: sessionTranscript)
+        let transcript = try SessionTranscriptInput(sessionTranscript)
 
         var authMethods: [String: MdocDeviceAuthMethod] = [:]
         var deviceAuthByCredential: [String: CBOR] = [:]
@@ -199,8 +201,7 @@ enum MdocProximityResponseBuilder
             {
                 let built = try makeDeviceAuth(credentialId: element.credentialId,
                                                docType: mdoc.docType,
-                                               sessionTranscript: sessionTranscript,
-                                               readerPublicKey: readerPublicKey,
+                                               transcript: transcript,
                                                keys: keys)
                 deviceAuthByCredential[element.credentialId] = built.structure
                 authMethods[element.credentialId] = built.method
@@ -238,20 +239,20 @@ enum MdocProximityResponseBuilder
     /// Decides the method for one document and produces its `DeviceAuth`.
     private static func makeDeviceAuth(credentialId: String,
                                        docType: String,
-                                       sessionTranscript: [UInt8],
-                                       readerPublicKey: [UInt8]?,
+                                       transcript: SessionTranscriptInput,
                                        keys: MdocDeviceKeyOperations)
         throws -> (structure: CBOR, method: MdocDeviceAuthMethod)
     {
         let deviceAuthenticationBytes = MdocDeviceAuth.deviceAuthenticationBytes(
-            MdocDeviceAuth.deviceAuthentication(sessionTranscript: sessionTranscript,
+            MdocDeviceAuth.deviceAuthentication(sessionTranscript: transcript.sessionTranscript,
                                                 docType: docType,
                                                 deviceNameSpacesBytes: emptyDeviceNameSpacesBytes))
 
         // No reader ephemeral key means no shared secret to MAC with. Not reachable over device
         // retrieval, where a session always carries one, but it is over the paths that reuse this
         // API with a transcript built without one.
-        if let readerPublicKey, try keys.canKeyAgree(credentialId: credentialId)
+        if let readerPublicKey = transcript.readerPublicKey,
+           try keys.canKeyAgree(credentialId: credentialId)
         {
             do
             {
@@ -259,7 +260,7 @@ enum MdocProximityResponseBuilder
                                                          readerPublicKey: readerPublicKey)
                 let emacKey = MdocDeviceAuth.emacKey(
                     sharedSecret: sharedSecret,
-                    sessionTranscriptBytes: sessionTranscriptBytes(sessionTranscript))
+                    sessionTranscriptBytes: transcript.sessionTranscriptBytes)
                 let structure = MdocDeviceAuth.macStructure(
                     deviceAuthenticationBytes: deviceAuthenticationBytes)
                 let tag = MdocDeviceAuth.mac(macStructure: structure, emacKey: emacKey)
@@ -301,29 +302,67 @@ enum MdocProximityResponseBuilder
             .byteString([UInt8](signature.dropFirst()))    // 65-byte compact (v‖r‖s) → 64-byte r‖s
         ])
     }
+}
 
-    /// `SessionTranscriptBytes` — the transcript wrapped in tag 24, which is what the HKDF salt is
-    /// taken over.
-    private static func sessionTranscriptBytes(_ sessionTranscript: [UInt8]) -> [UInt8]
-    {
-        return CBOR.tagged(CBOR.Tag(rawValue: 24), .byteString(sessionTranscript)).encode()
-    }
+/// The transcript in the two forms the response needs, taken from whichever form the caller had.
+///
+/// The transport SDK derives its session keys over `SessionTranscriptBytes`, so that is what it
+/// hands on; a caller that built the transcript itself may hold the bare `SessionTranscript`
+/// array instead. Both are accepted, and neither is re-encoded: `bstr .cbor` preserves the bytes
+/// it wraps, so the array inside `SessionTranscriptBytes` is exactly what the reader hashed, and
+/// wrapping the bare array in a minimal tag-24 header reproduces `SessionTranscriptBytes`.
+///
+/// The two forms go to different places. `DeviceAuthentication` embeds the bare array as its
+/// second element; the `EMacKey` salt is taken over the tag-24 form (ISO/IEC 18013-5 9.1.3.5 /
+/// DIS 12.4.5, with `SessionTranscriptBytes` defined in 9.1.5.1 / DIS 12.7.1).
+struct SessionTranscriptInput
+{
+    /// `SessionTranscript`, the bare three-element array, spliced into `DeviceAuthentication`.
+    let sessionTranscript: [UInt8]
 
-    /// Reads `EReaderKeyBytes` out of the transcript and returns the reader's public point.
-    ///
-    /// The transcript itself is never re-encoded; this only looks inside it.
-    private static func readerPublicKey(sessionTranscript: [UInt8]) throws -> [UInt8]?
+    /// `SessionTranscriptBytes`, the tag-24 wrapped form the `EMacKey` salt is taken over.
+    let sessionTranscriptBytes: [UInt8]
+
+    /// The reader's ephemeral public point from `EReaderKeyBytes`, or nil where the transcript
+    /// carries none.
+    let readerPublicKey: [UInt8]?
+
+    init(_ received: [UInt8]) throws
     {
-        guard case let .array(parts)? = try? CBOR.decode(sessionTranscript), parts.count == 3
-        else
+        let parts: [CBOR]
+        switch try? CBOR.decode(received)
         {
+        case let .tagged(tag, .byteString(inner))? where tag.rawValue == 24:
+            guard case let .array(innerParts)? = try? CBOR.decode(inner), innerParts.count == 3
+            else
+            {
+                throw OID4VCManagerError.invalidSessionTranscript(
+                    detail: "SessionTranscriptBytes does not wrap a three-element array").getError()
+            }
+            parts = innerParts
+            sessionTranscript = inner
+            sessionTranscriptBytes = received
+
+        case let .array(receivedParts)? where receivedParts.count == 3:
+            parts = receivedParts
+            sessionTranscript = received
+            sessionTranscriptBytes = CBOR.tagged(CBOR.Tag(rawValue: 24),
+                                                 .byteString(received)).encode()
+
+        default:
             throw OID4VCManagerError.invalidSessionTranscript(
-                detail: "not a three-element array").getError()
+                detail: "neither SessionTranscriptBytes nor a three-element array").getError()
         }
 
-        if case .null = parts[1] { return nil }
+        readerPublicKey = try Self.readerPublicKey(eReaderKeyBytes: parts[1])
+    }
 
-        guard case let .tagged(tag, payload) = parts[1],
+    /// Reads `EReaderKeyBytes` and returns the reader's public point.
+    private static func readerPublicKey(eReaderKeyBytes: CBOR) throws -> [UInt8]?
+    {
+        if case .null = eReaderKeyBytes { return nil }
+
+        guard case let .tagged(tag, payload) = eReaderKeyBytes,
               tag.rawValue == 24,
               case let .byteString(coseKeyBytes) = payload,
               case let .map(coseKey)? = try? CBOR.decode(coseKeyBytes)

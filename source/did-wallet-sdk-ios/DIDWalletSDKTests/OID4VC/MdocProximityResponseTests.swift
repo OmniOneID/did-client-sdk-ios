@@ -329,6 +329,75 @@ final class MdocProximityResponseTests: XCTestCase
                      code: "MSDKWLT05621")
     }
 
+    /// The transport SDK hands on `SessionTranscriptBytes` — the tag-24 wrapped form it derived
+    /// its session keys over — rather than the bare array. Both forms name the same transcript,
+    /// so the response bytes cannot differ between them.
+    func testSessionTranscriptBytesInputProducesTheSameResponseAsTheArray() throws
+    {
+        let wrappedTranscript = CBOR.tagged(CBOR.Tag(rawValue: 24),
+                                            .byteString(transcript)).encode()
+
+        let fromArray = try MdocProximityResponseBuilder.build(
+            selected: [requested(codes: [code("given_name")])],
+            documents: ["cred-1": try mdoc()],
+            sessionTranscript: transcript,
+            keys: StubKeys())
+        let fromBytes = try MdocProximityResponseBuilder.build(
+            selected: [requested(codes: [code("given_name")])],
+            documents: ["cred-1": try mdoc()],
+            sessionTranscript: wrappedTranscript,
+            keys: StubKeys())
+
+        XCTAssertEqual(fromBytes.authMethods, ["cred-1": .deviceMac])
+        XCTAssertEqual(fromBytes.response, fromArray.response)
+    }
+
+    /// The reader's `SessionTranscriptBytes` vector, given as is, has to be used as is: the MAC
+    /// tag pins both the salt (over the wrapped bytes) and the signature input (over the array
+    /// inside them).
+    func testSessionTranscriptBytesInputMatchesTheReaderVector() throws
+    {
+        let transcriptBytes = hexBytes(Self.vectorSessionTranscriptBytes)
+        let keys = StubKeys()
+        let built = try MdocProximityResponseBuilder.build(
+            selected: [requested(codes: [code("given_name")])],
+            documents: ["cred-1": try mdoc()],
+            sessionTranscript: transcriptBytes,
+            keys: keys)
+
+        let expectedTag = MdocDeviceAuth.mac(
+            macStructure: MdocDeviceAuth.macStructure(
+                deviceAuthenticationBytes: MdocDeviceAuth.deviceAuthenticationBytes(
+                    MdocDeviceAuth.deviceAuthentication(
+                        sessionTranscript: hexBytes(Self.vectorSessionTranscript),
+                        docType: docType,
+                        deviceNameSpacesBytes: MdocProximityResponseBuilder
+                            .emptyDeviceNameSpacesBytes))),
+            emacKey: MdocDeviceAuth.emacKey(sharedSecret: keys.sharedSecret,
+                                            sessionTranscriptBytes: transcriptBytes))
+
+        guard case let .map(fields)? = try CBOR.decode([UInt8](built.response)),
+              case let .array(documents)? = fields["documents"],
+              case let .map(auth) = try deviceAuth(of: documents[0]),
+              case let .array(mac0)? = auth["deviceMac"],
+              case let .byteString(tag) = mac0[3]
+        else { return XCTFail("no COSE_Mac0 tag in the response") }
+
+        XCTAssertEqual(tag, expectedTag)
+    }
+
+    func testRejectsSessionTranscriptBytesThatDoNotWrapAThreeElementArray() throws
+    {
+        let wrappedPair = CBOR.tagged(CBOR.Tag(rawValue: 24),
+                                      .byteString(CBOR.array([.null, .null]).encode())).encode()
+        assertThrows(try MdocProximityResponseBuilder.build(
+            selected: [requested(codes: [code("given_name")])],
+            documents: ["cred-1": try mdoc()],
+            sessionTranscript: wrappedPair,
+            keys: StubKeys()),
+                     code: "MSDKWLT05621")
+    }
+
     /// One document answering two requests is authenticated once: the inputs are identical, and
     /// `authMethods` has one entry per credential to describe.
     func testOneDocumentInTwoRequestsIsAuthenticatedOnce() throws

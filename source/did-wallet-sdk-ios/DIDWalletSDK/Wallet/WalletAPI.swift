@@ -818,7 +818,9 @@ extension WalletAPI : IOID4VPService
     ///
     /// - Parameters:
     ///   - deviceRequest: The same request bytes, matched again here rather than trusted.
-    ///   - sessionTranscript: The transcript from the transport SDK, used **as received**.
+    ///   - sessionTranscript: The transcript from the transport SDK, used **as received**: either
+    ///     `SessionTranscriptBytes` (`#6.24(bstr .cbor SessionTranscript)`, what the transport SDK
+    ///     hands on) or the bare `SessionTranscript` array. Neither is re-encoded.
     ///   - selected: The pruned result of `matchMdocRequest`.
     ///   - passcode: The holder key's PIN, or nil on the biometric path. Asked once for the call.
     /// - Returns: The plaintext `DeviceResponse` and how each document was authenticated. The
