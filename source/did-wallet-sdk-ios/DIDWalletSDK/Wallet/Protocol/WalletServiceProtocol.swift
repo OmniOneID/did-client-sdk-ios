@@ -31,6 +31,8 @@ protocol IWalletService
                                userId: String) throws -> WalletTokenSeed
     func createNonceForWalletToken(walletTokenData: WalletTokenData,
                                    APIGatewayURL: String) async throws -> String
+    func createLocalWalletToken(purpose: WalletTokenPurposeEnum,
+                                pkgName: String) throws -> String
     func bindUser(hWalletToken: String) throws -> Bool
     func unbindUser(hWalletToken: String) throws -> Bool
     func requestRegisterUser(tasURL: String,

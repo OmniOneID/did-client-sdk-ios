@@ -132,6 +132,7 @@ public struct WalletSDKError: Error {
 | MSDKWLT05043 | Failed to save keychain              | Keychain saving failed            | Ensure proper keychain saving process |
 | MSDKWLT05044 | Incorrect passcode                   | Passcode entered is incorrect     | Verify and re-enter the correct passcode |
 | MSDKWLT05045 | Wallet ID not found                  | Specified wallet ID not found     | Check wallet ID                  |
+| MSDKWLT05046 | Wallet has not been personalized     | Local wallet token requested before the wallet was personalized online | Personalize the wallet online (`bindUser`) first |
 
 <br>
 

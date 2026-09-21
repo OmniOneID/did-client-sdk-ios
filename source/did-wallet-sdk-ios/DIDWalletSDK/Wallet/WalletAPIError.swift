@@ -68,6 +68,7 @@ enum WalletAPIError: WalletAPIErrorProtocol {
     case saveKeychainFail
     case incorrectPasscode
     case notFoundWalletId
+    case notPersonalized
     
     // DID
     case userRegistrationFail
@@ -136,6 +137,8 @@ enum WalletAPIError: WalletAPIErrorProtocol {
             return ("05044", "Incorrect passcode")
         case .notFoundWalletId:
             return ("05045", "Wallet ID not found")
+        case .notPersonalized:
+            return ("05046", "Wallet has not been personalized")
             
             // DID
         case .userRegistrationFail:

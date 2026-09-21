@@ -42,10 +42,11 @@ iOS Wallet API
         - [2.3. deleteWallet](#23-deletewallet)
         - [2.4. createWalletTokenSeed](#24-createwallettokenseed)
         - [2.5. createNonceForWalletToken](#25-createnonceforwallettoken)
-        - [2.6. bindUser](#26-binduser)
-        - [2.7. unbindUser](#27-unbinduser)
-        - [2.8. requestRegisterUser](#28-requestregisteruser)
-        - [2.9. getSignedWalletInfo](#29-getsignedwalletinfo)
+        - [2.6. createLocalWalletToken](#26-createlocalwallettoken)
+        - [2.7. bindUser](#27-binduser)
+        - [2.8. unbindUser](#28-unbinduser)
+        - [2.9. requestRegisterUser](#29-requestregisteruser)
+        - [2.10. getSignedWalletInfo](#210-getsignedwalletinfo)
     - [3. DIDKey)](#3-didkey)
         - [3.1. createHolderDIDDocument](#31-createholderdiddocument)
         - [3.2. createSignedDIDDoc](#32-createsigneddiddoc)
@@ -300,7 +301,52 @@ let nonce = try await WalletAPI.shared.createNonceForWalletToken(walletTokenData
 
 <br>
 
-## 2.6. bindUser
+## 2.6. createLocalWalletToken
+
+### Description
+`Issue a wallet token locally, without contacting the CAS.`
+
+Available once the wallet has been personalized online (`bindUser`), and only for the read and
+presentation purposes: `LIST_VC`, `DETAIL_VC`, `PRESENT_VP`, `LIST_VC_AND_PRESENT_VP`. The call
+is synchronous and performs no network I/O. Unlike `createNonceForWalletToken` it returns the
+hWalletToken itself, not a nonce. The stored token is replaced, so a token obtained earlier by
+either path stops verifying.
+
+### Declaration
+
+```swift
+func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String
+```
+
+### Parameters
+
+| Name    | Type                   | Description                                   | **M/O** | **Note** |
+|---------|------------------------|-----------------------------------------------|---------|----------|
+| purpose | WalletTokenPurposeEnum | Purpose of the token. One of the four above.  | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| pkgName | String                 | Package name of the calling app               | M       |          |
+
+### Returns
+
+| Type   | Description                                                       | **M/O** | **Note** |
+|--------|-------------------------------------------------------------------|---------|----------|
+| String | hWalletToken to pass to the APIs that accept the given purpose    | M       |          |
+
+### Throws
+
+- `MSDKWLT05002` (`verifyParameterFail`): `pkgName` is empty, or `purpose` is not one of the four
+- `MSDKWLT05046` (`notPersonalized`): the wallet has never been personalized
+
+### Usage
+
+```swift
+let hWalletToken = try WalletAPI.shared.createLocalWalletToken(purpose: .LIST_VC,
+                                                               pkgName: "org.omnione.did.wallet")
+let credentials = try WalletAPI.shared.getAllCredentials(hWalletToken: hWalletToken)
+```
+
+<br>
+
+## 2.7. bindUser
 
 ### Description
 `Perform user personalization in Wallet.`
@@ -331,7 +377,7 @@ let success = try WalletAPI.shared.bindUser(hWalletToken: hWalletToken);
 
 <br>
 
-## 2.7. unbindUser
+## 2.8. unbindUser
 
 ### Description
 `Perform user depersonalization.`
@@ -363,7 +409,7 @@ let success = try WalletAPI.shared.unbindUser(hWalletToken: hWalletToken);
 <br>
 
 
-## 2.8. requestRegisterUser
+## 2.9. requestRegisterUser
 
 ### Description
 `Request user registration.`
@@ -398,7 +444,7 @@ let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL
 
 <br>
 
-## 2.9. getSignedWalletInfo
+## 2.10. getSignedWalletInfo
 
 ### Description
 `signed wallet information.`

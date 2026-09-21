@@ -27,6 +27,7 @@
 		7CA982BD2C85CF0F00EDF367 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 7CA982BC2C85CF0F00EDF367 /* Base */; };
 		7CAB251D2C74A25F00F18610 /* WalletServiceMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CAB251C2C74A25F00F18610 /* WalletServiceMock.swift */; };
 		7CB8D83C2BC917370063D094 /* WalletSDKTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB8D83B2BC917370063D094 /* WalletSDKTests.swift */; };
+		AAAA0400000000000000E365 /* WalletTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0401000000000000E365 /* WalletTokenTests.swift */; };
 		7CD08CFF2C9BF1EE00FC6EB7 /* DIDWalletSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CB8D82C2BC917370063D094 /* DIDWalletSDK.framework */; };
 		7CD08D002C9BF1EE00FC6EB7 /* DIDWalletSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7CB8D82C2BC917370063D094 /* DIDWalletSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7CDED7FE2C7830CC009CE791 /* WalletTokenMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDED7FD2C7830CC009CE791 /* WalletTokenMock.swift */; };
@@ -356,6 +357,7 @@
 		7CB8D82C2BC917370063D094 /* DIDWalletSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DIDWalletSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CB8D8362BC917370063D094 /* DIDWalletSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DIDWalletSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7CB8D83B2BC917370063D094 /* WalletSDKTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletSDKTests.swift; sourceTree = "<group>"; };
+		AAAA0401000000000000E365 /* WalletTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTokenTests.swift; sourceTree = "<group>"; };
 		7CDED7FD2C7830CC009CE791 /* WalletTokenMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletTokenMock.swift; sourceTree = "<group>"; };
 		7CDED7FF2C7830ED009CE791 /* WalletCoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCoreMock.swift; sourceTree = "<group>"; };
 		7CDED8012C783121009CE791 /* WalletLockManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletLockManagerMock.swift; sourceTree = "<group>"; };
@@ -1162,6 +1164,7 @@
 			children = (
 				C9F294BE2DB0BAE5005376E1 /* Mocks */,
 				7CB8D83B2BC917370063D094 /* WalletSDKTests.swift */,
+				AAAA0401000000000000E365 /* WalletTokenTests.swift */,
 			);
 			path = WalletAPI;
 			sourceTree = "<group>";
@@ -1894,6 +1897,7 @@
 				7CDED7FE2C7830CC009CE791 /* WalletTokenMock.swift in Sources */,
 				7CDED8022C783121009CE791 /* WalletLockManagerMock.swift in Sources */,
 				7CB8D83C2BC917370063D094 /* WalletSDKTests.swift in Sources */,
+				AAAA0400000000000000E365 /* WalletTokenTests.swift in Sources */,
 				C95C738E2F99E5C30031E365 /* OID4VCITests.swift in Sources */,
 				AAAA0004000000000000E365 /* OID4VPTests.swift in Sources */,
 				AAAA0006000000000000E365 /* JWETests.swift in Sources */,

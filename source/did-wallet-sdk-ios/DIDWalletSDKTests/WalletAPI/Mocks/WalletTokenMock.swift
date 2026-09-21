@@ -72,4 +72,13 @@ class WalletTokenMock : WalletTokenImpl {
         
         return resultNonce
     }
+    
+    func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String {
+        let hWalletToken = MockData.shared.hWalletToken(purpose: purpose)
+        let purposeCode = WalletTokenPurpose(purpose: purpose)
+        
+        MockData.shared.setTokenMock(token: TokenMock(idx: "id", walletId: "walletId", hWalletToken: hWalletToken, validUntil: "2050-08-23T12:10:02Z", purpose: purposeCode.purposeCode.value, nonce: "", pkgName: pkgName, pii: "", createDate: "2024-08-23T11:40:03.566877Z"))
+        
+        return hWalletToken
+    }
 }

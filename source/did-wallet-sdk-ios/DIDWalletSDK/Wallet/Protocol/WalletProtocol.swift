@@ -30,6 +30,7 @@ public protocol WalletTokenImpl {
     func verifyWalletToken(hWalletToken: String, purposes: [WalletTokenPurposeEnum]) throws
     func createWalletTokenSeed(purpose: WalletTokenPurposeEnum, pkgName: String, userId: String?) throws -> WalletTokenSeed
     func createNonceForWalletToken(walletTokenData: WalletTokenData?, APIGatewayURL: String) async throws  -> String
+    func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String
 }
 
 public protocol WalletCoreImpl {

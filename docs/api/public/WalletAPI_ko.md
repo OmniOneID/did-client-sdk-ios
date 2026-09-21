@@ -43,10 +43,11 @@ iOS Wallet API
         - [2.3. deleteWallet](#23-deletewallet)
         - [2.4. createWalletTokenSeed](#24-createwallettokenseed)
         - [2.5. createNonceForWalletToken](#25-createnonceforwallettoken)
-        - [2.6. bindUser](#26-binduser)
-        - [2.7. unbindUser](#27-unbinduser)
-        - [2.8. requestRegisterUser](#28-requestregisteruser)
-        - [2.9. getSignedWalletInfo](#29-getsignedwalletinfo)
+        - [2.6. createLocalWalletToken](#26-createlocalwallettoken)
+        - [2.7. bindUser](#27-binduser)
+        - [2.8. unbindUser](#28-unbinduser)
+        - [2.9. requestRegisterUser](#29-requestregisteruser)
+        - [2.10. getSignedWalletInfo](#210-getsignedwalletinfo)
     - [3. DIDKey)](#3-didkey)
         - [3.1. createHolderDIDDocument](#31-createholderdiddocument)
         - [3.2. createSignedDIDDoc](#32-createsigneddiddoc)
@@ -302,7 +303,51 @@ let nonce = try await WalletAPI.shared.createNonceForWalletToken(walletTokenData
 
 <br>
 
-## 2.6. bindUser
+## 2.6. createLocalWalletToken
+
+### Description
+`CAS 와 통신하지 않고 월렛 토큰을 로컬에서 발급한다.`
+
+월렛이 온라인 개인화(`bindUser`)를 한 번 거친 뒤부터, 조회·제출 목적(`LIST_VC`, `DETAIL_VC`,
+`PRESENT_VP`, `LIST_VC_AND_PRESENT_VP`)에 한해 사용할 수 있다. 동기 함수이며 네트워크 통신이
+없다. `createNonceForWalletToken` 과 달리 nonce 가 아니라 hWalletToken 자체를 반환한다. 저장된
+토큰은 교체되므로, 어느 경로로든 이전에 받은 토큰은 더 이상 검증되지 않는다.
+
+### Declaration
+
+```swift
+func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String
+```
+
+### Parameters
+
+| Name    | Type                   | Description                         | **M/O** | **Note** |
+|---------|------------------------|-------------------------------------|---------|----------|
+| purpose | WalletTokenPurposeEnum | 토큰 목적. 위 4종 중 하나           | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| pkgName | String                 | 호출 앱의 패키지 이름               | M       |          |
+
+### Returns
+
+| Type   | Description                                      | **M/O** | **Note** |
+|--------|--------------------------------------------------|---------|----------|
+| String | 해당 purpose 를 받는 API 에 전달할 hWalletToken  | M       |          |
+
+### Throws
+
+- `MSDKWLT05002` (`verifyParameterFail`): `pkgName` 이 비어 있거나 `purpose` 가 4종 밖
+- `MSDKWLT05046` (`notPersonalized`): 월렛이 개인화된 적이 없음
+
+### Usage
+
+```swift
+let hWalletToken = try WalletAPI.shared.createLocalWalletToken(purpose: .LIST_VC,
+                                                               pkgName: "org.omnione.did.wallet")
+let credentials = try WalletAPI.shared.getAllCredentials(hWalletToken: hWalletToken)
+```
+
+<br>
+
+## 2.7. bindUser
 
 ### Description
 `Wallet에 사용자 개인화를 수행한다.`
@@ -333,7 +378,7 @@ let success = try WalletAPI.shared.bindUser(hWalletToken: hWalletToken);
 
 <br>
 
-## 2.7. unbindUser
+## 2.8. unbindUser
 
 ### Description
 `사용자 비개인화를 수행한다.`
@@ -364,7 +409,7 @@ let success = try WalletAPI.shared.unbindUser(hWalletToken: hWalletToken);
 
 <br>
 
-## 2.8. requestRegisterUser
+## 2.9. requestRegisterUser
 
 ### Description
 `사용자 등록을 요청한다.`
@@ -399,7 +444,7 @@ let _RequestRegisterUser = try await WalletAPI.shared.requestRegisterUser(tasURL
 
 <br>
 
-## 2.9. getSignedWalletInfo
+## 2.10. getSignedWalletInfo
 
 ### Description
 `서명된 Wallet 정보를 조회한다.`

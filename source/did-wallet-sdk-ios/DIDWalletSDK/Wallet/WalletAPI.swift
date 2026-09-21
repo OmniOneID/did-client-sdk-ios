@@ -95,6 +95,25 @@ extension WalletAPI : IWalletService
         return try await walletToken.createNonceForWalletToken(walletTokenData: walletTokenData, APIGatewayURL: APIGatewayURL)
     }
     
+    /// Issues a wallet token locally, without contacting the CAS.
+    ///
+    /// Available once the wallet has been personalized online (`bindUser`) and only for the
+    /// read and presentation purposes: `LIST_VC`, `DETAIL_VC`, `PRESENT_VP`,
+    /// `LIST_VC_AND_PRESENT_VP`. The call is synchronous and performs no network I/O.
+    /// Unlike `createNonceForWalletToken` it returns the hWalletToken itself, not a nonce.
+    /// The stored token is replaced, so a token obtained earlier by either path stops verifying.
+    ///
+    /// - Parameters:
+    ///   - purpose: The purpose of the wallet token. Must be one of the four listed above.
+    ///   - pkgName: The package name associated with the wallet token.
+    /// - Returns: The hWalletToken to pass to the APIs that accept the given purpose.
+    /// - Throws: `WalletAPIError.verifyParameterFail` for an empty `pkgName` or a purpose outside
+    ///           the list, `WalletAPIError.notPersonalized` if the wallet has never been personalized.
+    public func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String
+    {
+        return try walletToken.createLocalWalletToken(purpose: purpose, pkgName: pkgName)
+    }
+    
     /// Attempts to bind a user using the provided wallet token (hWalletToken).
     ///
     /// The function first logs the wallet token for debugging purposes. Then, it verifies the token

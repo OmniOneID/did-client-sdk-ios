@@ -157,6 +157,57 @@ class WalletToken: WalletTokenImpl {
         throw WalletAPIError.insertQueryFail.getError()
     }
     
+    /// Purposes a local wallet token may be issued for.
+    ///
+    /// A local token skips the CAS signature check, so it must open only a proper subset of
+    /// what a CAS-verified token opens: reading credentials and building presentations. The
+    /// purposes left out either unlock a local mutation (DID creation, key or credential
+    /// deletion, personalization, lock setup) or belong to flows that need the CAS anyway.
+    static let localTokenPurposes: [WalletTokenPurposeEnum] = [.LIST_VC, .DETAIL_VC, .PRESENT_VP, .LIST_VC_AND_PRESENT_VP]
+    
+    /// Issues a wallet token without contacting the CAS.
+    ///
+    /// The only state it requires is that this wallet has been personalized online at least
+    /// once (`UserEntity` row). The token is random rather than derived, since the app holds no
+    /// `walletTokenData` to derive it from, so the token itself is returned instead of a nonce.
+    /// Inserting it replaces whatever token is stored, exactly as the online path does.
+    /// - Parameters:
+    ///   - purpose: one of `localTokenPurposes`
+    ///   - pkgName: package name of the calling app
+    /// - Returns: the hWalletToken (64 hex characters)
+    func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String {
+        
+        guard !pkgName.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("pkgName").getError()
+        }
+        
+        guard WalletToken.localTokenPurposes.contains(purpose) else {
+            throw WalletAPIError.verifyParameterFail("purpose").getError()
+        }
+        
+        guard let user = try CoreDataManager.shared.selectUser() else {
+            throw WalletAPIError.notPersonalized.getError()
+        }
+        
+        let random = try CryptoUtils.generateNonce(size: 32)
+        // Hex, prefix dropped to match the online token
+        let hWalletToken = String(MultibaseUtils.encode(type: MultibaseType.base16, data: random).dropFirst())
+        
+        WalletLogger.debug("local hWalletToken \(hWalletToken)")
+        
+        if let walletId = Properties.getWalletId(),
+           try CoreDataManager.shared.insertToken(walletId: walletId,
+                                                  hWalletToken: hWalletToken,
+                                                  purpose: purpose.value,
+                                                  pkgName: pkgName,
+                                                  nonce: "",
+                                                  pii: user.pii) {
+            return hWalletToken
+        }
+        WalletLogger.debug("createLocalWalletToken insertToken fail")
+        throw WalletAPIError.insertQueryFail.getError()
+    }
+    
     public func verifyCertVcRef(roleType: RoleTypeEnum, providerDID: String, providerURL: String, APIGatewayURL: String) async throws {
         
         guard !providerDID.isEmpty else {

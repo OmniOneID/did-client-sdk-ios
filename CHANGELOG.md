@@ -148,6 +148,14 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   `052xx` for JWE, `053xx` for the credential response, `054xx` for verification (including the mdoc
   checks `05403`–`05405`) and `055xx` for presentation.
 
+- `WalletAPI.createLocalWalletToken(purpose:pkgName:)` issues a wallet token without contacting
+  the CAS. It is available once the wallet has been personalized online, only for the read and
+  presentation purposes (`LIST_VC`, `DETAIL_VC`, `PRESENT_VP`, `LIST_VC_AND_PRESENT_VP`), and
+  returns the hWalletToken itself rather than a nonce, so an app can keep listing credentials and
+  building presentations while the CAS is unreachable. Every other purpose still requires the
+  `createWalletTokenSeed` / `createNonceForWalletToken` round trip. `MSDKWLT05046`
+  (`notPersonalized`) is raised when the wallet has never been personalized.
+
 - `authenticateLock(passcode:isChanging:)` takes an `isChanging` flag, default `false`, so a
   passcode-change flow can verify the current passcode without disturbing the wallet's lock state.
   Existing call sites keep compiling.
