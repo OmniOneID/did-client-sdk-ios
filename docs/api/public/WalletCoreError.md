@@ -353,7 +353,7 @@ Raised by `matchMdocRequest` and `createDeviceResponse`.
 |--------------|-------------------------------------------------------------|-----------------------------------|---------------------------------------|
 | MSDKWLT05600 | No stored document can answer any docRequest                | No stored mdoc can fill even one element of any `docRequest` | Issue a document of the requested type |
 | MSDKWLT05610 | No document was selected                                    | `createDeviceResponse` was called with an empty `selected` | Do not call it when the holder refuses everything |
-| MSDKWLT05611 | Invalid selected mdoc documents: {detail}                   | A selected entry does not belong to the fresh match of the request, or names a code the match did not offer | Prune what `matchMdocRequest` returned; never rebuild entries |
+| MSDKWLT05611 | Invalid selected mdoc documents: {detail}                   | A selected entry does not belong to the fresh match of the request, or names a code its document cannot disclose (not held, or ambiguous) | Edit what `matchMdocRequest` returned; add elements only with codes from `MdocCredentialItem.consentItems`, never assembled |
 | MSDKWLT05612 | A selected document carries no claim code                   | A selected entry has an empty `claimCodes` | Drop the entry instead of emptying its codes |
 | MSDKWLT05613 | The same document is selected twice for the same docRequest | Two selected entries share `docRequestIndex` and `credentialId` | Select each document once per request |
 | MSDKWLT05614 | A selected document names the same claim code twice         | A selected entry repeats a code in `claimCodes` | Keep each code once |
