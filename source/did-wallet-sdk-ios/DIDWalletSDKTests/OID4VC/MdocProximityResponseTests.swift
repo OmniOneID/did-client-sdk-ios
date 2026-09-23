@@ -38,6 +38,11 @@ final class MdocProximityResponseTests: XCTestCase
         return try Mdoc.parse(raw: MdocFixtures.pidIssuerSigned)
     }
 
+    private func documents() throws -> [String: Mdoc]
+    {
+        return ["cred-1": try mdoc()]
+    }
+
     private func code(_ element: String) -> String
     {
         return MdocClaimIndex.code(namespace: namespace, elementIdentifier: element)
@@ -110,13 +115,14 @@ final class MdocProximityResponseTests: XCTestCase
         let selected = [requested(codes: [code("given_name")])]
 
         XCTAssertNoThrow(try MdocProximityResponseBuilder.validate(selected: selected,
-                                                                   against: matched))
+                                                                   against: matched,
+                                                               documents: try documents()))
     }
 
     func testRejectsEmptySelection() throws
     {
         assertThrows(try MdocProximityResponseBuilder.validate(
-            selected: [], against: [requested(codes: [code("given_name")])]),
+            selected: [], against: [requested(codes: [code("given_name")])], documents: try documents()),
                      code: "MSDKWLT05610")
     }
 
@@ -126,19 +132,63 @@ final class MdocProximityResponseTests: XCTestCase
         let selected = [requested(index: 1, codes: [code("given_name")])]
 
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
-                                                               against: matched),
+                                                               against: matched,
+                                                               documents: try documents()),
                      code: "MSDKWLT05611")
     }
 
-    /// Moving a `missing` element into `claimCodes` is the reason the check is against the match
-    /// result rather than the request.
-    func testRejectsCodeThatDidNotMatch() throws
+    /// Moving a `missing` element into `claimCodes` is why codes are checked against the document:
+    /// the request names elements this wallet does not hold.
+    func testRejectsCodeTheDocumentDoesNotHold() throws
     {
         let matched = [requested(codes: [code("given_name")])]
         let selected = [requested(codes: [code("given_name"), code("not_an_element")])]
 
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
-                                                               against: matched),
+                                                               against: matched,
+                                                               documents: try documents()),
+                     code: "MSDKWLT05611")
+    }
+
+    /// Adding an element the reader did not request is the holder's call, not something to judge.
+    func testAcceptsAHeldElementTheReaderDidNotRequest() throws
+    {
+        let matched = [requested(codes: [code("given_name")])]
+        let selected = [requested(codes: [code("given_name"), code("family_name")])]
+
+        XCTAssertNoThrow(try MdocProximityResponseBuilder.validate(selected: selected,
+                                                                   against: matched,
+                                                                   documents: try documents()))
+    }
+
+    /// Held but naming two elements: resolving it would mean guessing which one the holder chose.
+    func testRejectsAnAmbiguousCode() throws
+    {
+        let document = try Mdoc.parse(raw: MdocTests.syntheticDocument(elements: [
+            ("a.b", "c"),   // code "a.b.c"
+            ("a", "b.c"),   // code "a.b.c" as well
+            ("a", "d")
+        ]))
+        func element(_ codes: [String]) -> MdocRequestedDocument
+        {
+            return MdocRequestedDocument(docRequestIndex: 0, docType: document.docType,
+                                         credentialId: "cred-1", claimCodes: codes,
+                                         intentToRetain: [:], missing: [])
+        }
+
+        assertThrows(try MdocProximityResponseBuilder.validate(selected: [element(["a.d", "a.b.c"])],
+                                                               against: [element(["a.d"])],
+                                                               documents: ["cred-1": document]),
+                     code: "MSDKWLT05611")
+    }
+
+    func testRejectsADocumentThatIsNotStored() throws
+    {
+        let matched = [requested(codes: [code("given_name")])]
+
+        assertThrows(try MdocProximityResponseBuilder.validate(selected: matched,
+                                                               against: matched,
+                                                               documents: [:]),
                      code: "MSDKWLT05611")
     }
 
@@ -148,7 +198,8 @@ final class MdocProximityResponseTests: XCTestCase
         let selected = [requested(codes: [])]
 
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
-                                                               against: matched),
+                                                               against: matched,
+                                                               documents: try documents()),
                      code: "MSDKWLT05612")
     }
 
@@ -159,7 +210,8 @@ final class MdocProximityResponseTests: XCTestCase
                         requested(codes: [code("given_name")])]
 
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
-                                                               against: matched),
+                                                               against: matched,
+                                                               documents: try documents()),
                      code: "MSDKWLT05613")
     }
 
@@ -171,7 +223,8 @@ final class MdocProximityResponseTests: XCTestCase
         let selected = [requested(codes: [code("given_name"), code("given_name")])]
 
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
-                                                               against: matched),
+                                                               against: matched,
+                                                               documents: try documents()),
                      code: "MSDKWLT05614")
     }
 
@@ -181,7 +234,8 @@ final class MdocProximityResponseTests: XCTestCase
                        requested(index: 1, codes: [code("family_name")])]
 
         XCTAssertNoThrow(try MdocProximityResponseBuilder.validate(selected: matched,
-                                                                    against: matched))
+                                                                    against: matched,
+                                                               documents: try documents()))
     }
 
     // MARK: - build

@@ -154,7 +154,9 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   returns the hWalletToken itself rather than a nonce, so an app can keep listing credentials and
   building presentations while the CAS is unreachable. Every other purpose still requires the
   `createWalletTokenSeed` / `createNonceForWalletToken` round trip. `MSDKWLT05046`
-  (`notPersonalized`) is raised when the wallet has never been personalized.
+  (`notPersonalized`) is raised when the wallet has never been personalized. The public
+  `WalletTokenImpl` protocol gains the same requirement, so a type outside the SDK that conforms
+  to it must add the method.
 
 - `authenticateLock(passcode:isChanging:)` takes an `isChanging` flag, default `false`, so a
   passcode-change flow can verify the current passcode without disturbing the wallet's lock state.

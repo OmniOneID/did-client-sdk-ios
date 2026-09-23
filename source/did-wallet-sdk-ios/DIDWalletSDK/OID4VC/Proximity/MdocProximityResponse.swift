@@ -89,11 +89,18 @@ enum MdocProximityResponseBuilder
 
     /// Checks the holder's selection against a fresh match of the same request.
     ///
-    /// The comparison is against the match result rather than the request: the request also names
-    /// elements this wallet does not hold, so comparing with it would let a selection through that
-    /// cannot be assembled.
+    /// Documents are checked against the match result: each has to answer the request it names.
+    /// Codes are checked against the document, not the request — the holder may add elements the
+    /// reader did not ask for, and whether to is theirs to decide. What is refused is a code the
+    /// document cannot hand over: one it does not hold, or one that names two of its elements.
+    ///
+    /// - Parameters:
+    ///   - selected: What the holder agreed to.
+    ///   - matched: A fresh match of the same request.
+    ///   - documents: `credentialId` → the stored document, for every matched document.
     static func validate(selected: [MdocRequestedDocument],
-                         against matched: [MdocRequestedDocument]) throws
+                         against matched: [MdocRequestedDocument],
+                         documents: [String: Mdoc]) throws
     {
         guard !selected.isEmpty
         else
@@ -101,11 +108,10 @@ enum MdocProximityResponseBuilder
             throw OID4VCManagerError.emptyMdocSelection.getError()
         }
 
-        var allowed: [String: (docType: String, codes: Set<String>)] = [:]
+        var allowed: [String: String] = [:]
         for element in matched
         {
-            allowed[key(element.docRequestIndex, element.credentialId)] =
-                (element.docType, Set(element.claimCodes))
+            allowed[key(element.docRequestIndex, element.credentialId)] = element.docType
         }
 
         var seen: Set<String> = []
@@ -113,14 +119,14 @@ enum MdocProximityResponseBuilder
         {
             let identity = key(element.docRequestIndex, element.credentialId)
 
-            guard let match = allowed[identity]
+            guard let docType = allowed[identity]
             else
             {
                 throw OID4VCManagerError.invalidSelectedMdocDocuments(
                     detail: "document '\(element.credentialId)' does not answer docRequest "
                           + "\(element.docRequestIndex)").getError()
             }
-            guard match.docType == element.docType
+            guard docType == element.docType
             else
             {
                 throw OID4VCManagerError.invalidSelectedMdocDocuments(
@@ -143,14 +149,23 @@ enum MdocProximityResponseBuilder
             {
                 throw OID4VCManagerError.duplicateMdocClaimCode.getError()
             }
-            // Dropping elements is the holder's consent; adding them is not.
-            let extra = Set(element.claimCodes).subtracting(match.codes).sorted()
-            guard extra.isEmpty
+            guard let mdoc = documents[element.credentialId]
             else
             {
                 throw OID4VCManagerError.invalidSelectedMdocDocuments(
-                    detail: "document '\(element.credentialId)' names \(extra.joined(separator: ", "))"
-                          + ", which did not match").getError()
+                    detail: "document '\(element.credentialId)' is not stored").getError()
+            }
+            // Dropping elements and adding unrequested ones are both the holder's consent; only a
+            // code the document cannot resolve to one element is refused.
+            let undisclosable = Set(element.claimCodes)
+                .subtracting(MdocClaimIndex.build(mdoc: mdoc).disclosableCodes)
+                .sorted()
+            guard undisclosable.isEmpty
+            else
+            {
+                throw OID4VCManagerError.invalidSelectedMdocDocuments(
+                    detail: "document '\(element.credentialId)' cannot disclose "
+                          + undisclosable.joined(separator: ", ")).getError()
             }
         }
     }

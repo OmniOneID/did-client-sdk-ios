@@ -20,12 +20,12 @@ iOS Wallet API
 
 - Subject: WalletAPI
 - Writer: 박주현
-- Date: 2026-08-06
+- Date: 2026-09-22
 - Version: v3.0.0
 
 | Version | Date       | History                               |
 | -------- | ---------- | -------------------------------------- |
-| v3.0.0   | 2026-08-06 | OID4VC 절 추가, 선언부를 SDK 기준으로 정정 |
+| v3.0.0   | 2026-09-22 | OID4VC 절·createLocalWalletToken·ISO/IEC 18013-5 근접 제출 API 추가, 선언부를 SDK 기준으로 정정 |
 | v2.0.1   | 2025-10-13 | DID 관련 함수 및 authenticatePin 추가 |
 | v2.0.0   | 2025-05-27 | ZKP 관련 함수 추가                    |
 | v1.0.0   | 2024-10-18 | 초기 작성                             |
@@ -94,6 +94,9 @@ iOS Wallet API
         - [7.5. isAnyOID4VCSaved](#75-isanyoid4vcsaved)
         - [7.6. matchCredentials](#76-matchcredentials)
         - [7.7. createVpToken](#77-createvptoken)
+    - [8. Proximity](#8-proximity)
+        - [8.1. matchMdocRequest](#81-matchmdocrequest)
+        - [8.2. createDeviceResponse](#82-createdeviceresponse)
 
 - [Enumerators](#enumerators)
     - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
@@ -107,6 +110,9 @@ iOS Wallet API
     - [6. DIDAuth](#6-didauth)
     - [7. AuthorizationRequest](#7-authorizationrequest)
     - [8. MatchedCredential](#8-matchedcredential)
+    - [9. MdocRequestedDocument](#9-mdocrequesteddocument)
+    - [10. MdocDeviceResponse](#10-mdocdeviceresponse)
+        - [10.1. MdocDeviceAuthMethod](#101-mdocdeviceauthmethod)
 
 
 # API 목록
@@ -336,6 +342,7 @@ func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) th
 
 - `MSDKWLT05002` (`verifyParameterFail`): `pkgName` 이 비어 있거나 `purpose` 가 4종 밖
 - `MSDKWLT05046` (`notPersonalized`): 월렛이 개인화된 적이 없음
+- `MSDKWLT05030` (`insertQueryFail`): 토큰을 저장하지 못함
 
 ### Usage
 
@@ -1660,7 +1667,9 @@ try WalletAPI.shared.authenticatePin(id: pinID, pin: pin)
 ## 7. OID4VC
 
 OpenID4VCI(발급)와 OpenID4VP(제출). 이 절로 발급받은 크리덴셜은 4절의 W3C 크리덴셜과 별도로
-저장되며, `getAllCredentials`가 아니라 `getAllOID4VCs`로 조회한다.
+저장되며, `getAllCredentials`가 아니라 `getAllOID4VCs`로 조회한다. 발급·저장되는 형식은 IETF
+SD-JWT VC(`SdJwtCredentialItem`)와 ISO/IEC 18013-5 mdoc(`MdocCredentialItem`) 두 가지다. mdoc 의
+근접 제출은 8절이다.
 
 ## 7.1. requestIssueOID4VC
 
@@ -1713,7 +1722,7 @@ let credentialId = try await WalletAPI.shared.requestIssueOID4VC(hWalletToken: h
 ### Declaration
 
 ```swift
-func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
+func getAllOID4VCs(hWalletToken: String) throws -> [any CredentialItem]
 ```
 
 ### Parameters
@@ -1724,9 +1733,9 @@ func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
 
 ### Returns
 
-| Type                  | Description                | **M/O** | **Note** |
-|-----------------------|----------------------------|---------|----------|
-| [SdJwtCredentialItem] | 저장된 모든 SD-JWT 크리덴셜 | M       | 없으면 빈 배열 |
+| Type                 | Description                | **M/O** | **Note** |
+|----------------------|----------------------------|---------|----------|
+| [any CredentialItem] | 저장된 모든 OID4VC 크리덴셜 | M       | 없으면 빈 배열. 각 원소는 `SdJwtCredentialItem` 또는 `MdocCredentialItem` — `format` 으로 분기하거나 캐스팅한다 |
 
 ### Usage
 
@@ -1744,7 +1753,7 @@ let credentials = try WalletAPI.shared.getAllOID4VCs(hWalletToken: hWalletToken)
 ### Declaration
 
 ```swift
-func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialItem]
+func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [any CredentialItem]
 ```
 
 ### Parameters
@@ -1756,9 +1765,9 @@ func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialI
 
 ### Returns
 
-| Type                  | Description       | **M/O** | **Note** |
-|-----------------------|-------------------|---------|----------|
-| [SdJwtCredentialItem] | 조회된 크리덴셜    | M       |          |
+| Type                 | Description       | **M/O** | **Note** |
+|----------------------|-------------------|---------|----------|
+| [any CredentialItem] | 조회된 크리덴셜    | M       | 각 원소는 `SdJwtCredentialItem` 또는 `MdocCredentialItem` |
 
 ### Usage
 
@@ -1902,6 +1911,136 @@ let body = try WalletAPI.shared.createVpToken(hWalletToken: hWalletToken,
                                               authRequest: authRequest,
                                               matchedCredentials: selected,
                                               passcode: passcode)
+```
+
+<br>
+
+## 8. Proximity
+
+웹이 아니라 BLE/NFC 로 가까이 있는 리더에게 제출하는 흐름. 이 절이 현재 다루는 것은 7절로
+발급받은 mdoc 의 ISO/IEC 18013-5 device retrieval 이다. OpenID4VP 가 아니다 — 요청은 검증자의
+DCQL 쿼리가 아니라 리더의 `DeviceRequest` 이고, 두 흐름이 공유하는 것은 claim code 체계뿐이다.
+근접 제출은 이 SDK 와 전송 SDK 가 나눠 맡는다. 전송 SDK 가 세션(BLE/NFC, 세션 암호화)을 운영하고
+복호화한 `DeviceRequest` 바이트를 넘겨주면, 이 SDK 가 저장된 mdoc 과 매칭하고 동의 후
+`DeviceResponse` 를 만들어 돌려준다. 전송 SDK 가 이를 암호화해 보낸다. `readerAuth` 는 읽지 않고,
+`version` 은 비교하지 않는다.
+
+## 8.1. matchMdocRequest
+
+### Description
+`ISO/IEC 18013-5 근접 제출 요청에 답할 수 있는 저장된 mdoc 을 찾는다.`
+
+요청된 element 중 **하나라도** 채울 수 있는 문서가 반환된다. 채우지 못하는 element 는 `missing` 에
+담기므로 동의 화면이 둘 다 보여줄 수 있다. 부분 응답으로 충분한지는 리더의 업무 규칙이지 이 SDK
+의 판단이 아니다. 유효기간을 벗어난 문서도 걸러내지 않는다. 어떤 저장 문서도 답할 수 없는
+`docRequest` 는 결과에 아예 없다 — 앱은 받은 요청과 `docRequestIndex` 를 대조한다.
+
+### Declaration
+
+```swift
+func matchMdocRequest(hWalletToken: String, deviceRequest: Data) throws -> [MdocRequestedDocument]
+```
+
+### Parameters
+
+| Name          | Type   | Description                                    | **M/O** | **Note** |
+|---------------|--------|------------------------------------------------|---------|----------|
+| hWalletToken  | String | 월렛토큰                                        | M       | `PRESENT_VP` 또는 `LIST_VC_AND_PRESENT_VP` 권한 필요 |
+| deviceRequest | Data   | 전송 SDK 가 복호화한 `DeviceRequest` CBOR        | M       |          |
+
+### Returns
+
+| Type                    | Description                                                              | **M/O** | **Note** |
+|-------------------------|--------------------------------------------------------------------------|---------|----------|
+| [MdocRequestedDocument] | 무언가 답할 수 있는 (docRequest, 문서) 쌍마다 한 항목. 요청 인덱스, 그 다음 크리덴셜 id 순 | M | [MdocRequestedDocument](#9-mdocrequesteddocument) |
+
+### Throws
+
+- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` 가 올바른 `DeviceRequest` 가 아님
+- `MSDKWLT05600` (`noMatchedMdocDocuments`): 어떤 `docRequest` 에도 답할 수 있는 저장 문서가 없음
+
+### Usage
+
+```swift
+let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
+                                                    deviceRequest: deviceRequest)
+```
+
+<br>
+
+## 8.2. createDeviceResponse
+
+### Description
+`홀더가 동의한 문서와 element 로 DeviceResponse 를 생성한다.`
+
+동의는 `matchMdocRequest` 의 반환값을 편집하는 것으로 표현한다. element 를 빼려면 `claimCodes` 에서
+그 코드를 빼고, 문서를 빼려면 배열에서 그 항목을 뺀다. 리더가 요청하지 않은 element 를 더할 수도
+있다 — 그 문서의 `MdocCredentialItem.consentItems` 에서 코드를 가져와 덧붙인다. 더할지는 홀더가
+정하며 여기서 판단하지 않는다. 문서가 보유하지 않은 코드와 `isAmbiguous` 로 표시된 코드만 거부된다.
+전부 거부하는 것은 **이 함수를 호출하지 않고** 전송 SDK 가 세션을 끝내게 하는 것으로 표현한다. 빈
+`selected` 는 거부된다. 요청은 신뢰하지 않고 여기서 다시 매칭하며, 각 항목은 그 새 매칭 결과의
+요청에 답하는 것이어야 한다.
+
+`sessionTranscript` 는 **받은 그대로** 쓴다. `SessionTranscriptBytes`(`#6.24(bstr .cbor
+SessionTranscript)`, 전송 SDK 가 넘겨주는 형태)든 순수 `SessionTranscript` 배열이든 받으며, 어느
+쪽도 다시 인코딩하지 않는다.
+
+문서별 인증은 기기 키가 키 합의를 할 수 있고 transcript 에 리더의 임시 키가 있으면 `deviceMac`,
+그렇지 않으면 `deviceSignature` 로 하며, 실제 사용한 방식을 `authMethods` 에 크리덴셜별로 알려준다.
+홀더 키는 하나의 인증 컨텍스트로 쓰이므로, 사용자 확인을 요구하는 Secure Enclave 키라도 호출당 한
+번만 묻는다.
+
+반환되는 `response` 는 **평문** `DeviceResponse` 다. 전송 SDK 가 암호화해서 보낸다.
+
+### Declaration
+
+```swift
+func createDeviceResponse(hWalletToken: String, deviceRequest: Data, sessionTranscript: Data, selected: [MdocRequestedDocument], passcode: String? = nil) throws -> MdocDeviceResponse
+```
+
+### Parameters
+
+| Name              | Type                    | Description                                         | **M/O** | **Note** |
+|-------------------|-------------------------|-----------------------------------------------------|---------|----------|
+| hWalletToken      | String                  | 월렛토큰                                             | M       | `PRESENT_VP` 또는 `LIST_VC_AND_PRESENT_VP` 권한 필요 |
+| deviceRequest     | Data                    | `matchMdocRequest` 에 넘겼던 것과 같은 `DeviceRequest` 바이트 | M | 신뢰하지 않고 여기서 다시 매칭한다 |
+| sessionTranscript | Data                    | 전송 SDK 가 넘겨준 transcript, 받은 그대로            | M       | `SessionTranscriptBytes` 또는 순수 `SessionTranscript` 배열 |
+| selected          | [MdocRequestedDocument] | `matchMdocRequest` 반환값을 편집한 것                 | M       | [MdocRequestedDocument](#9-mdocrequesteddocument). 비어 있으면 안 됨 |
+| passcode          | String?                 | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil`      | O       | 기본값 `nil` |
+
+### Returns
+
+| Type               | Description                                    | **M/O** | **Note** |
+|--------------------|------------------------------------------------|---------|----------|
+| MdocDeviceResponse | 평문 `DeviceResponse` 와 문서별 인증 방식        | M       | [MdocDeviceResponse](#10-mdocdeviceresponse) |
+
+### Throws
+
+- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` 가 올바른 `DeviceRequest` 가 아님
+- `MSDKWLT05621` (`invalidSessionTranscript`): `sessionTranscript` 가 두 형태 중 어느 것도 아님
+- `MSDKWLT05600` (`noMatchedMdocDocuments`): 어떤 `docRequest` 에도 답할 수 있는 저장 문서가 없음
+- `MSDKWLT05610` (`emptyMdocSelection`): `selected` 가 비어 있음
+- `MSDKWLT05611` (`invalidSelectedMdocDocuments`): 항목이 새 매칭 결과에 없거나, 그 문서가 공개할 수 없는 코드(미보유 또는 모호)를 담고 있음
+- `MSDKWLT05612` (`emptyMdocClaimCodes`): 항목에 claim code 가 하나도 없음
+- `MSDKWLT05613` (`duplicateSelectedMdocDocument`): 같은 `docRequest` 에 같은 문서가 두 번 선택됨
+- `MSDKWLT05614` (`duplicateMdocClaimCode`): 항목이 같은 claim code 를 두 번 담고 있음
+- `MSDKWLT05504` (`credentialNotFound`): 선택된 크리덴셜이 더 이상 Wallet 에 없음
+- `MSDKWLT05505` (`holderKeyNotFound`): 선택된 문서에 바인딩된 기기 키가 없음
+- `MSDKWLT12401` (`keyAgreement`): `deviceMac` 을 위한 Secure Enclave 키 합의 실패
+
+### Usage
+
+```swift
+let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
+                                                    deviceRequest: deviceRequest)
+// ... 동의 화면: element 를 빼려면 코드를, 문서를 빼려면 항목을 덜어낸다.
+//     요청 밖 element 를 더하려면 MdocCredentialItem.consentItems 의 코드를 덧붙인다 ...
+let result = try WalletAPI.shared.createDeviceResponse(hWalletToken: hWalletToken,
+                                                       deviceRequest: deviceRequest,
+                                                       sessionTranscript: sessionTranscript,
+                                                       selected: selected,
+                                                       passcode: passcode)
+transport.send(deviceResponse: result.response)   // 전송 SDK 가 암호화한다
 ```
 
 <br>
@@ -2159,3 +2298,84 @@ public struct MatchedCredential {
 | credentialId | String   | 매칭된 저장 크리덴셜 id                                    | M       |          |
 | claimCodes   | [String] | 공개할 클레임. 쿼리가 요구한 클레임이거나, 크리덴셜 전체를 요구했다면 공개 가능한 모든 클레임 | M | 불투명 값이다. 표시·대조에만 쓰고 쪼개거나 조립하지 않는다 |
 <br>
+
+## 9. MdocRequestedDocument
+
+### Description
+
+`ISO/IEC 18013-5 근접 제출 요청의 매칭 한 건: 요청된 문서와, 그 element 중 하나 이상을 채울 수 있는 저장 문서.`
+
+`matchMdocRequest` 가 반환하고, 편집한 뒤 `createDeviceResponse` 에 되돌려준다. 요청된 element 를
+전부 채울 필요는 없다 — 채우지 못하는 것은 `missing` 에 담긴다.
+
+### Declaration
+
+```swift
+public struct MdocRequestedDocument {
+    public let docRequestIndex: Int
+    public let docType: String
+    public let credentialId: String
+    public let claimCodes: [String]
+    public let intentToRetain: [String: Bool]
+    public let missing: [String]
+}
+```
+
+### Property
+
+| Name            | Type           | Description                                                        | **M/O** | **Note** |
+| --------------- | -------------- | ------------------------------------------------------------------ | ------- | -------- |
+| docRequestIndex | Int            | 이 항목이 답하는 `DeviceRequest.docRequests` 의 0 기반 인덱스        | M       | `docType` 으로는 요청을 식별할 수 없다. 리더가 같은 타입을 다른 element 로 두 번 요청할 수 있다 |
+| docType         | String         | 요청된 `ItemsRequest.docType`                                       | M       |          |
+| credentialId    | String         | 요청된 element 를 하나 이상 채울 수 있는 저장 문서                    | M       | `MdocCredentialItem.id` 와 같은 값 |
+| claimCodes      | [String]       | 공개할 element, 코드 형태                                            | M       | 불투명 값이다. element 를 빼려면 코드를 빼고, 요청 밖 element 를 더하려면 `MdocCredentialItem.consentItems` 의 코드를 덧붙인다. 쪼개거나 조립하지 않는다 |
+| intentToRetain  | [String: Bool] | 코드별 리더의 보관 의도. `claimCodes` 와 `missing` 을 합친 범위        | M       | 출력 전용. `createDeviceResponse` 는 읽지 않는다 |
+| missing         | [String]       | 이 문서가 채울 수 없는 요청 element, 같은 코드 형태                    | M       | 보유하지 않은 element 와, 모호한 코드로 보유한 element 를 포함 |
+<br>
+
+## 10. MdocDeviceResponse
+
+### Description
+
+`생성된 DeviceResponse 와, 그 안의 문서 각각이 어떤 방식으로 인증됐는지.`
+
+### Declaration
+
+```swift
+public struct MdocDeviceResponse {
+    public let response: Data
+    public let authMethods: [String: MdocDeviceAuthMethod]
+}
+```
+
+### Property
+
+| Name        | Type                           | Description                                     | **M/O** | **Note** |
+| ----------- | ------------------------------ | ----------------------------------------------- | ------- | -------- |
+| response    | Data                           | `DeviceResponse` CBOR, **평문**                  | M       | 전송 SDK 가 암호화해서 보낸다 |
+| authMethods | [String: MdocDeviceAuthMethod] | `credentialId` → 그 문서에 실제 사용한 인증 방식   | M       | [MdocDeviceAuthMethod](#101-mdocdeviceauthmethod). 한 응답에 같은 doctype 이 두 번 실릴 수 있어 크리덴셜 기준 |
+<br>
+
+## 10.1. MdocDeviceAuthMethod
+
+### Description
+
+`DeviceResponse 안의 문서 하나가 인증된 방식.`
+
+### Declaration
+
+```swift
+public enum MdocDeviceAuthMethod: String, Sendable {
+    case deviceSignature
+    case deviceMac
+}
+```
+
+### Property
+
+| Value           | Description                                                   | **Note** |
+| --------------- | ------------------------------------------------------------- | -------- |
+| deviceSignature | 문서의 기기 키로 만든 ECDSA 서명                               | 키가 키 합의를 못 하거나 transcript 에 리더 키가 없을 때 |
+| deviceMac       | 리더 임시 키와의 ECDH 로 유도한 `EMacKey` 로 만든 HMAC          | 기기 키가 키 합의를 할 수 있으면 우선 사용 |
+<br>
+

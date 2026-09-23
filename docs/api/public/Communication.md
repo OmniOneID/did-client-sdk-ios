@@ -20,11 +20,12 @@ iOS Communication API
 
 - Subject: Communication
 - Author: JooHyun Park
-- Date: 2026-07-31
-- Version: v2.0.0
+- Date: 2026-09-22
+- Version: v2.0.1
 
 | Version | Date       | Changes                  |
 | ------- | ---------- | ------------------------ |
+| v2.0.1  | 2026-09-22 | Add sendPostUrlencoded   |
 | v2.0.0  | 2026-07-31 | Remove doGet / doPost — use sendRequest |
 | v1.0.2  | 2025-09-09 | Add new communication API |
 | v1.0.1  | 2025-05-23 | Add ZKP API              |
@@ -38,7 +39,9 @@ iOS Communication API
   - [1. getZKPCredentialSchama](#1-getzkpcredentialschama)
   - [2. getZKPCredentialDefinition](#2-getzkpcredentialdefinition)
   - [3. sendRequest](#3-sendrequest)
-  - [4. sendRequest](#4-sendrequest)  
+  - [4. sendRequest](#4-sendrequest)
+  - [5. sendPostUrlencoded](#5-sendposturlencoded)
+  - [6. sendPostUrlencoded](#6-sendposturlencoded)
 
 # Removed in v2.0.0
 
@@ -205,5 +208,85 @@ let (data, statusCode) = try await CommunicationClient.sendRequest(
     headerFields: ["Authorization": "Bearer token"],
     requestJsonData: nil
 )
+
+<br>
+
+### 5. sendPostUrlencoded
+
+#### Description
+```
+Sends an asynchronous POST request with an application/x-www-form-urlencoded body and returns a decoded response.
+
+The request object is form-encoded (each property becomes a key=value pair), the method is always POST,
+and the response is decoded into the expected generic type T, which must conform to Jsonable.
+Suited to the OpenID4VCI token endpoint and the OpenID4VP direct_post response, both of which take form-encoded bodies.
+```
+
+#### Declaration
+```swift
+public static func sendPostUrlencoded<T : Jsonable>(urlString : String,
+                                                    headerFields : StringDictionary = XWWWFormHttpHeaderFields,
+                                                    requestJsonable : Jsonable) async throws -> T
+```
+
+#### Parameters
+| Parameter       | Type             | Description                                | **M/O** | **Note**                               |
+|-----------------|------------------|--------------------------------------------|---------|----------------------------------------|
+| urlString       | String           | The URL string to send the request to      | M       |                                        |
+| headerFields    | StringDictionary | A dictionary of HTTP header fields         | O       | Defaults to `XWWWFormHttpHeaderFields` |
+| requestJsonable | Jsonable         | Request body, form-encoded before sending  | M       | Must conform to `Jsonable`             |
+
+#### Returns
+| Type | Description             | **M/O** | **Note**                   |
+| ---- | ----------------------- | ------- | -------------------------- |
+| T    | Decoded response object | M       | Must conform to `Jsonable`. Throws on a non-200 status |
+
+#### Usage
+```swift
+let tokenResponse: TokenResponse = try await CommunicationClient.sendPostUrlencoded(
+    urlString: "https://issuer.example.com/token",
+    requestJsonable: tokenRequest
+)
+```
+
+<br>
+
+
+### 6. sendPostUrlencoded
+
+#### Description
+```
+Sends an asynchronous POST request with an application/x-www-form-urlencoded body and returns the raw response data.
+
+The body is sent as given, the method is always POST, and the response is returned as raw Data along with
+the HTTP status code, without attempting to decode it. The status check is left to the caller.
+```
+
+#### Declaration
+```swift
+public static func sendPostUrlencoded(urlString : String,
+                                      headerFields : StringDictionary = XWWWFormHttpHeaderFields,
+                                      requestJsonData : Data) async throws -> (Data, Int)
+```
+
+#### Parameters
+| Parameter       | Type             | Description                                | **M/O** | **Note**                               |
+|-----------------|------------------|--------------------------------------------|---------|----------------------------------------|
+| urlString       | String           | The URL string of the API endpoint         | M       |                                        |
+| headerFields    | StringDictionary | A dictionary containing HTTP header fields | O       | Defaults to `XWWWFormHttpHeaderFields` |
+| requestJsonData | Data             | The request body, already form-encoded     | M       | e.g. the `Data` returned by `createVpToken` |
+
+#### Returns
+| Type        | Description                            | **M/O** | **Note** |
+| ----------- | -------------------------------------- | ------- | -------- |
+| (Data, Int) | Raw response data and HTTP status code | M       |          |
+
+#### Usage
+```swift
+let (data, statusCode) = try await CommunicationClient.sendPostUrlencoded(
+    urlString: authRequest.responseUri,
+    requestJsonData: responseBody
+)
+```
 
 <br>

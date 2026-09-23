@@ -20,11 +20,12 @@ iOS Communication API
 
 - 주제: Communication
 - 작성: 박주현
-- 일자: 2026-07-31
-- 버전: v2.0.0
+- 일자: 2026-09-22
+- 버전: v2.0.1
 
 | 버전   | 일자       | 변경 내용        |
 | ------ | ---------- | ---------------- |
+| v2.0.1 | 2026-09-22 | sendPostUrlencoded 추가 |
 | v2.0.0 | 2026-07-31 | doGet / doPost 제거 — sendRequest 사용 |
 | v1.0.2 | 2025-09-09 | 신규 통신 API 추가 |
 | v1.0.1 | 2025-05-23 | ZKP API 추가     |
@@ -39,6 +40,8 @@ iOS Communication API
   - [2. getZKPCredentialDefinition](#2-getzkpcredentialdefinition)
   - [3. sendRequest](#3-sendrequest)
   - [4. sendRequest](#4-sendrequest)
+  - [5. sendPostUrlencoded](#5-sendposturlencoded)
+  - [6. sendPostUrlencoded](#6-sendposturlencoded)
 
 
 ## v2.0.0 에서 제거된 API
@@ -206,5 +209,85 @@ let (data, statusCode) = try await CommunicationClient.sendRequest(
     headerFields: ["Authorization": "Bearer token"],
     requestJsonData: nil
 )
+
+<br>
+
+### 5. sendPostUrlencoded
+
+#### Description
+```
+application/x-www-form-urlencoded 본문으로 비동기 POST 요청을 보내고, 응답을 디코딩하여 반환합니다.
+
+요청 객체는 폼 인코딩되며(각 프로퍼티가 key=value 쌍이 됩니다), 메서드는 항상 POST 입니다.
+응답은 Jsonable을 준수하는 제네릭 타입 T로 디코딩됩니다.
+폼 인코딩 본문을 받는 OpenID4VCI 토큰 엔드포인트와 OpenID4VP direct_post 응답에 적합합니다.
+```
+
+#### Declaration
+```swift
+public static func sendPostUrlencoded<T : Jsonable>(urlString : String,
+                                                    headerFields : StringDictionary = XWWWFormHttpHeaderFields,
+                                                    requestJsonable : Jsonable) async throws -> T
+```
+
+#### Parameters
+| Parameter       | Type             | Description                          | **M/O** | **Note**                               |
+|-----------------|------------------|--------------------------------------|---------|----------------------------------------|
+| urlString       | String           | 요청을 보낼 URL 문자열                | M       |                                        |
+| headerFields    | StringDictionary | HTTP 헤더 필드 딕셔너리               | O       | 기본: `XWWWFormHttpHeaderFields`       |
+| requestJsonable | Jsonable         | 요청 본문. 전송 전에 폼 인코딩된다     | M       | `Jsonable` 준수 필요                   |
+
+#### Returns
+| Type | Description        | **M/O** | **Note**                   |
+| ---- | ------------------ | ------- | -------------------------- |
+| T    | 디코딩된 응답 객체  | M       | `Jsonable` 준수 필요. 상태 코드가 200 이 아니면 에러를 던진다 |
+
+#### Usage
+```swift
+let tokenResponse: TokenResponse = try await CommunicationClient.sendPostUrlencoded(
+    urlString: "https://issuer.example.com/token",
+    requestJsonable: tokenRequest
+)
+```
+
+<br>
+
+
+### 6. sendPostUrlencoded
+
+#### Description
+```
+application/x-www-form-urlencoded 본문으로 비동기 POST 요청을 보내고, 원시 응답 데이터를 반환합니다.
+
+본문은 주어진 그대로 전송되며, 메서드는 항상 POST 입니다.
+응답은 디코딩 없이 원시 Data와 HTTP 상태 코드로 반환됩니다. 상태 코드 확인은 호출자의 몫입니다.
+```
+
+#### Declaration
+```swift
+public static func sendPostUrlencoded(urlString : String,
+                                      headerFields : StringDictionary = XWWWFormHttpHeaderFields,
+                                      requestJsonData : Data) async throws -> (Data, Int)
+```
+
+#### Parameters
+| Parameter       | Type             | Description                          | **M/O** | **Note**                               |
+|-----------------|------------------|--------------------------------------|---------|----------------------------------------|
+| urlString       | String           | API 엔드포인트의 URL 문자열          | M       |                                        |
+| headerFields    | StringDictionary | HTTP 헤더 필드 딕셔너리              | O       | 기본: `XWWWFormHttpHeaderFields`       |
+| requestJsonData | Data             | 이미 폼 인코딩된 요청 본문            | M       | 예: `createVpToken` 이 반환한 `Data`   |
+
+#### Returns
+| Type        | Description                       | **M/O** | **Note** |
+| ----------- | --------------------------------- | ------- | -------- |
+| (Data, Int) | 원시 응답 데이터와 HTTP 상태 코드   | M       |          |
+
+#### Usage
+```swift
+let (data, statusCode) = try await CommunicationClient.sendPostUrlencoded(
+    urlString: authRequest.responseUri,
+    requestJsonData: responseBody
+)
+```
 
 <br>

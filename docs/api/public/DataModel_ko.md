@@ -20,12 +20,12 @@ iOS DataModel
 
 - Subject: DataModel
 - Writer: 박주현
-- Date: 2026-08-06
+- Date: 2026-09-22
 - Version: v2.0.0
 
 | Version          | Date       | History                 |
 | ---------------- | ---------- | ------------------------|
-| v2.0.0           | 2026-08-06 | OID4VC 모델 추가          |
+| v2.0.0           | 2026-09-22 | OID4VC·mdoc·근접 제출 모델 추가 |
 | v1.0.1           | 2025-05-27 | ZKP 관련 모델 추가         |
 | v1.0.0           | 2024-08-28 | 초기 작성                 |
 
@@ -140,42 +140,52 @@ iOS DataModel
         - [1.1. CredentialFormat](#11-credentialformat)
         - [1.2. VCDMCredentialItem](#12-vcdmcredentialitem)
         - [1.3. SdJwtCredentialItem](#13-sdjwtcredentialitem)
+        - [1.4. MdocCredentialItem](#14-mdoccredentialitem)
     - [2. SDJWT](#2-sdjwt)
         - [2.1. Disclosure](#21-disclosure)
-    - [3. JWS](#3-jws)
-        - [3.1. JWSHeader](#31-jwsheader)
-    - [4. JWK](#4-jwk)
-        - [4.1. JWK nested enumerations](#41-jwk-nested-enumerations)
-    - [5. AuthorizationRequest](#5-authorizationrequest)
-    - [6. DCQLQuery](#6-dcqlquery)
-        - [6.1. CredentialQuery](#61-credentialquery)
-        - [6.2. ClaimQuery](#62-claimquery)
-        - [6.3. TrustedAuthority](#63-trustedauthority)
-        - [6.4. CredentialSet](#64-credentialset)
-        - [6.5. DCQLPathElement](#65-dcqlpathelement)
-    - [7. MatchedCredential](#7-matchedcredential)
-    - [8. IssuerMetadataResponse](#8-issuermetadataresponse)
-        - [8.1. CredentialConfiguration](#81-credentialconfiguration)
-        - [8.2. EncryptionSupport](#82-encryptionsupport)
-        - [8.3. CredentialPolicy](#83-credentialpolicy)
-        - [8.4. CredentialMetadata](#84-credentialmetadata)
-        - [8.5. DisplayInfo](#85-displayinfo)
-            - [8.5.1. LogoInfo](#851-logoinfo)
-        - [8.6. ProofSupport](#86-proofsupport)
-        - [8.7. ClaimDetail](#87-claimdetail)
-        - [8.8. SupportedFormat](#88-supportedformat)
-        - [8.9. SigningAlg](#89-signingalg)
-    - [9. CredentialOfferResponse](#9-credentialofferresponse)
-        - [9.1. Grants](#91-grants)
-        - [9.2. PreAuthorizedCode](#92-preauthorizedcode)
-        - [9.3. TxCode](#93-txcode)
-        - [9.4. AuthorizationCode](#94-authorizationcode)
-    - [10. TokenRequest](#10-tokenrequest)
-    - [11. TokenResponse](#11-tokenresponse)
-    - [12. AuthorizationDetails](#12-authorizationdetails)
-    - [13. OID4VCIIssuerList](#13-oid4vciissuerlist)
-        - [13.1. OID4VCIIssuerItem](#131-oid4vciissueritem)
-    - [14. AnyJSON](#14-anyjson)
+        - [2.2. SdJwtConsentItem](#22-sdjwtconsentitem)
+    - [3. Mdoc](#3-mdoc)
+        - [3.1. MdocConsentItem](#31-mdocconsentitem)
+        - [3.2. MdocValidityInfo](#32-mdocvalidityinfo)
+        - [3.3. MdocElementValue](#33-mdocelementvalue)
+    - [4. StatusListReference](#4-statuslistreference)
+    - [5. JWS](#5-jws)
+        - [5.1. JWSHeader](#51-jwsheader)
+    - [6. JWK](#6-jwk)
+        - [6.1. JWK nested enumerations](#61-jwk-nested-enumerations)
+    - [7. AuthorizationRequest](#7-authorizationrequest)
+    - [8. DCQLQuery](#8-dcqlquery)
+        - [8.1. CredentialQuery](#81-credentialquery)
+        - [8.2. ClaimQuery](#82-claimquery)
+        - [8.3. TrustedAuthority](#83-trustedauthority)
+        - [8.4. CredentialSet](#84-credentialset)
+        - [8.5. DCQLPathElement](#85-dcqlpathelement)
+    - [9. MatchedCredential](#9-matchedcredential)
+    - [10. MdocRequestedDocument](#10-mdocrequesteddocument)
+    - [11. MdocDeviceResponse](#11-mdocdeviceresponse)
+        - [11.1. MdocDeviceAuthMethod](#111-mdocdeviceauthmethod)
+    - [12. IssuerMetadataResponse](#12-issuermetadataresponse)
+        - [12.1. CredentialConfiguration](#121-credentialconfiguration)
+        - [12.2. EncryptionSupport](#122-encryptionsupport)
+        - [12.3. CredentialPolicy](#123-credentialpolicy)
+        - [12.4. CredentialMetadata](#124-credentialmetadata)
+        - [12.5. DisplayInfo](#125-displayinfo)
+            - [12.5.1. LogoInfo](#1251-logoinfo)
+        - [12.6. ProofSupport](#126-proofsupport)
+        - [12.7. ClaimDetail](#127-claimdetail)
+        - [12.8. SupportedFormat](#128-supportedformat)
+        - [12.9. SigningAlg](#129-signingalg)
+    - [13. CredentialOfferResponse](#13-credentialofferresponse)
+        - [13.1. Grants](#131-grants)
+        - [13.2. PreAuthorizedCode](#132-preauthorizedcode)
+        - [13.3. TxCode](#133-txcode)
+        - [13.4. AuthorizationCode](#134-authorizationcode)
+    - [14. TokenRequest](#14-tokenrequest)
+    - [15. TokenResponse](#15-tokenresponse)
+    - [16. AuthorizationDetails](#16-authorizationdetails)
+    - [17. OID4VCIIssuerList](#17-oid4vciissuerlist)
+        - [17.1. OID4VCIIssuerItem](#171-oid4vciissueritem)
+    - [18. AnyJSON](#18-anyjson)
 
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
@@ -2838,8 +2848,9 @@ public struct CredentialDefinition: Jsonable
 
 # OID4VC
 
-앱이 직접 다루는 OpenID4VCI(발급)·OpenID4VP(제출) 계층의 모델이다. Wallet에서 읽어오는 것(1–4),
-검증자와 주고받는 것(5–7), 발급자와 주고받는 것(8–13)으로 나뉜다.
+앱이 직접 다루는 OpenID4VCI(발급)·OpenID4VP(제출)·ISO/IEC 18013-5 근접 제출 계층의 모델이다.
+Wallet에서 읽어오는 것(1–6), 검증자·리더와 주고받는 것(7–11), 발급자와 주고받는 것(12–17)으로
+나뉜다.
 
 매칭 엔진 자체 — credential adapter, `DCQLCredentialMatcher`, `ParsedCredential`, path 헬퍼 — 는
 SDK 내부 조합을 위해 `public`일 뿐 앱이 쓰는 표면이 아니다. 앱은 `WalletAPI.matchCredentials`를
@@ -2873,15 +2884,26 @@ public protocol CredentialItem: Identifiable {
 
 ### Declaration
 ```swift
-public enum CredentialFormat { case vcdm, sdJwtVc, msoMdoc }
+public enum CredentialFormat {
+    case vcdm, sdJwtVc, msoMdoc
+
+    public var token: String { get }
+    public init?(token: String)
+}
 ```
 
 ### Property
 | Value    | Description                            | **Note**                                       |
 |----------|----------------------------------------|------------------------------------------------|
-| vcdm     | W3C VCDM 크리덴셜                       | [VCDMCredentialItem](#12-vcdmcredentialitem)   |
-| sdJwtVc  | SD-JWT VC                              | [SdJwtCredentialItem](#13-sdjwtcredentialitem) |
-| msoMdoc  | ISO mdoc                               | 아직 발급·제출 미지원                            |
+| vcdm     | W3C VCDM 크리덴셜                       | [VCDMCredentialItem](#12-vcdmcredentialitem). 토큰 `opendid_vc` |
+| sdJwtVc  | IETF SD-JWT VC                         | [SdJwtCredentialItem](#13-sdjwtcredentialitem). 토큰 `dc+sd-jwt-did` |
+| msoMdoc  | ISO/IEC 18013-5 mdoc                   | [MdocCredentialItem](#14-mdoccredentialitem). 토큰 `mso_mdoc-did` |
+
+### Method
+| Name         | Description                                              | **Note** |
+|--------------|----------------------------------------------------------|----------|
+| token        | 이 SDK 가 그 형식에 대해 쓰는 DCQL `format` 토큰            | 앱이 표시하거나 비교할 때 기준으로 삼는 단일 정의 |
+| init(token:) | DCQL `format` 토큰이 가리키는 형식. 이 SDK 가 다루지 않는 토큰이면 `nil` | 검증자가 보낼 수 있는 별칭도 받는다. `.vcdm` 에 `jwt_vc_json`, `jwt_vc`, `ldp_vc`, `.sdJwtVc` 에 `vc+sd-jwt`, `sd-jwt` |
 
 <br>
 
@@ -2914,7 +2936,7 @@ public struct VCDMCredentialItem: CredentialItem
 ## 1.3. SdJwtCredentialItem
 
 ### Description
-`저장된 SD-JWT 크리덴셜. getAllOID4VCs / getOID4VCs 의 반환 타입이다.`
+`저장된 SD-JWT 크리덴셜. getAllOID4VCs / getOID4VCs 가 반환하는 두 원소 타입 중 하나.`
 
 ### Declaration
 ```swift
@@ -2926,6 +2948,10 @@ public struct SdJwtCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let sdjwt: SDJWT
+
+    public var issuerDid: String? { get }
+    public var consentItems: [SdJwtConsentItem] { get throws }
+    public var status: StatusListReference? { get throws }
 }
 ```
 
@@ -2938,6 +2964,46 @@ public struct SdJwtCredentialItem: CredentialItem
 | kid                  | String           | 크리덴셜에 바인딩된 홀더 키의 id             | M       |          |
 | credentialIdentifier | String           | 발급자가 지정한 `credential_identifier`     | O       |          |
 | sdjwt                | SDJWT            | 크리덴셜 본체                               | M       | [SDJWT](#2-sdjwt) |
+| issuerDid            | String           | 크리덴셜에 서명한 발급자의 DID               | O       | `SDJWT.issuerDid`. 이 SDK 가 저장한 크리덴셜이면 `nil` 이 아니다 |
+| consentItems         | [SdJwtConsentItem] | 홀더에게 동의를 물을 수 있는 모든 클레임, 발급자가 쓴 순서 | M | [SdJwtConsentItem](#22-sdjwtconsentitem). 발급자 JWT payload 를 읽을 수 없으면 `MSDKWLT05102` |
+| status               | StatusListReference | 크리덴셜의 폐기 상태가 게시되는 곳          | O       | [StatusListReference](#4-statuslistreference). 발급자가 게시하지 않으면 `nil`. payload 를 읽을 수 없으면 `MSDKWLT05102` |
+
+<br>
+
+## 1.4. MdocCredentialItem
+
+### Description
+`저장된 ISO/IEC 18013-5 mdoc. getAllOID4VCs / getOID4VCs 가 반환하는 다른 한 원소 타입.`
+
+### Declaration
+```swift
+public struct MdocCredentialItem: CredentialItem
+{
+    public let id: String
+    public let format: CredentialFormat
+    public let configurationId: String
+    public let kid: String
+    public let credentialIdentifier: String?
+    public let mdoc: Mdoc
+
+    public var issuerDid: String? { get }
+    public var consentItems: [MdocConsentItem] { get }
+    public var status: StatusListReference? { get }
+}
+```
+
+### Property
+| Name                 | Type              | Description                                | **M/O** | **Note** |
+|----------------------|-------------------|--------------------------------------------|---------|----------|
+| id                   | String            | Wallet 내부 크리덴셜 id                     | M       | `MdocRequestedDocument.credentialId` 가 가리키는 값 |
+| format               | CredentialFormat  | 항상 `.msoMdoc`                            | M       | [CredentialFormat](#11-credentialformat) |
+| configurationId      | String            | 발급에 사용된 `credential_configuration_id` | M       |          |
+| kid                  | String            | 문서에 바인딩된 기기 키의 id                 | M       |          |
+| credentialIdentifier | String            | 발급자가 지정한 `credential_identifier`     | O       |          |
+| mdoc                 | Mdoc              | 문서 본체                                   | M       | [Mdoc](#3-mdoc) |
+| issuerDid            | String            | 문서에 서명한 발급자의 DID                   | O       | `Mdoc.issuerDid`. 이 SDK 가 저장한 문서면 `nil` 이 아니다 |
+| consentItems         | [MdocConsentItem] | 홀더에게 동의를 물을 수 있는 모든 element, 발급자 순서 | M | [MdocConsentItem](#31-mdocconsentitem). 파싱 때 문서 전체가 디코딩되므로 에러를 던지지 않는다 |
+| status               | StatusListReference | 문서의 폐기 상태가 게시되는 곳              | O       | [StatusListReference](#4-statuslistreference). 발급자가 게시하지 않으면 `nil` |
 
 <br>
 
@@ -2957,6 +3023,10 @@ public struct SDJWT: Jsonable {
     public static func parse(raw: String) -> SDJWT
     public func toString() -> String
     public func getSignSource() -> (String, String)
+
+    public var issuerDid: String? { get }
+    public func consentItems() throws -> [SdJwtConsentItem]
+    public func status() throws -> StatusListReference?
 }
 ```
 
@@ -2966,6 +3036,7 @@ public struct SDJWT: Jsonable {
 | credentialJwt | String        | 발급자가 서명한 JWT (compact)         | M       |          |
 | disclosures   | [Disclosure]  | 크리덴셜이 담고 있는 모든 disclosure   | M       | [Disclosure](#21-disclosure) |
 | keyBindingJwt | String        | KB-JWT. 제출본에만 존재               | O       |          |
+| issuerDid     | String        | 크리덴셜에 서명한 발급자의 DID. 발급자 JWT 의 `kid` 에서 읽는다 | O | JWT 를 읽을 수 없거나 `kid` 가 DID URL 이 아니면 `nil` — 이 SDK 가 저장한 크리덴셜에서는 일어나지 않는다 |
 
 ### Method
 | Name             | Description                                        | **Note** |
@@ -2973,6 +3044,8 @@ public struct SDJWT: Jsonable {
 | parse(raw:)      | `~`로 구분된 SD-JWT 문자열을 분해한다                | 에러를 던지지 않는다. 해석 불가 문자열은 disclosure 없는 크리덴셜 JWT가 된다 |
 | toString()       | `~` 구분 형식으로 다시 직렬화한다                    |          |
 | getSignSource()  | 크리덴셜 JWT의 서명 대상과 서명값을 반환한다          |          |
+| consentItems()   | 홀더에게 동의를 물을 수 있는 모든 클레임을, 각각을 가리키는 코드와 함께, 발급자가 disclosure 를 쓴 순서로 반환한다. 평문으로 둔 클레임은 맨 뒤 | [SdJwtConsentItem](#22-sdjwtconsentitem). 발급자 JWT payload 를 읽을 수 없으면 `MSDKWLT05102` |
+| status()         | 크리덴셜의 폐기 상태가 게시되는 곳. 게시하지 않으면 `nil` | [StatusListReference](#4-statuslistreference). payload 를 읽을 수 없거나 해석할 수 없는 `status` 가 있으면 `MSDKWLT05102` |
 
 <br>
 
@@ -3001,7 +3074,208 @@ public struct Disclosure: Codable, Equatable, Sendable {
 
 <br>
 
-## 3. JWS
+## 2.2. SdJwtConsentItem
+
+### Description
+`SD-JWT 의 클레임 하나. 홀더에게 동의를 묻는 단위.`
+
+`code` 가 오가는 값이다. 매칭은 이 코드로 클레임을 지목하고, 홀더의 선택도 이 코드로 표현되며,
+`createVpToken` 은 이 코드를 필요한 disclosure 로 되돌린다. 불투명 값이다 — 표시하고 비교하되,
+`.` 이나 `[]` 로 쪼개거나 조립하지 않는다.
+
+### Declaration
+```swift
+public struct SdJwtConsentItem: Sendable, Equatable {
+    public let code: String
+    public let claimName: String
+    public let value: AnyJSON
+    public let isAmbiguous: Bool
+    public let isSelectivelyDisclosable: Bool
+}
+```
+
+### Property
+| Name                     | Type    | Description                                              | **M/O** | **Note** |
+|--------------------------|---------|----------------------------------------------------------|---------|----------|
+| code                     | String  | claim code                                               | M       | `MatchedCredential.claimCodes` 에 그대로 되돌려준다 |
+| claimName                | String  | 코드의 마지막 세그먼트. 경로 대신 라벨을 보여줄 화면용     | M       |          |
+| value                    | AnyJSON | 클레임 값                                                 | M       | [AnyJSON](#18-anyjson) |
+| isAmbiguous              | Bool    | 이 코드가 크리덴셜의 클레임 둘 이상을 가리키는지            | M       | 모호한 코드의 제출은 추측하지 않고 실패한다 |
+| isSelectivelyDisclosable | Bool    | 이 클레임을 빼면 실제로 숨겨지는지                          | M       | `false` 면 발급자가 평문으로 둔 것이다. 선택 여부와 무관하게 검증자가 읽는다 |
+
+<br>
+
+## 3. Mdoc
+
+### Description
+`OpenID4VCI 로 발급받은 ISO/IEC 18013-5 IssuerSigned 모바일 문서.`
+
+문서는 디코딩된 클레임으로 노출되지만, 저장·제출은 발급자가 서명한 바이트 그대로 한다.
+`issuerSigned` 가 원본 base64url 문자열이고, MSO 의 모든 digest 는 받은 그대로의 item 바이트 위에서
+계산된다. 파싱은 디코딩만 하고 검증하지 않는다 — 저장된 문서는 저장 시점에 검증(발급자 서명,
+element digest, 유효기간, 기기 키 바인딩)을 거친 것이다.
+
+### Declaration
+```swift
+public struct Mdoc: Sendable, Equatable {
+    public let docType: String
+    public let namespaces: [String: [String: MdocElementValue]]
+    public let validityInfo: MdocValidityInfo
+    public let issuerSigned: String
+
+    public var issuerDid: String? { get }
+    public var status: StatusListReference? { get }
+    public var consentItems: [MdocConsentItem] { get }
+
+    public static func parse(raw: String) throws -> Mdoc
+    public func toString() -> String
+}
+```
+
+### Property
+| Name         | Type                                   | Description                                        | **M/O** | **Note** |
+|--------------|----------------------------------------|----------------------------------------------------|---------|----------|
+| docType      | String                                 | 문서 타입. 예: `eu.europa.ec.eudi.pid.1`            | M       |          |
+| namespaces   | [String: [String: MdocElementValue]]   | 공개된 element. namespace, 그 다음 element 식별자 순 | M       | [MdocElementValue](#33-mdocelementvalue). `Dictionary` 라 순회 순서가 고정되지 않는다 — 화면은 `consentItems` 로 그린다 |
+| validityInfo | MdocValidityInfo                       | MSO 에 적힌 문서 유효기간                            | M       | [MdocValidityInfo](#32-mdocvalidityinfo) |
+| issuerSigned | String                                 | 받은 그대로의 `IssuerSigned` 구조, base64url         | M       |          |
+| issuerDid    | String                                 | 문서에 서명한 발급자의 DID. `issuerAuth` 의 `kid` 에서 읽는다 | O | 저장(검증)된 문서에서 의미가 있다. `kid` 가 없거나 DID URL 이 아니면 `nil` |
+| status       | StatusListReference                    | 문서의 폐기 상태가 게시되는 곳. MSO 에서 읽는다       | O       | [StatusListReference](#4-statuslistreference). 발급자가 게시하지 않으면 `nil` |
+| consentItems | [MdocConsentItem]                      | 홀더에게 동의를 물을 수 있는 모든 element, 각각을 가리키는 코드와 함께 | M | [MdocConsentItem](#31-mdocconsentitem). element 는 서명된 순서, namespace 는 이름 순 |
+
+### Method
+| Name         | Description                                        | **Note** |
+|--------------|----------------------------------------------------|----------|
+| parse(raw:)  | base64url 형태의 `IssuerSigned` 를 디코딩한다        | 올바른 `IssuerSigned` 가 아니면 `MSDKWLT05103` |
+| toString()   | base64url 인코딩된 `IssuerSigned`. 발급자 바이트 그대로 |          |
+
+<br>
+
+## 3.1. MdocConsentItem
+
+### Description
+`mdoc 의 element 하나. 홀더에게 동의를 묻는 단위.`
+
+`code` 가 오가는 값이다. 매칭은 이 코드로 element 를 지목하고, 홀더의 선택도 이 코드로 표현되며,
+`createVpToken` / `createDeviceResponse` 는 이 코드를 이 element 로 되돌린다. 불투명 값이다 —
+표시하고 비교하되, 쪼개거나 `namespace` 와 `elementIdentifier` 로 조립하지 않는다.
+
+### Declaration
+```swift
+public struct MdocConsentItem: Sendable, Equatable {
+    public let code: String
+    public let namespace: String
+    public let elementIdentifier: String
+    public let value: MdocElementValue
+    public let isAmbiguous: Bool
+}
+```
+
+### Property
+| Name              | Type             | Description                                       | **M/O** | **Note** |
+|-------------------|------------------|---------------------------------------------------|---------|----------|
+| code              | String           | claim code                                        | M       | `MatchedCredential.claimCodes` 또는 `MdocRequestedDocument.claimCodes` 에 그대로 되돌려준다 |
+| namespace         | String           | element 가 속한 namespace                          | M       | 행을 그리기 위한 것이지 코드를 재구성하기 위한 것이 아니다 |
+| elementIdentifier | String           | namespace 안에서의 element 식별자                   | M       | 행을 그리기 위한 것이지 코드를 재구성하기 위한 것이 아니다 |
+| value             | MdocElementValue | 발급자가 element 에 넣은 값                         | M       | [MdocElementValue](#33-mdocelementvalue) |
+| isAmbiguous       | Bool             | 이 코드가 문서의 element 둘 이상을 가리키는지        | M       | 모호한 코드의 제출은 추측하지 않고 실패한다 |
+
+<br>
+
+## 3.2. MdocValidityInfo
+
+### Description
+`발급자가 MSO 에 적은 유효기간.`
+
+### Declaration
+```swift
+public struct MdocValidityInfo: Sendable, Equatable {
+    public let signed: Date
+    public let validFrom: Date
+    public let validUntil: Date
+    public let expectedUpdate: Date?
+}
+```
+
+### Property
+| Name           | Type | Description                          | **M/O** | **Note** |
+|----------------|------|--------------------------------------|---------|----------|
+| signed         | Date | MSO 가 서명된 시각                    | M       |          |
+| validFrom      | Date | 문서 유효기간 시작                    | M       |          |
+| validUntil     | Date | 문서 유효기간 끝                      | M       |          |
+| expectedUpdate | Date | 발급자가 재발급을 예정한 시각(적었다면) | O       |          |
+
+<br>
+
+## 3.3. MdocElementValue
+
+### Description
+`mdoc element 가 가질 수 있는 값.`
+
+mdoc element 는 JSON 이 아니라 CBOR 라 `AnyJSON` 이 담지 못하는 것까지 이른다. `portrait` 는 JPEG
+바이트열이고, `birth_date` 는 평문 문자열이 아니라 태그된 날짜다.
+
+### Declaration
+```swift
+public enum MdocElementValue: Sendable, Equatable {
+    case text(String)
+    case bytes(Data)
+    case integer(Int64)
+    case double(Double)
+    case bool(Bool)
+    case fullDate(String)
+    case dateTime(Date)
+    case array([MdocElementValue])
+    case map([String: MdocElementValue])
+    case null
+}
+```
+
+### Property
+| Value            | Description                                                       | **Note** |
+|------------------|-------------------------------------------------------------------|----------|
+| text(String)     | 문자열                                                             |          |
+| bytes(Data)      | 바이트열. 예: portrait JPEG                                        |          |
+| integer(Int64)   | 정수                                                               |          |
+| double(Double)   | 부동소수                                                           |          |
+| bool(Bool)       | 불리언                                                             |          |
+| fullDate(String) | `full-date`(tag 1004). 시각·시간대 없는 달력 날짜, 적힌 그대로       | 시점이 아니라 날짜를 뜻하므로 문자열로 둔다 |
+| dateTime(Date)   | 시점(tag 0 / tag 1)                                                |          |
+| array            | element 값의 배열                                                   |          |
+| map              | 문자열 키의 element 값 맵                                           |          |
+| null             | CBOR null                                                          |          |
+
+<br>
+
+## 4. StatusListReference
+
+### Description
+`크리덴셜의 폐기 상태가 게시되는 곳. IETF Token Status List 항목.`
+
+크리덴셜은 자기 상태를 말하지 않는다. 목록을 가리킬 뿐이고, 답이 필요한 쪽이 그 목록을 받아
+`idx` 위치의 항목을 읽는다. 두 크리덴셜 형식 모두 같은 방식(`status.status_list`)으로 참조를
+담으므로 타입 하나가 둘을 다 맡는다. SDK 는 참조를 노출하는 데서 멈춘다. 목록을 받아오지도,
+bitstring 을 풀지도, 폐기·정지 여부를 판단하지도 않는다 — 그 호출과 판단은 월렛 앱의 몫이다.
+
+### Declaration
+```swift
+public struct StatusListReference: Sendable, Equatable {
+    public let uri: String
+    public let idx: Int
+
+    public init(uri: String, idx: Int)
+}
+```
+
+### Property
+| Name | Type   | Description                                   | **M/O** | **Note** |
+|------|--------|-----------------------------------------------|---------|----------|
+| uri  | String | status list 토큰이 게시된 URL                  | M       |          |
+| idx  | Int    | `uri` 가 가리키는 목록 안에서 이 크리덴셜의 위치 | M       |          |
+
+<br>
+
+## 5. JWS
 
 ### Description
 `compact 직렬화된 JWS(<header>.<payload>.<signature>)를 파싱한 결과.`
@@ -3039,7 +3313,7 @@ public struct JWS
 
 <br>
 
-## 3.1. JWSHeader
+## 5.1. JWSHeader
 
 ### Description
 `JWS의 protected header.`
@@ -3061,14 +3335,14 @@ public struct JWSHeader : Jsonable
 ### Property
 | Name | Type          | Description                            | **M/O** | **Note** |
 |------|---------------|----------------------------------------|---------|----------|
-| alg  | JWK.Algorithm | 서명 알고리즘                           | M       | [JWK](#4-jwk) |
+| alg  | JWK.Algorithm | 서명 알고리즘                           | M       | [JWK](#6-jwk) |
 | typ  | String        | 토큰 타입. 예: `openid4vci-proof+jwt`   | M       |          |
 | kid  | String        | 서명자 키 id                            | O       |          |
-| jwk  | JWK           | 헤더에 실린 서명자 공개키                | O       | [JWK](#4-jwk) |
+| jwk  | JWK           | 헤더에 실린 서명자 공개키                | O       | [JWK](#6-jwk) |
 
 <br>
 
-## 4. JWK
+## 6. JWK
 
 ### Description
 `JSON Web Key. EC P-256 키만 모델링한다.`
@@ -3093,7 +3367,7 @@ public struct JWK: Jsonable
 ### Property
 | Name | Type      | Description                     | **M/O** | **Note** |
 |------|-----------|---------------------------------|---------|----------|
-| alg  | Algorithm | 용도 알고리즘                    | O       | [중첩 열거형](#41-jwk-nested-enumerations) |
+| alg  | Algorithm | 용도 알고리즘                    | O       | [중첩 열거형](#61-jwk-nested-enumerations) |
 | kid  | String    | 키 id                           | O       |          |
 | crv  | Curve     | 곡선. 기본값 `.p256`             | M       |          |
 | kty  | KeyType   | 키 타입. 기본값 `.ec`            | M       |          |
@@ -3103,7 +3377,7 @@ public struct JWK: Jsonable
 
 <br>
 
-## 4.1. JWK nested enumerations
+## 6.1. JWK nested enumerations
 
 ### Description
 `알고리즘·곡선·키 타입·용도. 각각 인식하지 못한 전송 값을 그대로 보존한다.`
@@ -3126,7 +3400,7 @@ public enum JWKUse: String, Jsonable, Equatable { case sig, enc }
 
 <br>
 
-## 5. AuthorizationRequest
+## 7. AuthorizationRequest
 
 ### Description
 `검증자로부터 받은 OpenID4VP 인가 요청.`
@@ -3158,13 +3432,13 @@ public struct AuthorizationRequest : Jsonable, FromSnake
 | clientId       | String            | 검증자 식별자. presentation의 audience로 쓰인다 | M      |          |
 | responseType   | String            | OAuth response type                          | M       |          |
 | responseMode   | String            | `direct_post` 또는 `direct_post.jwt`          | M       | 그 외 값은 거부된다 (`MSDKWLT05509`) |
-| dcqlQuery      | DCQLQuery         | 매칭 대상 크리덴셜 쿼리                        | M       | [DCQLQuery](#6-dcqlquery) |
-| clientMetadata | [String: AnyJSON] | 검증자 메타데이터. `direct_post.jwt`의 응답 암호화 키를 담는다 | M | [AnyJSON](#14-anyjson) |
+| dcqlQuery      | DCQLQuery         | 매칭 대상 크리덴셜 쿼리                        | M       | [DCQLQuery](#8-dcqlquery) |
+| clientMetadata | [String: AnyJSON] | 검증자 메타데이터. `direct_post.jwt`의 응답 암호화 키를 담는다 | M | [AnyJSON](#18-anyjson) |
 | iat            | Int               | 요청 발행 시각                                 | M       |          |
 
 <br>
 
-## 6. DCQLQuery
+## 8. DCQLQuery
 
 ### Description
 `검증자의 DCQL(Digital Credentials Query Language) 쿼리 (OpenID4VP 1.0 §6).`
@@ -3182,13 +3456,13 @@ public struct DCQLQuery: Jsonable, FromSnake
 ### Property
 | Name            | Type                 | Description                        | **M/O** | **Note** |
 |-----------------|----------------------|------------------------------------|---------|----------|
-| credentials     | [CredentialQuery]    | 만족시켜야 할 크리덴셜 쿼리들        | O       | [CredentialQuery](#61-credentialquery) |
-| credentialSets  | [CredentialSet]      | 그 쿼리들의 어떤 조합을 받아들이는지 | O       | [CredentialSet](#64-credentialset) |
-| transactionData | [[String: AnyJSON]]  | 함께 서명할 거래 데이터              | O       | [AnyJSON](#14-anyjson) |
+| credentials     | [CredentialQuery]    | 만족시켜야 할 크리덴셜 쿼리들        | O       | [CredentialQuery](#81-credentialquery) |
+| credentialSets  | [CredentialSet]      | 그 쿼리들의 어떤 조합을 받아들이는지 | O       | [CredentialSet](#84-credentialset) |
+| transactionData | [[String: AnyJSON]]  | 함께 서명할 거래 데이터              | O       | [AnyJSON](#18-anyjson) |
 
 <br>
 
-## 6.1. CredentialQuery
+## 8.1. CredentialQuery
 
 ### Description
 `검증자가 요구하는 크리덴셜 한 건.`
@@ -3214,17 +3488,17 @@ public struct CredentialQuery: Jsonable, FromSnake
 |-----------------------------------|---------------------|--------------------------------------------|---------|----------|
 | id                                | String              | 쿼리 id. `MatchedCredential.queryId`로 되돌아온다 | O  |          |
 | format                            | String              | 요구하는 크리덴셜 형식                       | O       |          |
-| meta                              | [String: AnyJSON]   | 형식별 제약. 예: 허용 스키마 id 목록          | O       | [AnyJSON](#14-anyjson) |
-| claims                            | [ClaimQuery]        | 요구하는 클레임. 없으면 크리덴셜 전체         | O       | [ClaimQuery](#62-claimquery) |
+| meta                              | [String: AnyJSON]   | 형식별 제약. 예: 허용 스키마 id 목록          | O       | [AnyJSON](#18-anyjson) |
+| claims                            | [ClaimQuery]        | 요구하는 클레임. 없으면 크리덴셜 전체         | O       | [ClaimQuery](#82-claimquery) |
 | claimSets                         | [[String]]          | `claims[].id` 배열의 배열. 안쪽 배열 하나가 하나의 허용 조합 | O | 모든 id가 해소되는 첫 조합을 Wallet이 선택한다 |
-| trustedAuthorities                | [TrustedAuthority]  | 발급자 제약                                 | O       | [TrustedAuthority](#63-trustedauthority) |
+| trustedAuthorities                | [TrustedAuthority]  | 발급자 제약                                 | O       | [TrustedAuthority](#83-trustedauthority) |
 | purpose                           | String              | 요구 사유                                   | O       |          |
 | multiple                          | Bool                | 이 쿼리에 여러 크리덴셜이 응답할 수 있는지     | O       | 기본값 `false` |
 | requireCryptographicHolderBinding | Bool                | 홀더 바인딩 필수 여부                        | O       |          |
 
 <br>
 
-## 6.2. ClaimQuery
+## 8.2. ClaimQuery
 
 ### Description
 `검증자가 요구하는 클레임 한 건. 값에 대한 술어를 함께 걸 수 있다.`
@@ -3249,18 +3523,18 @@ public struct ClaimQuery: Jsonable, FromSnake
 | Name      | Type               | Description                            | **M/O** | **Note** |
 |-----------|--------------------|----------------------------------------|---------|----------|
 | id        | String             | 클레임 쿼리 id. `claimSets`가 참조한다   | O       |          |
-| path      | [DCQLPathElement]  | JSON 크리덴셜 내 클레임 경로             | O       | [DCQLPathElement](#65-dcqlpathelement). mdoc에는 쓰지 않는다 |
+| path      | [DCQLPathElement]  | JSON 크리덴셜 내 클레임 경로             | O       | [DCQLPathElement](#85-dcqlpathelement). mdoc에는 쓰지 않는다 |
 | namespace | String             | mdoc 네임스페이스. 예: `org.iso.18013.5.1` | O    |          |
 | claimName | String             | 네임스페이스 내 mdoc 클레임 이름          | O       |          |
 | purpose   | String             | 이 클레임을 요구하는 사유                 | O       |          |
-| values    | [AnyJSON]          | 값이 이 중 하나여야 한다                  | O       | [AnyJSON](#14-anyjson) |
+| values    | [AnyJSON]          | 값이 이 중 하나여야 한다                  | O       | [AnyJSON](#18-anyjson) |
 | value     | AnyJSON            | 값이 이것과 같아야 한다                   | O       |          |
 | max       | AnyJSON            | 값의 상한                                | O       |          |
 | min       | AnyJSON            | 값의 하한                                | O       |          |
 
 <br>
 
-## 6.3. TrustedAuthority
+## 8.3. TrustedAuthority
 
 ### Description
 `크리덴셜 쿼리의 발급자 제약 (OpenID4VP 1.0 §6.1.1).`
@@ -3281,7 +3555,7 @@ public struct TrustedAuthority: Jsonable, FromSnake {
 
 <br>
 
-## 6.4. CredentialSet
+## 8.4. CredentialSet
 
 ### Description
 `검증자가 받아들이는 크리덴셜 쿼리 조합.`
@@ -3306,7 +3580,7 @@ public struct CredentialSet: Jsonable, FromSnake {
 
 <br>
 
-## 6.5. DCQLPathElement
+## 8.5. DCQLPathElement
 
 ### Description
 `DCQL 클레임 경로의 한 단계 — 객체 멤버, 배열 인덱스, 또는 와일드카드.`
@@ -3329,7 +3603,7 @@ public enum DCQLPathElement: Codable, Hashable, Sendable {
 
 <br>
 
-## 7. MatchedCredential
+## 9. MatchedCredential
 
 ### Description
 `하나의 DCQL 크리덴셜 쿼리에 대해 매칭된 크리덴셜 한 건.`
@@ -3356,7 +3630,92 @@ public struct MatchedCredential
 
 <br>
 
-## 8. IssuerMetadataResponse
+## 10. MdocRequestedDocument
+
+### Description
+`ISO/IEC 18013-5 근접 제출 요청의 매칭 한 건: 요청된 문서와, 그 element 중 하나 이상을 채울 수 있는 저장 문서.`
+
+`matchMdocRequest` 가 반환하고, 편집한 뒤 `createDeviceResponse` 에 되돌려준다. 요청된 element 를
+전부 채울 필요는 없다 — 채우지 못하는 것은 `missing` 에 담긴다. 앱은 element 를 빼려면
+`claimCodes` 에서 코드를, 문서를 빼려면 항목 자체를 덜어낸다. 리더가 요청하지 않은 element 를
+더하려면 그 문서의 [MdocCredentialItem](#14-mdoccredentialitem)`.consentItems` 에서 코드를 가져와
+덧붙인다. 더할지는 홀더가 정한다.
+
+### Declaration
+```swift
+public struct MdocRequestedDocument
+{
+    public let docRequestIndex: Int
+    public let docType: String
+    public let credentialId: String
+    public let claimCodes: [String]
+    public let intentToRetain: [String: Bool]
+    public let missing: [String]
+
+    public init(docRequestIndex: Int, docType: String, credentialId: String,
+                claimCodes: [String], intentToRetain: [String: Bool], missing: [String])
+}
+```
+
+### Property
+| Name            | Type           | Description                                                        | **M/O** | **Note** |
+|-----------------|----------------|--------------------------------------------------------------------|---------|----------|
+| docRequestIndex | Int            | 이 항목이 답하는 `DeviceRequest.docRequests` 의 0 기반 인덱스        | M       | `docType` 으로는 요청을 식별할 수 없다. 리더가 같은 타입을 다른 element 로 두 번 요청할 수 있다 |
+| docType         | String         | 요청된 `ItemsRequest.docType`                                       | M       |          |
+| credentialId    | String         | 요청된 element 를 하나 이상 채울 수 있는 저장 문서                    | M       | [MdocCredentialItem](#14-mdoccredentialitem)`.id` 와 같은 값 |
+| claimCodes      | [String]       | 공개할 element, 코드 형태                                            | M       | 불투명 값이다. element 를 빼려면 코드를 빼고, 요청 밖 element 를 더하려면 `consentItems` 의 코드를 덧붙인다. 쪼개거나 조립하지 않는다 |
+| intentToRetain  | [String: Bool] | 코드별 리더의 보관 의도. `claimCodes` 와 `missing` 을 합친 범위        | M       | 출력 전용. `createDeviceResponse` 는 읽지 않는다 |
+| missing         | [String]       | 이 문서가 채울 수 없는 요청 element, 같은 코드 형태                    | M       | 보유하지 않은 element 와, 모호한 코드로 보유한 element 를 포함 |
+
+<br>
+
+## 11. MdocDeviceResponse
+
+### Description
+`생성된 DeviceResponse 와, 그 안의 문서 각각이 어떤 방식으로 인증됐는지.`
+
+### Declaration
+```swift
+public struct MdocDeviceResponse
+{
+    public let response: Data
+    public let authMethods: [String: MdocDeviceAuthMethod]
+
+    public init(response: Data, authMethods: [String: MdocDeviceAuthMethod])
+}
+```
+
+### Property
+| Name        | Type                           | Description                                     | **M/O** | **Note** |
+|-------------|--------------------------------|-------------------------------------------------|---------|----------|
+| response    | Data                           | `DeviceResponse` CBOR, **평문**                  | M       | 전송 SDK 가 암호화해서 보낸다 |
+| authMethods | [String: MdocDeviceAuthMethod] | `credentialId` → 그 문서에 실제 사용한 인증 방식   | M       | [MdocDeviceAuthMethod](#111-mdocdeviceauthmethod). 한 응답에 같은 doctype 이 두 번 실릴 수 있어 크리덴셜 기준 |
+
+<br>
+
+## 11.1. MdocDeviceAuthMethod
+
+### Description
+`DeviceResponse 안의 문서 하나가 인증된 방식.`
+
+### Declaration
+```swift
+public enum MdocDeviceAuthMethod: String, Sendable
+{
+    case deviceSignature
+    case deviceMac
+}
+```
+
+### Property
+| Value           | Description                                                 | **Note** |
+|-----------------|-------------------------------------------------------------|----------|
+| deviceSignature | 문서의 기기 키로 만든 ECDSA 서명                             | 키가 키 합의를 못 하거나 transcript 에 리더 키가 없을 때 |
+| deviceMac       | 리더 임시 키와의 ECDH 로 유도한 `EMacKey` 로 만든 HMAC        | 기기 키가 키 합의를 할 수 있으면 우선 사용 |
+
+<br>
+
+## 12. IssuerMetadataResponse
 
 ### Description
 `발급자의 OpenID4VCI 메타데이터 — 엔드포인트와 발급 가능한 크리덴셜 목록.`
@@ -3393,14 +3752,14 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 | nonceEndpoint                     | String                            | nonce 엔드포인트                      | O       |          |
 | deferredCredentialEndpoint        | String                            | deferred credential 엔드포인트        | O       |          |
 | notificationEndpoint              | String                            | notification 엔드포인트               | O       |          |
-| credentialRequestEncryption       | EncryptionSupport                 | 발급자가 광고하는 요청 암호화          | O       | [EncryptionSupport](#82-encryptionsupport) |
-| credentialResponseEncryption      | EncryptionSupport                 | 발급자가 광고하는 응답 암호화          | O       | [EncryptionSupport](#82-encryptionsupport) |
+| credentialRequestEncryption       | EncryptionSupport                 | 발급자가 광고하는 요청 암호화          | O       | [EncryptionSupport](#122-encryptionsupport) |
+| credentialResponseEncryption      | EncryptionSupport                 | 발급자가 광고하는 응답 암호화          | O       | [EncryptionSupport](#122-encryptionsupport) |
 | credentialIdentifiersSupported    | Bool                              | `credential_identifier` 사용 여부     | O       |          |
-| credentialConfigurationsSupported | [String: CredentialConfiguration] | 발급 가능한 크리덴셜. 키는 `credential_configuration_id` | M | [CredentialConfiguration](#81-credentialconfiguration) |
+| credentialConfigurationsSupported | [String: CredentialConfiguration] | 발급 가능한 크리덴셜. 키는 `credential_configuration_id` | M | [CredentialConfiguration](#121-credentialconfiguration) |
 
 <br>
 
-## 8.1. CredentialConfiguration
+## 12.1. CredentialConfiguration
 
 ### Description
 `발급자가 제공하는 크리덴셜 한 종류.`
@@ -3424,19 +3783,19 @@ public struct CredentialConfiguration: Jsonable, FromSnake
 ### Property
 | Name                                 | Type                     | Description                | **M/O** | **Note** |
 |--------------------------------------|--------------------------|----------------------------|---------|----------|
-| format                               | SupportedFormat          | 크리덴셜 형식               | M       | [SupportedFormat](#88-supportedformat) |
+| format                               | SupportedFormat          | 크리덴셜 형식               | M       | [SupportedFormat](#128-supportedformat) |
 | scope                                | String                   | 이 크리덴셜의 OAuth scope   | O       |          |
 | cryptographicBindingMethodsSupported | [String]                 | 지원하는 홀더 바인딩 방식    | O       |          |
-| credentialSigningAlgValuesSupported  | [SigningAlg]             | 발급자 서명 알고리즘         | O       | [SigningAlg](#89-signingalg) |
-| proofTypesSupported                  | [String: ProofSupport]   | 허용하는 홀더 proof 타입     | O       | [ProofSupport](#86-proofsupport) |
+| credentialSigningAlgValuesSupported  | [SigningAlg]             | 발급자 서명 알고리즘         | O       | [SigningAlg](#129-signingalg) |
+| proofTypesSupported                  | [String: ProofSupport]   | 허용하는 홀더 proof 타입     | O       | [ProofSupport](#126-proofsupport) |
 | vct                                  | String                   | SD-JWT VC 타입              | O       |          |
 | doctype                              | String                   | mdoc doctype                | O       |          |
-| policy                               | CredentialPolicy         | 배치·1회용 정책              | O       | [CredentialPolicy](#83-credentialpolicy) |
-| credentialMetadata                   | CredentialMetadata       | 클레임·표시 정보             | O       | [CredentialMetadata](#84-credentialmetadata) |
+| policy                               | CredentialPolicy         | 배치·1회용 정책              | O       | [CredentialPolicy](#123-credentialpolicy) |
+| credentialMetadata                   | CredentialMetadata       | 클레임·표시 정보             | O       | [CredentialMetadata](#124-credentialmetadata) |
 
 <br>
 
-## 8.2. EncryptionSupport
+## 12.2. EncryptionSupport
 
 ### Description
 `발급자가 광고하는 암호화 — Wallet이 실제로 보내는 것이 아니다.`
@@ -3460,7 +3819,7 @@ public struct EncryptionSupport: Jsonable, FromSnake
 
 <br>
 
-## 8.3. CredentialPolicy
+## 12.3. CredentialPolicy
 
 ### Description
 `크리덴셜 구성의 발급 정책.`
@@ -3482,7 +3841,7 @@ public struct CredentialPolicy: Jsonable, FromSnake
 
 <br>
 
-## 8.4. CredentialMetadata
+## 12.4. CredentialMetadata
 
 ### Description
 `크리덴셜 구성의 클레임·표시 정보.`
@@ -3498,12 +3857,12 @@ public struct CredentialMetadata: Codable, Sendable {
 ### Property
 | Name    | Type          | Description                 | **M/O** | **Note** |
 |---------|---------------|-----------------------------|---------|----------|
-| claims  | [ClaimDetail] | 이 크리덴셜이 담는 클레임     | O       | [ClaimDetail](#87-claimdetail) |
-| display | [DisplayInfo] | 로케일별 표시 방법           | O       | [DisplayInfo](#85-displayinfo) |
+| claims  | [ClaimDetail] | 이 크리덴셜이 담는 클레임     | O       | [ClaimDetail](#127-claimdetail) |
+| display | [DisplayInfo] | 로케일별 표시 방법           | O       | [DisplayInfo](#125-displayinfo) |
 
 <br>
 
-## 8.5. DisplayInfo
+## 12.5. DisplayInfo
 
 ### Description
 `한 로케일에서 크리덴셜 또는 클레임을 표시하는 방법.`
@@ -3524,14 +3883,14 @@ public struct DisplayInfo: Jsonable, FromSnake
 | Name            | Type     | Description        | **M/O** | **Note** |
 |-----------------|----------|--------------------|---------|----------|
 | name            | String   | 표시 이름           | O       |          |
-| logo            | LogoInfo | 로고 이미지         | O       | [LogoInfo](#851-logoinfo) |
+| logo            | LogoInfo | 로고 이미지         | O       | [LogoInfo](#1251-logoinfo) |
 | locale          | String   | BCP 47 로케일 태그  | O       |          |
 | backgroundColor | String   | 배경색             | O       |          |
 | textColor       | String   | 글자색             | O       |          |
 
 <br>
 
-## 8.5.1. LogoInfo
+## 12.5.1. LogoInfo
 
 ### Description
 `표시 항목의 로고 이미지.`
@@ -3553,7 +3912,7 @@ public struct LogoInfo: Jsonable, FromSnake
 
 <br>
 
-## 8.6. ProofSupport
+## 12.6. ProofSupport
 
 ### Description
 `한 proof 타입에 대해 발급자가 허용하는 홀더 proof 알고리즘.`
@@ -3573,7 +3932,7 @@ public struct ProofSupport: Jsonable, FromSnake
 
 <br>
 
-## 8.7. ClaimDetail
+## 12.7. ClaimDetail
 
 ### Description
 `발급 가능한 크리덴셜의 클레임 한 건. 발급자가 기술한 내용이다.`
@@ -3592,14 +3951,14 @@ public struct ClaimDetail: Jsonable, FromSnake
 ### Property
 | Name      | Type          | Description                | **M/O** | **Note** |
 |-----------|---------------|----------------------------|---------|----------|
-| display   | [DisplayInfo] | 로케일별 클레임 라벨         | O       | [DisplayInfo](#85-displayinfo) |
+| display   | [DisplayInfo] | 로케일별 클레임 라벨         | O       | [DisplayInfo](#125-displayinfo) |
 | mandatory | Bool          | 발급자가 항상 포함하는지     | O       |          |
 | path      | [String]      | 크리덴셜 내 클레임 경로      | O       |          |
 | valueType | String        | 값 타입 힌트                | O       |          |
 
 <br>
 
-## 8.8. SupportedFormat
+## 12.8. SupportedFormat
 
 ### Description
 `크리덴셜 형식 토큰. 발급자의 원본 문자열을 보존해 그대로 재전송할 수 있다.`
@@ -3625,7 +3984,7 @@ public enum SupportedFormat: Jsonable, Equatable
 
 <br>
 
-## 8.9. SigningAlg
+## 12.9. SigningAlg
 
 ### Description
 `발급자가 문자열 또는 숫자로 게시할 수 있는 서명 알고리즘 값.`
@@ -3646,7 +4005,7 @@ public enum SigningAlg: Codable, Sendable {
 
 <br>
 
-## 9. CredentialOfferResponse
+## 13. CredentialOfferResponse
 
 ### Description
 `발급자의 credential offer — 발급자 주도 발급에서 Wallet이 받는 값.`
@@ -3666,11 +4025,11 @@ public struct CredentialOfferResponse: Jsonable, FromSnake
 |----------------------------|----------|--------------------------------|---------|----------|
 | credentialIssuer           | String   | 발급자 식별자                   | M       |          |
 | credentialConfigurationIds | [String] | 제공되는 크리덴셜               | O       |          |
-| grants                     | Grants   | 이 offer로 토큰을 얻는 방법     | M       | [Grants](#91-grants) |
+| grants                     | Grants   | 이 offer로 토큰을 얻는 방법     | M       | [Grants](#131-grants) |
 
 <br>
 
-## 9.1. Grants
+## 13.1. Grants
 
 ### Description
 `offer가 지원하는 grant 타입.`
@@ -3687,12 +4046,12 @@ public struct Grants: Jsonable
 ### Property
 | Name              | Type              | Description             | **M/O** | **Note** |
 |-------------------|-------------------|-------------------------|---------|----------|
-| preAuthorizedCode | PreAuthorizedCode | pre-authorized code grant | O     | [PreAuthorizedCode](#92-preauthorizedcode). 전송 키는 `urn:ietf:params:oauth:grant-type:pre-authorized_code` |
-| authorizationCode | AuthorizationCode | authorization code grant  | O     | [AuthorizationCode](#94-authorizationcode) |
+| preAuthorizedCode | PreAuthorizedCode | pre-authorized code grant | O     | [PreAuthorizedCode](#132-preauthorizedcode). 전송 키는 `urn:ietf:params:oauth:grant-type:pre-authorized_code` |
+| authorizationCode | AuthorizationCode | authorization code grant  | O     | [AuthorizationCode](#134-authorizationcode) |
 
 <br>
 
-## 9.2. PreAuthorizedCode
+## 13.2. PreAuthorizedCode
 
 ### Description
 `credential offer의 pre-authorized code grant.`
@@ -3710,11 +4069,11 @@ public struct PreAuthorizedCode: Jsonable
 | Name              | Type   | Description                  | **M/O** | **Note** |
 |-------------------|--------|------------------------------|---------|----------|
 | preAuthorizedCode | String | pre-authorized code          | M       | 전송 키는 `pre-authorized_code` |
-| txCode            | TxCode | 홀더가 입력해야 할 거래 코드   | O       | [TxCode](#93-txcode) |
+| txCode            | TxCode | 홀더가 입력해야 할 거래 코드   | O       | [TxCode](#133-txcode) |
 
 <br>
 
-## 9.3. TxCode
+## 13.3. TxCode
 
 ### Description
 `발급자가 거래 코드를 요구할 때, 홀더가 어떻게 입력해야 하는지.`
@@ -3738,7 +4097,7 @@ public struct TxCode: Jsonable
 
 <br>
 
-## 9.4. AuthorizationCode
+## 13.4. AuthorizationCode
 
 ### Description
 `credential offer의 authorization code grant.`
@@ -3758,7 +4117,7 @@ public struct AuthorizationCode: Jsonable
 
 <br>
 
-## 10. TokenRequest
+## 14. TokenRequest
 
 ### Description
 `pre-authorized code grant에서 Wallet이 보내는 토큰 요청.`
@@ -3782,11 +4141,11 @@ public struct TokenRequest: Jsonable, FromSnake
 | grantType            | String                 | grant 타입                   | M       | pre-authorized code grant로 고정 |
 | preAuthorizedCode    | String                 | credential offer에서 받은 코드 | M      | `pre-authorized_code`로 인코딩 |
 | txCode               | String                 | 홀더가 입력한 거래 코드       | O       |          |
-| authorizationDetails | [AuthorizationDetails] | 토큰이 대상으로 하는 크리덴셜  | M       | [AuthorizationDetails](#12-authorizationdetails) |
+| authorizationDetails | [AuthorizationDetails] | 토큰이 대상으로 하는 크리덴셜  | M       | [AuthorizationDetails](#16-authorizationdetails) |
 
 <br>
 
-## 11. TokenResponse
+## 15. TokenResponse
 
 ### Description
 `발급자의 토큰 응답. requestIssueOID4VC에 전달한다.`
@@ -3810,11 +4169,11 @@ public struct TokenResponse: Jsonable, FromSnake
 | tokenType            | String                 | 토큰 타입. 예: `Bearer`            | M       |          |
 | cNonce               | String                 | 홀더 proof에 바인딩할 nonce        | O       |          |
 | expiresIn            | Int                    | 토큰 수명(초)                      | O       |          |
-| authorizationDetails | [AuthorizationDetails] | 토큰이 포함하는 credential identifier | O    | [AuthorizationDetails](#12-authorizationdetails) |
+| authorizationDetails | [AuthorizationDetails] | 토큰이 포함하는 credential identifier | O    | [AuthorizationDetails](#16-authorizationdetails) |
 
 <br>
 
-## 12. AuthorizationDetails
+## 16. AuthorizationDetails
 
 ### Description
 `토큰 요청·응답이 어떤 크리덴셜 구성에 해당하는지.`
@@ -3840,7 +4199,7 @@ public struct AuthorizationDetails: Jsonable, FromSnake
 
 <br>
 
-## 13. OID4VCIIssuerList
+## 17. OID4VCIIssuerList
 
 ### Description
 `Wallet이 발급을 시작할 수 있는 OID4VCI 발급자 목록.`
@@ -3863,11 +4222,11 @@ public struct OID4VCIIssuerList: Jsonable
 | Name  | Type                | Description       | **M/O** | **Note** |
 |-------|---------------------|-------------------|---------|----------|
 | count | Int                 | `items`의 항목 수  | M       |          |
-| items | [OID4VCIIssuerItem] | 발급자 항목들      | M       | [OID4VCIIssuerItem](#131-oid4vciissueritem) |
+| items | [OID4VCIIssuerItem] | 발급자 항목들      | M       | [OID4VCIIssuerItem](#171-oid4vciissueritem) |
 
 <br>
 
-## 13.1. OID4VCIIssuerItem
+## 17.1. OID4VCIIssuerItem
 
 ### Description
 `OID4VCI 발급자 항목 하나 — 식별자와 발급 시작에 필요한 엔드포인트.`
@@ -3888,12 +4247,12 @@ public struct OID4VCIIssuerItem: Jsonable
 | Name                        | Type   | Description                                 | **M/O** | **Note** |
 |-----------------------------|--------|---------------------------------------------|---------|----------|
 | credentialIssuer            | String | 발급자 식별자                                | M       | 발급자 메타데이터의 `credential_issuer`와 일치 |
-| credentialIssuerMetadataUri | String | 이 발급자의 `IssuerMetadataResponse` 조회 위치 | M      | [IssuerMetadataResponse](#8-issuermetadataresponse) |
+| credentialIssuerMetadataUri | String | 이 발급자의 `IssuerMetadataResponse` 조회 위치 | M      | [IssuerMetadataResponse](#12-issuermetadataresponse) |
 | userInitiationUri           | String | Wallet 주도 발급을 시작하는 위치              | O       | 발급자 주도 offer만 지원하는 발급자에는 없다 |
 
 <br>
 
-## 14. AnyJSON
+## 18. AnyJSON
 
 ### Description
 `규격이 임의의 JSON을 허용하는 자리에 쓰이는 무손실 JSON 값 컨테이너.`

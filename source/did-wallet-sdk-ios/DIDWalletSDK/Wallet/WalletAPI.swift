@@ -108,7 +108,8 @@ extension WalletAPI : IWalletService
     ///   - pkgName: The package name associated with the wallet token.
     /// - Returns: The hWalletToken to pass to the APIs that accept the given purpose.
     /// - Throws: `WalletAPIError.verifyParameterFail` for an empty `pkgName` or a purpose outside
-    ///           the list, `WalletAPIError.notPersonalized` if the wallet has never been personalized.
+    ///           the list, `WalletAPIError.notPersonalized` if the wallet has never been personalized,
+    ///           `WalletAPIError.insertQueryFail` if the token could not be stored.
     public func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String
     {
         return try walletToken.createLocalWalletToken(purpose: purpose, pkgName: pkgName)
@@ -709,6 +710,7 @@ extension WalletAPI : ISecurityAuthService
     }
 }
 
+//MARK: IOID4VCService
 extension WalletAPI : IOID4VCService
 {
     public func requestIssueOID4VC(
@@ -760,6 +762,7 @@ extension WalletAPI : IOID4VCService
 
 }
 
+//MARK: IOID4VPService
 extension WalletAPI : IOID4VPService
 {
     /// Finds the stored credentials that satisfy the verifier's DCQL query.
@@ -808,6 +811,22 @@ extension WalletAPI : IOID4VPService
     ///   the code has to resolve to that is unclear, not what it matched. The other
     ///   `OID4VCManagerError`s (055xx) follow when a credential, holder key or response encryption
     ///   key is missing or the format is unsupported.
+    public func createVpToken(hWalletToken: String,
+                              authRequest: AuthorizationRequest,
+                              matchedCredentials: [MatchedCredential],
+                              passcode: String?) throws -> Data
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
+        return try walletService.createVpToken(authRequest: authRequest,
+                                               matchedCredentials: matchedCredentials,
+                                               passcode: passcode)
+    }
+}
+
+//MARK: IProximityService
+extension WalletAPI : IProximityService
+{
     /// Finds the documents that can answer an ISO/IEC 18013-5 proximity request.
     ///
     /// A document is returned when it can fill **at least one** requested element; what it cannot
@@ -830,8 +849,11 @@ extension WalletAPI : IOID4VPService
 
     /// Builds the `DeviceResponse` for the documents and elements the holder agreed to.
     ///
-    /// The app expresses consent by pruning what `matchMdocRequest` returned: drop a code to
-    /// withhold an element, drop an element of the array to withhold a document. Refusing
+    /// The app expresses consent by editing what `matchMdocRequest` returned: drop a code to
+    /// withhold an element, drop an element of the array to withhold a document. A document may
+    /// also carry elements the reader did not request — append codes from its
+    /// `MdocCredentialItem.consentItems`; whether to is the holder's call and is not judged here.
+    /// A code the document does not hold, or one marked `isAmbiguous`, is rejected. Refusing
     /// everything is expressed by **not calling this** and letting the transport SDK end the
     /// session; an empty `selected` is rejected.
     ///
@@ -840,7 +862,7 @@ extension WalletAPI : IOID4VPService
     ///   - sessionTranscript: The transcript from the transport SDK, used **as received**: either
     ///     `SessionTranscriptBytes` (`#6.24(bstr .cbor SessionTranscript)`, what the transport SDK
     ///     hands on) or the bare `SessionTranscript` array. Neither is re-encoded.
-    ///   - selected: The pruned result of `matchMdocRequest`.
+    ///   - selected: The edited result of `matchMdocRequest`.
     ///   - passcode: The holder key's PIN, or nil on the biometric path. Asked once for the call.
     /// - Returns: The plaintext `DeviceResponse` and how each document was authenticated. The
     ///   transport SDK encrypts it before sending.
@@ -856,18 +878,6 @@ extension WalletAPI : IOID4VPService
                                                       sessionTranscript: sessionTranscript,
                                                       selected: selected,
                                                       passcode: passcode)
-    }
-
-    public func createVpToken(hWalletToken: String,
-                              authRequest: AuthorizationRequest,
-                              matchedCredentials: [MatchedCredential],
-                              passcode: String?) throws -> Data
-    {
-        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
-                                               purposes: [.PRESENT_VP, .LIST_VC_AND_PRESENT_VP])
-        return try walletService.createVpToken(authRequest: authRequest,
-                                               matchedCredentials: matchedCredentials,
-                                               passcode: passcode)
     }
 }
 

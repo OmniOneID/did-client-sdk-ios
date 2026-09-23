@@ -337,16 +337,19 @@ class WalletService: WalletServiceImpl {
     /// Builds the `DeviceResponse` for what the holder agreed to.
     ///
     /// The request is matched again here rather than trusted: the app returns a selection the
-    /// holder pruned, and only a fresh match says what this wallet could actually have offered.
+    /// holder pruned or extended, and only a fresh match says which documents could answer it.
     func createDeviceResponse(deviceRequest: Data,
                               sessionTranscript: Data,
                               selected: [MdocRequestedDocument],
                               passcode: String?) throws -> MdocDeviceResponse
     {
         let matched = try matchMdocRequest(deviceRequest: deviceRequest)
-        try MdocProximityResponseBuilder.validate(selected: selected, against: matched)
-
         let items = try walletCore.getAllOID4VCICredentials().compactMap { $0 as? MdocCredentialItem }
+        try MdocProximityResponseBuilder.validate(
+            selected: selected,
+            against: matched,
+            documents: Dictionary(items.map { ($0.id, $0.mdoc) }, uniquingKeysWith: { first, _ in first }))
+
         var documents: [String: Mdoc] = [:]
         var keyIds: [String: String] = [:]
         for element in selected

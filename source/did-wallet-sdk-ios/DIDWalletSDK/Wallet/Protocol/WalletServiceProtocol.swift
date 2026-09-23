@@ -17,7 +17,7 @@
 
 import Foundation
 
-protocol IWalletAPI : IWalletService, IDIDKeyService, ICredentialService, IZKPService, ISecurityAuthService, IOID4VCService, IOID4VPService
+protocol IWalletAPI : IWalletService, IDIDKeyService, ICredentialService, IZKPService, ISecurityAuthService, IOID4VCService, IOID4VPService, IProximityService
 {}
 
 protocol IWalletService
@@ -170,4 +170,16 @@ protocol IOID4VPService
                        authRequest: AuthorizationRequest,
                        matchedCredentials: [MatchedCredential],
                        passcode: String?) throws -> Data
+}
+
+protocol IProximityService
+{
+    func matchMdocRequest(hWalletToken: String,
+                          deviceRequest: Data) throws -> [MdocRequestedDocument]
+
+    func createDeviceResponse(hWalletToken: String,
+                              deviceRequest: Data,
+                              sessionTranscript: Data,
+                              selected: [MdocRequestedDocument],
+                              passcode: String?) throws -> MdocDeviceResponse
 }

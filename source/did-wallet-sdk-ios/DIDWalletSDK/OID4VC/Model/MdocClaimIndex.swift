@@ -54,6 +54,12 @@ struct MdocClaimIndex
         Set(entries.keys)
     }
 
+    /// The codes presentation can resolve: every code that names exactly one element.
+    var disclosableCodes: Set<String>
+    {
+        Set(entries.filter { !$0.value.isAmbiguous }.keys)
+    }
+
     /// The one place a claim code is built.
     static func code(namespace: String, elementIdentifier: String) -> String
     {

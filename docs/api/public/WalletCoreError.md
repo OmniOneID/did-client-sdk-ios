@@ -20,12 +20,12 @@ iOS WalletCoreError
 
 - Topic: WalletCoreError
 - Author: JooHyun Park
-- Date: 2026-08-06
+- Date: 2026-09-22
 - Version: v2.0.0
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
-| v2.0.0           | 2026-08-06 | Add OID4VCManager error  |
+| v2.0.0           | 2026-09-22 | Add OID4VCManager error, mdoc / proximity and key agreement errors |
 | v1.0.2           | 2025-09-09 | Fixed DID-related error  |
 | v1.0.1           | 2025-04-28 | Add ZKP Error            |
 | v1.0.0           | 2024-08-28 | Initial version          |
@@ -62,6 +62,7 @@ iOS WalletCoreError
     - [6.3. OID4VCI(053xx)](#63-oid4vci053xx)
     - [6.4. Verify(054xx)](#64-verify054xx)
     - [6.5. OID4VP(055xx)](#65-oid4vp055xx)
+    - [6.6. Proximity(056xx)](#66-proximity056xx)
   - [7. StorageManager](#7-storagemanager)
     - [7.1. Save(101xx)](#71-save101xx)
     - [7.2. Update(102xx)](#72-update102xx)
@@ -76,6 +77,7 @@ iOS WalletCoreError
     - [9.1. KeyPair(121xx)](#91-keypair121xx)
     - [9.2. Signature(122xx)](#92-signature122xx)
     - [9.3. Encryption(123xx)](#93-encryption123xx)
+    - [9.4. Key agreement(124xx)](#94-key-agreement124xx)
 
 # Model
 ## WalletCoreError
@@ -275,8 +277,9 @@ public struct WalletCoreError: Error {
 
 ## 6. OID4VCManager
 
-Errors raised by the OpenID4VCI (issuance) and OpenID4VP (presentation) layer. They surface through
-`requestIssueOID4VC`, `matchCredentials` and `createVpToken`.
+Errors raised by the OpenID4VCI (issuance), OpenID4VP (presentation) and ISO/IEC 18013-5 proximity
+layer. They surface through `requestIssueOID4VC`, `matchCredentials`, `createVpToken`,
+`matchMdocRequest` and `createDeviceResponse`.
 
 ### 6.1. Common(051xx)
 
@@ -285,6 +288,7 @@ Errors raised by the OpenID4VCI (issuance) and OpenID4VP (presentation) layer. T
 | MSDKWLT05100 | Unsupported in : {id}                | The requested credential configuration id is not offered by the issuer | Use an id listed in the issuer metadata |
 | MSDKWLT05101 | Unsupported format : {format}        | The credential format is not one the SDK can issue, store or present   | Use a supported format                  |
 | MSDKWLT05102 | Invalid JWS : {detail}               | A JWS could not be decoded, or its payload could not be read           | Depend on detail error cases            |
+| MSDKWLT05103 | Invalid mdoc : {detail}              | An `IssuerSigned` could not be decoded, or its MSO uses a digest algorithm the SDK does not implement | Depend on detail error cases |
 
 <br>
 
@@ -318,6 +322,9 @@ Errors raised by the OpenID4VCI (issuance) and OpenID4VP (presentation) layer. T
 | MSDKWLT05400 | Not found kid for verify                  | The JWS header carries no `kid` to resolve a verification key | -                 |
 | MSDKWLT05401 | Failed to verify signature                | The signature did not verify with the resolved key | Check the signer's key           |
 | MSDKWLT05402 | No 'jwk' in the JWS header to verify with | Verification was asked to use the embedded key, but the header carries none | Pass the verification key explicitly |
+| MSDKWLT05403 | Element {elementIdentifier} does not match its digest in the MSO | An issuer-signed item's bytes do not hash to the digest the MSO carries for it | Check the issuer's document |
+| MSDKWLT05404 | The mdoc is outside its validity period   | The issuance moment is before `validFrom` or after `validUntil` of the MSO | Check the issuer's document |
+| MSDKWLT05405 | The mdoc is bound to a key this wallet does not hold | The MSO's device key is not the holder key the credential was requested with | Check the issuer's document |
 
 <br>
 
@@ -335,6 +342,23 @@ Errors raised by the OpenID4VCI (issuance) and OpenID4VP (presentation) layer. T
 | MSDKWLT05507 | Unsupported response encryption ({detail})         | The verifier asks for a key-agreement or content-encryption algorithm the SDK does not implement | Use `ECDH-ES` with `A128GCM`/`A256GCM` |
 | MSDKWLT05508 | Invalid selected credentials: {detail}             | The selection does not belong to the request, is empty, drops claims the query asked for, or a claim code names more than one claim | Pass back what `matchCredentials` returned, dropping whole entries only |
 | MSDKWLT05509 | Unsupported response_mode : {mode}                 | The request's `response_mode` is neither `direct_post` nor `direct_post.jwt` | Use a POST-based response mode |
+
+<br>
+
+### 6.6. Proximity(056xx)
+
+Raised by `matchMdocRequest` and `createDeviceResponse`.
+
+| Error Code   | Error Message                                               | Description                       | Action Required                       |
+|--------------|-------------------------------------------------------------|-----------------------------------|---------------------------------------|
+| MSDKWLT05600 | No stored document can answer any docRequest                | No stored mdoc can fill even one element of any `docRequest` | Issue a document of the requested type |
+| MSDKWLT05610 | No document was selected                                    | `createDeviceResponse` was called with an empty `selected` | Do not call it when the holder refuses everything |
+| MSDKWLT05611 | Invalid selected mdoc documents: {detail}                   | A selected entry does not belong to the fresh match of the request, or names a code the match did not offer | Prune what `matchMdocRequest` returned; never rebuild entries |
+| MSDKWLT05612 | A selected document carries no claim code                   | A selected entry has an empty `claimCodes` | Drop the entry instead of emptying its codes |
+| MSDKWLT05613 | The same document is selected twice for the same docRequest | Two selected entries share `docRequestIndex` and `credentialId` | Select each document once per request |
+| MSDKWLT05614 | A selected document names the same claim code twice         | A selected entry repeats a code in `claimCodes` | Keep each code once |
+| MSDKWLT05620 | Invalid DeviceRequest: {detail}                             | The bytes are not a well-formed `DeviceRequest` | Check what the transport SDK handed over |
+| MSDKWLT05621 | Invalid SessionTranscript: {detail}                         | The bytes are neither `SessionTranscriptBytes` nor a `SessionTranscript` array | Pass the transcript as the transport SDK handed it over |
 
 <br>
 
@@ -445,5 +469,14 @@ Errors raised by the OpenID4VCI (issuance) and OpenID4VP (presentation) layer. T
 |--------------|-----------------------------------------------|-----------------------------------|-----------------------------------|
 | MSDKWLT12300 | Cannot create encrypted data : {detail error} | Error occurs via Secure Enclave   | Depend on detail error cases      |
 | MSDKWLT12301 | Cannot create decrypted data : {detail error} | Error occurs via Secure Enclave   | Depend on detail error cases      |
+
+  <br>
+
+### 9.4. Key agreement(124xx)
+
+| Error Code   | Error Message                                 | Description                       | Action Required                   |
+|--------------|-----------------------------------------------|-----------------------------------|-----------------------------------|
+| MSDKWLT12400 | The key cannot perform key agreement          | The Secure Enclave key was created without key agreement | Not surfaced through `WalletAPI`: `createDeviceResponse` falls back to `deviceSignature` |
+| MSDKWLT12401 | Key agreement failed : {detail error}         | ECDH with the reader's ephemeral key failed | Depend on detail error cases      |
 
   <br>

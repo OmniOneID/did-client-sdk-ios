@@ -20,12 +20,12 @@ iOS Wallet API
 
 - Subject: WalletAPI
 - Writer: JooHyun Park
-- Date: 2026-08-06
+- Date: 2026-09-22
 - Version: v3.0.0
 
 | Version | Date       | History                                               |
 | -------- | ---------- | ----------------------------------------------------- |
-| v3.0.0   | 2026-08-06 | Add OID4VC section; correct declarations to match the SDK |
+| v3.0.0   | 2026-09-22 | Add OID4VC section, createLocalWalletToken and the ISO/IEC 18013-5 proximity APIs; correct declarations to match the SDK |
 | v2.0.1   | 2025-09-11 | Add DID-related function and authenticatePin          |
 | v2.0.0   | 2025-05-27 | Add ZKP-related function                              |
 | v1.0.0   | 2024-10-18 | Initial                                              |
@@ -93,6 +93,9 @@ iOS Wallet API
         - [7.5. isAnyOID4VCSaved](#75-isanyoid4vcsaved)
         - [7.6. matchCredentials](#76-matchcredentials)
         - [7.7. createVpToken](#77-createvptoken)
+    - [8. Proximity](#8-proximity)
+        - [8.1. matchMdocRequest](#81-matchmdocrequest)
+        - [8.2. createDeviceResponse](#82-createdeviceresponse)
 
 - [Enumerators](#enumerators)
     - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
@@ -106,6 +109,9 @@ iOS Wallet API
     - [6. DIDAuth](#6-didauth)
     - [7. AuthorizationRequest](#7-authorizationrequest)
     - [8. MatchedCredential](#8-matchedcredential)
+    - [9. MdocRequestedDocument](#9-mdocrequesteddocument)
+    - [10. MdocDeviceResponse](#10-mdocdeviceresponse)
+        - [10.1. MdocDeviceAuthMethod](#101-mdocdeviceauthmethod)
 
 
 # API List
@@ -335,6 +341,7 @@ func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) th
 
 - `MSDKWLT05002` (`verifyParameterFail`): `pkgName` is empty, or `purpose` is not one of the four
 - `MSDKWLT05046` (`notPersonalized`): the wallet has never been personalized
+- `MSDKWLT05030` (`insertQueryFail`): the token could not be stored
 
 ### Usage
 
@@ -1667,7 +1674,8 @@ try WalletAPI.shared.authenticatePin(id: pinID, pin: pin)
 
 OpenID4VCI (issuance) and OpenID4VP (presentation). Credentials issued through this section are
 stored separately from the W3C credentials of section 4 and are listed with `getAllOID4VCs`, not
-`getAllCredentials`.
+`getAllCredentials`. Two formats are issued and stored: IETF SD-JWT VC (`SdJwtCredentialItem`) and
+ISO/IEC 18013-5 mdoc (`MdocCredentialItem`). Proximity presentation of the mdocs is section 8.
 
 ## 7.1. requestIssueOID4VC
 
@@ -1720,7 +1728,7 @@ let credentialId = try await WalletAPI.shared.requestIssueOID4VC(hWalletToken: h
 ### Declaration
 
 ```swift
-func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
+func getAllOID4VCs(hWalletToken: String) throws -> [any CredentialItem]
 ```
 
 ### Parameters
@@ -1731,9 +1739,9 @@ func getAllOID4VCs(hWalletToken: String) throws -> [SdJwtCredentialItem]
 
 ### Returns
 
-| Type                  | Description                  | **M/O** | **Note** |
-|-----------------------|------------------------------|---------|----------|
-| [SdJwtCredentialItem] | All stored SD-JWT credentials | M      | Empty when none are saved |
+| Type                 | Description                  | **M/O** | **Note** |
+|----------------------|------------------------------|---------|----------|
+| [any CredentialItem] | All stored OID4VC credentials | M      | Empty when none are saved. Each element is an `SdJwtCredentialItem` or an `MdocCredentialItem`; switch on `format` or cast |
 
 ### Usage
 
@@ -1751,7 +1759,7 @@ let credentials = try WalletAPI.shared.getAllOID4VCs(hWalletToken: hWalletToken)
 ### Declaration
 
 ```swift
-func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialItem]
+func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [any CredentialItem]
 ```
 
 ### Parameters
@@ -1763,9 +1771,9 @@ func getOID4VCs(hWalletToken: String, ids: [String]) throws -> [SdJwtCredentialI
 
 ### Returns
 
-| Type                  | Description             | **M/O** | **Note** |
-|-----------------------|-------------------------|---------|----------|
-| [SdJwtCredentialItem] | The matching credentials | M      |          |
+| Type                 | Description             | **M/O** | **Note** |
+|----------------------|-------------------------|---------|----------|
+| [any CredentialItem] | The matching credentials | M      | Each element is an `SdJwtCredentialItem` or an `MdocCredentialItem` |
 
 ### Usage
 
@@ -1910,6 +1918,141 @@ let body = try WalletAPI.shared.createVpToken(hWalletToken: hWalletToken,
                                               authRequest: authRequest,
                                               matchedCredentials: selected,
                                               passcode: passcode)
+```
+
+<br>
+
+## 8. Proximity
+
+Presentation to a reader in proximity, over BLE/NFC rather than over the web. What this section
+covers today is ISO/IEC 18013-5 device retrieval of the mdocs issued through section 7. This is not
+OpenID4VP: the request is a `DeviceRequest` from a reader, not a DCQL query from a verifier, and the
+two flows share only the claim-code scheme. Proximity is split between this SDK and a transport
+SDK: the transport SDK runs the session (BLE/NFC, session encryption) and hands over the decrypted
+`DeviceRequest` bytes; this SDK matches them against the stored mdocs and, after consent, builds the
+`DeviceResponse` for the transport SDK to encrypt and send. `readerAuth` is not read, and `version`
+is not compared.
+
+## 8.1. matchMdocRequest
+
+### Description
+`Finds the stored mdocs that can answer an ISO/IEC 18013-5 proximity request.`
+
+A document is returned when it can fill **at least one** requested element; what it cannot fill is
+listed in `missing`, so the consent screen can show both. Whether a partial answer is enough is the
+reader's business rule, not this SDK's. Documents outside their validity window are not filtered
+out. A `docRequest` that no stored document can answer is simply absent from the result — the app
+compares `docRequestIndex` against the requests it received.
+
+### Declaration
+
+```swift
+func matchMdocRequest(hWalletToken: String, deviceRequest: Data) throws -> [MdocRequestedDocument]
+```
+
+### Parameters
+
+| Name          | Type   | Description                                                 | **M/O** | **Note** |
+|---------------|--------|-------------------------------------------------------------|---------|----------|
+| hWalletToken  | String | Wallet Token                                                | M       | Must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP` |
+| deviceRequest | Data   | The `DeviceRequest` CBOR, as the transport SDK decrypted it | M       |          |
+
+### Returns
+
+| Type                    | Description                                                                                   | **M/O** | **Note** |
+|-------------------------|-----------------------------------------------------------------------------------------------|---------|----------|
+| [MdocRequestedDocument] | One entry per (docRequest, document) pair that can answer something, ordered by request index and then credential id | M | [MdocRequestedDocument](#9-mdocrequesteddocument) |
+
+### Throws
+
+- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` is not a well-formed `DeviceRequest`
+- `MSDKWLT05600` (`noMatchedMdocDocuments`): no stored document can answer any `docRequest`
+
+### Usage
+
+```swift
+let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
+                                                    deviceRequest: deviceRequest)
+```
+
+<br>
+
+## 8.2. createDeviceResponse
+
+### Description
+`Builds the DeviceResponse for the documents and elements the holder agreed to.`
+
+The app expresses consent by editing what `matchMdocRequest` returned: drop a code from
+`claimCodes` to withhold an element, drop an entry of the array to withhold a document. An entry
+may also carry elements the reader did not request: append codes taken from the document's
+`MdocCredentialItem.consentItems`. Whether to add them is the holder's call and is not judged here;
+only a code the document does not hold, or one marked `isAmbiguous`, is rejected. Refusing
+everything is expressed by **not calling this** and letting the transport SDK end the session; an
+empty `selected` is rejected. The request is matched again here rather than trusted, and each
+entry has to answer a request in that fresh match.
+
+`sessionTranscript` is used **as received**: either `SessionTranscriptBytes`
+(`#6.24(bstr .cbor SessionTranscript)`, what the transport SDK hands on) or the bare
+`SessionTranscript` array. Neither is re-encoded.
+
+Each document is authenticated with `deviceMac` when its device key can perform key agreement and
+the transcript carries the reader's ephemeral key, and with `deviceSignature` otherwise; the method
+used is reported per credential in `authMethods`. The holder key is used under one authentication
+context, so a Secure Enclave key that asks the user to confirm asks once for the whole call.
+
+The returned `response` is the **plaintext** `DeviceResponse`; the transport SDK encrypts it before
+sending.
+
+### Declaration
+
+```swift
+func createDeviceResponse(hWalletToken: String, deviceRequest: Data, sessionTranscript: Data, selected: [MdocRequestedDocument], passcode: String? = nil) throws -> MdocDeviceResponse
+```
+
+### Parameters
+
+| Name              | Type                    | Description                                                        | **M/O** | **Note** |
+|-------------------|-------------------------|--------------------------------------------------------------------|---------|----------|
+| hWalletToken      | String                  | Wallet Token                                                       | M       | Must allow `PRESENT_VP` or `LIST_VC_AND_PRESENT_VP` |
+| deviceRequest     | Data                    | The same `DeviceRequest` bytes passed to `matchMdocRequest`        | M       | Matched again here rather than trusted |
+| sessionTranscript | Data                    | The transcript from the transport SDK, as received                 | M       | `SessionTranscriptBytes` or the bare `SessionTranscript` array |
+| selected          | [MdocRequestedDocument] | The edited result of `matchMdocRequest`                            | M       | [MdocRequestedDocument](#9-mdocrequesteddocument). Must not be empty |
+| passcode          | String?                 | PIN when the holder key is PIN-protected; `nil` for biometrics     | O       | Defaults to `nil` |
+
+### Returns
+
+| Type               | Description                                                     | **M/O** | **Note** |
+|--------------------|-----------------------------------------------------------------|---------|----------|
+| MdocDeviceResponse | The plaintext `DeviceResponse` and the method used per document | M       | [MdocDeviceResponse](#10-mdocdeviceresponse) |
+
+### Throws
+
+- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` is not a well-formed `DeviceRequest`
+- `MSDKWLT05621` (`invalidSessionTranscript`): `sessionTranscript` is neither form of the transcript
+- `MSDKWLT05600` (`noMatchedMdocDocuments`): no stored document can answer any `docRequest`
+- `MSDKWLT05610` (`emptyMdocSelection`): `selected` is empty
+- `MSDKWLT05611` (`invalidSelectedMdocDocuments`): an entry does not belong to the fresh match, or names a code its document cannot disclose (not held, or ambiguous)
+- `MSDKWLT05612` (`emptyMdocClaimCodes`): an entry carries no claim code
+- `MSDKWLT05613` (`duplicateSelectedMdocDocument`): the same document is selected twice for the same `docRequest`
+- `MSDKWLT05614` (`duplicateMdocClaimCode`): an entry names the same claim code twice
+- `MSDKWLT05504` (`credentialNotFound`): a selected credential is no longer in the wallet
+- `MSDKWLT05505` (`holderKeyNotFound`): the device key bound to a selected document is missing
+- `MSDKWLT12401` (`keyAgreement`): the Secure Enclave failed the key agreement for `deviceMac`
+
+### Usage
+
+```swift
+let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
+                                                    deviceRequest: deviceRequest)
+// ... consent screen: the holder withholds an element by dropping its code,
+//     a document by dropping its entry, and adds an unrequested element by
+//     appending its code from MdocCredentialItem.consentItems ...
+let result = try WalletAPI.shared.createDeviceResponse(hWalletToken: hWalletToken,
+                                                       deviceRequest: deviceRequest,
+                                                       sessionTranscript: sessionTranscript,
+                                                       selected: selected,
+                                                       passcode: passcode)
+transport.send(deviceResponse: result.response)   // the transport SDK encrypts it
 ```
 
 <br>
@@ -2168,3 +2311,84 @@ public struct MatchedCredential {
 | credentialId | String   | The matched stored credential id                              | M       |          |
 | claimCodes   | [String] | The claims to disclose — the ones the query asked for, or every claim the credential can disclose when it asked for the whole credential | M | Opaque values: display and compare them, never split or assemble them |
 <br>
+
+## 9. MdocRequestedDocument
+
+### Description
+
+`One match of an ISO/IEC 18013-5 proximity request: a requested document, and a stored document that can fill at least one of its elements.`
+
+Returned by `matchMdocRequest` and passed back, edited, to `createDeviceResponse`. Filling every
+requested element is not required — what cannot be filled is listed in `missing`.
+
+### Declaration
+
+```swift
+public struct MdocRequestedDocument {
+    public let docRequestIndex: Int
+    public let docType: String
+    public let credentialId: String
+    public let claimCodes: [String]
+    public let intentToRetain: [String: Bool]
+    public let missing: [String]
+}
+```
+
+### Property
+
+| Name            | Type           | Description                                                                 | **M/O** | **Note** |
+| --------------- | -------------- | --------------------------------------------------------------------------- | ------- | -------- |
+| docRequestIndex | Int            | Zero-based index into `DeviceRequest.docRequests` this entry answers        | M       | `docType` cannot identify a request: a reader may ask for the same type twice with different elements |
+| docType         | String         | The requested `ItemsRequest.docType`                                        | M       |          |
+| credentialId    | String         | The stored document that can fill at least one requested element            | M       | Same value as `MdocCredentialItem.id` |
+| claimCodes      | [String]       | The elements to disclose, as codes                                          | M       | Opaque values: drop one to withhold the element, append one from `MdocCredentialItem.consentItems` to add an unrequested element; never split or assemble them |
+| intentToRetain  | [String: Bool] | The reader's retention intent per code, over `claimCodes` and `missing` together | M  | Output only; `createDeviceResponse` does not read it back |
+| missing         | [String]       | Requested elements this document cannot supply, in the same code form       | M       | Covers elements not held and elements held under an ambiguous code |
+<br>
+
+## 10. MdocDeviceResponse
+
+### Description
+
+`A built DeviceResponse, and how each document in it was authenticated.`
+
+### Declaration
+
+```swift
+public struct MdocDeviceResponse {
+    public let response: Data
+    public let authMethods: [String: MdocDeviceAuthMethod]
+}
+```
+
+### Property
+
+| Name        | Type                           | Description                                              | **M/O** | **Note** |
+| ----------- | ------------------------------ | -------------------------------------------------------- | ------- | -------- |
+| response    | Data                           | The `DeviceResponse` CBOR, **plaintext**                 | M       | The transport SDK encrypts it before sending |
+| authMethods | [String: MdocDeviceAuthMethod] | `credentialId` → the method actually used for that document | M    | [MdocDeviceAuthMethod](#101-mdocdeviceauthmethod). Keyed by credential, since a response may carry the same doctype twice |
+<br>
+
+## 10.1. MdocDeviceAuthMethod
+
+### Description
+
+`How one document in a DeviceResponse was authenticated.`
+
+### Declaration
+
+```swift
+public enum MdocDeviceAuthMethod: String, Sendable {
+    case deviceSignature
+    case deviceMac
+}
+```
+
+### Property
+
+| Value           | Description                                                                 | **Note** |
+| --------------- | --------------------------------------------------------------------------- | -------- |
+| deviceSignature | ECDSA signature with the document's device key                              | Used when the key cannot perform key agreement, or the transcript carries no reader key |
+| deviceMac       | HMAC with the `EMacKey` derived from ECDH with the reader's ephemeral key   | Preferred when the device key can perform key agreement |
+<br>
+

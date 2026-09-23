@@ -20,12 +20,12 @@ iOS DataModel
 
 - Subject: DataModel
 - Writer: JooHyun Park
-- Date: 2026-08-06
+- Date: 2026-09-22
 - Version: v2.0.0
 
 | Version          | Date       | History                 |
 | ---------------- | ---------- | ------------------------|
-| v2.0.0           | 2026-08-06 | Add OID4VC models       |
+| v2.0.0           | 2026-09-22 | Add OID4VC, mdoc and proximity models |
 | v1.0.1           | 2025-05-27 | Add ZKP-related models  |
 | v1.0.0           | 2024-08-28 | Initial                 |
 
@@ -141,42 +141,52 @@ iOS DataModel
         - [1.1. CredentialFormat](#11-credentialformat)
         - [1.2. VCDMCredentialItem](#12-vcdmcredentialitem)
         - [1.3. SdJwtCredentialItem](#13-sdjwtcredentialitem)
+        - [1.4. MdocCredentialItem](#14-mdoccredentialitem)
     - [2. SDJWT](#2-sdjwt)
         - [2.1. Disclosure](#21-disclosure)
-    - [3. JWS](#3-jws)
-        - [3.1. JWSHeader](#31-jwsheader)
-    - [4. JWK](#4-jwk)
-        - [4.1. JWK nested enumerations](#41-jwk-nested-enumerations)
-    - [5. AuthorizationRequest](#5-authorizationrequest)
-    - [6. DCQLQuery](#6-dcqlquery)
-        - [6.1. CredentialQuery](#61-credentialquery)
-        - [6.2. ClaimQuery](#62-claimquery)
-        - [6.3. TrustedAuthority](#63-trustedauthority)
-        - [6.4. CredentialSet](#64-credentialset)
-        - [6.5. DCQLPathElement](#65-dcqlpathelement)
-    - [7. MatchedCredential](#7-matchedcredential)
-    - [8. IssuerMetadataResponse](#8-issuermetadataresponse)
-        - [8.1. CredentialConfiguration](#81-credentialconfiguration)
-        - [8.2. EncryptionSupport](#82-encryptionsupport)
-        - [8.3. CredentialPolicy](#83-credentialpolicy)
-        - [8.4. CredentialMetadata](#84-credentialmetadata)
-        - [8.5. DisplayInfo](#85-displayinfo)
-            - [8.5.1. LogoInfo](#851-logoinfo)
-        - [8.6. ProofSupport](#86-proofsupport)
-        - [8.7. ClaimDetail](#87-claimdetail)
-        - [8.8. SupportedFormat](#88-supportedformat)
-        - [8.9. SigningAlg](#89-signingalg)
-    - [9. CredentialOfferResponse](#9-credentialofferresponse)
-        - [9.1. Grants](#91-grants)
-        - [9.2. PreAuthorizedCode](#92-preauthorizedcode)
-        - [9.3. TxCode](#93-txcode)
-        - [9.4. AuthorizationCode](#94-authorizationcode)
-    - [10. TokenRequest](#10-tokenrequest)
-    - [11. TokenResponse](#11-tokenresponse)
-    - [12. AuthorizationDetails](#12-authorizationdetails)
-    - [13. OID4VCIIssuerList](#13-oid4vciissuerlist)
-        - [13.1. OID4VCIIssuerItem](#131-oid4vciissueritem)
-    - [14. AnyJSON](#14-anyjson)
+        - [2.2. SdJwtConsentItem](#22-sdjwtconsentitem)
+    - [3. Mdoc](#3-mdoc)
+        - [3.1. MdocConsentItem](#31-mdocconsentitem)
+        - [3.2. MdocValidityInfo](#32-mdocvalidityinfo)
+        - [3.3. MdocElementValue](#33-mdocelementvalue)
+    - [4. StatusListReference](#4-statuslistreference)
+    - [5. JWS](#5-jws)
+        - [5.1. JWSHeader](#51-jwsheader)
+    - [6. JWK](#6-jwk)
+        - [6.1. JWK nested enumerations](#61-jwk-nested-enumerations)
+    - [7. AuthorizationRequest](#7-authorizationrequest)
+    - [8. DCQLQuery](#8-dcqlquery)
+        - [8.1. CredentialQuery](#81-credentialquery)
+        - [8.2. ClaimQuery](#82-claimquery)
+        - [8.3. TrustedAuthority](#83-trustedauthority)
+        - [8.4. CredentialSet](#84-credentialset)
+        - [8.5. DCQLPathElement](#85-dcqlpathelement)
+    - [9. MatchedCredential](#9-matchedcredential)
+    - [10. MdocRequestedDocument](#10-mdocrequesteddocument)
+    - [11. MdocDeviceResponse](#11-mdocdeviceresponse)
+        - [11.1. MdocDeviceAuthMethod](#111-mdocdeviceauthmethod)
+    - [12. IssuerMetadataResponse](#12-issuermetadataresponse)
+        - [12.1. CredentialConfiguration](#121-credentialconfiguration)
+        - [12.2. EncryptionSupport](#122-encryptionsupport)
+        - [12.3. CredentialPolicy](#123-credentialpolicy)
+        - [12.4. CredentialMetadata](#124-credentialmetadata)
+        - [12.5. DisplayInfo](#125-displayinfo)
+            - [12.5.1. LogoInfo](#1251-logoinfo)
+        - [12.6. ProofSupport](#126-proofsupport)
+        - [12.7. ClaimDetail](#127-claimdetail)
+        - [12.8. SupportedFormat](#128-supportedformat)
+        - [12.9. SigningAlg](#129-signingalg)
+    - [13. CredentialOfferResponse](#13-credentialofferresponse)
+        - [13.1. Grants](#131-grants)
+        - [13.2. PreAuthorizedCode](#132-preauthorizedcode)
+        - [13.3. TxCode](#133-txcode)
+        - [13.4. AuthorizationCode](#134-authorizationcode)
+    - [14. TokenRequest](#14-tokenrequest)
+    - [15. TokenResponse](#15-tokenresponse)
+    - [16. AuthorizationDetails](#16-authorizationdetails)
+    - [17. OID4VCIIssuerList](#17-oid4vciissuerlist)
+        - [17.1. OID4VCIIssuerItem](#171-oid4vciissueritem)
+    - [18. AnyJSON](#18-anyjson)
 
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
@@ -2837,9 +2847,9 @@ public struct CredentialDefinition: Jsonable
 
 # OID4VC
 
-Models of the OpenID4VCI (issuance) and OpenID4VP (presentation) layer that an app handles directly:
-what it reads out of the wallet (1–4), what it exchanges with a verifier (5–7), and what it exchanges
-with an issuer (8–13).
+Models of the OpenID4VCI (issuance), OpenID4VP (presentation) and ISO/IEC 18013-5 proximity layer
+that an app handles directly: what it reads out of the wallet (1–6), what it exchanges with a
+verifier or reader (7–11), and what it exchanges with an issuer (12–17).
 
 The matching engine itself — the credential adapters, `DCQLCredentialMatcher`, `ParsedCredential` and
 the path helpers — is `public` for internal composition but is not part of the app-facing surface;
@@ -2873,15 +2883,26 @@ public protocol CredentialItem: Identifiable {
 
 ### Declaration
 ```swift
-public enum CredentialFormat { case vcdm, sdJwtVc, msoMdoc }
+public enum CredentialFormat {
+    case vcdm, sdJwtVc, msoMdoc
+
+    public var token: String { get }
+    public init?(token: String)
+}
 ```
 
 ### Property
 | Value    | Description                                       | **Note**                                    |
 |----------|---------------------------------------------------|---------------------------------------------|
-| vcdm     | W3C Verifiable Credentials Data Model credential  | [VCDMCredentialItem](#12-vcdmcredentialitem) |
-| sdJwtVc  | SD-JWT VC                                         | [SdJwtCredentialItem](#13-sdjwtcredentialitem) |
-| msoMdoc  | ISO mdoc                                          | Not issued or presented yet                 |
+| vcdm     | W3C Verifiable Credentials Data Model credential  | [VCDMCredentialItem](#12-vcdmcredentialitem). Token `opendid_vc` |
+| sdJwtVc  | IETF SD-JWT VC                                    | [SdJwtCredentialItem](#13-sdjwtcredentialitem). Token `dc+sd-jwt-did` |
+| msoMdoc  | ISO/IEC 18013-5 mdoc                              | [MdocCredentialItem](#14-mdoccredentialitem). Token `mso_mdoc-did` |
+
+### Method
+| Name         | Description                                                        | **Note** |
+|--------------|--------------------------------------------------------------------|----------|
+| token        | The DCQL `format` token this SDK writes for the format             | The one definition an app should render or compare against |
+| init(token:) | The format a DCQL `format` token names, or `nil` for one this SDK does not handle | Also accepts the aliases a verifier may send: `jwt_vc_json`, `jwt_vc`, `ldp_vc` for `.vcdm`; `vc+sd-jwt`, `sd-jwt` for `.sdJwtVc` |
 
 <br>
 
@@ -2914,7 +2935,7 @@ public struct VCDMCredentialItem: CredentialItem
 ## 1.3. SdJwtCredentialItem
 
 ### Description
-`A stored SD-JWT credential, as returned by getAllOID4VCs / getOID4VCs.`
+`A stored SD-JWT credential, one of the two element types getAllOID4VCs / getOID4VCs return.`
 
 ### Declaration
 ```swift
@@ -2926,6 +2947,10 @@ public struct SdJwtCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let sdjwt: SDJWT
+
+    public var issuerDid: String? { get }
+    public var consentItems: [SdJwtConsentItem] { get throws }
+    public var status: StatusListReference? { get throws }
 }
 ```
 
@@ -2938,6 +2963,46 @@ public struct SdJwtCredentialItem: CredentialItem
 | kid                  | String           | Key id of the holder key bound to the credential     | M       |          |
 | credentialIdentifier | String           | `credential_identifier` when the issuer supplied one | O       |          |
 | sdjwt                | SDJWT            | The credential itself                                | M       | [SDJWT](#2-sdjwt) |
+| issuerDid            | String           | DID of the issuer that signed the credential         | O       | `SDJWT.issuerDid`; never `nil` for a credential this SDK stored |
+| consentItems         | [SdJwtConsentItem] | Every claim the holder can be asked to consent to, in the issuer's order | M | [SdJwtConsentItem](#22-sdjwtconsentitem). Throws `MSDKWLT05102` when the issuer JWT payload cannot be read |
+| status               | StatusListReference | Where the credential's revocation status is published | O    | [StatusListReference](#4-statuslistreference). `nil` when the issuer publishes none; throws `MSDKWLT05102` when the payload cannot be read |
+
+<br>
+
+## 1.4. MdocCredentialItem
+
+### Description
+`A stored ISO/IEC 18013-5 mdoc, the other element type getAllOID4VCs / getOID4VCs return.`
+
+### Declaration
+```swift
+public struct MdocCredentialItem: CredentialItem
+{
+    public let id: String
+    public let format: CredentialFormat
+    public let configurationId: String
+    public let kid: String
+    public let credentialIdentifier: String?
+    public let mdoc: Mdoc
+
+    public var issuerDid: String? { get }
+    public var consentItems: [MdocConsentItem] { get }
+    public var status: StatusListReference? { get }
+}
+```
+
+### Property
+| Name                 | Type              | Description                                          | **M/O** | **Note** |
+|----------------------|-------------------|------------------------------------------------------|---------|----------|
+| id                   | String            | Wallet-local credential id                           | M       | The value `MdocRequestedDocument.credentialId` refers to |
+| format               | CredentialFormat  | Always `.msoMdoc`                                    | M       | [CredentialFormat](#11-credentialformat) |
+| configurationId      | String            | `credential_configuration_id` this was issued under  | M       |          |
+| kid                  | String            | Key id of the device key bound to the document       | M       |          |
+| credentialIdentifier | String            | `credential_identifier` when the issuer supplied one | O       |          |
+| mdoc                 | Mdoc              | The document itself                                  | M       | [Mdoc](#3-mdoc) |
+| issuerDid            | String            | DID of the issuer that signed the document           | O       | `Mdoc.issuerDid`; never `nil` for a document this SDK stored |
+| consentItems         | [MdocConsentItem] | Every element the holder can be asked to consent to, in the issuer's order | M | [MdocConsentItem](#31-mdocconsentitem). Non-throwing: the document was decoded in full when parsed |
+| status               | StatusListReference | Where the document's revocation status is published | O      | [StatusListReference](#4-statuslistreference). `nil` when the issuer publishes none |
 
 <br>
 
@@ -2957,6 +3022,10 @@ public struct SDJWT: Jsonable {
     public static func parse(raw: String) -> SDJWT
     public func toString() -> String
     public func getSignSource() -> (String, String)
+
+    public var issuerDid: String? { get }
+    public func consentItems() throws -> [SdJwtConsentItem]
+    public func status() throws -> StatusListReference?
 }
 ```
 
@@ -2966,6 +3035,7 @@ public struct SDJWT: Jsonable {
 | credentialJwt | String        | The issuer-signed JWT, compact serialized              | M       |          |
 | disclosures   | [Disclosure]  | Every disclosure the credential carries                 | M       | [Disclosure](#21-disclosure) |
 | keyBindingJwt | String        | KB-JWT, present only on a presentation                 | O       |          |
+| issuerDid     | String        | DID of the issuer that signed the credential, read from the issuer JWT's `kid` | O | `nil` when the JWT cannot be read or its `kid` is not a DID URL — neither happens for a credential this SDK stored |
 
 ### Method
 | Name             | Description                                                    | **Note** |
@@ -2973,6 +3043,8 @@ public struct SDJWT: Jsonable {
 | parse(raw:)      | Splits a `~`-separated SD-JWT string into its parts             | Never throws; an unparseable string yields a credential JWT with no disclosures |
 | toString()       | Serializes back to the `~`-separated form                       |          |
 | getSignSource()  | Returns the signing input and signature of the credential JWT   |          |
+| consentItems()   | Every claim the holder can be asked to consent to, each with the code that names it, in the order the issuer wrote the disclosures; claims left in the clear come last | [SdJwtConsentItem](#22-sdjwtconsentitem). Throws `MSDKWLT05102` when the issuer JWT payload cannot be read |
+| status()         | Where the credential's revocation status is published, or `nil` when it publishes none | [StatusListReference](#4-statuslistreference). Throws `MSDKWLT05102` when the payload cannot be read or holds a `status` that cannot be understood |
 
 <br>
 
@@ -3001,7 +3073,210 @@ public struct Disclosure: Codable, Equatable, Sendable {
 
 <br>
 
-## 3. JWS
+## 2.2. SdJwtConsentItem
+
+### Description
+`One claim of an SD-JWT, as the holder is asked to consent to it.`
+
+`code` is the value that travels: matching names claims with it, the holder's selection is expressed
+in it, and `createVpToken` resolves it back to the disclosures it needs. It is opaque — display it and
+compare it, but never split it on `.` or `[]`, and never assemble one.
+
+### Declaration
+```swift
+public struct SdJwtConsentItem: Sendable, Equatable {
+    public let code: String
+    public let claimName: String
+    public let value: AnyJSON
+    public let isAmbiguous: Bool
+    public let isSelectivelyDisclosable: Bool
+}
+```
+
+### Property
+| Name                     | Type    | Description                                                        | **M/O** | **Note** |
+|--------------------------|---------|--------------------------------------------------------------------|---------|----------|
+| code                     | String  | The claim code                                                     | M       | Hand it back in `MatchedCredential.claimCodes` unchanged |
+| claimName                | String  | The last segment of the code, for a screen that shows a label rather than a path | M | |
+| value                    | AnyJSON | The claim's value                                                  | M       | [AnyJSON](#18-anyjson) |
+| isAmbiguous              | Bool    | Whether this code names more than one claim of the credential      | M       | Presenting an ambiguous code fails rather than guessing |
+| isSelectivelyDisclosable | Bool    | Whether withholding the claim actually hides it                    | M       | `false` means the issuer left it in the clear: the verifier reads it whether or not it is selected |
+
+<br>
+
+## 3. Mdoc
+
+### Description
+`An ISO/IEC 18013-5 IssuerSigned mobile document, as issued over OpenID4VCI.`
+
+The document is exposed as decoded claims but stored and presented as the bytes the issuer signed:
+`issuerSigned` is the original base64url string, and every digest in the MSO is computed over the
+item bytes exactly as received. Parsing decodes; it does not verify — a stored document was verified
+(issuer signature, element digests, validity window, device-key binding) when it was stored.
+
+### Declaration
+```swift
+public struct Mdoc: Sendable, Equatable {
+    public let docType: String
+    public let namespaces: [String: [String: MdocElementValue]]
+    public let validityInfo: MdocValidityInfo
+    public let issuerSigned: String
+
+    public var issuerDid: String? { get }
+    public var status: StatusListReference? { get }
+    public var consentItems: [MdocConsentItem] { get }
+
+    public static func parse(raw: String) throws -> Mdoc
+    public func toString() -> String
+}
+```
+
+### Property
+| Name         | Type                                   | Description                                              | **M/O** | **Note** |
+|--------------|----------------------------------------|----------------------------------------------------------|---------|----------|
+| docType      | String                                 | The document type, e.g. `eu.europa.ec.eudi.pid.1`        | M       |          |
+| namespaces   | [String: [String: MdocElementValue]]   | The disclosed elements, by namespace and then by element identifier | M | [MdocElementValue](#33-mdocelementvalue). A `Dictionary`, so its iteration order is not stable — draw a screen from `consentItems` instead |
+| validityInfo | MdocValidityInfo                       | The document's validity window, from the MSO             | M       | [MdocValidityInfo](#32-mdocvalidityinfo) |
+| issuerSigned | String                                 | The `IssuerSigned` structure as received, base64url-encoded | M    |          |
+| issuerDid    | String                                 | DID of the issuer that signed the document, from the `kid` of `issuerAuth` | O | Meaningful on a stored (verified) document; `nil` when the document carries no `kid` or one that is not a DID URL |
+| status       | StatusListReference                    | Where the document's revocation status is published, from the MSO | O | [StatusListReference](#4-statuslistreference). `nil` when the issuer publishes none |
+| consentItems | [MdocConsentItem]                      | Every element the holder can be asked to consent to, each with the code that names it | M | [MdocConsentItem](#31-mdocconsentitem). Elements in the order they were signed, namespaces in name order |
+
+### Method
+| Name         | Description                                              | **Note** |
+|--------------|----------------------------------------------------------|----------|
+| parse(raw:)  | Decodes an `IssuerSigned` from its base64url form        | Throws `MSDKWLT05103` when the input is not a well-formed `IssuerSigned` |
+| toString()   | The base64url-encoded `IssuerSigned`, the issuer's bytes unchanged |          |
+
+<br>
+
+## 3.1. MdocConsentItem
+
+### Description
+`One element of an mdoc, as the holder is asked to consent to it.`
+
+`code` is the value that travels: matching names elements with it, the holder's selection is
+expressed in it, and `createVpToken` / `createDeviceResponse` resolve it back to this element. It is
+opaque — display it and compare it, but never split it apart or build one from `namespace` and
+`elementIdentifier`.
+
+### Declaration
+```swift
+public struct MdocConsentItem: Sendable, Equatable {
+    public let code: String
+    public let namespace: String
+    public let elementIdentifier: String
+    public let value: MdocElementValue
+    public let isAmbiguous: Bool
+}
+```
+
+### Property
+| Name              | Type             | Description                                             | **M/O** | **Note** |
+|-------------------|------------------|---------------------------------------------------------|---------|----------|
+| code              | String           | The claim code                                          | M       | Hand it back in `MatchedCredential.claimCodes` or `MdocRequestedDocument.claimCodes` unchanged |
+| namespace         | String           | The namespace the element belongs to                    | M       | For rendering the row, not for reconstructing the code |
+| elementIdentifier | String           | The element's identifier within its namespace           | M       | For rendering the row, not for reconstructing the code |
+| value             | MdocElementValue | The value the issuer put in the element                 | M       | [MdocElementValue](#33-mdocelementvalue) |
+| isAmbiguous       | Bool             | Whether this code names more than one element of the document | M | Presenting an ambiguous code fails rather than guessing |
+
+<br>
+
+## 3.2. MdocValidityInfo
+
+### Description
+`The validity window an issuer states in the MSO.`
+
+### Declaration
+```swift
+public struct MdocValidityInfo: Sendable, Equatable {
+    public let signed: Date
+    public let validFrom: Date
+    public let validUntil: Date
+    public let expectedUpdate: Date?
+}
+```
+
+### Property
+| Name           | Type | Description                                    | **M/O** | **Note** |
+|----------------|------|------------------------------------------------|---------|----------|
+| signed         | Date | When the MSO was signed                        | M       |          |
+| validFrom      | Date | The start of the document's validity           | M       |          |
+| validUntil     | Date | The end of the document's validity             | M       |          |
+| expectedUpdate | Date | When the issuer expects to re-issue, if it said | O      |          |
+
+<br>
+
+## 3.3. MdocElementValue
+
+### Description
+`A value an mdoc element can hold.`
+
+An mdoc element is CBOR, not JSON, so it reaches past what `AnyJSON` can carry: a `portrait` is a
+JPEG byte string, and a `birth_date` is a tagged date rather than a plain string.
+
+### Declaration
+```swift
+public enum MdocElementValue: Sendable, Equatable {
+    case text(String)
+    case bytes(Data)
+    case integer(Int64)
+    case double(Double)
+    case bool(Bool)
+    case fullDate(String)
+    case dateTime(Date)
+    case array([MdocElementValue])
+    case map([String: MdocElementValue])
+    case null
+}
+```
+
+### Property
+| Value            | Description                                                     | **Note** |
+|------------------|-----------------------------------------------------------------|----------|
+| text(String)     | A text string                                                   |          |
+| bytes(Data)      | A byte string, e.g. a portrait JPEG                             |          |
+| integer(Int64)   | An integer                                                      |          |
+| double(Double)   | A floating-point number                                         |          |
+| bool(Bool)       | A boolean                                                       |          |
+| fullDate(String) | A `full-date` (tag 1004): a calendar date with no time and no zone, kept as written | Stays a string because it denotes a date, not an instant |
+| dateTime(Date)   | A point in time (tag 0 / tag 1)                                 |          |
+| array            | An array of element values                                      |          |
+| map              | A map of element values keyed by text                           |          |
+| null             | CBOR null                                                       |          |
+
+<br>
+
+## 4. StatusListReference
+
+### Description
+`Where a credential's revocation status is published, as an IETF Token Status List entry.`
+
+A credential says nothing about its own status: it points at a list, and whoever wants the answer
+fetches that list and reads the entry at `idx`. Both credential formats carry the reference the same
+way (`status.status_list`), so one type serves both. The SDK exposes the reference and stops there:
+it does not fetch the list, decode its bitstring, or decide whether a credential is revoked or
+suspended — the wallet app owns that call and the judgement that follows.
+
+### Declaration
+```swift
+public struct StatusListReference: Sendable, Equatable {
+    public let uri: String
+    public let idx: Int
+
+    public init(uri: String, idx: Int)
+}
+```
+
+### Property
+| Name | Type   | Description                                                   | **M/O** | **Note** |
+|------|--------|---------------------------------------------------------------|---------|----------|
+| uri  | String | The URL the status list token is published at                 | M       |          |
+| idx  | Int    | This credential's position in the list the `uri` resolves to  | M       |          |
+
+<br>
+
+## 5. JWS
 
 ### Description
 `A parsed JWS in compact serialization (<header>.<payload>.<signature>).`
@@ -3039,7 +3314,7 @@ public struct JWS
 
 <br>
 
-## 3.1. JWSHeader
+## 5.1. JWSHeader
 
 ### Description
 `The protected header of a JWS.`
@@ -3062,14 +3337,14 @@ public struct JWSHeader : Jsonable
 ### Property
 | Name | Type          | Description                                   | **M/O** | **Note** |
 |------|---------------|-----------------------------------------------|---------|----------|
-| alg  | JWK.Algorithm | Signing algorithm                             | M       | [JWK](#4-jwk) |
+| alg  | JWK.Algorithm | Signing algorithm                             | M       | [JWK](#6-jwk) |
 | typ  | String        | Token type, e.g. `openid4vci-proof+jwt`       | M       |          |
 | kid  | String        | Key id of the signer                          | O       |          |
-| jwk  | JWK           | The signer's public key, embedded             | O       | [JWK](#4-jwk) |
+| jwk  | JWK           | The signer's public key, embedded             | O       | [JWK](#6-jwk) |
 
 <br>
 
-## 4. JWK
+## 6. JWK
 
 ### Description
 `A JSON Web Key. Only EC P-256 keys are modelled.`
@@ -3094,7 +3369,7 @@ public struct JWK: Jsonable
 ### Property
 | Name | Type      | Description                              | **M/O** | **Note** |
 |------|-----------|------------------------------------------|---------|----------|
-| alg  | Algorithm | Intended algorithm                       | O       | [Nested enumerations](#41-jwk-nested-enumerations) |
+| alg  | Algorithm | Intended algorithm                       | O       | [Nested enumerations](#61-jwk-nested-enumerations) |
 | kid  | String    | Key id                                   | O       |          |
 | crv  | Curve     | Curve; `.p256` by default                | M       |          |
 | kty  | KeyType   | Key type; `.ec` by default               | M       |          |
@@ -3104,7 +3379,7 @@ public struct JWK: Jsonable
 
 <br>
 
-## 4.1. JWK nested enumerations
+## 6.1. JWK nested enumerations
 
 ### Description
 `Algorithm, curve, key type and intended use. Each keeps the wire value it did not recognise.`
@@ -3127,7 +3402,7 @@ public enum JWKUse: String, Jsonable, Equatable { case sig, enc }
 
 <br>
 
-## 5. AuthorizationRequest
+## 7. AuthorizationRequest
 
 ### Description
 `OpenID4VP authorization request received from the verifier.`
@@ -3159,13 +3434,13 @@ public struct AuthorizationRequest : Jsonable, FromSnake
 | clientId       | String            | Verifier identifier; used as the presentation audience   | M       |          |
 | responseType   | String            | OAuth response type                                      | M       |          |
 | responseMode   | String            | `direct_post` or `direct_post.jwt`                       | M       | Other modes are rejected (`MSDKWLT05509`) |
-| dcqlQuery      | DCQLQuery         | The credential query to match against                    | M       | [DCQLQuery](#6-dcqlquery) |
-| clientMetadata | [String: AnyJSON] | Verifier metadata; carries the response-encryption key for `direct_post.jwt` | M | [AnyJSON](#14-anyjson) |
+| dcqlQuery      | DCQLQuery         | The credential query to match against                    | M       | [DCQLQuery](#8-dcqlquery) |
+| clientMetadata | [String: AnyJSON] | Verifier metadata; carries the response-encryption key for `direct_post.jwt` | M | [AnyJSON](#18-anyjson) |
 | iat            | Int               | Issued-at timestamp of the request                       | M       |          |
 
 <br>
 
-## 6. DCQLQuery
+## 8. DCQLQuery
 
 ### Description
 `The verifier's Digital Credentials Query Language query (OpenID4VP 1.0 §6).`
@@ -3183,13 +3458,13 @@ public struct DCQLQuery: Jsonable, FromSnake
 ### Property
 | Name            | Type                    | Description                                      | **M/O** | **Note** |
 |-----------------|-------------------------|--------------------------------------------------|---------|----------|
-| credentials     | [CredentialQuery]       | The credential queries to satisfy                 | O       | [CredentialQuery](#61-credentialquery) |
-| credentialSets  | [CredentialSet]         | Which combinations of those queries are acceptable | O      | [CredentialSet](#64-credentialset) |
-| transactionData | [[String: AnyJSON]]     | Transaction data to be signed alongside            | O       | [AnyJSON](#14-anyjson) |
+| credentials     | [CredentialQuery]       | The credential queries to satisfy                 | O       | [CredentialQuery](#81-credentialquery) |
+| credentialSets  | [CredentialSet]         | Which combinations of those queries are acceptable | O      | [CredentialSet](#84-credentialset) |
+| transactionData | [[String: AnyJSON]]     | Transaction data to be signed alongside            | O       | [AnyJSON](#18-anyjson) |
 
 <br>
 
-## 6.1. CredentialQuery
+## 8.1. CredentialQuery
 
 ### Description
 `One credential the verifier asks for.`
@@ -3215,17 +3490,17 @@ public struct CredentialQuery: Jsonable, FromSnake
 |-----------------------------------|---------------------|----------------------------------------------------|---------|----------|
 | id                                | String              | Query id; echoed back as `MatchedCredential.queryId` | O     |          |
 | format                            | String              | Credential format asked for                        | O       |          |
-| meta                              | [String: AnyJSON]   | Format-specific constraints, e.g. accepted schema ids | O    | [AnyJSON](#14-anyjson) |
-| claims                            | [ClaimQuery]        | The claims asked for; absent means the whole credential | O  | [ClaimQuery](#62-claimquery) |
+| meta                              | [String: AnyJSON]   | Format-specific constraints, e.g. accepted schema ids | O    | [AnyJSON](#18-anyjson) |
+| claims                            | [ClaimQuery]        | The claims asked for; absent means the whole credential | O  | [ClaimQuery](#82-claimquery) |
 | claimSets                         | [[String]]          | Arrays of `claims[].id`; each inner array is one acceptable option | O | The wallet uses the first option whose ids all resolve |
-| trustedAuthorities                | [TrustedAuthority]  | Issuer constraints                                 | O       | [TrustedAuthority](#63-trustedauthority) |
+| trustedAuthorities                | [TrustedAuthority]  | Issuer constraints                                 | O       | [TrustedAuthority](#83-trustedauthority) |
 | purpose                           | String              | Why the verifier wants it                          | O       |          |
 | multiple                          | Bool                | Whether more than one credential may answer this query | O   | Defaults to `false` |
 | requireCryptographicHolderBinding | Bool                | Whether holder binding is required                 | O       |          |
 
 <br>
 
-## 6.2. ClaimQuery
+## 8.2. ClaimQuery
 
 ### Description
 `One claim the verifier asks for, optionally with a predicate on its value.`
@@ -3250,18 +3525,18 @@ public struct ClaimQuery: Jsonable, FromSnake
 | Name      | Type               | Description                                     | **M/O** | **Note** |
 |-----------|--------------------|-------------------------------------------------|---------|----------|
 | id        | String             | Claim query id, referenced by `claimSets`       | O       |          |
-| path      | [DCQLPathElement]  | Path to the claim in a JSON credential          | O       | [DCQLPathElement](#65-dcqlpathelement). Not used for mdoc |
+| path      | [DCQLPathElement]  | Path to the claim in a JSON credential          | O       | [DCQLPathElement](#85-dcqlpathelement). Not used for mdoc |
 | namespace | String             | mdoc namespace, e.g. `org.iso.18013.5.1`        | O       |          |
 | claimName | String             | mdoc claim name within the namespace            | O       |          |
 | purpose   | String             | Why the verifier wants this claim               | O       |          |
-| values    | [AnyJSON]          | The value must be one of these                  | O       | [AnyJSON](#14-anyjson) |
+| values    | [AnyJSON]          | The value must be one of these                  | O       | [AnyJSON](#18-anyjson) |
 | value     | AnyJSON            | The value must equal this                       | O       |          |
 | max       | AnyJSON            | Upper bound on the value                        | O       |          |
 | min       | AnyJSON            | Lower bound on the value                        | O       |          |
 
 <br>
 
-## 6.3. TrustedAuthority
+## 8.3. TrustedAuthority
 
 ### Description
 `Issuer constraint for a credential query (OpenID4VP 1.0 §6.1.1).`
@@ -3282,7 +3557,7 @@ public struct TrustedAuthority: Jsonable, FromSnake {
 
 <br>
 
-## 6.4. CredentialSet
+## 8.4. CredentialSet
 
 ### Description
 `Which combinations of credential queries the verifier will accept.`
@@ -3307,7 +3582,7 @@ public struct CredentialSet: Jsonable, FromSnake {
 
 <br>
 
-## 6.5. DCQLPathElement
+## 8.5. DCQLPathElement
 
 ### Description
 `One step of a DCQL claim path: an object member, an array index, or a wildcard.`
@@ -3330,7 +3605,7 @@ public enum DCQLPathElement: Codable, Hashable, Sendable {
 
 <br>
 
-## 7. MatchedCredential
+## 9. MatchedCredential
 
 ### Description
 `One matched credential for a single DCQL credential query.`
@@ -3358,7 +3633,92 @@ public struct MatchedCredential
 
 <br>
 
-## 8. IssuerMetadataResponse
+## 10. MdocRequestedDocument
+
+### Description
+`One match of an ISO/IEC 18013-5 proximity request: a requested document, and a stored document that can fill at least one of its elements.`
+
+Returned by `matchMdocRequest` and passed back, edited, to `createDeviceResponse`. Filling every
+requested element is not required — what cannot be filled is listed in `missing`. The app withholds
+an element by dropping its code from `claimCodes`, and a document by dropping the entry. It adds an
+element the reader did not request by appending that element's code from the document's
+[MdocCredentialItem](#14-mdoccredentialitem)`.consentItems`; whether to is the holder's call.
+
+### Declaration
+```swift
+public struct MdocRequestedDocument
+{
+    public let docRequestIndex: Int
+    public let docType: String
+    public let credentialId: String
+    public let claimCodes: [String]
+    public let intentToRetain: [String: Bool]
+    public let missing: [String]
+
+    public init(docRequestIndex: Int, docType: String, credentialId: String,
+                claimCodes: [String], intentToRetain: [String: Bool], missing: [String])
+}
+```
+
+### Property
+| Name            | Type           | Description                                                                 | **M/O** | **Note** |
+|-----------------|----------------|-----------------------------------------------------------------------------|---------|----------|
+| docRequestIndex | Int            | Zero-based index into `DeviceRequest.docRequests` this entry answers        | M       | `docType` cannot identify a request: a reader may ask for the same type twice with different elements |
+| docType         | String         | The requested `ItemsRequest.docType`                                        | M       |          |
+| credentialId    | String         | The stored document that can fill at least one requested element            | M       | Same value as [MdocCredentialItem](#14-mdoccredentialitem)`.id` |
+| claimCodes      | [String]       | The elements to disclose, as codes                                          | M       | Opaque values: drop one to withhold the element, append one from `consentItems` to add an unrequested element; never split or assemble them |
+| intentToRetain  | [String: Bool] | The reader's retention intent per code, over `claimCodes` and `missing` together | M  | Output only; `createDeviceResponse` does not read it back |
+| missing         | [String]       | Requested elements this document cannot supply, in the same code form       | M       | Covers elements not held and elements held under an ambiguous code |
+
+<br>
+
+## 11. MdocDeviceResponse
+
+### Description
+`A built DeviceResponse, and how each document in it was authenticated.`
+
+### Declaration
+```swift
+public struct MdocDeviceResponse
+{
+    public let response: Data
+    public let authMethods: [String: MdocDeviceAuthMethod]
+
+    public init(response: Data, authMethods: [String: MdocDeviceAuthMethod])
+}
+```
+
+### Property
+| Name        | Type                           | Description                                                 | **M/O** | **Note** |
+|-------------|--------------------------------|-------------------------------------------------------------|---------|----------|
+| response    | Data                           | The `DeviceResponse` CBOR, **plaintext**                    | M       | The transport SDK encrypts it before sending |
+| authMethods | [String: MdocDeviceAuthMethod] | `credentialId` → the method actually used for that document | M       | [MdocDeviceAuthMethod](#111-mdocdeviceauthmethod). Keyed by credential, since a response may carry the same doctype twice |
+
+<br>
+
+## 11.1. MdocDeviceAuthMethod
+
+### Description
+`How one document in a DeviceResponse was authenticated.`
+
+### Declaration
+```swift
+public enum MdocDeviceAuthMethod: String, Sendable
+{
+    case deviceSignature
+    case deviceMac
+}
+```
+
+### Property
+| Value           | Description                                                               | **Note** |
+|-----------------|---------------------------------------------------------------------------|----------|
+| deviceSignature | ECDSA signature with the document's device key                            | Used when the key cannot perform key agreement, or the transcript carries no reader key |
+| deviceMac       | HMAC with the `EMacKey` derived from ECDH with the reader's ephemeral key | Preferred when the device key can perform key agreement |
+
+<br>
+
+## 12. IssuerMetadataResponse
 
 ### Description
 `An issuer's OpenID4VCI metadata: its endpoints and the credentials it offers.`
@@ -3395,14 +3755,14 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 | nonceEndpoint                     | String                            | Nonce endpoint                                | O       |          |
 | deferredCredentialEndpoint        | String                            | Deferred credential endpoint                  | O       |          |
 | notificationEndpoint              | String                            | Notification endpoint                         | O       |          |
-| credentialRequestEncryption       | EncryptionSupport                 | Request encryption the issuer advertises      | O       | [EncryptionSupport](#82-encryptionsupport) |
-| credentialResponseEncryption      | EncryptionSupport                 | Response encryption the issuer advertises     | O       | [EncryptionSupport](#82-encryptionsupport) |
+| credentialRequestEncryption       | EncryptionSupport                 | Request encryption the issuer advertises      | O       | [EncryptionSupport](#122-encryptionsupport) |
+| credentialResponseEncryption      | EncryptionSupport                 | Response encryption the issuer advertises     | O       | [EncryptionSupport](#122-encryptionsupport) |
 | credentialIdentifiersSupported    | Bool                              | Whether the issuer uses `credential_identifier` | O     |          |
-| credentialConfigurationsSupported | [String: CredentialConfiguration] | Offered credentials, keyed by `credential_configuration_id` | M | [CredentialConfiguration](#81-credentialconfiguration) |
+| credentialConfigurationsSupported | [String: CredentialConfiguration] | Offered credentials, keyed by `credential_configuration_id` | M | [CredentialConfiguration](#121-credentialconfiguration) |
 
 <br>
 
-## 8.1. CredentialConfiguration
+## 12.1. CredentialConfiguration
 
 ### Description
 `One credential the issuer offers.`
@@ -3426,19 +3786,19 @@ public struct CredentialConfiguration: Jsonable, FromSnake
 ### Property
 | Name                                 | Type                     | Description                              | **M/O** | **Note** |
 |--------------------------------------|--------------------------|------------------------------------------|---------|----------|
-| format                               | SupportedFormat          | Credential format                        | M       | [SupportedFormat](#88-supportedformat) |
+| format                               | SupportedFormat          | Credential format                        | M       | [SupportedFormat](#128-supportedformat) |
 | scope                                | String                   | OAuth scope for this credential          | O       |          |
 | cryptographicBindingMethodsSupported | [String]                 | Holder binding methods supported         | O       |          |
-| credentialSigningAlgValuesSupported  | [SigningAlg]             | Issuer signing algorithms                | O       | [SigningAlg](#89-signingalg) |
-| proofTypesSupported                  | [String: ProofSupport]   | Accepted holder proof types              | O       | [ProofSupport](#86-proofsupport) |
+| credentialSigningAlgValuesSupported  | [SigningAlg]             | Issuer signing algorithms                | O       | [SigningAlg](#129-signingalg) |
+| proofTypesSupported                  | [String: ProofSupport]   | Accepted holder proof types              | O       | [ProofSupport](#126-proofsupport) |
 | vct                                  | String                   | SD-JWT VC type                           | O       |          |
 | doctype                              | String                   | mdoc doctype                             | O       |          |
-| policy                               | CredentialPolicy         | Batch and one-time-use policy            | O       | [CredentialPolicy](#83-credentialpolicy) |
-| credentialMetadata                   | CredentialMetadata       | Claims and display information           | O       | [CredentialMetadata](#84-credentialmetadata) |
+| policy                               | CredentialPolicy         | Batch and one-time-use policy            | O       | [CredentialPolicy](#123-credentialpolicy) |
+| credentialMetadata                   | CredentialMetadata       | Claims and display information           | O       | [CredentialMetadata](#124-credentialmetadata) |
 
 <br>
 
-## 8.2. EncryptionSupport
+## 12.2. EncryptionSupport
 
 ### Description
 `Encryption the issuer advertises — not what the wallet sends.`
@@ -3462,7 +3822,7 @@ public struct EncryptionSupport: Jsonable, FromSnake
 
 <br>
 
-## 8.3. CredentialPolicy
+## 12.3. CredentialPolicy
 
 ### Description
 `Issuance policy for a credential configuration.`
@@ -3484,7 +3844,7 @@ public struct CredentialPolicy: Jsonable, FromSnake
 
 <br>
 
-## 8.4. CredentialMetadata
+## 12.4. CredentialMetadata
 
 ### Description
 `Claims and display information for a credential configuration.`
@@ -3500,12 +3860,12 @@ public struct CredentialMetadata: Codable, Sendable {
 ### Property
 | Name    | Type          | Description                          | **M/O** | **Note** |
 |---------|---------------|--------------------------------------|---------|----------|
-| claims  | [ClaimDetail] | The claims this credential carries   | O       | [ClaimDetail](#87-claimdetail) |
-| display | [DisplayInfo] | How to present the credential, per locale | O  | [DisplayInfo](#85-displayinfo) |
+| claims  | [ClaimDetail] | The claims this credential carries   | O       | [ClaimDetail](#127-claimdetail) |
+| display | [DisplayInfo] | How to present the credential, per locale | O  | [DisplayInfo](#125-displayinfo) |
 
 <br>
 
-## 8.5. DisplayInfo
+## 12.5. DisplayInfo
 
 ### Description
 `How to present a credential or claim in one locale.`
@@ -3526,14 +3886,14 @@ public struct DisplayInfo: Jsonable, FromSnake
 | Name            | Type     | Description                | **M/O** | **Note** |
 |-----------------|----------|----------------------------|---------|----------|
 | name            | String   | Display name               | O       |          |
-| logo            | LogoInfo | Logo image                 | O       | [LogoInfo](#851-logoinfo) |
+| logo            | LogoInfo | Logo image                 | O       | [LogoInfo](#1251-logoinfo) |
 | locale          | String   | BCP 47 locale tag          | O       |          |
 | backgroundColor | String   | Background colour          | O       |          |
 | textColor       | String   | Text colour                | O       |          |
 
 <br>
 
-## 8.5.1. LogoInfo
+## 12.5.1. LogoInfo
 
 ### Description
 `A logo image for a display entry.`
@@ -3555,7 +3915,7 @@ public struct LogoInfo: Jsonable, FromSnake
 
 <br>
 
-## 8.6. ProofSupport
+## 12.6. ProofSupport
 
 ### Description
 `The holder proof algorithms an issuer accepts for one proof type.`
@@ -3575,7 +3935,7 @@ public struct ProofSupport: Jsonable, FromSnake
 
 <br>
 
-## 8.7. ClaimDetail
+## 12.7. ClaimDetail
 
 ### Description
 `One claim of an offered credential, as the issuer describes it.`
@@ -3594,14 +3954,14 @@ public struct ClaimDetail: Jsonable, FromSnake
 ### Property
 | Name      | Type          | Description                                | **M/O** | **Note** |
 |-----------|---------------|--------------------------------------------|---------|----------|
-| display   | [DisplayInfo] | Claim labels, per locale                   | O       | [DisplayInfo](#85-displayinfo) |
+| display   | [DisplayInfo] | Claim labels, per locale                   | O       | [DisplayInfo](#125-displayinfo) |
 | mandatory | Bool          | Whether the issuer always includes it      | O       |          |
 | path      | [String]      | Path to the claim in the credential        | O       |          |
 | valueType | String        | Value type hint                            | O       |          |
 
 <br>
 
-## 8.8. SupportedFormat
+## 12.8. SupportedFormat
 
 ### Description
 `A credential format token, keeping the issuer's original string so it can be re-sent verbatim.`
@@ -3627,7 +3987,7 @@ public enum SupportedFormat: Jsonable, Equatable
 
 <br>
 
-## 8.9. SigningAlg
+## 12.9. SigningAlg
 
 ### Description
 `A signing algorithm value that an issuer may publish as either a string or a number.`
@@ -3648,7 +4008,7 @@ public enum SigningAlg: Codable, Sendable {
 
 <br>
 
-## 9. CredentialOfferResponse
+## 13. CredentialOfferResponse
 
 ### Description
 `An issuer's credential offer — what the wallet receives when issuance is issuer-initiated.`
@@ -3668,11 +4028,11 @@ public struct CredentialOfferResponse: Jsonable, FromSnake
 |----------------------------|----------|----------------------------------------------|---------|----------|
 | credentialIssuer           | String   | Issuer identifier                            | M       |          |
 | credentialConfigurationIds | [String] | The credentials being offered                | O       |          |
-| grants                     | Grants   | How to obtain a token for this offer         | M       | [Grants](#91-grants) |
+| grants                     | Grants   | How to obtain a token for this offer         | M       | [Grants](#131-grants) |
 
 <br>
 
-## 9.1. Grants
+## 13.1. Grants
 
 ### Description
 `The grant types the offer supports.`
@@ -3689,12 +4049,12 @@ public struct Grants: Jsonable
 ### Property
 | Name              | Type              | Description                      | **M/O** | **Note** |
 |-------------------|-------------------|----------------------------------|---------|----------|
-| preAuthorizedCode | PreAuthorizedCode | Pre-authorized code grant        | O       | [PreAuthorizedCode](#92-preauthorizedcode). Wire key is `urn:ietf:params:oauth:grant-type:pre-authorized_code` |
-| authorizationCode | AuthorizationCode | Authorization code grant         | O       | [AuthorizationCode](#94-authorizationcode) |
+| preAuthorizedCode | PreAuthorizedCode | Pre-authorized code grant        | O       | [PreAuthorizedCode](#132-preauthorizedcode). Wire key is `urn:ietf:params:oauth:grant-type:pre-authorized_code` |
+| authorizationCode | AuthorizationCode | Authorization code grant         | O       | [AuthorizationCode](#134-authorizationcode) |
 
 <br>
 
-## 9.2. PreAuthorizedCode
+## 13.2. PreAuthorizedCode
 
 ### Description
 `The pre-authorized code grant of a credential offer.`
@@ -3712,11 +4072,11 @@ public struct PreAuthorizedCode: Jsonable
 | Name              | Type   | Description                                | **M/O** | **Note** |
 |-------------------|--------|--------------------------------------------|---------|----------|
 | preAuthorizedCode | String | The pre-authorized code                    | M       | Wire key is `pre-authorized_code` |
-| txCode            | TxCode | Transaction code the holder must enter     | O       | [TxCode](#93-txcode) |
+| txCode            | TxCode | Transaction code the holder must enter     | O       | [TxCode](#133-txcode) |
 
 <br>
 
-## 9.3. TxCode
+## 13.3. TxCode
 
 ### Description
 `How the holder must enter the transaction code, when the issuer requires one.`
@@ -3740,7 +4100,7 @@ public struct TxCode: Jsonable
 
 <br>
 
-## 9.4. AuthorizationCode
+## 13.4. AuthorizationCode
 
 ### Description
 `The authorization code grant of a credential offer.`
@@ -3760,7 +4120,7 @@ public struct AuthorizationCode: Jsonable
 
 <br>
 
-## 10. TokenRequest
+## 14. TokenRequest
 
 ### Description
 `The token request the wallet sends for a pre-authorized code grant.`
@@ -3784,11 +4144,11 @@ public struct TokenRequest: Jsonable, FromSnake
 | grantType            | String                 | Grant type                           | M       | Fixed to the pre-authorized code grant |
 | preAuthorizedCode    | String                 | The code from the credential offer   | M       | Encoded as `pre-authorized_code` |
 | txCode               | String                 | Transaction code the holder entered  | O       |          |
-| authorizationDetails | [AuthorizationDetails] | Which credentials the token is for   | M       | [AuthorizationDetails](#12-authorizationdetails) |
+| authorizationDetails | [AuthorizationDetails] | Which credentials the token is for   | M       | [AuthorizationDetails](#16-authorizationdetails) |
 
 <br>
 
-## 11. TokenResponse
+## 15. TokenResponse
 
 ### Description
 `The issuer's token response. Passed to requestIssueOID4VC.`
@@ -3812,11 +4172,11 @@ public struct TokenResponse: Jsonable, FromSnake
 | tokenType            | String                 | Token type, e.g. `Bearer`                     | M       |          |
 | cNonce               | String                 | Nonce to bind into the holder proof           | O       |          |
 | expiresIn            | Int                    | Token lifetime in seconds                     | O       |          |
-| authorizationDetails | [AuthorizationDetails] | Credential identifiers the token covers       | O       | [AuthorizationDetails](#12-authorizationdetails) |
+| authorizationDetails | [AuthorizationDetails] | Credential identifiers the token covers       | O       | [AuthorizationDetails](#16-authorizationdetails) |
 
 <br>
 
-## 12. AuthorizationDetails
+## 16. AuthorizationDetails
 
 ### Description
 `Which credential configuration a token request or response applies to.`
@@ -3842,7 +4202,7 @@ public struct AuthorizationDetails: Jsonable, FromSnake
 
 <br>
 
-## 13. OID4VCIIssuerList
+## 17. OID4VCIIssuerList
 
 ### Description
 `List of OID4VCI issuers the wallet may start an issuance with.`
@@ -3865,11 +4225,11 @@ public struct OID4VCIIssuerList: Jsonable
 | Name  | Type                | Description                 | **M/O** | **Note** |
 |-------|---------------------|-----------------------------|---------|----------|
 | count | Int                 | Number of entries in `items` | M      |          |
-| items | [OID4VCIIssuerItem] | The issuer entries          | M       | [OID4VCIIssuerItem](#131-oid4vciissueritem) |
+| items | [OID4VCIIssuerItem] | The issuer entries          | M       | [OID4VCIIssuerItem](#171-oid4vciissueritem) |
 
 <br>
 
-## 13.1. OID4VCIIssuerItem
+## 17.1. OID4VCIIssuerItem
 
 ### Description
 `One OID4VCI issuer entry: its identifier and the endpoints needed to begin issuance.`
@@ -3890,12 +4250,12 @@ public struct OID4VCIIssuerItem: Jsonable
 | Name                        | Type   | Description                                          | **M/O** | **Note** |
 |-----------------------------|--------|------------------------------------------------------|---------|----------|
 | credentialIssuer            | String | Issuer identifier                                    | M       | Matches `credential_issuer` of the issuer metadata |
-| credentialIssuerMetadataUri | String | Where to fetch this issuer's `IssuerMetadataResponse` | M      | [IssuerMetadataResponse](#8-issuermetadataresponse) |
+| credentialIssuerMetadataUri | String | Where to fetch this issuer's `IssuerMetadataResponse` | M      | [IssuerMetadataResponse](#12-issuermetadataresponse) |
 | userInitiationUri           | String | Where the wallet starts a wallet-initiated issuance  | O       | Absent for issuers that only support issuer-initiated offers |
 
 <br>
 
-## 14. AnyJSON
+## 18. AnyJSON
 
 ### Description
 `A lossless JSON value container, used wherever the spec allows arbitrary JSON.`

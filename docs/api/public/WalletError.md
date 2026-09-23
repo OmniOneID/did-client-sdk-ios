@@ -20,11 +20,12 @@ iOS WalletAPIError
 
 - Topic: WalletAPIError
 - Author: Dongjun Park
-- Date: 2026-08-06
-- Version: v2.0.2
+- Date: 2026-09-22
+- Version: v2.0.3
 
 | Version | Date       | Changes                  |
 | --------| ---------- | ------------------------ |
+| v2.0.3  | 2026-09-22 | Add notPersonalized (05046) |
 | v2.0.2  | 2026-08-06 | Fixed VP error code prefix |
 | v2.0.1  | 2025-10-01 | Add lock-related error   |
 | v1.0.0  | 2024-10-18 | Initial version          |

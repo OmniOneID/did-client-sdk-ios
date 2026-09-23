@@ -290,7 +290,7 @@ final class MdocTests: XCTestCase {
     /// - Parameters:
     ///   - elements: The (namespace, identifier) pairs to write into `nameSpaces`.
     ///   - status: The MSO's `status` member, written only when given.
-    private static func syntheticDocument(elements: [(namespace: String, identifier: String)],
+    static func syntheticDocument(elements: [(namespace: String, identifier: String)],
                                           status: CBOR? = nil) -> String {
         var nameSpaces = OrderedDictionary<CBOR, CBOR>()
         for (index, element) in elements.enumerated() {

@@ -20,11 +20,12 @@ iOS UtilityError
 
 - Topic: UtilityError
 - Author: Woosang Kim
-- Date: 2024-08-30
-- Version: v1.0.0
+- Date: 2026-09-22
+- Version: v1.0.1
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
+| v1.0.1  | 2026-09-22 | Fix CryptoUtils 001xx codes to match the SDK |
 | v1.0.0  | 2024-08-30 | Initial version          |
 
 <div style="page-break-after: always;"></div>
@@ -75,10 +76,10 @@ public struct UtilityError: Error {
 
 | Error Code      | Error Message                                      | Description                            | Action Required                        |
 |-----------------|----------------------------------------------------|----------------------------------------|----------------------------------------|
-| MSDKUTL00101    | Fail to create random key. error : {detail error}                 | Failure during random key generation   | Depend on detail error cases     |
-| MSDKUTL00102    | Fail to derive public key                          | Failed to derive public key            | Verify key derivation steps            |
-| MSDKUTL00103    | Fail to generate shared secret using ECDH. error : {detail error} | ECDH shared secret generation failed   | Depend on detail error cases     |
-| MSDKUTL00104    | Fail to derive key using PBKDF2                    | PBKDF2 key derivation failed           | Check PBKDF2 parameters and input      |
+| MSDKUTL00100    | Fail to create random key. error : {detail error}                 | Failure during random key generation   | Depend on detail error cases     |
+| MSDKUTL00101    | Fail to derive public key                          | Failed to derive public key            | Verify key derivation steps            |
+| MSDKUTL00102    | Fail to generate shared secret using ECDH. error : {detail error} | ECDH shared secret generation failed   | Depend on detail error cases     |
+| MSDKUTL00103    | Fail to derive key using PBKDF2                    | PBKDF2 key derivation failed           | Check PBKDF2 parameters and input      |
 | MSDKUTL00200    | Fail to convert public key to external representation. error : {detail error} | Public key conversion failed  | Depend on detail error cases |
 | MSDKUTL00201    | Fail to convert private key to external representation. error : {detail error} | Private key conversion failed | Depend on detail error cases     |
 | MSDKUTL00202    | Fail to convert private key to object. error : {detail error}     | Private key object conversion failed   | Depend on detail error cases      |
