@@ -29,7 +29,7 @@ public struct OID4VCICredential: Jsonable
     /// (`credentialConfigurationId` / `credentialIdentifier`) are kept as separate fields because they
     /// can be shared across distinct credentials and so are unsafe as a primary key.
     public let id: String
-    /// Credential format token, e.g. `"dc+sd-jwt"` or `"mso_mdoc"`.
+    /// Credential format token, e.g. `"dc+sd-jwt-did"` or `"mso_mdoc-did"`.
     public let format: String
     /// The `credential_configuration_id` the credential was issued under.
     public let credentialConfigurationId: String

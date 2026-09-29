@@ -39,23 +39,18 @@ public enum CredentialFormat {
 
     /// The format a DCQL `format` token names, or `nil` for a token this SDK does not handle.
     ///
-    /// Accepts the aliases a verifier may send as well as the canonical token, because a query is
-    /// written by the other side and this SDK reads more spellings than it writes.
+    /// Only the tokens `token` writes are read. Matching and presentation accept nothing else, so a
+    /// spelling resolved here would name a format no credential of it could ever match.
     /// - Parameter token: The `format` value from a DCQL credential query.
     public init?(token: String) {
         guard let format = CredentialFormat.byToken[token] else { return nil }
         self = format
     }
 
-    /// Every token that names a format, canonical and alias alike.
+    /// Every token that names a format.
     private static let byToken: [String: CredentialFormat] = [
         CredentialFormat.vcdm.token:    .vcdm,
-        "jwt_vc_json":                  .vcdm,
-        "jwt_vc":                       .vcdm,
-        "ldp_vc":                       .vcdm,
         CredentialFormat.sdJwtVc.token: .sdJwtVc,
-        "vc+sd-jwt":                    .sdJwtVc,
-        "sd-jwt":                       .sdJwtVc,
         CredentialFormat.msoMdoc.token: .msoMdoc
     ]
 
@@ -79,25 +74,6 @@ public struct SdJwtCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let sdjwt: SDJWT
-
-    /// The DID of the issuer that signed this credential. See `SDJWT.issuerDid`.
-    public var issuerDid: String? { sdjwt.issuerDid }
-
-    /// Every claim the holder can be asked to consent to, in the order the issuer wrote them.
-    ///
-    /// Reading it can fail because an SD-JWT's claims live in its issuer JWT payload, which is
-    /// parsed on demand — unlike an mdoc, whose elements were already decoded when it was parsed.
-    public var consentItems: [SdJwtConsentItem] {
-        get throws { try sdjwt.consentItems() }
-    }
-
-    /// Where this credential's revocation status is published. See `SDJWT.status()`.
-    ///
-    /// Throws for the same reason `consentItems` does: the answer is in the issuer JWT payload,
-    /// which is read on demand.
-    public var status: StatusListReference? {
-        get throws { try sdjwt.status() }
-    }
 }
 
 public struct MdocCredentialItem: CredentialItem
@@ -108,21 +84,6 @@ public struct MdocCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let mdoc: Mdoc
-
-    /// The DID of the issuer that signed this document. See `Mdoc.issuerDid`.
-    public var issuerDid: String? { mdoc.issuerDid }
-
-    /// Every element the holder can be asked to consent to, in the issuer's order.
-    ///
-    /// The stored item and the document it holds answer this the same way; the property is here so
-    /// a screen built from a wallet listing does not have to reach through to `mdoc` first.
-    public var consentItems: [MdocConsentItem] { mdoc.consentItems }
-
-    /// Where this document's revocation status is published. See `Mdoc.status`.
-    ///
-    /// Non-throwing where the SD-JWT item's is not, because an mdoc's MSO was decoded when the
-    /// document was parsed; anything unreadable in it failed then.
-    public var status: StatusListReference? { mdoc.status }
 }
 
 

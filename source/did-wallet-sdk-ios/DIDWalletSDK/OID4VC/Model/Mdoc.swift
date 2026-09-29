@@ -303,6 +303,8 @@ public enum MdocElementValue: Sendable, Equatable {
         case .null, .undefined:
             return .null
         case let .date(value):
+            // Tag 1 arrives here, never as `.tagged`: the decoder turns it into a date itself,
+            // from an integer or a float alike.
             return .dateTime(value)
         case let .array(values):
             return .array(try values.map { try MdocElementValue.decode($0) })
@@ -340,11 +342,6 @@ public enum MdocElementValue: Sendable, Equatable {
                 return .dateTime(date)
             }
             return .fullDate(text)
-        case 1:
-            guard let seconds = value.int64Value else {
-                throw OID4VCManagerError.invalidMdoc(detail: "epoch time is not an integer").getError()
-            }
-            return .dateTime(Date(timeIntervalSince1970: TimeInterval(seconds)))
         default:
             // A tag this SDK does not model still has a value underneath it worth showing.
             return try MdocElementValue.decode(value)

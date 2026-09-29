@@ -97,6 +97,22 @@ final class MdocTests: XCTestCase {
         XCTAssertEqual(claims["expiry_date"], .fullDate("2036-01-10"))
     }
 
+    /// An epoch-based date-time (tag 1) is an instant whether written as an integer or a float, as
+    /// RFC 8949 allows both. The CBOR decoder is what reads the tag, so this pins its behavior:
+    /// a decoder that handed tag 1 through untouched would lose the date to a plain number.
+    func testEpochDateTimeIsReadAsAnInstantFromIntegerOrFloat() throws {
+        let seconds: UInt32 = 1_786_060_800
+        let integerEpoch: [UInt8] = [0xC1, 0x1A] + withUnsafeBytes(of: seconds.bigEndian, Array.init)
+        let floatEpoch: [UInt8] = [0xC1, 0xFB]
+            + withUnsafeBytes(of: (Double(seconds) + 0.5).bitPattern.bigEndian, Array.init)
+
+        let integerValue = try MdocElementValue.decode(XCTUnwrap(CBOR.decode(integerEpoch)))
+        let floatValue = try MdocElementValue.decode(XCTUnwrap(CBOR.decode(floatEpoch)))
+
+        XCTAssertEqual(integerValue, .dateTime(Date(timeIntervalSince1970: TimeInterval(seconds))))
+        XCTAssertEqual(floatValue, .dateTime(Date(timeIntervalSince1970: TimeInterval(seconds) + 0.5)))
+    }
+
     /// The elements this issuer has no value for arrive as empty strings rather than being left
     /// out, so a wallet that lists "the claims this credential can disclose" will list all 26.
     func testElementsWithoutAValueArrivePresentAndEmpty() throws {
@@ -458,18 +474,6 @@ final class MdocTests: XCTestCase {
 
     private static func hex(_ data: Data) -> String {
         return data.map { String(format: "%02x", $0) }.joined()
-    }
-
-    func testStoredItemAnswersTheSameAsItsDocument() throws {
-        let mdoc = try parsed()
-        let item = MdocCredentialItem(id: "id",
-                                      format: .msoMdoc,
-                                      configurationId: "config",
-                                      kid: "pin",
-                                      credentialIdentifier: nil,
-                                      mdoc: mdoc)
-
-        XCTAssertEqual(item.consentItems, mdoc.consentItems)
     }
 
     func testRejectsInputThatIsNotAnIssuerSigned() {

@@ -54,7 +54,7 @@ public class SDJWTCredentialAdapter: CredentialAdapter {
         let allClaims = extractAllClaimsInternal(sdjwt: sdjwt, payload: payload)
         let metadata = extractMetadata(payload: payload)
         // The transport format is the SD-JWT VC media type in the issuer JWT `typ` header
-        // (e.g. dc+sd-jwt / vc+sd-jwt), not the `vct` type claim (which is always present and
+        // (e.g. dc+sd-jwt-did), not the `vct` type claim (which is always present and
         // only identifies the credential type, e.g. urn:eudi:pid:1).
         guard let format = decodedJwt.header["typ"] as? String, !format.isEmpty else {
             throw DCQLError.parseError("SD-JWT is missing the 'typ' header")

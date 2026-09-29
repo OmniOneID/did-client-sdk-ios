@@ -1975,7 +1975,7 @@ let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
 
 동의는 `matchMdocRequest` 의 반환값을 편집하는 것으로 표현한다. element 를 빼려면 `claimCodes` 에서
 그 코드를 빼고, 문서를 빼려면 배열에서 그 항목을 뺀다. 리더가 요청하지 않은 element 를 더할 수도
-있다 — 그 문서의 `MdocCredentialItem.consentItems` 에서 코드를 가져와 덧붙인다. 더할지는 홀더가
+있다 — 그 문서의 `Mdoc.consentItems` 에서 코드를 가져와 덧붙인다. 더할지는 홀더가
 정하며 여기서 판단하지 않는다. 문서가 보유하지 않은 코드와 `isAmbiguous` 로 표시된 코드만 거부된다.
 전부 거부하는 것은 **이 함수를 호출하지 않고** 전송 SDK 가 세션을 끝내게 하는 것으로 표현한다. 빈
 `selected` 는 거부된다. 요청은 신뢰하지 않고 여기서 다시 매칭하며, 각 항목은 그 새 매칭 결과의
@@ -2034,7 +2034,7 @@ func createDeviceResponse(hWalletToken: String, deviceRequest: Data, sessionTran
 let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
                                                     deviceRequest: deviceRequest)
 // ... 동의 화면: element 를 빼려면 코드를, 문서를 빼려면 항목을 덜어낸다.
-//     요청 밖 element 를 더하려면 MdocCredentialItem.consentItems 의 코드를 덧붙인다 ...
+//     요청 밖 element 를 더하려면 Mdoc.consentItems 의 코드를 덧붙인다 ...
 let result = try WalletAPI.shared.createDeviceResponse(hWalletToken: hWalletToken,
                                                        deviceRequest: deviceRequest,
                                                        sessionTranscript: sessionTranscript,
@@ -2328,7 +2328,7 @@ public struct MdocRequestedDocument {
 | docRequestIndex | Int            | 이 항목이 답하는 `DeviceRequest.docRequests` 의 0 기반 인덱스        | M       | `docType` 으로는 요청을 식별할 수 없다. 리더가 같은 타입을 다른 element 로 두 번 요청할 수 있다 |
 | docType         | String         | 요청된 `ItemsRequest.docType`                                       | M       |          |
 | credentialId    | String         | 요청된 element 를 하나 이상 채울 수 있는 저장 문서                    | M       | `MdocCredentialItem.id` 와 같은 값 |
-| claimCodes      | [String]       | 공개할 element, 코드 형태                                            | M       | 불투명 값이다. element 를 빼려면 코드를 빼고, 요청 밖 element 를 더하려면 `MdocCredentialItem.consentItems` 의 코드를 덧붙인다. 쪼개거나 조립하지 않는다 |
+| claimCodes      | [String]       | 공개할 element, 코드 형태                                            | M       | 불투명 값이다. element 를 빼려면 코드를 빼고, 요청 밖 element 를 더하려면 `Mdoc.consentItems` 의 코드를 덧붙인다. 쪼개거나 조립하지 않는다 |
 | intentToRetain  | [String: Bool] | 코드별 리더의 보관 의도. `claimCodes` 와 `missing` 을 합친 범위        | M       | 출력 전용. `createDeviceResponse` 는 읽지 않는다 |
 | missing         | [String]       | 이 문서가 채울 수 없는 요청 element, 같은 코드 형태                    | M       | 보유하지 않은 element 와, 모호한 코드로 보유한 element 를 포함 |
 <br>

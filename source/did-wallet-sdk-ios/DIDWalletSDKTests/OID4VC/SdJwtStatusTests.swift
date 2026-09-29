@@ -78,21 +78,6 @@ final class SdJwtStatusTests: XCTestCase {
         XCTAssertNil(try sdjwt.status())
     }
 
-    /// The stored item and the credential inside it answer the same, so a screen drawn from a
-    /// wallet listing does not have to reach through to `sdjwt` first.
-    func testStoredItemAnswersTheSameAsItsCredential() throws {
-        let sdjwt = credential(
-            claims: #","status":{"status_list":{"idx":7,"uri":"https://issuer.example/status-lists/2"}}"#)
-        let item = SdJwtCredentialItem(id: "id",
-                                       format: .sdJwtVc,
-                                       configurationId: "config",
-                                       kid: "kid",
-                                       credentialIdentifier: nil,
-                                       sdjwt: sdjwt)
-
-        XCTAssertEqual(try item.status, try sdjwt.status())
-    }
-
     /// A payload that is not readable at all fails, rather than passing for a credential without a
     /// status.
     func testUnreadablePayloadThrows() {

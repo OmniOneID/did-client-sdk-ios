@@ -39,17 +39,13 @@ final class CredentialFormatTests: XCTestCase {
         }
     }
 
-    /// A query is written by the other side, so more spellings are read than are ever written.
-    func testAliasesResolveToTheFormatTheyName() {
-        XCTAssertEqual(CredentialFormat(token: "vc+sd-jwt"), .sdJwtVc)
-        XCTAssertEqual(CredentialFormat(token: "sd-jwt"), .sdJwtVc)
-        XCTAssertEqual(CredentialFormat(token: "jwt_vc_json"), .vcdm)
-        XCTAssertEqual(CredentialFormat(token: "jwt_vc"), .vcdm)
-        XCTAssertEqual(CredentialFormat(token: "ldp_vc"), .vcdm)
-    }
-
+    /// Matching and presentation read only the canonical tokens, so no other spelling names a
+    /// format — including the base-standard tokens the canonical ones are derived from.
     func testAnUnhandledTokenNamesNoFormat() {
-        XCTAssertNil(CredentialFormat(token: "mso_mdoc"))
+        for token in ["mso_mdoc", "dc+sd-jwt", "vc+sd-jwt", "sd-jwt", "jwt_vc_json", "jwt_vc", "ldp_vc"] {
+            XCTAssertNil(CredentialFormat(token: token), token)
+            XCTAssertFalse(CredentialFormat.isKnown(token: token), token)
+        }
         XCTAssertNil(CredentialFormat(token: ""))
         XCTAssertNil(CredentialFormat(token: "DC+SD-JWT-DID"))
     }

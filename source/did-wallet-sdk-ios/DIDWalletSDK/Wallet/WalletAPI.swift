@@ -852,7 +852,7 @@ extension WalletAPI : IProximityService
     /// The app expresses consent by editing what `matchMdocRequest` returned: drop a code to
     /// withhold an element, drop an element of the array to withhold a document. A document may
     /// also carry elements the reader did not request — append codes from its
-    /// `MdocCredentialItem.consentItems`; whether to is the holder's call and is not judged here.
+    /// `Mdoc.consentItems`; whether to is the holder's call and is not judged here.
     /// A code the document does not hold, or one marked `isAmbiguous`, is rejected. Refusing
     /// everything is expressed by **not calling this** and letting the transport SDK end the
     /// session; an empty `selected` is rejected.

@@ -21,7 +21,7 @@ import Foundation
 /// Implementations provide format-specific parsing and claim/metadata/issuer matching.
 public protocol CredentialAdapter {
 
-    /// Credential formats supported by this adapter (e.g., ["dc+sd-jwt", "vc+sd-jwt"]).
+    /// Credential formats supported by this adapter (e.g., ["dc+sd-jwt-did"]).
     func getSupportedFormats() -> Set<String>
 
     /// Whether this adapter supports the given credential format.

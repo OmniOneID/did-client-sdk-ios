@@ -21,7 +21,7 @@ import Foundation
 /// DCQL matching regardless of the original credential format (SD-JWT, opendid_vc, mdoc).
 public class ParsedCredential {
 
-    /// The credential format identifier (e.g., "dc+sd-jwt", "opendid_vc", "mso_mdoc").
+    /// The credential format identifier (e.g., "dc+sd-jwt-did", "opendid_vc", "mso_mdoc-did").
     public let format: String
 
     /// The raw credential string as originally provided (SD-JWT compact, VC JSON, base64url mdoc).

@@ -2902,7 +2902,7 @@ public enum CredentialFormat {
 | Name         | Description                                                        | **Note** |
 |--------------|--------------------------------------------------------------------|----------|
 | token        | The DCQL `format` token this SDK writes for the format             | The one definition an app should render or compare against |
-| init(token:) | The format a DCQL `format` token names, or `nil` for one this SDK does not handle | Also accepts the aliases a verifier may send: `jwt_vc_json`, `jwt_vc`, `ldp_vc` for `.vcdm`; `vc+sd-jwt`, `sd-jwt` for `.sdJwtVc` |
+| init(token:) | The format a DCQL `format` token names, or `nil` for one this SDK does not handle | Reads only the tokens `token` writes; any other spelling is `nil` |
 
 <br>
 
@@ -2947,10 +2947,6 @@ public struct SdJwtCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let sdjwt: SDJWT
-
-    public var issuerDid: String? { get }
-    public var consentItems: [SdJwtConsentItem] { get throws }
-    public var status: StatusListReference? { get throws }
 }
 ```
 
@@ -2963,9 +2959,6 @@ public struct SdJwtCredentialItem: CredentialItem
 | kid                  | String           | Key id of the holder key bound to the credential     | M       |          |
 | credentialIdentifier | String           | `credential_identifier` when the issuer supplied one | O       |          |
 | sdjwt                | SDJWT            | The credential itself                                | M       | [SDJWT](#2-sdjwt) |
-| issuerDid            | String           | DID of the issuer that signed the credential         | O       | `SDJWT.issuerDid`; never `nil` for a credential this SDK stored |
-| consentItems         | [SdJwtConsentItem] | Every claim the holder can be asked to consent to, in the issuer's order | M | [SdJwtConsentItem](#22-sdjwtconsentitem). Throws `MSDKWLT05102` when the issuer JWT payload cannot be read |
-| status               | StatusListReference | Where the credential's revocation status is published | O    | [StatusListReference](#4-statuslistreference). `nil` when the issuer publishes none; throws `MSDKWLT05102` when the payload cannot be read |
 
 <br>
 
@@ -2984,10 +2977,6 @@ public struct MdocCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let mdoc: Mdoc
-
-    public var issuerDid: String? { get }
-    public var consentItems: [MdocConsentItem] { get }
-    public var status: StatusListReference? { get }
 }
 ```
 
@@ -3000,9 +2989,6 @@ public struct MdocCredentialItem: CredentialItem
 | kid                  | String            | Key id of the device key bound to the document       | M       |          |
 | credentialIdentifier | String            | `credential_identifier` when the issuer supplied one | O       |          |
 | mdoc                 | Mdoc              | The document itself                                  | M       | [Mdoc](#3-mdoc) |
-| issuerDid            | String            | DID of the issuer that signed the document           | O       | `Mdoc.issuerDid`; never `nil` for a document this SDK stored |
-| consentItems         | [MdocConsentItem] | Every element the holder can be asked to consent to, in the issuer's order | M | [MdocConsentItem](#31-mdocconsentitem). Non-throwing: the document was decoded in full when parsed |
-| status               | StatusListReference | Where the document's revocation status is published | O      | [StatusListReference](#4-statuslistreference). `nil` when the issuer publishes none |
 
 <br>
 
@@ -3642,7 +3628,7 @@ Returned by `matchMdocRequest` and passed back, edited, to `createDeviceResponse
 requested element is not required — what cannot be filled is listed in `missing`. The app withholds
 an element by dropping its code from `claimCodes`, and a document by dropping the entry. It adds an
 element the reader did not request by appending that element's code from the document's
-[MdocCredentialItem](#14-mdoccredentialitem)`.consentItems`; whether to is the holder's call.
+[Mdoc](#3-mdoc)`.consentItems`; whether to is the holder's call.
 
 ### Declaration
 ```swift

@@ -109,8 +109,7 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   and nothing else: splitting one on `.` or `[]`, or assembling one from parts, picks out a
   different claim than the holder agreed to.
 
-- **Consent listing.** `Mdoc.consentItems` and `SDJWT.consentItems()` — mirrored on the two
-  `CredentialItem` types — enumerate everything a credential can be asked to disclose, each row
+- **Consent listing.** `Mdoc.consentItems` and `SDJWT.consentItems()` enumerate everything a credential can be asked to disclose, each row
   carrying the code the presentation will be expressed in. Both list in the order the issuer wrote
   the credential — the order its elements were signed in for an mdoc, the order its disclosures
   arrived in for an SD-JWT — so a screen drawn from either does not reorder itself between runs.
@@ -118,12 +117,11 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   reports whether withholding a claim actually hides it, since an issuer may leave a claim in the
   clear; `isAmbiguous` marks a code that names more than one claim, which cannot be presented.
 
-- **Issuer identity.** `Mdoc.issuerDid` and `SDJWT.issuerDid`, likewise mirrored, name the issuer
+- **Issuer identity.** `Mdoc.issuerDid` and `SDJWT.issuerDid` name the issuer
   whose key the credential's signature was checked against. Read from the signature's key
   identifier rather than from a self-asserted claim, and reported the same way for both formats.
 
-- **Revocation status reference.** `Mdoc.status` and `SDJWT.status()`, mirrored on the two
-  `CredentialItem` types, report where a credential says its revocation status is published — an
+- **Revocation status reference.** `Mdoc.status` and `SDJWT.status()` report where a credential says its revocation status is published — an
   IETF Token Status List entry, as `StatusListReference` with a `uri` and an `idx`. Both formats
   answer in that one type, so an app reads the reference the same way whichever it holds, without
   decoding an MSO out of CBOR itself.
@@ -135,8 +133,8 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   check that was skipped.
 
 - **Format tokens.** `CredentialFormat.token` and `CredentialFormat.init?(token:)` convert between
-  the enum and the DCQL `format` string, the initializer also accepting the aliases a verifier may
-  send. An app that has to branch on a request's format need not carry the literals itself.
+  the enum and the DCQL `format` string, reading only the tokens the SDK writes. An app that has to
+  branch on a request's format need not carry the literals itself.
 
 - **JWS.** `JWS` is public — `protectedHeader`, `payloadData`, `verify()` and
   `verify(publicKey:)` — because fetching an authorization request and posting its response stay

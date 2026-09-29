@@ -2903,7 +2903,7 @@ public enum CredentialFormat {
 | Name         | Description                                              | **Note** |
 |--------------|----------------------------------------------------------|----------|
 | token        | 이 SDK 가 그 형식에 대해 쓰는 DCQL `format` 토큰            | 앱이 표시하거나 비교할 때 기준으로 삼는 단일 정의 |
-| init(token:) | DCQL `format` 토큰이 가리키는 형식. 이 SDK 가 다루지 않는 토큰이면 `nil` | 검증자가 보낼 수 있는 별칭도 받는다. `.vcdm` 에 `jwt_vc_json`, `jwt_vc`, `ldp_vc`, `.sdJwtVc` 에 `vc+sd-jwt`, `sd-jwt` |
+| init(token:) | DCQL `format` 토큰이 가리키는 형식. 이 SDK 가 다루지 않는 토큰이면 `nil` | `token` 이 쓰는 토큰만 읽는다. 다른 표기는 `nil` |
 
 <br>
 
@@ -2948,10 +2948,6 @@ public struct SdJwtCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let sdjwt: SDJWT
-
-    public var issuerDid: String? { get }
-    public var consentItems: [SdJwtConsentItem] { get throws }
-    public var status: StatusListReference? { get throws }
 }
 ```
 
@@ -2964,9 +2960,6 @@ public struct SdJwtCredentialItem: CredentialItem
 | kid                  | String           | 크리덴셜에 바인딩된 홀더 키의 id             | M       |          |
 | credentialIdentifier | String           | 발급자가 지정한 `credential_identifier`     | O       |          |
 | sdjwt                | SDJWT            | 크리덴셜 본체                               | M       | [SDJWT](#2-sdjwt) |
-| issuerDid            | String           | 크리덴셜에 서명한 발급자의 DID               | O       | `SDJWT.issuerDid`. 이 SDK 가 저장한 크리덴셜이면 `nil` 이 아니다 |
-| consentItems         | [SdJwtConsentItem] | 홀더에게 동의를 물을 수 있는 모든 클레임, 발급자가 쓴 순서 | M | [SdJwtConsentItem](#22-sdjwtconsentitem). 발급자 JWT payload 를 읽을 수 없으면 `MSDKWLT05102` |
-| status               | StatusListReference | 크리덴셜의 폐기 상태가 게시되는 곳          | O       | [StatusListReference](#4-statuslistreference). 발급자가 게시하지 않으면 `nil`. payload 를 읽을 수 없으면 `MSDKWLT05102` |
 
 <br>
 
@@ -2985,10 +2978,6 @@ public struct MdocCredentialItem: CredentialItem
     public let kid: String
     public let credentialIdentifier: String?
     public let mdoc: Mdoc
-
-    public var issuerDid: String? { get }
-    public var consentItems: [MdocConsentItem] { get }
-    public var status: StatusListReference? { get }
 }
 ```
 
@@ -3001,9 +2990,6 @@ public struct MdocCredentialItem: CredentialItem
 | kid                  | String            | 문서에 바인딩된 기기 키의 id                 | M       |          |
 | credentialIdentifier | String            | 발급자가 지정한 `credential_identifier`     | O       |          |
 | mdoc                 | Mdoc              | 문서 본체                                   | M       | [Mdoc](#3-mdoc) |
-| issuerDid            | String            | 문서에 서명한 발급자의 DID                   | O       | `Mdoc.issuerDid`. 이 SDK 가 저장한 문서면 `nil` 이 아니다 |
-| consentItems         | [MdocConsentItem] | 홀더에게 동의를 물을 수 있는 모든 element, 발급자 순서 | M | [MdocConsentItem](#31-mdocconsentitem). 파싱 때 문서 전체가 디코딩되므로 에러를 던지지 않는다 |
-| status               | StatusListReference | 문서의 폐기 상태가 게시되는 곳              | O       | [StatusListReference](#4-statuslistreference). 발급자가 게시하지 않으면 `nil` |
 
 <br>
 
@@ -3638,7 +3624,7 @@ public struct MatchedCredential
 `matchMdocRequest` 가 반환하고, 편집한 뒤 `createDeviceResponse` 에 되돌려준다. 요청된 element 를
 전부 채울 필요는 없다 — 채우지 못하는 것은 `missing` 에 담긴다. 앱은 element 를 빼려면
 `claimCodes` 에서 코드를, 문서를 빼려면 항목 자체를 덜어낸다. 리더가 요청하지 않은 element 를
-더하려면 그 문서의 [MdocCredentialItem](#14-mdoccredentialitem)`.consentItems` 에서 코드를 가져와
+더하려면 그 문서의 [Mdoc](#3-mdoc)`.consentItems` 에서 코드를 가져와
 덧붙인다. 더할지는 홀더가 정한다.
 
 ### Declaration

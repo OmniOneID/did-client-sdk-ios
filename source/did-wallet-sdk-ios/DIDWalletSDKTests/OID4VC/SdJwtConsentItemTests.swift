@@ -175,18 +175,6 @@ final class SdJwtConsentItemTests: XCTestCase {
         XCTAssertEqual(Set(resolved.map { $0.getDisclosure() }), [fixture.address, fixture.street])
     }
 
-    func testStoredItemAnswersTheSameAsItsCredential() throws {
-        let sdjwt = SDJWT.parse(raw: nestedSDJWT().raw)
-        let item = SdJwtCredentialItem(id: "id",
-                                       format: .sdJwtVc,
-                                       configurationId: "config",
-                                       kid: "pin",
-                                       credentialIdentifier: nil,
-                                       sdjwt: sdjwt)
-
-        XCTAssertEqual(try item.consentItems, try sdjwt.consentItems())
-    }
-
     func testUnreadableIssuerPayloadThrows() {
         let sdjwt = SDJWT.parse(raw: "not.a.jwt~")
 

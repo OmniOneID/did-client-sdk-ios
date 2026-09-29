@@ -44,18 +44,6 @@ final class IssuerDidTests: XCTestCase {
         XCTAssertNil(mdoc.issuerDid)
     }
 
-    func testMdocStoredItemAnswersTheSameAsItsDocument() throws {
-        let mdoc = try Mdoc.parse(raw: MdocFixtures.pidIssuerSigned)
-        let item = MdocCredentialItem(id: "id",
-                                      format: .msoMdoc,
-                                      configurationId: "config",
-                                      kid: "pin",
-                                      credentialIdentifier: nil,
-                                      mdoc: mdoc)
-
-        XCTAssertEqual(item.issuerDid, mdoc.issuerDid)
-    }
-
     // MARK: - SD-JWT
 
     /// `kid` rather than `iss`: the payload states an issuer, the header names the key the
@@ -84,20 +72,6 @@ final class IssuerDidTests: XCTestCase {
             payload: #"{"iss":"https://issuer.example"}"#))
 
         XCTAssertNil(sdjwt.issuerDid)
-    }
-
-    func testSdJwtStoredItemAnswersTheSameAsItsCredential() throws {
-        let sdjwt = SDJWT.parse(raw: IssuerDidTests.credential(
-            header: #"{"alg":"ES256","typ":"dc+sd-jwt-did","kid":"did:omn:issuer?versionId=1#assert"}"#,
-            payload: #"{"iss":"https://issuer.example"}"#))
-        let item = SdJwtCredentialItem(id: "id",
-                                       format: .sdJwtVc,
-                                       configurationId: "config",
-                                       kid: "pin",
-                                       credentialIdentifier: nil,
-                                       sdjwt: sdjwt)
-
-        XCTAssertEqual(item.issuerDid, sdjwt.issuerDid)
     }
 
     // MARK: - Both formats

@@ -1985,7 +1985,7 @@ let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
 The app expresses consent by editing what `matchMdocRequest` returned: drop a code from
 `claimCodes` to withhold an element, drop an entry of the array to withhold a document. An entry
 may also carry elements the reader did not request: append codes taken from the document's
-`MdocCredentialItem.consentItems`. Whether to add them is the holder's call and is not judged here;
+`Mdoc.consentItems`. Whether to add them is the holder's call and is not judged here;
 only a code the document does not hold, or one marked `isAmbiguous`, is rejected. Refusing
 everything is expressed by **not calling this** and letting the transport SDK end the session; an
 empty `selected` is rejected. The request is matched again here rather than trusted, and each
@@ -2046,7 +2046,7 @@ let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
                                                     deviceRequest: deviceRequest)
 // ... consent screen: the holder withholds an element by dropping its code,
 //     a document by dropping its entry, and adds an unrequested element by
-//     appending its code from MdocCredentialItem.consentItems ...
+//     appending its code from Mdoc.consentItems ...
 let result = try WalletAPI.shared.createDeviceResponse(hWalletToken: hWalletToken,
                                                        deviceRequest: deviceRequest,
                                                        sessionTranscript: sessionTranscript,
@@ -2341,7 +2341,7 @@ public struct MdocRequestedDocument {
 | docRequestIndex | Int            | Zero-based index into `DeviceRequest.docRequests` this entry answers        | M       | `docType` cannot identify a request: a reader may ask for the same type twice with different elements |
 | docType         | String         | The requested `ItemsRequest.docType`                                        | M       |          |
 | credentialId    | String         | The stored document that can fill at least one requested element            | M       | Same value as `MdocCredentialItem.id` |
-| claimCodes      | [String]       | The elements to disclose, as codes                                          | M       | Opaque values: drop one to withhold the element, append one from `MdocCredentialItem.consentItems` to add an unrequested element; never split or assemble them |
+| claimCodes      | [String]       | The elements to disclose, as codes                                          | M       | Opaque values: drop one to withhold the element, append one from `Mdoc.consentItems` to add an unrequested element; never split or assemble them |
 | intentToRetain  | [String: Bool] | The reader's retention intent per code, over `claimCodes` and `missing` together | M  | Output only; `createDeviceResponse` does not read it back |
 | missing         | [String]       | Requested elements this document cannot supply, in the same code form       | M       | Covers elements not held and elements held under an ambiguous code |
 <br>
