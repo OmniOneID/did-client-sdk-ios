@@ -1196,10 +1196,7 @@ extension WalletService
         ? "pin"
         : "bio"
 
-        let keyInfos = try walletCore.getKeyInfos(ids: [authType])
-
-        let compressedPublicKey = try MultibaseUtils.decode(encoded: keyInfos.first!.publicKey)
-        let jwk = try P256V.decompressPublicKey(compressedPublicKey: compressedPublicKey).getPublicKeyJwk()
+        let kid = try holderKeyDidUrl(keyId: authType)
 
         var nonce : String?
         if let nonceEndpoint = metadata.nonceEndpoint
@@ -1208,27 +1205,16 @@ extension WalletService
             nonce = cNonce.cNonce
         }
 
-        let typ = "openid4vci-proof+jwt"
-
-        let header = try JWSHeader.init(
-            typ: typ,
-            jwk: jwk
-        ).toJsonData().base64URLEncoded
-
-        let payload = try JWSAudiencePayload.init(
-            aud: metadata.credentialIssuer,
-            nonce: nonce
-        ).toJsonData().base64URLEncoded
-
-        let signSource = "\(header).\(payload)"
-        let digest = signSource.data(using: .utf8)!.sha256()
-
-        // KeyManager returns a 65-byte compact signature (v‖r‖s); JOSE ES256 wants 64-byte r‖s.
-        let compactSignature = try walletCore.sign(keyId: authType,
-                                                   pin: passcode?.data(using: .utf8),
-                                                   data: digest, type: DidDocumentType.HolderDidDocumnet)
-        let signature = Data(compactSignature.dropFirst()).base64URLEncoded
-        let jws = "\(signSource).\(signature)"
+        let jws = try CredentialProofToken.create(
+            kid: kid,
+            audience: metadata.credentialIssuer,
+            nonce: nonce,
+            signDigest: { digest in
+                try self.walletCore.sign(keyId: authType,
+                                         pin: passcode?.data(using: .utf8),
+                                         data: digest,
+                                         type: .HolderDidDocumnet)
+            })
 
         var credentialRequest : CredentialRequest
 
@@ -1347,6 +1333,24 @@ extension WalletService
 
 extension WalletService
 {
+    /// The DID URL an issuer resolves to find a holder key: `<did>?versionId=<current>#<keyId>`.
+    ///
+    /// The issuer resolves `kid` against the holder DID Document, so it has to name one of that
+    /// document's authentication methods — the pin and bio keys a credential is bound to are.
+    /// - Throws: `OID4VCManagerError.holderKeyNotFound` when the key is not saved or is not one
+    ///   of the document's authentication methods.
+    func holderKeyDidUrl(keyId: String, holderDidDoc: DIDDocument? = nil) throws -> String
+    {
+        let holderDidDoc = try holderDidDoc ?? walletCore.getDidDocument(type: .HolderDidDocumnet)
+        guard try walletCore.isSavedKey(keyId: keyId),
+              holderDidDoc.authentication?.contains(keyId) == true
+        else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+        return holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + "#" + keyId
+    }
+}
+
+extension WalletService
+{
     /// Revokes a stored OID4VCI credential at its issuer. See `WalletAPI.requestRevokeOID4VC`.
     public func requestRevokeOID4VC(metadata: IssuerMetadataResponse,
                                     vcId: String,
@@ -1384,13 +1388,8 @@ extension WalletService
             throw WalletAPIError.verifyParameterFail("credential status").getError()
         }
 
-        // The issuer resolves `kid` against the holder DID Document, so it has to name one of that
-        // document's authentication methods — the key the credential is bound to always is one.
         let holderDidDoc = try walletCore.getDidDocument(type: .HolderDidDocumnet)
-        guard try walletCore.isSavedKey(keyId: keyId),
-              holderDidDoc.authentication?.contains(keyId) == true
-        else { throw OID4VCManagerError.holderKeyNotFound.getError() }
-        let kid = holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + "#" + keyId
+        let kid = try holderKeyDidUrl(keyId: keyId, holderDidDoc: holderDidDoc)
 
         let cNonce: CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
 

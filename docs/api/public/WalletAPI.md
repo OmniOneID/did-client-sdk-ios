@@ -1682,6 +1682,12 @@ ISO/IEC 18013-5 mdoc (`MdocCredentialItem`). Proximity presentation of the mdocs
 ### Description
 `Request issuance of a credential over OpenID4VCI and store it in the wallet.`
 
+The key proof (`typ: openid4vci-proof+jwt`) is signed with the PIN key when `passcode` is given and
+the biometric key otherwise. Its header names that key by `kid` — the holder DID with the DID
+Document's current `versionId` and the key's id — and carries no `jwk`; the issuer resolves the key
+from the holder DID Document. The call fails with `MSDKWLT06505` (`holderKeyNotFound`) when that
+key is missing or is not an authentication method of the holder DID Document.
+
 ### Declaration
 
 ```swift

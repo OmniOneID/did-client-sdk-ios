@@ -83,6 +83,11 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   the binding to the wallet's own key. `getAllOID4VCs`, `getOID4VCs(ids:)`, `deleteOID4VCs(ids:)`
   and `isAnyOID4VCSaved` manage what is stored.
 
+  The key proof (`openid4vci-proof+jwt`) names the holder key by `kid` — the holder DID with the DID
+  Document's current `versionId` and the key's id — rather than embedding it as `jwk`, so the issuer
+  resolves it from the holder DID Document as it does for a revocation token. The PIN or biometric
+  key has to be an authentication method of that document.
+
   The listing APIs return `[any CredentialItem]`, not a concrete type: one wallet holds both
   formats, so a list mixes `SdJwtCredentialItem` and `MdocCredentialItem` and the caller narrows to
   what it can act on.

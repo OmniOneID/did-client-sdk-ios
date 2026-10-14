@@ -1676,6 +1676,11 @@ SD-JWT VC(`SdJwtCredentialItem`)와 ISO/IEC 18013-5 mdoc(`MdocCredentialItem`) �
 ### Description
 `OpenID4VCI로 크리덴셜 발급을 요청하고 Wallet에 저장한다.`
 
+키 증명(`typ: openid4vci-proof+jwt`)은 `passcode` 가 있으면 PIN 키, 없으면 생체인증 키로 서명한다.
+헤더는 그 키를 `kid` 로 가리키며 `jwk` 는 넣지 않는다. `kid` 는 holder DID, DID 문서의 현재
+`versionId`, 그 키의 ID 로 만든다. issuer 는 holder DID 문서에서 키를 찾는다. 그 키가 없거나 holder DID 문서의 authentication 에 없으면
+`MSDKWLT06505` (`holderKeyNotFound`)로 실패한다.
+
 ### Declaration
 
 ```swift
