@@ -132,6 +132,13 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   issuer wrote but wrote wrongly throws instead of reading as absent, so `nil` never stands in for a
   check that was skipped.
 
+- **Revocation request.** `WalletAPI.requestRevokeOID4VC(hWalletToken:metadata:vcId:passcode:)`
+  asks the issuer to revoke a stored credential, an OpenDID extension. It fetches a `c_nonce` from
+  the metadata's `nonce_endpoint`, signs an `opendid-credential-revocation+jwt` token over it and the
+  credential's status list entry with the key the credential is bound to, and posts it to the new
+  `IssuerMetadataResponse.credentialRevocationEndpoint`. A 200 answer is success; the stored
+  credential is left for the app to delete or mark.
+
 - **Format tokens.** `CredentialFormat.token` and `CredentialFormat.init?(token:)` convert between
   the enum and the DCQL `format` string, reading only the tokens the SDK writes. An app that has to
   branch on a request's format need not carry the literals itself.
@@ -142,9 +149,9 @@ IETF SD-JWT VC and ISO/IEC 18013-5 mdoc.
   authenticates nothing on its own; when the header names a `kid`, resolve the signer's key and use
   `verify(publicKey:)`, leaving the trust decision where it belongs.
 
-- **Errors.** `OID4VCManagerError` raises coded errors across the flow: `051xx` for malformed input,
-  `052xx` for JWE, `053xx` for the credential response, `054xx` for verification (including the mdoc
-  checks `05403`–`05405`) and `055xx` for presentation.
+- **Errors.** `OID4VCManagerError` raises coded errors across the flow: `061xx` for malformed input,
+  `062xx` for JWE, `063xx` for the credential response, `064xx` for verification (including the mdoc
+  checks `06403`–`06405`) and `065xx` for presentation.
 
 - `WalletAPI.createLocalWalletToken(purpose:pkgName:)` issues a wallet token without contacting
   the CAS. It is available once the wallet has been personalized online, only for the read and

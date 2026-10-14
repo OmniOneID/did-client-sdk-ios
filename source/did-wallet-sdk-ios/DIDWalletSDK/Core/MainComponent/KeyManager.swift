@@ -459,13 +459,6 @@ struct KeyManager
     }
     
     //MARK: Sign
-    /// Sign the digest
-    ///
-    /// - Parameters:
-    ///   - id: Key name to be find
-    ///   - pin: (Optional)Pin of key
-    ///   - digest: Data to sign
-    /// - Returns: Signature value
     /// Whether the key behind `id` can perform ECDH.
     ///
     /// A Secure Enclave key is asked about itself: a key generated before `PURPOSE_AGREE_KEY`-style
@@ -540,8 +533,15 @@ struct KeyManager
         }
     }
 
-    /// - Parameter context: An authentication context to reuse for a Secure Enclave key, so that a
-    ///   confirmation already given covers this signature too. See `keyAgreement`.
+    /// Sign the digest
+    ///
+    /// - Parameters:
+    ///   - id: Key name to be find
+    ///   - pin: (Optional)Pin of key
+    ///   - digest: Data to sign
+    ///   - context: An authentication context to reuse for a Secure Enclave key, so that a
+    ///     confirmation already given covers this signature too. See `keyAgreement`.
+    /// - Returns: Signature value
     func sign(id : String,
               pin : Data? = nil,
               digest : Data,

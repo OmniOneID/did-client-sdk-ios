@@ -48,6 +48,8 @@ iOS DataModel
     - [3. VerifiablePresentation](#3-verifiablepresentation)
     - [4. Proof](#4-proof)
         - [4.1. VCProof](#41-vcproof)
+        - [4.2. VPProof](#42-vpproof)
+        - [4.3. OIDV4VPChallenge](#43-oidv4vpchallenge)
     - [5. Profile](#5-profile)
         - [5.1. IssuerProfile](#51-issuerprofile)
             - [5.1.1. Profle](#511-profile)
@@ -75,7 +77,7 @@ iOS DataModel
         - [1.1. M132](#11-m132-reg-user)
             - [1.1.1. ProposeRegisterUser/ _ProposeRegisterUser](#111-proposeregisteruser-_proposeregisteruser)
             - [1.1.2. RequestEcdh/ _RequestEcdh](#112-requestecdh-_requestecdh)
-            - [1.1.3. AttestedAppInfo](#113-attestedappinfo)
+            - [1.1.3. RequestAttestedAppInfo](#113-requestattestedappinfo)
             - [1.1.4. WalletTokenData](#114-wallettokendata)
             - [1.1.5. RequestCreateToken/ _RequestCreateToken](#115-requestcreatetoken-_requestcreatetoken)
             - [1.1.6. RetieveKyc/ _RetieveKyc](#116-retievekyc-_retievekyc)
@@ -101,6 +103,10 @@ iOS DataModel
         - [1.6. M310 (submit zkproof)](#16-m310-submit-zkproof)
             - [1.6.1. RequestProfile/ _RequestProofRequestProfile](#161-requestprofile-_requestproofrequestprofile)
             - [1.6.2. RequestZKPVerify/ _RequestVerify](#162-requestzkpverify-_requestverify)
+        - [1.7. M141 (update DID)](#17-m141-update-did)
+            - [1.7.1. ProposeUpdateDidDoc/ _ProposeUpdateDidDoc](#171-proposeupdatediddoc-_proposeupdatediddoc)
+            - [1.7.2. RequestUpdateDidDoc/ _RequestUpdateDidDoc](#172-requestupdatediddoc-_requestupdatediddoc)
+            - [1.7.3. ConfirmUpdateDidDoc/ _ConfirmUpdateDidDoc](#173-confirmupdatediddoc-_confirmupdatediddoc)
 
     - [2. Token](#2-token)
         - [2.1. ServerTokenSeed](#21-servertokenseed)
@@ -118,15 +124,23 @@ iOS DataModel
         - [3.3. AccE2e](#33-acce2e)
         - [3.4. E2e](#34-e2e)
         - [3.5. DIDAuth](#35-didauth)
+        - [3.6. ReqEcdhBuilder](#36-reqecdhbuilder)
 
     - [4. DidDoc](#4-diddoc)
         - [4.1. DIDDocVO](#41-diddocvo)
         - [4.2. AttestedDIDDoc](#42-attesteddiddoc)
         - [4.3. SignedDidDoc](#43-signeddiddoc)
+        - [4.4. RequestAttestedDIDDoc](#44-requestattesteddiddoc)
+        - [4.5. InvokedDidDoc](#45-invokeddiddoc)
+        - [4.6. ResponseTxId](#46-responsetxid)
+        - [4.7. AllowCAList](#47-allowcalist)
 
     - [5. Offer](#5-offer)
         - [5.1. IssueOfferPayload](#51-issueofferpayload)
         - [5.2. VerifyOfferPayload](#52-verifyofferpayload)
+        - [5.3. VpOfferWrapper](#53-vpofferwrapper)
+        - [5.4. RequestOfferPayload](#54-requestofferpayload)
+        - [5.5. DataPayload](#55-datapayload)
 
     - [6. VC](#6-vc)
         - [6.1. ReqVC](#61-reqvc)
@@ -135,6 +149,11 @@ iOS DataModel
             - [6.2.1. VCPlan](#621-vcplan)
                 - [6.2.1.1. Option](#6211-option)
                 - [6.2.1.2. VCPlan.CredentialDefinition](#6212-vcplancredentialdefinition)
+                - [6.2.1.3. VCIssuanceMode](#6213-vcissuancemode)
+        - [6.3. ReqRevokeVc](#63-reqrevokevc)
+        - [6.4. VCMeta](#64-vcmeta)
+        - [6.5. CredSchemaVO](#65-credschemavo)
+        - [6.6. CredDefVO](#66-creddefvo)
 
 - [OID4VC](#oid4vc)
     - [1. CredentialItem](#1-credentialitem)
@@ -187,6 +206,8 @@ iOS DataModel
     - [17. OID4VCIIssuerList](#17-oid4vciissuerlist)
         - [17.1. OID4VCIIssuerItem](#171-oid4vciissueritem)
     - [18. AnyJSON](#18-anyjson)
+    - [19. OrderedStringMap](#19-orderedstringmap)
+    - [20. SimpleJWTDecoder](#20-simplejwtdecoder)
 
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
@@ -212,17 +233,25 @@ iOS DataModel
     - [19. RoleTypeEnum](#19-roletypeenum)
     - [20. ServerTokenPurposeEnum](#20-servertokenpurposeenum)
     - [21. WalletTokenPurposeEnum](#21-wallettokenpurposeenum)
+    - [22. DidDocumentType](#22-diddocumenttype)
+    - [23. PresentModeEnum](#23-presentmodeenum)
+    - [24. VCStatusEnum](#24-vcstatusenum)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
         - [2.1. ProofContainer](#21-proofcontainer)
     - [2.2. ProofsContainer](#22-proofscontainer)
+        - [2.3. VPProofsContainer](#23-vpproofscontainer)
+        - [2.4. OID4VPProofProtocol](#24-oid4vpproofprotocol)
+        - [2.5. IssuerProofProtocol](#25-issuerproofprotocol)
     - [3. ConvertibleToAlgorithmType](#3-convertibletoalgorithmtype)
     - [4. ConvertibleFromAlgorithmType](#4-convertiblefromalgorithmtype)
     - [5. AlgorithmTypeConvertible](#5-algorithmtypeconvertible)
+    - [6. FromSnake](#6-fromsnake)
 - [Property Wrapper](#property-wrapper)
     - [1. @UTCDatetime](#1-utcdatetime)
     - [2. @DIDVersionId](#2-didversionid)
+    - [3. @ValidURL](#3-validurl)
 
 # WalletCore
 
@@ -286,6 +315,8 @@ public struct DIDDocument : Jsonable, ProofsContainer
 
 `Sub Model / List of DID key with public key value`
 
+In code, this type is nested in `DIDDocument` (`DIDDocument.VerificationMethod`).
+
 ### Declaration
 
 ```swift
@@ -317,6 +348,8 @@ public struct VerificationMethod : Jsonable
 ### Description
 
 `Sub Model / List of service`
+
+In code, this type is nested in `DIDDocument` (`DIDDocument.Service`).
 
 ### Declaration
 
@@ -396,6 +429,8 @@ public struct VerifiableCredential : Jsonable, Identifiable
 
 `Issuer information`
 
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.Issuer`).
+
 ## Declaration
 
 ```swift
@@ -421,6 +456,8 @@ public struct Issuer : Jsonable
 ## Description
 
 `Document verification for Evidence`
+
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.DocumentVerificationEvidence`).
 
 ## Declaration
 
@@ -459,6 +496,8 @@ public struct DocumentVerificationEvidence : Jsonable
 
 `Credential schema`
 
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.CredentialSchema`).
+
 ## Declaration
 
 ```swift
@@ -485,6 +524,8 @@ public struct CredentialSchema : Jsonable
 
 `Credential subject`
 
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.CredentialSubject`).
+
 ## Declaration
 
 ```swift
@@ -510,6 +551,8 @@ public struct CredentialSubject : Jsonable
 ## Description
 
 `Information for Subject`
+
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.Claim`).
 
 ## Declaration
 
@@ -551,6 +594,8 @@ public struct Claim : Jsonable
 
 `Internationalization`
 
+In code, this type is nested in `VerifiableCredential.Claim` (`VerifiableCredential.Claim.Internationalization`).
+
 ## Declaration
 
 ```swift
@@ -583,7 +628,7 @@ public struct Internationalization : Jsonable
 
 ```swift
 // Declaration in Swift
-public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
+public struct VerifiablePresentation : Jsonable, VPProofsContainer, Identifiable
 {
     public var context              : [String]
     public var id                   : String
@@ -593,8 +638,8 @@ public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
     @UTCDatetime public var validUntil : String
     public var verifierNonce        : String
     public var verifiableCredential : [VerifiableCredential]
-    public var proof                : Proof?
-    public var proofs               : [Proof]?
+    public var proof                : VPProof?
+    public var proofs               : [VPProof]?
 }
 ```
 
@@ -610,8 +655,8 @@ public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
 | validUntil           | String                 | This VP valid until the datetime |    M    |                          |
 | verifierNonce        | String                 | Verifier nonce                   |    M    |                          |
 | verifiableCredential | [VerifiableCredential] | List of VC                       |    M    | [VerifiableCredential](#2-verifiablecredential)   |
-| proof                | Proof                  | Owner proof                      |    O    | [Proof](#4-proof) | 
-| proofs               | [Proof]                | List of owner proof              |    O    | [Proof](#4-proof)    | 
+| proof                | VPProof                | Owner proof                      |    O    | [VPProof](#42-vpproof) |
+| proofs               | [VPProof]              | List of owner proof              |    O    | [VPProof](#42-vpproof) |
 
 <br>
 
@@ -657,9 +702,7 @@ public struct Proof : ProofProtocol
 
 ```swift
 // Declaration in Swift
-public struct Service : Jsonable
-{
-public struct VCProof : ProofProtocol, Jsonable
+public struct VCProof : ProofProtocol, IssuerProofProtocol
 {
     @UTCDatetime public var created: String
     public var proofPurpose: ProofPurpose
@@ -680,6 +723,86 @@ public struct VCProof : ProofProtocol, Jsonable
 | type               | ProofType    | Proof type                       |    M    | [ProofType](#4-prooftype)   |
 | proofValue         | String       | Signature value                  |    O    |                          |
 | proofValueList     | [String]     | Signature value List             |    O    |                          |
+
+<br>
+
+## 4.2 VPProof
+
+### Description
+
+`Holder proof of a VP`
+
+For a VP presented over OpenID4VP the proof also carries the verifier's `domain` and `challenge`, so the
+signature is bound to that verifier and that request. Both stay `nil` otherwise.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct VPProof : ProofProtocol, OID4VPProofProtocol
+{
+    @UTCDatetime public var created: String
+    public var proofPurpose: ProofPurpose
+    public var verificationMethod: String
+    public var type: ProofType
+    public var proofValue: String?
+    public var domain: String?
+    public var challenge: String?
+
+    public init(created: String,
+                proofPurpose: ProofPurpose,
+                verificationMethod: String,
+                type: ProofType,
+                proofValue: String? = nil,
+                domain: String? = nil,
+                challenge: String? = nil)
+}
+```
+
+### Property
+
+| Name               | Type         | Description                                  | **M/O** | **Note**                 |
+|--------------------|--------------|----------------------------------------------|---------|--------------------------|
+| created            | String       | Created datetime                             |    M    | [@UTCDatetime](#1-utcdatetime) |
+| proofPurpose       | ProofPurpose | Proof purpose                                |    M    | [ProofPurpose](#3-proofpurpose) |
+| verificationMethod | String       | Key URL used for Proof Signature             |    M    |                          |
+| type               | ProofType    | Proof type                                   |    M    | [ProofType](#4-prooftype) |
+| proofValue         | String       | Signature value                              |    O    |                          |
+| domain             | String       | Verifier the proof is bound to               |    O    | OpenID4VP `client_id`. Set from [OIDV4VPChallenge](#43-oidv4vpchallenge) |
+| challenge          | String       | Challenge the proof is bound to              |    O    | OpenID4VP `nonce`. Set from [OIDV4VPChallenge](#43-oidv4vpchallenge) |
+
+<br>
+
+## 4.3 OIDV4VPChallenge
+
+### Description
+
+`The domain and challenge a VP proof is bound to`
+
+Passed to `createVp` as `challenge`; the SDK copies both values into [VPProof](#42-vpproof)
+`domain` and `challenge`. In the OpenID4VP flow the SDK builds it itself from the authorization
+request — `client_id` as `domain`, `nonce` as `challenge`. Conforms to
+[OID4VPProofProtocol](#24-oid4vpproofprotocol).
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct OIDV4VPChallenge : OID4VPProofProtocol
+{
+    public var domain: String?
+    public var challenge: String?
+
+    public init(domain: String, challenge: String)
+}
+```
+
+### Property
+
+| Name      | Type   | Description                              | **M/O** | **Note** |
+|-----------|--------|------------------------------------------|---------|----------|
+| domain    | String | Verifier identifier the proof is bound to |    O    | Required by the initializer |
+| challenge | String | Challenge the proof is bound to          |    O    | Required by the initializer |
 
 <br>
 
@@ -731,6 +854,8 @@ public struct IssueProfile : Jsonable, ProofContainer
 
 `Profile contents`
 
+In code, this type is nested in `IssueProfile` (`IssueProfile.Profile`).
+
 ### Declaration
 
 ```swift
@@ -761,6 +886,8 @@ public struct Profile : Jsonable
 
 `VC schema information`
 
+In code, this type is nested in `IssueProfile.Profile` (`IssueProfile.Profile.CredentialSchema`).
+
 ### Declaration
 
 ```swift
@@ -788,6 +915,8 @@ public struct CredentialSchema : Jsonable
 ### Description
 
 `Issuing process`
+
+In code, this type is nested in `IssueProfile.Profile` (`IssueProfile.Profile.Process`).
 
 ### Declaration
 
@@ -857,6 +986,8 @@ public struct VerifyProfile : Jsonable, ProofContainer
 
 `Profile contents`
 
+In code, this type is nested in `VerifyProfile` (`VerifyProfile.Profile`).
+
 ### Declaration
 
 ```swift
@@ -885,6 +1016,8 @@ public struct Profile : Jsonable
 
 `Filtering for presentation`
 
+In code, this type is nested in `VerifyProfile.Profile` (`VerifyProfile.Profile.ProfileFilter`).
+
 ### Declaration
 
 ```swift
@@ -908,6 +1041,8 @@ public struct ProfileFilter : Jsonable
 ### Description
 
 `Presentable claim and issuer  per VC schema`
+
+In code, this type is nested in `VerifyProfile.Profile.ProfileFilter` (`VerifyProfile.Profile.ProfileFilter.CredentialSchema`).
 
 ### Declaration
 
@@ -944,6 +1079,8 @@ public struct CredentialSchema : Jsonable
 ### Description
 
 `Method for VP presentation`
+
+In code, this type is nested in `VerifyProfile.Profile` (`VerifyProfile.Profile.Process`).
 
 ### Declaration
 
@@ -1058,7 +1195,7 @@ public struct ReqE2e : Jsonable, ProofContainer
 | Name      | Type      | Description                                   | **M/O** | **Note**                 |
 |-----------|-----------|-----------------------------------------------|---------|--------------------------|
 | nonce     | String               | Value for symmetric key creation   |    M    | Encoded by Multibase     |
-| curve     | ECType    | Elliptic curve type                |    M    |                          |
+| curve     | ECType    | Elliptic curve type                |    M    | [ECType](Utility.md#1-ectype) |
 | publicKey | String               | Server's public key for encryption |    M    | Encoded by Multibase     |
 | cipher    | SymmetricCipherType  | Cipher type                        |    M    | [SymmetricCipherType](#15-symmetricciphertype)  |
 | padding   | SymmetricPaddingType | Padding type                       |    M    | [SymmetricPaddingType](#14-symmetricpaddingtype)   |
@@ -1111,6 +1248,8 @@ public struct ProofRequestProfile : Jsonable, ProofContainer
 ### Description
 
 `Profile contents`
+
+In code, this type is nested in `ProofRequestProfile` (`ProofRequestProfile.Profile`).
 
 ### Declaration
 
@@ -1174,6 +1313,8 @@ public struct VCSchema : Jsonable
 
 `VC Metadata`
 
+In code, this type is nested in `VCSchema` (`VCSchema.VCMetadata`).
+
 ### Declaration
 
 ```swift
@@ -1200,6 +1341,8 @@ public struct VCMetadata : Jsonable
 
 `Credential Subject`
 
+In code, this type is nested in `VCSchema` (`VCSchema.CredentialSubject`).
+
 ### Declaration
 
 ```swift
@@ -1223,6 +1366,8 @@ public struct CredentialSubject : Jsonable
 ### Description
 
 `Claim`
+
+In code, this type is nested in `VCSchema.CredentialSubject` (`VCSchema.CredentialSubject.Claim`).
 
 ### Declaration
 
@@ -1250,6 +1395,8 @@ public struct Claim : Jsonable
 ### Description
 
 `Claim namespace`
+
+In code, this type is nested in `VCSchema.CredentialSubject.Claim` (`VCSchema.CredentialSubject.Claim.Namespace`).
 
 ### Declaration
 
@@ -1279,6 +1426,8 @@ public struct Namespace : Jsonable
 ### Description
 
 `Claim Definition`
+
+In code, this type is nested in `VCSchema.CredentialSubject.Claim` (`VCSchema.CredentialSubject.Claim.ClaimDef`).
 
 ### Declaration
 
@@ -1389,7 +1538,7 @@ public struct _RequestEcdh: Jsonable {
 | accEcdh | AccEcdh |                                |    M    |          |
 <br>
 
-#### 1.1.3. AttestedAppInfo
+#### 1.1.3. RequestAttestedAppInfo
 
 #### Description
 `attested app info`
@@ -1426,8 +1575,8 @@ public struct WalletTokenData: Jsonable, ProofContainer {
     public var sha256_pii: String
     public var provider: Provider
     public var nonce: String   // multibase
-    public var proof: OpenDID_DataModel.Proof?
-    public init(seed: WalletTokenSeed, sha256_pii: String, provider: Provider, nonce: String, proof: OpenDID_DataModel.Proof?) {
+    public var proof: Proof?
+    public init(seed: WalletTokenSeed, sha256_pii: String, provider: Provider, nonce: String, proof: Proof?) {
         self.seed = seed
         self.sha256_pii = sha256_pii
         self.provider = provider
@@ -1443,7 +1592,7 @@ public struct WalletTokenData: Jsonable, ProofContainer {
 | sha256_pii | String           | hashed(sha256)                 |    M    |          |
 | provider   | Provider         | provier                        |    M    |          |
 | nonce      | String           | nonce                          |    M    |          |
-| proof      | Proof            | proof                          |    M    |          |
+| proof      | Proof            | proof                          |    O    |          |
 
 <br>
 
@@ -1485,6 +1634,7 @@ public struct _RequestCreateToken: Jsonable {
 | id      | String           | message ID                     |    M    |          |
 | txId    | String           | transaction ID                 |    M    |          |
 | seed    | ServerTokenSeed  | server token seed              |    M    |          |
+| iv      | String           | initialize vector              |    M    |          |
 | encStd  | String           | encrypt server token data      |    M    |          |
 
 <br>
@@ -1504,12 +1654,14 @@ public struct RetrieveKyc: Jsonable {
     public var id: String
     public var txId: String
     public var serverToken: String
-    public var kycTxId: String
-    public init(id: String, txId: String, serverToken: String, kycTxId: String) {
+    public var kycTxId: String?
+    public var kycToken : String?
+    public init(id: String, txId: String, serverToken: String, kycTxId: String?, kycToken : String?) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
         self.kycTxId = kycTxId
+        self.kycToken = kycToken
     }
 }
 
@@ -1526,8 +1678,9 @@ public struct _RetrieveKyc: Jsonable {
 |-------------|------------------|--------------------------------|---------|----------|
 | id          | String           | message ID                     |    M    |          |
 | txId        | String           | transaction ID                 |    M    |          |
-| serverToken | ServerTokenSeed  | server token                   |    M    |          |
-| kycTxId     | String           | kyc transaction ID             |    M    |          |
+| serverToken | String           | server token                   |    M    |          |
+| kycTxId     | String           | kyc transaction ID             |    O    |          |
+| kycToken    | String           | kyc token                      |    O    |          |
 <br>
 
 
@@ -1544,9 +1697,9 @@ public struct _RetrieveKyc: Jsonable {
 public struct RequestRegisterUser: Jsonable {
     public var id: String
     public var txId: String
-    public var signedDidDoc: SignedDidDoc
+    public var signedDidDoc: SignedDIDDoc
     public var serverToken: String
-    public init(id: String, txId: String, signedDidDoc: SignedDidDoc, serverToken: String) {
+    public init(id: String, txId: String, signedDidDoc: SignedDIDDoc, serverToken: String) {
         self.id = id
         self.txId = txId
         self.signedDidDoc = signedDidDoc
@@ -1566,7 +1719,7 @@ public struct _RequestRegisterUser: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transaction ID                 |    M    |          |
-| signedDidDoc | SignedDidDoc     | signed DID doc                 |    M    |          |
+| signedDidDoc | SignedDIDDoc     | signed DID doc                 |    M    |          |
 | serverToken  | String           | server token                   |    M    |          |
 <br>
 
@@ -1666,11 +1819,13 @@ public struct _ProposeIssueVc: Jsonable {
 public struct RequestIssueProfile: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
-    public init(id: String, txId: String, serverToken: String) {
+    public var serverToken: String?
+    public var userId: String?
+    public init(id: String, txId: String, serverToken: String? = nil, userId: String? = nil) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
+        self.userId = userId
     }
 }
 
@@ -1690,9 +1845,10 @@ public struct _RequestIssueProfile: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transaction ID                 |    M    |          |
-| serverToken  | String           | server token                   |    M    |          |
+| serverToken  | String           | server token                   |    O    |          |
+| userId       | String           | user ID                        |    O    |          |
 | authNonce    | String           | auth nonce                     |    M    |          |
-| profile      | IssuerProfile    | issuer profile                 |    M    |          |
+| profile      | IssueProfile     | issuer profile                 |    M    |          |
 <br>
 
 #### 1.2.3. RequestIssueVc/ _RequestIssueVc
@@ -1708,11 +1864,11 @@ public struct _RequestIssueProfile: Jsonable {
 public struct RequestIssueVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var didAuth: DIDAuth
     public var accE2e: AccE2e
     public var encReqVc: String
-    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
+    public init(id: String, txId: String, serverToken: String?, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -1736,7 +1892,7 @@ public struct _RequestIssueVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transaction ID                 |    M    |          |
-| serverToken  | String           | server token                   |    M    |          |
+| serverToken  | String           | server token                   |    O    |          |
 | didAuth      | DIDAuth          | DID auth                       |    M    |          |
 | accE2e       | AccE2e           | access E2e                     |    M    |          |
 | encReqVc     | String           | encrypt Request vc             |    M    |          |
@@ -1756,9 +1912,9 @@ public struct _RequestIssueVc: Jsonable {
 public struct ConfirmIssueVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var vcId: String
-    public init(id: String, txId: String, serverToken: String, vcId: String) {
+    public init(id: String, txId: String, serverToken: String? = nil, vcId: String) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -1778,7 +1934,7 @@ public struct _ConfirmIssueVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transaction ID                 |    M    |          |
-| serverToken  | String           | server token                   |    M    |          |
+| serverToken  | String           | server token                   |    O    |          |
 | vcId         | String           | vc ID                          |    M    |          |
 <br>
 
@@ -1945,10 +2101,10 @@ public struct _ProposeRevokeVc: Jsonable {
 public struct RequestRevokeVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var request: ReqRevokeVc
     
-    public init(id: String, txId: String, serverToken: String, request: ReqRevokeVc) {
+    public init(id: String, txId: String, serverToken: String?, request: ReqRevokeVc) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -1969,8 +2125,8 @@ public struct _RequestRevokeVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transaction ID                 |    M    |          |
-| serverToken  | String           | server token                   |    M    |          |
-| request      | ReqRevokeVc      |                                |    M    |          |
+| serverToken  | String           | server token                   |    O    |          |
+| request      | ReqRevokeVc      |                                |    M    | [ReqRevokeVc](#63-reqrevokevc) |
 <br>
 
 
@@ -1988,9 +2144,9 @@ public struct _RequestRevokeVc: Jsonable {
 public struct ConfirmRevokeVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
 
-    public init(id: String, txId: String, serverToken: String) {
+    public init(id: String, txId: String, serverToken: String?) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -2010,7 +2166,7 @@ public struct _ConfirmRevokeVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | message ID                     |    M    |          |
 | txId         | String           | transaction ID                 |    M    |          |
-| serverToken  | String           | server token                   |    M    |          |
+| serverToken  | String           | server token                   |    O    |          |
 <br>
 
 ### 1.5. M142 (restore DID)
@@ -2052,6 +2208,8 @@ public struct _ProposeRestoreDidDoc: Jsonable {
 | id           | String           | message ID                     |    M    |          |
 | offerId      | String           | offer ID                       |    M    |          |
 | did          | String           | did                            |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| authNonce    | String           | auth nonce                     |    M    |          |
 <br>
 
 #### 1.5.2. RequestRestoreDIDDoc/ _RequestRestoreDIDDoc
@@ -2200,6 +2358,129 @@ public struct _RequestVerify: Jsonable
 <br>
 
 
+### 1.7. M141 (update DID)
+#### 1.7.1. ProposeUpdateDidDoc/ _ProposeUpdateDidDoc
+
+#### Description
+
+`propose update diddoc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProposeUpdateDidDoc: Jsonable {
+    public var id: String
+    public var did: String
+
+    public init(id: String, did: String) {
+        self.id = id
+        self.did = did
+    }
+}
+
+public struct _ProposeUpdateDidDoc: Jsonable {
+    public var txId: String
+    public var authNonce: String
+
+    public init(txId: String, authNonce: String) {
+        self.txId = txId
+        self.authNonce = authNonce
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| did          | String           | did                            |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| authNonce    | String           | auth nonce                     |    M    |          |
+<br>
+
+#### 1.7.2. RequestUpdateDidDoc/ _RequestUpdateDidDoc
+
+#### Description
+
+`request update diddoc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestUpdateDidDoc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var didAuth: DIDAuth
+    public var signedDidDoc: SignedDIDDoc
+
+    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth, signedDidDoc: SignedDIDDoc) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.didAuth = didAuth
+        self.signedDidDoc = signedDidDoc
+    }
+}
+
+public struct _RequestUpdateDidDoc: Jsonable {
+    public var txId: String
+
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    M    |          |
+| didAuth      | DIDAuth          | did auth                       |    M    | [DIDAuth](#35-didauth) |
+| signedDidDoc | SignedDIDDoc     | signed DID document            |    M    | [SignedDidDoc](#43-signeddiddoc) |
+<br>
+
+#### 1.7.3. ConfirmUpdateDidDoc/ _ConfirmUpdateDidDoc
+
+#### Description
+
+`confirm update diddoc`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ConfirmUpdateDidDoc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String?
+
+    public init(id: String, txId: String, serverToken: String?) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+    }
+}
+
+public struct _ConfirmUpdateDidDoc: Jsonable {
+    public var txId: String
+
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | message ID                     |    M    |          |
+| txId         | String           | transaction ID                 |    M    |          |
+| serverToken  | String           | server token                   |    O    |          |
+
+<br>
+
 ## 2. Token
 ## 2.1. ServerTokenSeed
 
@@ -2221,9 +2502,9 @@ public struct ServerTokenSeed: Jsonable {
 
 | Name        | Type                       | Description                | **M/O** | **Note** |
 |-------------|---------------------------------------------------------|-------------------------------|---------|----------|
-| purpose     | WalletTokenPurposeEnum     | server token purpose       |    M    | [WalletTokenPurposeEnum](#24-servertokenpurpose) |
-| walletInfo  | SignedWalletInfo           | Signed wallet information  |    M    | [SignedWalletInfo](#27-signedwalletinfo) |
-| caAppInfo   | AttestedAppInfo            | Attested app information   |    M    | [AttestedAppInfo](#6-attestedappinfo) |
+| purpose     | WalletTokenPurposeEnum     | server token purpose       |    M    | [WalletTokenPurposeEnum](#21-wallettokenpurposeenum) |
+| walletInfo  | SignedWalletInfo           | Signed wallet information  |    M    | [SignedWalletInfo](#212-signedwalletinfo) |
+| caAppInfo   | AttestedAppInfo            | Attested app information   |    M    | [AttestedAppInfo](#211-attestedappinfo) |
 
 <br>
 
@@ -2250,7 +2531,7 @@ public struct AttestedAppInfo: Jsonable, ProofContainer {
 | Name     | Type     | Description                   | **M/O** | **Note**                  |
 |----------|----------|-------------------------------|---------|---------------------------|
 | appId    | String   | Certificated app id           |    M    |                            |
-| provider | Provider | Provider information          |    M    | [Provider](#provider)      |
+| provider | Provider | Provider information          |    M    | [Provider](#2111-provider)      |
 | nonce    | String   | Nonce for attestation         |    M    |                            |
 | proof    | Proof    | Assertion proof               |    O    | [Proof](#4-proof)         
 
@@ -2300,7 +2581,7 @@ public struct SignedWalletInfo: Jsonable, ProofContainer {
 
 | Name       | Type           | Description                | **M/O** | **Note** |
 |------------|----------------|----------------------------|---------|----------|
-| wallet     | Wallet          | Wallet information        |    M    | [Wallet](#28-wallet) |
+| wallet     | Wallet          | Wallet information        |    M    | [Wallet](#2121-wallet) |
 | nonce      | String          | Nonce                     |    M    |          |
 | proof      | Proof           | Proof                     |    O    | [Proof](#4-proof) |
 
@@ -2345,7 +2626,7 @@ public struct ServerTokenData: Jsonable, ProofContainer {
     public var validUntil: String
     public var provider: Provider
     public var nonce: String
-    public var Proof?
+    public var proof: Proof?
 }
 ```
 
@@ -2353,11 +2634,11 @@ public struct ServerTokenData: Jsonable, ProofContainer {
 
 | Name       | Type                                | Description                          | **M/O** | **Note** |
 |------------|-------------------------------------|--------------------------------------|---------|----------|
-| purpose    | ServerTokenPurposeEnum              | Server token purpose                 |    M    | [ServerTokenPurpose](#24-servertokenpurpose) |
+| purpose    | ServerTokenPurposeEnum              | Server token purpose                 |    M    | [ServerTokenPurpose](#20-servertokenpurposeenum) |
 | walletId   | String                              | Wallet ID                            |    M    |          |
 | appId      | String                              | Certificate app ID                   |    M    |          |
 | validUntil | String                              | Expiration date of the server token  |    M    |          |
-| provider   | Provider                            | Provider information                 |    M    | [Provider](#18-provider) |
+| provider   | Provider                            | Provider information                 |    M    | [Provider](#2111-provider) |
 | nonce      | String                              | Nonce                                |    M    |          |
 | proof      | Proof                               | Proof                                |    O    | [Proof](#4-proof) |
 
@@ -2382,7 +2663,7 @@ public struct WalletTokenSeed: Jsonable {
 ### Property
 | Name       | Type                            | Description                       | **M/O** | **Note** |
 |------------|---------------------------------|-----------------------------------|---------|----------|
-| purpose    | ServerTokenPurposeEnum          | Wallet token purpose              |    M    | [WalletTokenPurpose](#33-wallettokenpurpose) |
+| purpose    | WalletTokenPurposeEnum          | Wallet token purpose              |    M    | [WalletTokenPurpose](#21-wallettokenpurposeenum) |
 | pkgName    | String                          | CA package name                   |    M    |          |
 | nonce      | String                          | Nonce                             |    M    |          |
 | validUntil | String                          | Expiration date of the token      |    M    |          |
@@ -2412,9 +2693,9 @@ public struct WalletTokenData: Jsonable, ProofContainer {
 
 | Name       | Type              | Description                   | **M/O** | **Note** |
 |------------|-------------------|-------------------------------|---------|----------|
-| seed       | WalletTokenSeed   | Wallet token seed             |    M    | [WalletTokenSeed](#33-wallettokenseed) |
+| seed       | WalletTokenSeed   | Wallet token seed             |    M    | [WalletTokenSeed](#23-wallettokenseed) |
 | sha256_pii | String            | SHA-256 hash of PII           |    M    |          |
-| provider   | Provider          | Provider information          |    M    | [Provider](#18-provider) |
+| provider   | Provider          | Provider information          |    M    | [Provider](#2111-provider) |
 | nonce      | String            | Nonce                         |    M    |          |
 | proof      | Proof             | Proof                         |    O    | [Proof](#4-proof) |
 
@@ -2446,9 +2727,9 @@ public struct ReqEcdh: Jsonable, ProofContainer {
 |-------------|----------------------------------|--------------------------------|---------|----------|
 | client      | String                           | Client DID                     |    M    |          |
 | clientNonce | String                           | Client Nonce                   |    M    |          |
-| curve       | ECType.ELLIPTIC_CURVE_TYPE       | Curve type for ECDH       |    M    |          |
+| curve       | ECType                           | Curve type for ECDH       |    M    | [ECType](Utility.md#1-ectype) |
 | publicKey   | String                           | Public key for ECDH            |    M    |          |
-| candidate   | ReqEcdh.Ciphers                  | Candidate ciphers              |    O    |          |
+| candidate   | [SymmetricCipherType]            | Candidate ciphers              |    O    |          |
 | proof       | Proof                            | Proof                          |    O    | [Proof](#4-proof) |
 
 <br>
@@ -2493,6 +2774,7 @@ public struct AccE2e: Jsonable, ProofContainer {
     public var publicKey: String
     public var iv: String
     public var proof: Proof?
+}
 ```
 
 ### Property
@@ -2551,6 +2833,41 @@ public struct DIDAuth: Jsonable, ProofContainer {
 
 <br>
 
+## 3.6. ReqEcdhBuilder
+
+### Description
+
+`Builder for ReqEcdh`
+
+### Declaration
+
+```swift
+public class ReqEcdhBuilder {
+    public init()
+    public func setClient(_ client: String) -> ReqEcdhBuilder
+    public func setClientNonce(_ clientNonce: String) -> ReqEcdhBuilder
+    public func setPublicKey(_ publicKey: String) -> ReqEcdhBuilder
+    public func setCurve(_ curve: ECType) -> ReqEcdhBuilder
+    public func setCandidate(_ candidate: [SymmetricCipherType]) -> ReqEcdhBuilder
+    public func setProof(_ proof: Proof?) -> ReqEcdhBuilder
+    public func build() -> ReqEcdh
+}
+```
+
+### Method
+| Name              | Description                                  | **Note** |
+|-------------------|----------------------------------------------|----------|
+| init()            | Creates a builder; `curve` defaults to `secp256r1` |          |
+| setClient(_:)     | Sets the client DID                          |          |
+| setClientNonce(_:)| Sets the client nonce                        |          |
+| setPublicKey(_:)  | Sets the public key for ECDH                 |          |
+| setCurve(_:)      | Sets the curve type                          | [ECType](Utility.md#1-ectype) |
+| setCandidate(_:)  | Sets the candidate ciphers                   | Not carried into the result: `build()` leaves `candidate` as `nil` |
+| setProof(_:)      | Sets the proof                               | [Proof](#4-proof) |
+| build()           | Returns the `ReqEcdh`                        | [ReqEcdh](#31-reqecdh). `ReqEcdh.init` can be called directly instead |
+
+<br>
+
 ## 4. DidDoc
 ## 4.1. DIDDocVO
 
@@ -2592,7 +2909,7 @@ public struct AttestedDIDDoc: Jsonable, ProofContainer {
 |------------|----------|--------------------------|---------|---------------------------|
 | walletId   | String   | Wallet ID                |    M    |                            |
 | ownerDidDoc| String   | Owner's DID document     |    M    |                            |
-| provider   | Provider | Provider information     |    M    | [Provider](#provider)      |
+| provider   | Provider | Provider information     |    M    | [Provider](#2111-provider)      |
 | nonce      | String   | Nonce                    |    M    |                            |
 | proof      | Proof    | Attestation proof        |    O    | [Proof](#4-proof)          |
 
@@ -2606,7 +2923,7 @@ public struct AttestedDIDDoc: Jsonable, ProofContainer {
 ### Declaration
 ```swift
 public struct SignedDIDDoc: Jsonable, ProofContainer {
-    public var ownerDIDDoc: String
+    public var ownerDidDoc: String
     public var wallet: Wallet
     public var nonce: String
     public var proof: Proof?
@@ -2617,9 +2934,110 @@ public struct SignedDIDDoc: Jsonable, ProofContainer {
 | Name       | Type           | Description                | **M/O** | **Note** |
 |------------|----------------|----------------------------|---------|----------|
 | ownerDidDoc| String          | Owner's DID document      |    M    |          |
-| wallet     | Wallet          | Wallet information        |    M    | [Wallet](#28-wallet) |
+| wallet     | Wallet          | Wallet information        |    M    | [Wallet](#2121-wallet) |
 | nonce      | String          | Nonce                     |    M    |          |
 | proof      | Proof           | Proof                     |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 4.4. RequestAttestedDIDDoc
+
+### Description
+`Request to register the wallet with its attested DID document`
+
+The initializer's label is `attestedDIDDoc`; the property it sets is `attestedDidDoc`.
+
+### Declaration
+```swift
+public struct RequestAttestedDIDDoc: Jsonable {
+    public var id: String
+    public var attestedDidDoc: AttestedDIDDoc
+
+    public init(id: String, attestedDIDDoc: AttestedDIDDoc)
+}
+```
+
+### Property
+| Name           | Type           | Description              | **M/O** | **Note**                  |
+|----------------|----------------|--------------------------|---------|---------------------------|
+| id             | String         | Message ID               |    M    |                           |
+| attestedDidDoc | AttestedDIDDoc | Attested DID document    |    M    | [AttestedDIDDoc](#42-attesteddiddoc) |
+
+<br>
+
+## 4.5. InvokedDidDoc
+
+### Description
+`DID document signed by its controller`
+
+### Declaration
+```swift
+public struct InvokedDidDoc: Jsonable, ProofContainer {
+    public var didDoc: String
+    public var controller: Provider
+    public var nonce: String
+    public var proof: Proof?
+
+    public init(didDoc: String, controller: Provider, nonce: String, proof: Proof?)
+}
+```
+
+### Property
+| Name       | Type     | Description                  | **M/O** | **Note**                  |
+|------------|----------|------------------------------|---------|---------------------------|
+| didDoc     | String   | Encoded DID document         |    M    |                           |
+| controller | Provider | Controller information       |    M    | [Provider](#2111-provider) |
+| nonce      | String   | Nonce                        |    M    |                           |
+| proof      | Proof    | Controller proof             |    O    | [Proof](#4-proof)         |
+
+<br>
+
+## 4.6. ResponseTxId
+
+### Description
+`Response that carries only a transaction ID`
+
+Returned when the TAS accepts the wallet registration sent as
+[RequestAttestedDIDDoc](#44-requestattesteddiddoc). It has no public initializer.
+
+### Declaration
+```swift
+public struct ResponseTxId: Jsonable
+{
+    public var txId: String
+}
+```
+
+### Property
+| Name | Type   | Description    | **M/O** | **Note** |
+|------|--------|----------------|---------|----------|
+| txId | String | Transaction ID |    M    |          |
+
+<br>
+
+## 4.7. AllowCAList
+
+### Description
+`List of the certified app (CA) packages allowed to use the wallet`
+
+Fetched while the wallet is created; the SDK replaces its stored CA package list with `items`, and an
+empty list fails wallet creation.
+
+### Declaration
+```swift
+public struct AllowCAList: Jsonable {
+    public var count: Int
+    public var items: [String]
+
+    public init(count: Int, items: [String])
+}
+```
+
+### Property
+| Name  | Type     | Description                     | **M/O** | **Note** |
+|-------|----------|---------------------------------|---------|----------|
+| count | Int      | Number of allowed CA packages   |    M    |          |
+| items | [String] | Allowed CA package names        |    M    |          |
 
 <br>
 
@@ -2637,6 +3055,7 @@ public struct IssueOfferPayload: Jsonable {
     public var vcPlanId: String
     public var issuer: String
     public var validUntil: String?
+}
 ```
 
 ### Property
@@ -2674,13 +3093,88 @@ public struct VerifyOfferPayload: Jsonable {
 |------------|---------------------|--------------------------------------------|---------|----------|
 | offerId    | String              | Offer ID                                   |    M    |          |
 | type       | OfferTypeEnum       | Offer type                                 |    M    |          |
-| mode       | PresentModeEnum     | Presentation mode                          |    M    |          |
-| device     | String              | Identifier of the response device          |    O    |          |
-| service    | String              | Identifier of the service                  |    O    |          |
-| endpoints  | String[]            | List of profile request API endpoints      |    O    |          |
+| mode       | PresentModeEnum     | Presentation mode                          |    M    | [PresentModeEnum](#23-presentmodeenum) |
+| device     | String              | Identifier of the response device          |    M    |          |
+| service    | String              | Identifier of the service                  |    M    |          |
+| endpoints  | String[]            | List of profile request API endpoints      |    M    |          |
 | validUntil | String              | End date of the offer                      |    M    |          |
 | locked     | Bool                | Whether the offer is locked                |    O    |          |
 
+
+<br>
+
+## 5.3. VpOfferWrapper
+
+### Description
+`Verify offer payload paired with its transaction ID`
+
+### Declaration
+```swift
+public struct VpOfferWrapper: Jsonable {
+    public var txId: String?
+    public var payload: VerifyOfferPayload
+
+    public init(txId: String? = nil, payload: VerifyOfferPayload)
+}
+```
+
+### Property
+| Name    | Type               | Description            | **M/O** | **Note** |
+|---------|--------------------|------------------------|---------|----------|
+| txId    | String             | Transaction ID         |    O    |          |
+| payload | VerifyOfferPayload | Verify offer payload   |    M    | [VerifyOfferPayload](#52-verifyofferpayload) |
+
+<br>
+
+## 5.4. RequestOfferPayload
+
+### Description
+`Request for a verify offer payload`
+
+### Declaration
+```swift
+public struct RequestOfferPayload: Jsonable {
+    public var mode: String
+    public var device: String
+    public var service: String
+    public var validSeconds: Int
+
+    public init(mode: String, device: String, service: String, validSeconds: Int)
+}
+```
+
+### Property
+| Name         | Type   | Description                            | **M/O** | **Note** |
+|--------------|--------|----------------------------------------|---------|----------|
+| mode         | String | Presentation mode                      |    M    | Raw value of [PresentModeEnum](#23-presentmodeenum) |
+| device       | String | Identifier of the response device      |    M    |          |
+| service      | String | Identifier of the service              |    M    |          |
+| validSeconds | Int    | How long the offer stays valid, in seconds |    M    |          |
+
+<br>
+
+## 5.5. DataPayload
+
+### Description
+`Typed payload paired with an optional transaction ID`
+
+### Declaration
+```swift
+public struct DataPayload: Jsonable {
+    public var txId: String?
+    public var payloadType: String
+    public var payload: String
+
+    public init(txId: String? = nil, payloadType: String, payload: String)
+}
+```
+
+### Property
+| Name        | Type   | Description            | **M/O** | **Note** |
+|-------------|--------|------------------------|---------|----------|
+| txId        | String | Transaction ID         |    O    |          |
+| payloadType | String | Type of the payload    |    M    |          |
+| payload     | String | Encoded payload        |    M    |          |
 
 <br>
 
@@ -2740,7 +3234,7 @@ public struct ReqVcProfile: Jsonable {
 ```swift
 public struct VCPlanList: Jsonable {
     public var count: Int
-    public var items: [VcPlan]
+    public var items: [VCPlan]
 }
 ```
 
@@ -2749,7 +3243,7 @@ public struct VCPlanList: Jsonable {
 | Name   | Type             | Description                      | **M/O** | **Note** |
 |--------|------------------|----------------------------------|---------|----------|
 | count  | int              | Number of VC plan list           |    M    |          |
-| items  | array[VCPlan]    | List of VC plan                  |    M    | [VCPlan](#28-vcplan) |
+| items  | array[VCPlan]    | List of VC plan                  |    M    | [VCPlan](#621-vcplan) |
 
 <br>
 
@@ -2775,6 +3269,8 @@ public struct VCPlan: Jsonable {
     public var allowedIssuers: [String]?
     public var manager: String
     public var credentialDefinition : VCPlan.CredentialDefinition?
+    public var issuanceMode: VCIssuanceMode?
+    public var endpoints : [String]?
 }
 ```
 
@@ -2785,7 +3281,7 @@ public struct VCPlan: Jsonable {
 | name                 | String                        | VC plan name                                                  | M       |                                  |
 | description          | String                        | VC plan description                                           | M       |                                  |
 | url                  | String                        | Issuer URL                                                    | O       |                                  |
-| logo                 | LogoImage                     | Logo image                                                    | O       | [LogoImage](#29-logoimage)       |
+| logo                 | LogoImage                     | Logo image                                                    | O       | [LogoImage](#53-logoimage)       |
 | validFrom            | String                        | Validity start date                                           | O       |                                  |
 | validUntil           | String                        | Validity end date                                             | O       |                                  |
 | tags                 | array[String]                 | Tags                                                          | O       |                                  |
@@ -2795,6 +3291,8 @@ public struct VCPlan: Jsonable {
 | allowedIssuers       | array[String]                 | List of issuer DIDs allowed to use this VC plan               | O       |                                  |
 | manager              | String                        | Entity with administrative authority over the VC plan         | M       |                                  |
 | credentialDefinition | VCPlan.CredentialDefinition   | ZKP-related information associated with VC issuance           | O       |                                  |
+| issuanceMode         | VCIssuanceMode                | VC issuance mode (DIRECT or PROXY)                            | O       | [VCIssuanceMode](#6213-vcissuancemode) |
+| endpoints            | array[String]                 | List of API endpoints                                         | O       |                                  |
 
 <br>
 
@@ -2845,15 +3343,144 @@ public struct CredentialDefinition: Jsonable
 
 <br>
 
+## 6.2.1.3. VCIssuanceMode
+
+### Description
+`VC issuance mode of a VC plan`
+
+### Declaration
+```swift
+public enum VCIssuanceMode: String, Codable, Sendable
+{
+    case DIRECT
+    case PROXY
+}
+```
+
+<br>
+
+## 6.3. ReqRevokeVc
+
+### Description
+`VC revocation request signed by the holder`
+
+### Declaration
+```swift
+public struct ReqRevokeVc: Jsonable, ProofContainer {
+    public var vcId: String
+    public var issuerNonce: String
+    public var proof: Proof?
+    public var proofs: [Proof]?
+
+    public init(vcId: String, issuerNonce: String, proof: Proof? = nil, proofs: [Proof]? = nil)
+}
+```
+
+### Property
+| Name        | Type    | Description                     | **M/O** | **Note** |
+|-------------|---------|---------------------------------|---------|----------|
+| vcId        | String  | ID of the VC to revoke          |    M    |          |
+| issuerNonce | String  | Issuer nonce                    |    M    | From [_ProposeRevokeVc](#141-proposerevokevc-_proposerevokevc) |
+| proof       | Proof   | Holder proof                    |    O    | [Proof](#4-proof) |
+| proofs      | [Proof] | List of holder proof            |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 6.4. VCMeta
+
+### Description
+`Metadata of an issued VC`
+
+Decoded from JSON; it has no public initializer.
+
+### Declaration
+```swift
+public struct VCMeta: Jsonable {
+    public var id: String
+    public var issuer: Provider
+    public var subject: String
+    public var credentialSchema: IssueProfile.Profile.CredentialSchema
+    public var status: VCStatusEnum
+    public var issuanceDate: String
+    public var validFrom: String
+    public var validUntil: String
+    public var formatVersion: String
+    public var language: String
+}
+```
+
+### Property
+| Name             | Type             | Description                 | **M/O** | **Note** |
+|------------------|------------------|-----------------------------|---------|----------|
+| id               | String           | VC ID                       |    M    |          |
+| issuer           | Provider         | Issuer information          |    M    | [Provider](#2111-provider) |
+| subject          | String           | Subject (holder) DID        |    M    |          |
+| credentialSchema | CredentialSchema | Credential schema           |    M    | [CredentialSchema](#5111-credentialschema) |
+| status           | VCStatusEnum     | VC status                   |    M    | [VCStatusEnum](#24-vcstatusenum) |
+| issuanceDate     | String           | Issuance datetime           |    M    |          |
+| validFrom        | String           | VC valid from the datetime  |    M    |          |
+| validUntil       | String           | VC valid until the datetime |    M    |          |
+| formatVersion    | String           | VC format version           |    M    |          |
+| language         | String           | VC language                 |    M    |          |
+
+<br>
+
+## 6.5. CredSchemaVO
+
+### Description
+`Encoded ZKP credential schema`
+
+The SDK decodes `credSchema` with `ZKPCredentialSchema(fromMultibase:)`.
+
+### Declaration
+```swift
+public struct CredSchemaVO: Jsonable
+{
+    public var credSchema: String
+
+    public init(credSchema: String)
+}
+```
+
+### Property
+| Name       | Type   | Description                                 | **M/O** | **Note** |
+|------------|--------|---------------------------------------------|---------|----------|
+| credSchema | String | Multibase-encoded ZKP credential schema     |    M    |          |
+
+<br>
+
+## 6.6. CredDefVO
+
+### Description
+`Encoded ZKP credential definition`
+
+The SDK decodes `credDef` with `ZKPCredentialDefinition(fromMultibase:)`.
+
+### Declaration
+```swift
+public struct CredDefVO: Jsonable
+{
+    public var credDef: String
+
+    public init(credDef: String)
+}
+```
+
+### Property
+| Name    | Type   | Description                                 | **M/O** | **Note** |
+|---------|--------|---------------------------------------------|---------|----------|
+| credDef | String | Multibase-encoded ZKP credential definition |    M    |          |
+
+<br>
+
 # OID4VC
 
 Models of the OpenID4VCI (issuance), OpenID4VP (presentation) and ISO/IEC 18013-5 proximity layer
 that an app handles directly: what it reads out of the wallet (1–6), what it exchanges with a
-verifier or reader (7–11), and what it exchanges with an issuer (12–17).
+verifier or reader (7–11), what it exchanges with an issuer (12–17), and the JSON and JWT helpers they share (18–20).
 
 The matching engine itself — the credential adapters, `DCQLCredentialMatcher`, `ParsedCredential` and
-the path helpers — is `public` for internal composition but is not part of the app-facing surface;
-apps go through `WalletAPI.matchCredentials` instead.
+the path helpers — is internal to the SDK; apps go through `WalletAPI.matchCredentials`.
 
 ## 1. CredentialItem
 
@@ -3029,8 +3656,8 @@ public struct SDJWT: Jsonable {
 | parse(raw:)      | Splits a `~`-separated SD-JWT string into its parts             | Never throws; an unparseable string yields a credential JWT with no disclosures |
 | toString()       | Serializes back to the `~`-separated form                       |          |
 | getSignSource()  | Returns the signing input and signature of the credential JWT   |          |
-| consentItems()   | Every claim the holder can be asked to consent to, each with the code that names it, in the order the issuer wrote the disclosures; claims left in the clear come last | [SdJwtConsentItem](#22-sdjwtconsentitem). Throws `MSDKWLT05102` when the issuer JWT payload cannot be read |
-| status()         | Where the credential's revocation status is published, or `nil` when it publishes none | [StatusListReference](#4-statuslistreference). Throws `MSDKWLT05102` when the payload cannot be read or holds a `status` that cannot be understood |
+| consentItems()   | Every claim the holder can be asked to consent to, each with the code that names it, in the order the issuer wrote the disclosures; claims left in the clear come last | [SdJwtConsentItem](#22-sdjwtconsentitem). Throws `MSDKWLT06102` when the issuer JWT payload cannot be read |
+| status()         | Where the credential's revocation status is published, or `nil` when it publishes none | [StatusListReference](#4-statuslistreference). Throws `MSDKWLT06102` when the payload cannot be read or holds a `status` that cannot be understood |
 
 <br>
 
@@ -3046,6 +3673,11 @@ public struct Disclosure: Codable, Equatable, Sendable {
     public let claimName: String?
     public let claimValue: JSON
     public let raw: String?
+
+    public init(salt: String, claimName: String?, claimValue: JSON)
+    public func getDisclosure() -> String
+    public func digest() -> String
+    public static func parse(raw: String) -> Disclosure?
 }
 ```
 
@@ -3056,6 +3688,15 @@ public struct Disclosure: Codable, Equatable, Sendable {
 | claimName  | String | The claim name; `nil` for an array-element disclosure     | O       |          |
 | claimValue | JSON   | The disclosed value                                       | M       |          |
 | raw        | String | The issuer's disclosure string, byte-for-byte             | O       | `nil` for a disclosure built in code. Digests are computed over these exact bytes, so a parsed disclosure is presented unchanged |
+
+### Method
+| Name                             | Description                                         | **Note** |
+|----------------------------------|-----------------------------------------------------|----------|
+| init(salt:claimName:claimValue:) | Builds a disclosure in code                          | `raw` is `nil`; the string is serialized on demand. Pass `nil` as `claimName` for an array-element disclosure |
+| getDisclosure()                  | The base64url-encoded disclosure string              | A parsed disclosure returns `raw` unchanged |
+| digest()                         | base64url-encoded SHA-256 digest of `getDisclosure()` | The value the credential's `_sd` entries hold |
+| parse(raw:)                      | Parses a base64url-encoded disclosure string         | Never throws: `nil` when the string is not base64url or not a JSON array of `[salt, name, value]` or `[salt, value]`. Keeps the input as `raw` |
+| ==                               | Equal when `salt`, `claimName` and `claimValue` match | `raw` is not compared |
 
 <br>
 
@@ -3131,7 +3772,7 @@ public struct Mdoc: Sendable, Equatable {
 ### Method
 | Name         | Description                                              | **Note** |
 |--------------|----------------------------------------------------------|----------|
-| parse(raw:)  | Decodes an `IssuerSigned` from its base64url form        | Throws `MSDKWLT05103` when the input is not a well-formed `IssuerSigned` |
+| parse(raw:)  | Decodes an `IssuerSigned` from its base64url form        | Throws `MSDKWLT06103` when the input is not a well-formed `IssuerSigned` |
 | toString()   | The base64url-encoded `IssuerSigned`, the issuer's bytes unchanged |          |
 
 <br>
@@ -3281,6 +3922,8 @@ public struct JWS
     public init(from string: String) throws
     public var payloadData: Data { get throws }
     public var protectedHeader: JWSHeader { get throws }
+    public func verify() throws -> Bool
+    public func verify(publicKey: Data) throws -> Bool
 }
 ```
 
@@ -3294,9 +3937,11 @@ public struct JWS
 ### Method
 | Name              | Description                                              | **Note** |
 |-------------------|----------------------------------------------------------|----------|
-| init(from:)       | Parses a compact JWS                                     | Throws `MSDKWLT05102` when the string is not three dot-separated parts |
-| payloadData       | The base64url-decoded payload                            | Throws `MSDKWLT05102` when the payload is not base64url |
-| protectedHeader   | The decoded protected header                             | Throws `MSDKWLT05102` when the header is not base64url or is not a JWS header |
+| init(from:)       | Parses a compact JWS                                     | Throws `MSDKWLT06102` when the string is not three dot-separated parts |
+| payloadData       | The base64url-decoded payload                            | Throws `MSDKWLT06102` when the payload is not base64url |
+| protectedHeader   | The decoded protected header                             | Throws `MSDKWLT06102` when the header is not base64url, and a decoding error (`DecodingError`) when it is not a JWS header (`alg` and `typ` are required) |
+| verify()          | Verifies the signature against the P-256 public key embedded in the header (`jwk`) | Returns `false` on a mismatch. Throws `MSDKWLT06402` when the header carries no `jwk` and `MSDKWLT06102` when the header or signature is not base64url. A header that carries only a `kid` needs `verify(publicKey:)` |
+| verify(publicKey:) | Verifies the signature against a caller-supplied P-256 public key, in compressed (33), X9.63 (65) or raw (64) byte form | Returns `false` on a mismatch. The header is not read, so resolving the key and checking `alg` stay with the caller. Throws `MSDKWLT11100` when the bytes are not a P-256 public key and `MSDKWLT06102` when the signature is not base64url |
 
 <br>
 
@@ -3419,7 +4064,7 @@ public struct AuthorizationRequest : Jsonable, FromSnake
 | state          | String            | Verifier state, echoed back in the response              | M       |          |
 | clientId       | String            | Verifier identifier; used as the presentation audience   | M       |          |
 | responseType   | String            | OAuth response type                                      | M       |          |
-| responseMode   | String            | `direct_post` or `direct_post.jwt`                       | M       | Other modes are rejected (`MSDKWLT05509`) |
+| responseMode   | String            | `direct_post` or `direct_post.jwt`                       | M       | Other modes are rejected (`MSDKWLT06509`) |
 | dcqlQuery      | DCQLQuery         | The credential query to match against                    | M       | [DCQLQuery](#8-dcqlquery) |
 | clientMetadata | [String: AnyJSON] | Verifier metadata; carries the response-encryption key for `direct_post.jwt` | M | [AnyJSON](#18-anyjson) |
 | iat            | Int               | Issued-at timestamp of the request                       | M       |          |
@@ -3454,6 +4099,8 @@ public struct DCQLQuery: Jsonable, FromSnake
 
 ### Description
 `One credential the verifier asks for.`
+
+In code, this type is nested in `DCQLQuery` (`DCQLQuery.CredentialQuery`).
 
 ### Declaration
 ```swift
@@ -3491,6 +4138,8 @@ public struct CredentialQuery: Jsonable, FromSnake
 ### Description
 `One claim the verifier asks for, optionally with a predicate on its value.`
 
+In code, this type is nested in `DCQLQuery` (`DCQLQuery.ClaimQuery`).
+
 ### Declaration
 ```swift
 public struct ClaimQuery: Jsonable, FromSnake
@@ -3504,6 +4153,8 @@ public struct ClaimQuery: Jsonable, FromSnake
     public var value: AnyJSON?
     public var max: AnyJSON?
     public var min: AnyJSON?
+
+    public var addressesAClaim: Bool { get }
 }
 ```
 
@@ -3519,6 +4170,7 @@ public struct ClaimQuery: Jsonable, FromSnake
 | value     | AnyJSON            | The value must equal this                       | O       |          |
 | max       | AnyJSON            | Upper bound on the value                        | O       |          |
 | min       | AnyJSON            | Lower bound on the value                        | O       |          |
+| addressesAClaim | Bool          | Whether the query names a claim at all — by `path`, or by `namespace` + `claimName` | M | Read-only. `false` means the query constrains no claim |
 
 <br>
 
@@ -3526,6 +4178,8 @@ public struct ClaimQuery: Jsonable, FromSnake
 
 ### Description
 `Issuer constraint for a credential query (OpenID4VP 1.0 §6.1.1).`
+
+In code, this type is nested in `DCQLQuery` (`DCQLQuery.TrustedAuthority`).
 
 ### Declaration
 ```swift
@@ -3547,6 +4201,8 @@ public struct TrustedAuthority: Jsonable, FromSnake {
 
 ### Description
 `Which combinations of credential queries the verifier will accept.`
+
+In code, this type is nested in `DCQLQuery` (`DCQLQuery.CredentialSet`).
 
 ### Declaration
 ```swift
@@ -3607,6 +4263,8 @@ public struct MatchedCredential
     public let queryId: String
     public let credentialId: String
     public let claimCodes: [String]
+
+    public init(queryId: String, credentialId: String, claimCodes: [String])
 }
 ```
 
@@ -3616,6 +4274,11 @@ public struct MatchedCredential
 | queryId      | String   | The DCQL credential query id this match answers               | M       | `dcql_query.credentials[].id` |
 | credentialId | String   | The matched stored credential id                              | M       |          |
 | claimCodes   | [String] | The claims to disclose — the ones the query asked for, or every claim the credential can disclose | M | Opaque values: display and compare them, never split or assemble them |
+
+### Method
+| Name                                   | Description                                       | **Note** |
+|----------------------------------------|---------------------------------------------------|----------|
+| init(queryId:credentialId:claimCodes:) | Builds a match, for an app that rebuilds the list | `claimCodes` must still carry every claim matching returned; an empty list is rejected |
 
 <br>
 
@@ -3699,8 +4362,8 @@ public enum MdocDeviceAuthMethod: String, Sendable
 ### Property
 | Value           | Description                                                               | **Note** |
 |-----------------|---------------------------------------------------------------------------|----------|
-| deviceSignature | ECDSA signature with the document's device key                            | Used when the key cannot perform key agreement, or the transcript carries no reader key |
-| deviceMac       | HMAC with the `EMacKey` derived from ECDH with the reader's ephemeral key | Preferred when the device key can perform key agreement |
+| deviceSignature | ECDSA signature with the document's device key                            | Used for every document |
+| deviceMac       | HMAC with the `EMacKey` derived from ECDH with the reader's ephemeral key | Not produced at present. Kept so the type stays stable |
 
 <br>
 
@@ -3723,6 +4386,7 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
     public let nonceEndpoint: String?
     public let deferredCredentialEndpoint: String?
     public let notificationEndpoint: String?
+    public let credentialRevocationEndpoint: String?
     public let credentialRequestEncryption: EncryptionSupport?
     public let credentialResponseEncryption: EncryptionSupport?
     public let credentialIdentifiersSupported: Bool?
@@ -3741,6 +4405,7 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 | nonceEndpoint                     | String                            | Nonce endpoint                                | O       |          |
 | deferredCredentialEndpoint        | String                            | Deferred credential endpoint                  | O       |          |
 | notificationEndpoint              | String                            | Notification endpoint                         | O       |          |
+| credentialRevocationEndpoint      | String                            | Credential revocation endpoint (full URL)     | O       | OpenDID extension. Required by `requestRevokeOID4VC` |
 | credentialRequestEncryption       | EncryptionSupport                 | Request encryption the issuer advertises      | O       | [EncryptionSupport](#122-encryptionsupport) |
 | credentialResponseEncryption      | EncryptionSupport                 | Response encryption the issuer advertises     | O       | [EncryptionSupport](#122-encryptionsupport) |
 | credentialIdentifiersSupported    | Bool                              | Whether the issuer uses `credential_identifier` | O     |          |
@@ -3752,6 +4417,8 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 
 ### Description
 `One credential the issuer offers.`
+
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.CredentialConfiguration`).
 
 ### Declaration
 ```swift
@@ -3789,6 +4456,8 @@ public struct CredentialConfiguration: Jsonable, FromSnake
 ### Description
 `Encryption the issuer advertises — not what the wallet sends.`
 
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.EncryptionSupport`).
+
 ### Declaration
 ```swift
 public struct EncryptionSupport: Jsonable, FromSnake
@@ -3813,6 +4482,8 @@ public struct EncryptionSupport: Jsonable, FromSnake
 ### Description
 `Issuance policy for a credential configuration.`
 
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.CredentialPolicy`).
+
 ### Declaration
 ```swift
 public struct CredentialPolicy: Jsonable, FromSnake
@@ -3835,6 +4506,8 @@ public struct CredentialPolicy: Jsonable, FromSnake
 ### Description
 `Claims and display information for a credential configuration.`
 
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.CredentialMetadata`).
+
 ### Declaration
 ```swift
 public struct CredentialMetadata: Codable, Sendable {
@@ -3855,6 +4528,8 @@ public struct CredentialMetadata: Codable, Sendable {
 
 ### Description
 `How to present a credential or claim in one locale.`
+
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.DisplayInfo`).
 
 ### Declaration
 ```swift
@@ -3884,6 +4559,8 @@ public struct DisplayInfo: Jsonable, FromSnake
 ### Description
 `A logo image for a display entry.`
 
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.LogoInfo`).
+
 ### Declaration
 ```swift
 public struct LogoInfo: Jsonable, FromSnake
@@ -3906,6 +4583,8 @@ public struct LogoInfo: Jsonable, FromSnake
 ### Description
 `The holder proof algorithms an issuer accepts for one proof type.`
 
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.ProofSupport`).
+
 ### Declaration
 ```swift
 public struct ProofSupport: Jsonable, FromSnake
@@ -3925,6 +4604,8 @@ public struct ProofSupport: Jsonable, FromSnake
 
 ### Description
 `One claim of an offered credential, as the issuer describes it.`
+
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.ClaimDetail`).
 
 ### Declaration
 ```swift
@@ -3952,6 +4633,8 @@ public struct ClaimDetail: Jsonable, FromSnake
 ### Description
 `A credential format token, keeping the issuer's original string so it can be re-sent verbatim.`
 
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.SupportedFormat`).
+
 ### Declaration
 ```swift
 public enum SupportedFormat: Jsonable, Equatable
@@ -3968,7 +4651,7 @@ public enum SupportedFormat: Jsonable, Equatable
 | Value           | Description                     | **Note**                          |
 |-----------------|---------------------------------|-----------------------------------|
 | sdjwt(String)   | Decoded from `dc+sd-jwt-did`    | `rawValue` returns the original token |
-| mdoc(String)    | Decoded from `mso-mdoc-did`     |                                   |
+| mdoc(String)    | Decoded from `mso_mdoc-did`     |                                   |
 | unknown(String) | Any other format token          | Kept rather than rejected         |
 
 <br>
@@ -3977,6 +4660,8 @@ public enum SupportedFormat: Jsonable, Equatable
 
 ### Description
 `A signing algorithm value that an issuer may publish as either a string or a number.`
+
+In code, this type is nested in `IssuerMetadataResponse` (`IssuerMetadataResponse.SigningAlg`).
 
 ### Declaration
 ```swift
@@ -4023,6 +4708,8 @@ public struct CredentialOfferResponse: Jsonable, FromSnake
 ### Description
 `The grant types the offer supports.`
 
+In code, this type is nested in `CredentialOfferResponse` (`CredentialOfferResponse.Grants`).
+
 ### Declaration
 ```swift
 public struct Grants: Jsonable
@@ -4045,6 +4732,8 @@ public struct Grants: Jsonable
 ### Description
 `The pre-authorized code grant of a credential offer.`
 
+In code, this type is nested in `CredentialOfferResponse.Grants` (`CredentialOfferResponse.Grants.PreAuthorizedCode`).
+
 ### Declaration
 ```swift
 public struct PreAuthorizedCode: Jsonable
@@ -4066,6 +4755,8 @@ public struct PreAuthorizedCode: Jsonable
 
 ### Description
 `How the holder must enter the transaction code, when the issuer requires one.`
+
+In code, this type is nested in `CredentialOfferResponse.Grants.PreAuthorizedCode` (`CredentialOfferResponse.Grants.PreAuthorizedCode.TxCode`).
 
 ### Declaration
 ```swift
@@ -4090,6 +4781,8 @@ public struct TxCode: Jsonable
 
 ### Description
 `The authorization code grant of a credential offer.`
+
+In code, this type is nested in `CredentialOfferResponse.Grants` (`CredentialOfferResponse.Grants.AuthorizationCode`).
 
 ### Declaration
 ```swift
@@ -4262,6 +4955,7 @@ public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
     public var asArray: [AnyJSON]? { get }
     public var asObject: [String: AnyJSON]? { get }
     public func toFoundation() -> Any
+    public static func fromFoundation(_ value: Any) -> AnyJSON?
 }
 ```
 
@@ -4280,6 +4974,104 @@ public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
 |------------------|------------------------------------------------------------|----------|
 | asBool / asDouble / asString / asArray / asObject | Reads the value when it is of that case, otherwise `nil` | |
 | toFoundation()   | Converts to Foundation types for `JSONSerialization`       | `null` becomes `NSNull()` |
+| fromFoundation(_:) | Converts a Foundation JSON value, as `JSONSerialization` returns it | `nil` when the value is not a JSON type. An `NSNumber` becomes `bool` only when it is a real boolean (`CFBoolean`). A non-JSON member is dropped from an array and becomes `null` in an object |
+
+<br>
+
+## 19. OrderedStringMap
+
+### Description
+`A string-keyed map that keeps the order its entries were inserted in.`
+
+Used in public signatures where order is part of the value rather than presentation — the `r` map of a
+ZKP credential definition's primary public key (`CredentialPrimaryPublicKey.r`), whose values are
+hashed in order for the key-correctness challenge. A Swift `Dictionary` cannot carry that order.
+
+### Declaration
+```swift
+public struct OrderedStringMap<Value>
+{
+    public private(set) var keys: [String]
+
+    public init()
+    public init(_ pairs: [(String, Value)])
+    public subscript(key: String) -> Value? { get set }
+    public var values: [Value] { get }
+    public var count: Int { get }
+    public var isEmpty: Bool { get }
+    public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> OrderedStringMap<T>
+}
+
+extension OrderedStringMap: Sequence
+{
+    public func makeIterator() -> AnyIterator<(key: String, value: Value)>
+}
+
+extension OrderedStringMap: ExpressibleByDictionaryLiteral
+{
+    public init(dictionaryLiteral elements: (String, Value)...)
+}
+
+extension OrderedStringMap: Equatable where Value: Equatable
+{
+    public static func == (lhs: OrderedStringMap<Value>, rhs: OrderedStringMap<Value>) -> Bool
+}
+
+extension OrderedStringMap: Sendable where Value: Sendable {}
+```
+
+### Property
+| Name    | Type     | Description                    | **M/O** | **Note** |
+|---------|----------|--------------------------------|---------|----------|
+| keys    | [String] | The keys, in insertion order   | M       | Read-only; every iteration follows this order |
+| values  | [Value]  | The values, in key order       | M       |          |
+| count   | Int      | Number of entries              | M       |          |
+| isEmpty | Bool     | Whether the map has no entries | M       |          |
+
+### Method
+| Name               | Description                                                  | **Note** |
+|--------------------|--------------------------------------------------------------|----------|
+| init()             | Creates an empty map                                         |          |
+| init(_:)           | Builds a map from key-value pairs, keeping the order given   | A repeated key keeps its first position and takes the later value |
+| subscript(key:)    | Reads or writes a value                                      | A new key is appended; an existing key keeps its position; assigning `nil` removes the entry |
+| mapValues(_:)      | Transforms every value, keeping the order                    |          |
+| makeIterator()     | Iterates `(key, value)` pairs in key order                   | `Sequence` conformance |
+| init(dictionaryLiteral:) | Builds a map from a dictionary literal                 | The literal's written order is the map's order |
+| ==                 | Equal when both hold the same entries in the same order      | Only when `Value` is `Equatable` |
+
+<br>
+
+## 20. SimpleJWTDecoder
+
+### Description
+`Decodes the header and payload of a compact JWT into dictionaries, without verifying it.`
+
+Reads a JWT whose header the typed `JWS` cannot take — an `alg` outside `JWK.Algorithm`, for example —
+such as a Status List token. The signature is neither checked nor returned; verify it separately where
+it matters.
+
+### Declaration
+```swift
+public enum SimpleJWTDecoder {
+    public struct SimpleJWT {
+        public let header: [String: Any]
+        public let payload: [String: Any]
+    }
+
+    public enum JWTError: Error {
+        case invalidFormat
+        case invalidBase64
+        case invalidJSON
+    }
+
+    public static func parse(_ jwt: String) throws -> SimpleJWT
+}
+```
+
+### Method
+| Name      | Description                                          | **Note** |
+|-----------|------------------------------------------------------|----------|
+| parse(_:) | Splits the JWT on `.` and decodes the first two parts | Throws `invalidFormat` for fewer than two parts, `invalidBase64` when a part is not base64url, `invalidJSON` when a part is not a JSON object |
 
 <br>
 
@@ -4293,7 +5085,7 @@ public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
 ### Declaration
 
 ```cpp
-public struct VerifyAuthType : OptionSet, Sequence, Codable
+public struct VerifyAuthType : OptionSet, Sequence, Codable, Sendable
 {
     public let rawValue: Int
     
@@ -4302,8 +5094,15 @@ public struct VerifyAuthType : OptionSet, Sequence, Codable
     public static let bio  = VerifyAuthType(rawValue: 1 << 2)
     
     public static let and  = VerifyAuthType(rawValue: 1 << 15)
+
+    public func makeIterator() -> AnyIterator<VerifyAuthType>
 }
 ```
+
+### Method
+| Name           | Description                                         | **Note** |
+|----------------|-----------------------------------------------------|----------|
+| makeIterator() | Iterates each set flag as a single-bit value, lowest bit first | `Sequence` conformance |
 
 <br>
 
@@ -4315,11 +5114,13 @@ public struct VerifyAuthType : OptionSet, Sequence, Codable
 
 `DID key type`
 
+In code, this type is nested in `DIDDocument` (`DIDDocument.DIDKeyType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible
+public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible, Sendable
 {
     public static var commonString: String
     {
@@ -4340,11 +5141,13 @@ public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible
 
 `Service type`
 
+In code, this type is nested in `DIDDocument` (`DIDDocument.DIDServiceType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum DIDServiceType : String, Codable
+public enum DIDServiceType : String, Codable, Sendable
 {
     case linkedDomains      = "LinkedDomains"
     case credentialRegistry = "CredentialRegistry"
@@ -4362,7 +5165,7 @@ public enum DIDServiceType : String, Codable
 ### Declaration
 
 ```swift
-public enum ProofPurpose : String, Codable
+public enum ProofPurpose : String, Codable, Sendable
 {
     case assertionMethod      = "assertionMethod"
     case authentication       = "authentication"
@@ -4383,7 +5186,7 @@ public enum ProofPurpose : String, Codable
 ### Declaration
 
 ```swift
-public enum ProofType : String, Codable, AlgorithmTypeConvertible
+public enum ProofType : String, Codable, AlgorithmTypeConvertible, Sendable
 {
     public static var commonString: String
     {
@@ -4408,7 +5211,7 @@ public enum ProofType : String, Codable, AlgorithmTypeConvertible
 
 ```swift
 // Declaration in Swift
-public enum AuthType : Int, Codable
+public enum AuthType : Int, Codable, Sendable
 {
     case free = 1
     case pin  = 2
@@ -4424,11 +5227,13 @@ public enum AuthType : Int, Codable
 
 `Evidence Enumerator for Multitype array`
 
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.Evidence`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum Evidence
+public enum Evidence : Sendable
 {
     case documentVerification(DocumentVerificationEvidence)
 }
@@ -4442,11 +5247,13 @@ public enum Evidence
 
 `Presence type`
 
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.Presence`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum Presence : String, Codable
+public enum Presence : String, Codable, Sendable
 {
     case physical = "Physical"
     case digital  = "Digital"
@@ -4461,11 +5268,13 @@ public enum Presence : String, Codable
 
 `Evidence type`
 
+In code, this type is nested in `VerifiableCredential` (`VerifiableCredential.EvidenceType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum EvidenceType : String, Codable
+public enum EvidenceType : String, Codable, Sendable
 {
     case documentVerification = "DocumentVerification"
 }
@@ -4483,7 +5292,7 @@ public enum EvidenceType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum ProfileType : String, Codable
+public enum ProfileType : String, Codable, Sendable
 {
     case IssueProfile
     case VerifyProfile
@@ -4499,11 +5308,13 @@ public enum ProfileType : String, Codable
 
 `Logo image type`
 
+In code, this type is nested in `LogoImage` (`LogoImage.LogoImageType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum LogoImageType : String, Codable
+public enum LogoImageType : String, Codable, Sendable
 {
     case jpg
     case png
@@ -4522,7 +5333,7 @@ public enum LogoImageType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum ClaimType : String, Codable
+public enum ClaimType : String, Codable, Sendable
 {
     case text
     case image
@@ -4542,7 +5353,7 @@ public enum ClaimType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum ClaimFormat : String, Codable
+public enum ClaimFormat : String, Codable, Sendable
 {
     //text
     case plain
@@ -4572,7 +5383,7 @@ public enum ClaimFormat : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum Location : String, Codable
+public enum Location : String, Codable, Sendable
 {
     case inline
     case remote
@@ -4592,7 +5403,7 @@ public enum Location : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum SymmetricPaddingType : String , Codable
+public enum SymmetricPaddingType : String , Codable, Sendable
 {
     case noPad = "NOPAD"
     case pkcs5 = "PKCS5"
@@ -4611,7 +5422,7 @@ public enum SymmetricPaddingType : String , Codable
 
 ```swift
 // Declaration in Swift
-public enum SymmetricCipherType : String, Codable
+public enum SymmetricCipherType : String, Codable, Sendable
 {
     case aes128CBC = "AES-128-CBC"
     case aes128ECB = "AES-128-ECB"
@@ -4652,7 +5463,7 @@ public enum AlgorithmType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum CredentialSchemaType : String, Codable
+public enum CredentialSchemaType : String, Codable, Sendable
 {
     case osdSchemaCredential = "OsdSchemaCredential"
 }
@@ -4667,7 +5478,7 @@ public enum CredentialSchemaType : String, Codable
 
 ### Declaration
 ```swift
-public enum OfferTypeEnum: String, Codable {
+public enum OfferTypeEnum: String, Codable, Sendable {
     case IssueOffer
     case VerifyOffer
     case RestoreDidOffer
@@ -4721,9 +5532,10 @@ public enum ServerTokenPurposeEnum: Int, Jsonable {
     case ISSUE_VC = 8
     case REMOVE_VC = 9
     case PRESENT_VP = 10
-    case LIST_VC
-    case DETAIL_VC
-    case CREATE_DID_AND_ISSUE_VC
+    case LIST_VC = 11
+    case DETAIL_VC = 12
+    case CREATE_DID_AND_ISSUE_VC = 13
+    case LIST_VC_AND_PRESENT_VP = 14
 }
 ```
 
@@ -4751,6 +5563,60 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
     case DETAIL_VC                  = 12
     case CREATE_DID_AND_ISSUE_VC    = 13
     case LIST_VC_AND_PRESENT_VP     = 14
+
+    public var value: String { get }
+}
+```
+
+### Property
+| Name  | Type   | Description                                                            | **M/O** | **Note** |
+|-------|--------|------------------------------------------------------------------------|---------|----------|
+| value | String | Purpose name stored with the wallet token and compared when it is verified | M | In case order: `Personalize`, `Depersonalize`, `PersonalizeAndConfigLock`, `ConfigLock`, `CreateDid`, `UpdateDid`, `RestoreDid`, `IssueVc`, `RemoveVc`, `PresentVp`, `ListVc`, `DetailVc`, `CreateDidAndIssueVc`, `ListVcAndPresentVp` |
+
+<br>
+
+## 22. DidDocumentType
+
+### Description
+`Enumeration for the DID document types the wallet holds`
+
+`DeviceDidDocument` is the wallet's device DID document and `HolderDidDocumnet` (spelled as in code) the
+holder's DID document.
+
+### Declaration
+```swift
+public enum DidDocumentType: Int, Jsonable {
+    case DeviceDidDocument = 1
+    case HolderDidDocumnet = 2
+}
+```
+<br>
+
+## 23. PresentModeEnum
+
+### Description
+`Enumeration for VP presentation mode`
+
+### Declaration
+```swift
+public enum PresentModeEnum: String, Jsonable {
+    case Direct = "Direct"
+    case Indirect = "Indirect"
+}
+```
+<br>
+
+## 24. VCStatusEnum
+
+### Description
+`Enumeration for VC status`
+
+### Declaration
+```swift
+public enum VCStatusEnum: String, Codable, Sendable {
+    case ACTIVE
+    case INACTIVE
+    case REVOKED
 }
 ```
 <br>
@@ -4767,8 +5633,9 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
 
 ```swift
 // Declaration in Swift
-public protocol Jsonable : Codable
+public protocol Jsonable : Codable, Sendable
 {
+    init(fromMultibase encoded: String) throws
     init(from jsonData: Data) throws
     init(from jsonString: String) throws
     func toJsonData(isPretty: Bool) throws -> Data
@@ -4793,7 +5660,7 @@ public protocol ProofProtocol : Jsonable
     var created : String { get set }
     var verificationMethod : String { get set }
     var proofPurpose : ProofPurpose { get set }
-    var type : ProofType? { get set }
+    var type : ProofType { get set }
     var proofValue : String? { get set }
 }
 ```
@@ -4832,6 +5699,68 @@ public protocol ProofsContainer : Jsonable
 {
     var proof  : Proof? { get set }
     var proofs : [Proof]? { get set }
+}
+```
+
+<br>
+
+## 2.3. VPProofsContainer
+
+### Description
+
+`Protocol contains multi VP proofs`
+
+Adopted by [VerifiablePresentation](#3-verifiablepresentation).
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol VPProofsContainer : Jsonable
+{
+    var proof  : VPProof? { get set }
+    var proofs : [VPProof]? { get set }
+}
+```
+
+<br>
+
+## 2.4. OID4VPProofProtocol
+
+### Description
+
+`Protocol for a proof bound to an OpenID4VP domain and challenge`
+
+Adopted by [VPProof](#42-vpproof) and [OIDV4VPChallenge](#43-oidv4vpchallenge).
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol OID4VPProofProtocol : Jsonable
+{
+    var domain    : String? { get set }
+    var challenge : String? { get set }
+}
+```
+
+<br>
+
+## 2.5. IssuerProofProtocol
+
+### Description
+
+`Protocol for an issuer proof that carries a list of signature values`
+
+Adopted by [VCProof](#41-vcproof).
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol IssuerProofProtocol : Jsonable
+{
+    var proofValueList    : [String]? { get set }
 }
 ```
 
@@ -4899,13 +5828,35 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 
 <br>
 
+## 6. FromSnake
+
+### Description
+
+`Marker protocol that makes a Jsonable type use snake_case JSON keys`
+
+A `Jsonable` type that also conforms to `FromSnake` is decoded with `convertFromSnakeCase` and encoded
+with `convertToSnakeCase`, so camelCase Swift properties map to the snake_case members of the
+OpenID4VCI/OpenID4VP messages. It declares no requirements.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol FromSnake {}
+```
+
+<br>
+
 # Property Wrapper
 
 ## 1. @UTCDatetime
 
 ### Description
 
-`TBD`
+`String property that must hold an ISO 8601 datetime (yyyy-MM-ddTHH:mm:ss, with an optional fraction and Z)`
+
+Initializing or assigning a string that does not match stops the app with a precondition failure;
+decoding one throws `DecodingError.dataCorrupted`. The value is encoded as the plain string.
 
 ### Declaration
 
@@ -4920,7 +5871,10 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 
 ### Description
 
-`TBD`
+`String property that must hold a DID document version ID made of digits only`
+
+Initializing or assigning a string that does not match stops the app with a precondition failure;
+decoding one throws `DecodingError.dataCorrupted`. The value is encoded as the plain string.
 
 ### Declaration
 
@@ -4932,7 +5886,35 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 
 <br>
 
+## 3. @ValidURL
 
-    
+### Description
 
+`String property that must hold a URL`
 
+Initializing or assigning a string that `URL(string:)` cannot parse stops the app with a precondition
+failure. Decoding is stricter: the string must also have a scheme and a host, otherwise it throws
+`DecodingError.dataCorrupted`. The value is encoded as the plain string.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+@propertyWrapper
+public struct ValidURL : Codable
+{
+    public var wrappedValue: String { get set }
+
+    public init(wrappedValue: String)
+    public init(from decoder: Decoder) throws
+    public func encode(to encoder: Encoder) throws
+    public func appendingPath(_ component: String) -> String
+}
+```
+
+### Method
+| Name             | Description                                              | **Note** |
+|------------------|----------------------------------------------------------|----------|
+| appendingPath(_:) | Returns the URL with `component` appended as a path component, as a string |  |
+
+<br>

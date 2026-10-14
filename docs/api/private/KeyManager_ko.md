@@ -40,12 +40,15 @@ iOS KeyManager API
     - [3. IsKeySaved](#3-iskeysaved)
     - [4. GenerateKey](#4-generatekey)
     - [5. ChangePin](#5-changepin)
+    - [6. AuthenticatePin](#6-authenticatepin)
     - [7. GetKeyInfos by Ids](#7-getkeyinfos-by-ids)
     - [8. GetKeyInfos by VerifyAuthType](#8-getkeyinfos-by-verifyauthtype)
     - [9. DeleteKeys](#9-deletekeys)
     - [10. DeleteAllKeys](#10-deleteallkeys)
     - [11. Sign](#11-sign)
     - [12. Verify](#12-verify)
+    - [13. CanKeyAgree](#13-cankeyagree)
+    - [14. KeyAgreement](#14-keyagreement)
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
 - [Enumerators](#enumerators)
@@ -143,12 +146,12 @@ func isKeySaved(id : String) throws -> Bool
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
-if !keyManager.isKeySaved(id: "free")
+let keyManager = try KeyManager(fileName: "MyWallet")
+if try !keyManager.isKeySaved(id: "free")
 {
     let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, 
                                              id: "free",
-                                             accessMethod: .none)
+                                             methodType: .none)
 }
 ```
 
@@ -178,21 +181,21 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 //Free
 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, 
                                          id: "free",
-                                         accessMethod: .none)
+                                         methodType: .none)
 try keyManager.generateKey(keyGenRequest: freeKeyRequest)
 //Pin
 let pinData : Data = "password".data(using: .utf8)!
 let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1,
                                         id: "pin",
-                                        accessMethod: .pin(value: pinData))
+                                        methodType: .pin(value: pinData))
 try keyManager.generateKey(keyGenRequest: pinKeyRequest)
 //Bio
 let bioKeyRequest = SecureKeyGenRequest(id: "bio",
-                                        accessMethod: .currentSet
+                                        accessMethod: .currentSet,
                                         prompt : "Need to authenticate user")
 try keyManager.generateKey(keyGenRequest: bioKeyRequest)
 ```
@@ -225,7 +228,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let oldPinData : Data = "password".data(using: .utf8)!
 let newPinData : Data = "newPassword".data(using: .utf8)!
@@ -260,7 +263,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let pinID = "pin"
 let pinData : Data = "password".data(using: .utf8)!
@@ -296,7 +299,7 @@ func getKeyInfos(ids : [String]) throws -> [KeyInfo]
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 let keyInfos = try keyManager.getKeyInfos(ids: ["pin", "bio"])
 ```
 
@@ -329,7 +332,7 @@ func getKeyInfos(keyType : VerifyAuthType) throws -> [KeyInfo]
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 //저장된 모든 키 찾기
 let keyInfos = try keyManager.getKeyInfos(keyType: [])
 
@@ -376,7 +379,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 try keyManager.deleteKeys(ids: ["pin", "bio"])
 ```
 
@@ -404,7 +407,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 if keyManager.isAnyKeysSaved
 {
     try keyManager.deleteAllKeys()
@@ -422,7 +425,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
+func sign(id : String, pin : Data? = nil, digest : Data, context : LAContext? = nil) throws -> Data
 ```
 
 ### Parameters
@@ -432,6 +435,7 @@ func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
 | id        | String | 찾을 키 이름                  |    M    |         |
 | pin       | Data   | 키의 Pin                    |    O    |                  |
 | digest    | Data   | 서명할 값                    |    M    | 해시된 값이어야 한다. |
+| context   | LAContext | 시큐어 인클레이브 키에 재사용할 인증 컨텍스트. 이미 받은 확인으로 이 서명도 처리한다 |    O    | 기본값: nil |
 
 ### Returns
 
@@ -441,9 +445,7 @@ func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
 
 ### Usage
 ```swift
-import OpenDIDCryptoSDK
-
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let plainData = "Test".data(using: .utf8)!
 let digest = DigestUtils.getDigest(source: plainData, digestEnum: .sha256)
@@ -475,8 +477,8 @@ func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, sign
 |---------------|---------------|-----------------------------------------------------|---------|------------------------|
 | algorithmType | AlgorithmType | 서명값의 알고리즘 타입                                   |    M    |[AlgorithmType](#1-algorithmtype)|
 | publicKey     | Data          | 서명에 사용된 개인키의 공개키                              |    M    |                        |
-| digest        | Data          | 해시된 서명 원문                                        |    M    |                        |
-| signature     | Data          | 서명값                                                |    M    | 해시된 값이어야 한다.       |
+| digest        | Data          | 해시된 서명 원문                                        |    M    | 해시된 값이어야 한다.       |
+| signature     | Data          | 서명값                                                |    M    |                        |
 
 ### Returns
 
@@ -486,7 +488,7 @@ func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, sign
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let plainData = "Test".data(using: .utf8)!
 let digest = DigestUtils.getDigest(source: plainData, digestEnum: .sha256)
@@ -495,6 +497,93 @@ let publicKey = try MultibaseUtils.decode(encoded: "zeZDsJJfZxggomwKnwPEdpMKtGvx
 let signature = try MultibaseUtils.decode(encoded: "z3uF8E6tiEtHqYEFTVE2sL2L1dYDFxgnMyhs9jzu3ZvYxDhPmFRpyM85EAtGmau8ajfEQxqxKpHhVSUSYyRYn2XEV1")
         
 let result = try keyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: digest, signature: signature)
+```
+
+<br>
+
+## 13. CanKeyAgree
+
+### Description
+`키가 ECDH 키 합의를 수행할 수 있는지 확인한다.`
+
+소프트웨어 키(`walletNone`, `walletPin`)는 항상 가능하다. 시큐어 인클레이브 키는 키 자체에 묻는다. 키 교환을 지원하지 않게 생성된 키는 불가능하며, 지갑 쪽에서 이를 바꿀 방법은 없다. PIN이 필요한지는 별개 문제다. PIN으로 보호된 키는 서명할 때처럼 `keyAgreement` 시점에 PIN이 필요하다.
+
+### Declaration
+
+```swift
+// Declaration in swift
+func canKeyAgree(id : String) throws -> Bool
+```
+
+### Parameters
+
+| Name | Type   | Description  | **M/O** | **Note** |
+|------|--------|--------------|---------|----------|
+| id   | String | 찾을 키 이름 |    M    |          |
+
+### Returns
+
+| Type | Description              | **M/O** | **Note** |
+|------|--------------------------|---------|----------|
+| Bool | ECDH 수행 가능 여부      |    M    | `id`로 저장된 키가 없으면 `false` |
+
+### Usage
+```swift
+let keyManager = try KeyManager(fileName: "MyWallet")
+
+if try keyManager.canKeyAgree(id: "free")
+{
+    // 이 키로 ECDH 가능
+}
+```
+
+<br>
+
+## 14. KeyAgreement
+
+### Description
+`키와 상대 공개키 사이의 ECDH 공유 비밀을 계산한다.`
+
+KDF를 적용하지 않은 원본 공유 비밀(x 좌표 `Z`, 32바이트)을 반환한다. 키 유도는 프로토콜이 정한 KDF로 호출하는 쪽에서 한다.
+
+### Declaration
+
+```swift
+// Declaration in swift
+func keyAgreement(id : String, pin : Data? = nil, publicKey : Data, context : LAContext? = nil) throws -> Data
+```
+
+### Parameters
+
+| Name      | Type      | Description                                   | **M/O** | **Note** |
+|-----------|-----------|-----------------------------------------------|---------|----------|
+| id        | String    | 찾을 키 이름                                  |    M    |          |
+| pin       | Data      | 키의 Pin                                      |    O    | `sign`과 같이 PIN으로 보호된 소프트웨어 키에만 쓴다 |
+| publicKey | Data      | 상대 공개키                                   |    M    | 비압축 P-256 점(`0x04‖x‖y`, 65바이트) |
+| context   | LAContext | 시큐어 인클레이브 키에 재사용할 인증 컨텍스트. 한 번의 확인으로 여러 키 사용을 처리한다 |    O    | 기본값: nil |
+
+### Returns
+
+| Type | Description        | **M/O** | **Note** |
+|------|--------------------|---------|----------|
+| Data | 원본 공유 비밀     |    M    | 32바이트 |
+
+### Errors
+- `id`나 `publicKey`가 비어 있는 경우: 파라미터 오류
+- `publicKey`가 올바른 P-256 점이 아닌 경우: 소프트웨어 키는 파라미터 오류, 시큐어 인클레이브 키는 `keyAgreement` 오류
+- 등록된 생체 정보가 바뀐 뒤의 `secureEnclaveCurrentSet` 키: `userBiometricsChanged`
+- 키 교환을 지원하지 않는 시큐어 인클레이브 키: `keyAgreementUnsupported` (먼저 `canKeyAgree`로 확인)
+
+### Usage
+```swift
+let keyManager = try KeyManager(fileName: "MyWallet")
+
+// peerPublicKey: 65바이트 비압축 점 (0x04||x||y)
+//Pin 키가 아닐 경우
+let secret1 = try keyManager.keyAgreement(id: "free", publicKey: peerPublicKey)
+
+//Pin 키의 경우
+let secret2 = try keyManager.keyAgreement(id: "pin", pin: pinData, publicKey: peerPublicKey)
 ```
 
 <br>
@@ -509,7 +598,7 @@ let result = try keyManager.verify(algorithmType: .secp256r1, publicKey: publicK
 ### Declaration
 
 ```swift
-public struct VerifyAuthType : OptionSet, Sequence, Codable
+public struct VerifyAuthType : OptionSet, Sequence, Codable, Sendable
 {
     public let rawValue: Int
     
@@ -574,11 +663,11 @@ public enum WalletAccessMethod
 
 ```swift
 // Declaration in swift
-public enum SecureEnclaveAccessMethod
+public enum SecureEnclaveAccessMethod : Int, Codable
 {
-    case none
-    case currentSet
-    case any
+    case none       = 0
+    case currentSet = 1
+    case any        = 2
 }
 ```
 
@@ -635,7 +724,7 @@ public enum KeyAccessMethod : Int, Codable
 
 ```swift
 // Declaration in swift
-public enum AuthType : Int, Codable
+public enum AuthType : Int, Codable, Sendable
 {
     case free = 1
     case pin  = 2
@@ -783,7 +872,7 @@ public struct SecureKeyGenRequest : SecureKeyGenRequestProtocol
 |---------------|---------------------------|---------------------------------|---------|------------------------------------|
 | algorithmType | AlgorithmType             | 키의 알고리즘 타입                    |    M    |[AlgorithmType](#1-algorithmtype)            |
 | id            | String                    | 키 이름                            |    M    |                                    |
-| accessMethod  | SecureEnclaveAccessMethod | 시큐어 인클레이브에 저장된 키의 접근 방법  |    M    |[SecureEnclaveAccessMethod](#2-secureenclaveaccessmethod)|
+| accessMethod  | SecureEnclaveAccessMethod | 시큐어 인클레이브에 저장된 키의 접근 방법  |    M    |[SecureEnclaveAccessMethod](#3-secureenclaveaccessmethod)|
 | storage       | StorageOption             | 키 저장소                         |    M    |[StorageOption](#4-storageoption)            |
 | prompt        | String                    | Touch ID 사용에 대한 설명           |    M    |                                    |
 
@@ -801,11 +890,11 @@ public struct SecureKeyGenRequest : SecureKeyGenRequestProtocol
 // Declaration in swift
 public struct KeyInfo : MetaProtocol
 {
-    var algorithmType : AlgorithmType
-    var id            : String
-    var accessMethod  : KeyAccessMethod
-    var authType      : AuthType
-    var publicKey     : String
+    public var algorithmType : AlgorithmType
+    public var id            : String
+    public var accessMethod  : KeyAccessMethod
+    public var authType      : AuthType
+    public var publicKey     : String
 }
 ```
 

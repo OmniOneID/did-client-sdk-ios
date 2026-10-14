@@ -19,7 +19,7 @@ import Foundation
 
 /// `CredentialAdapter` for SD-JWT credentials (format: dc+sd-jwt-did).
 /// Reuses the SDK's `SDJWT` parser, `Disclosure`, and `SimpleJWTDecoder`.
-public class SDJWTCredentialAdapter: CredentialAdapter {
+class SDJWTCredentialAdapter: CredentialAdapter {
 
     private static let supportedFormats: Set<String> = [CredentialFormat.sdJwtVc.token]
 

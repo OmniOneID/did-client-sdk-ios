@@ -85,7 +85,7 @@ public struct WalletSDKError: Error {
 |--------------|--------------------------------------|-----------------------------------|------------------------------------|
 | MSDKWLT05000 | Unknown error                        | Unknown error                     | Investigate the cause of the error |
 | MSDKWLT05001 | General failure                      | General failure                   | Check for failure details          |
-| MSDKWLT05002 | Failed to verify parameter           | Parameter verification failed     | Verify and correct parameters      |
+| MSDKWLT05002 | Failed to verify parameter: {detail error} | Parameter verification failed | Verify and correct parameters      |
 | MSDKWLT05003 | Failed to serialize                  | Serialization process failed      | Check serialization process        |
 | MSDKWLT05004 | Failed to deserialize                | Deserialization process failed    | Check deserialization process      |
 | MSDKWLT05005 | Failed to create proof               | Proof creation failed             | Check proof creation logic         |

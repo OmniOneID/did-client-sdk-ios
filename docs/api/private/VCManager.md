@@ -56,7 +56,7 @@ Creates an instance of VCManager to manage the VC wallet.
 ### Declaration
 ```swift
 // Declaration in Swift
-init(fileName: String) throws
+public init(fileName: String) throws
 ```
 
 ### Parameters
@@ -90,7 +90,7 @@ Check if there is at least one saved VC. (Verify the existence of the VC wallet)
 
 ```swift
 // Declaration in Swift
-var isAnyCredentialsSaved: Bool
+public var isAnyCredentialsSaved: Bool
 ```
 
 ### Usage
@@ -320,7 +320,7 @@ func makePresentation(claimInfos: [ClaimInfo], presentationInfo: PresentationInf
 | Name              | Type               | Description                              | **M/O** | **Note**                         |
 |-------------------|--------------------|------------------------------------------|---------|----------------------------------|
 | claimInfos        | [ClaimInfo]        | VC information to use for creating VP    | M       | [ClaimInfo](#1-claiminfo)        |
-| presentationInfo  | [PresentationInfo] | Meta information to use for creating VP  | M       | [PresentationInfo](#2-presentationinfo) |
+| presentationInfo  | PresentationInfo   | Meta information to use for creating VP  | M       | [PresentationInfo](#2-presentationinfo) |
 
 ### Returns
 
@@ -409,11 +409,11 @@ public struct PresentationInfo {
 ### Description
 
 `VC (VerifiableCredential) object. Provided by Data Model SDK.` <br>
-cf. [Original Link](#Table-of-Contents) <!-- Needs modification -->
+cf. [Original Link](../public/DataModel.md#2-verifiablecredential)
 
 ## 4. VerifiablePresentation
 
 ### Description
 
 `VP (VerifiablePresentation) object. Provided by Data Model SDK.` <br>
-cf. [Original Link](#Table-of-Contents) <!-- Needs modification -->
+cf. [Original Link](../public/DataModel.md#3-verifiablepresentation)

@@ -34,7 +34,7 @@ iOS ZKPManager API
 
 # Table of Contents
 - [APIs](#apis)
-    - [1. init](#1-init)
+    - [1. init](#1-initializer)
     - [2. IsAnyCredentialsSaved](#2-isanycredentialssaved)
     - [3. isCredentialSaved](#3-iscredentialsaved)
     - [4. CreateCredentialRequest](#4-createcredentialrequest)

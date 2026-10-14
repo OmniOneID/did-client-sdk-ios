@@ -429,4 +429,9 @@ class WalletServiceMock : WalletServiceImpl
                             APIGatewayURL: String) async throws -> String {
         return ""
     }
+    // TODO
+    func requestRevokeOID4VC(metadata: IssuerMetadataResponse,
+                             vcId: String,
+                             passcode: String?) async throws {
+    }
 }

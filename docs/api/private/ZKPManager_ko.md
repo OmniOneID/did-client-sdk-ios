@@ -34,7 +34,7 @@ iOS ZKPManager API
 
 # 목차
 - [APIs](#apis)
-    - [1. init](#1-init)
+    - [1. init](#1-initializer)
     - [2. IsAnyCredentialsSaved](#2-isanycredentialssaved)
     - [3. isCredentialSaved](#3-iscredentialsaved)
     - [4. CreateCredentialRequest](#4-createcredentialrequest)
@@ -153,7 +153,7 @@ public func createCredentialRequest(proverDid : String,
 | --------------------- | ---------------------------- | ------------------------------------------------------------------- | --------- | ---------- |
 | proverDid             | String                       | Prover의 DID                                                        | M         |            |
 | credentialPublicKey   | CredentialPrimaryPublicKey   | Credential 정의의 `value`에 포함된 `primary`                            | M         |            |
-| credOffer             | ZKPCredential 발급 제안 객체    | ZKPCredentialOffer                                                  | M         |            |
+| credOffer             | ZKPCredentialOffer           | ZKPCredential 발급 제안 객체                                            | M         |            |
 
 ### Returns
 

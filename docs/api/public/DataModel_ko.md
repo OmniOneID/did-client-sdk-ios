@@ -48,6 +48,8 @@ iOS DataModel
     - [3. VerifiablePresentation](#3-verifiablepresentation)
     - [4. Proof](#4-proof)
         - [4.1. VCProof](#41-vcproof)
+        - [4.2. VPProof](#42-vpproof)
+        - [4.3. OIDV4VPChallenge](#43-oidv4vpchallenge)
     - [5. Profile](#5-profile)
         - [5.1. IssuerProfile](#51-issuerprofile)
             - [5.1.1. Profle](#511-profile)
@@ -75,7 +77,7 @@ iOS DataModel
         - [1.1. M132](#11-m132-reg-user)
             - [1.1.1. ProposeRegisterUser/ _ProposeRegisterUser](#111-proposeregisteruser-_proposeregisteruser)
             - [1.1.2. RequestEcdh/ _RequestEcdh](#112-requestecdh-_requestecdh)
-            - [1.1.3. AttestedAppInfo](#113-attestedappinfo)
+            - [1.1.3. RequestAttestedAppInfo](#113-requestattestedappinfo)
             - [1.1.4. WalletTokenData](#114-wallettokendata)
             - [1.1.5. RequestCreateToken/ _RequestCreateToken](#115-requestcreatetoken-_requestcreatetoken)
             - [1.1.6. RetieveKyc/ _RetieveKyc](#116-retievekyc-_retievekyc)
@@ -100,6 +102,10 @@ iOS DataModel
         - [1.6. M310 (submit zkproof)](#16-m310-submit-zkproof)
             - [1.6.1. RequestProfile/ _RequestProofRequestProfile](#161-requestprofile-_requestproofrequestprofile)
             - [1.6.2. RequestZKPVerify/ _RequestVerify](#162-requestzkpverify-_requestverify)
+        - [1.7. M141 (update DID)](#17-m141-update-did)
+            - [1.7.1. ProposeUpdateDidDoc/ _ProposeUpdateDidDoc](#171-proposeupdatediddoc-_proposeupdatediddoc)
+            - [1.7.2. RequestUpdateDidDoc/ _RequestUpdateDidDoc](#172-requestupdatediddoc-_requestupdatediddoc)
+            - [1.7.3. ConfirmUpdateDidDoc/ _ConfirmUpdateDidDoc](#173-confirmupdatediddoc-_confirmupdatediddoc)
   
     - [2. Token](#2-token)
         - [2.1. ServerTokenSeed](#21-servertokenseed)
@@ -117,15 +123,23 @@ iOS DataModel
         - [3.3. AccE2e](#33-acce2e)
         - [3.4. E2e](#34-e2e)
         - [3.5. DIDAuth](#35-didauth)
+        - [3.6. ReqEcdhBuilder](#36-reqecdhbuilder)
 
     - [4. DidDoc](#4-diddoc)
         - [4.1. DIDDocVO](#41-diddocvo)
         - [4.2. AttestedDIDDoc](#42-attesteddiddoc)
         - [4.3. SignedDidDoc](#43-signeddiddoc)
+        - [4.4. RequestAttestedDIDDoc](#44-requestattesteddiddoc)
+        - [4.5. InvokedDidDoc](#45-invokeddiddoc)
+        - [4.6. ResponseTxId](#46-responsetxid)
+        - [4.7. AllowCAList](#47-allowcalist)
 
     - [5. Offer](#5-offer)
         - [5.1. IssueOfferPayload](#51-issueofferpayload)
         - [5.2. VerifyOfferPayload](#52-verifyofferpayload)
+        - [5.3. VpOfferWrapper](#53-vpofferwrapper)
+        - [5.4. RequestOfferPayload](#54-requestofferpayload)
+        - [5.5. DataPayload](#55-datapayload)
 
     - [6. VC](#6-vc)
         - [6.1. ReqVC](#61-reqvc)
@@ -134,6 +148,11 @@ iOS DataModel
             - [6.2.1. VCPlan](#621-vcplan)
                 - [6.2.1.1. Option](#6211-option)
                 - [6.2.1.2. VCPlan.CredentialDefinition](#6212-vcplancredentialdefinition)
+                - [6.2.1.3. VCIssuanceMode](#6213-vcissuancemode)
+        - [6.3. ReqRevokeVc](#63-reqrevokevc)
+        - [6.4. VCMeta](#64-vcmeta)
+        - [6.5. CredSchemaVO](#65-credschemavo)
+        - [6.6. CredDefVO](#66-creddefvo)
 
 - [OID4VC](#oid4vc)
     - [1. CredentialItem](#1-credentialitem)
@@ -186,6 +205,8 @@ iOS DataModel
     - [17. OID4VCIIssuerList](#17-oid4vciissuerlist)
         - [17.1. OID4VCIIssuerItem](#171-oid4vciissueritem)
     - [18. AnyJSON](#18-anyjson)
+    - [19. OrderedStringMap](#19-orderedstringmap)
+    - [20. SimpleJWTDecoder](#20-simplejwtdecoder)
 
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
@@ -211,17 +232,25 @@ iOS DataModel
     - [19. RoleTypeEnum](#19-roletypeenum)
     - [20. ServerTokenPurposeEnum](#20-servertokenpurposeenum)
     - [21. WalletTokenPurposeEnum](#21-wallettokenpurposeenum)
+    - [22. DidDocumentType](#22-diddocumenttype)
+    - [23. PresentModeEnum](#23-presentmodeenum)
+    - [24. VCStatusEnum](#24-vcstatusenum)
 - [Protocols](#protocols)
     - [1. Jsonable](#1-jsonable)
     - [2. ProofProtocol](#2-proofprotocol)
         - [2.1. ProofContainer](#21-proofcontainer)
     - [2.2. ProofsContainer](#22-proofscontainer)
+        - [2.3. VPProofsContainer](#23-vpproofscontainer)
+        - [2.4. OID4VPProofProtocol](#24-oid4vpproofprotocol)
+        - [2.5. IssuerProofProtocol](#25-issuerproofprotocol)
     - [3. ConvertibleToAlgorithmType](#3-convertibletoalgorithmtype)
     - [4. ConvertibleFromAlgorithmType](#4-convertiblefromalgorithmtype)
     - [5. AlgorithmTypeConvertible](#5-algorithmtypeconvertible)
+    - [6. FromSnake](#6-fromsnake)
 - [Property Wrapper](#property-wrapper)
     - [1. @UTCDatetime](#1-utcdatetime)
     - [2. @DIDVersionId](#2-didversionid)
+    - [3. @ValidURL](#3-validurl)
 
 # WalletCore
 
@@ -285,6 +314,8 @@ public struct DIDDocument : Jsonable, ProofsContainer
 
 `하위 모델/공개 키 값을 포함하는 DID 키 목록`
 
+코드에서 이 타입은 `DIDDocument`에 중첩되어 있다(`DIDDocument.VerificationMethod`).
+
 ### Declaration
 
 ```swift
@@ -316,6 +347,8 @@ public struct VerificationMethod : Jsonable
 ### Description
 
 `하위 모델 / 서비스 목록`
+
+코드에서 이 타입은 `DIDDocument`에 중첩되어 있다(`DIDDocument.Service`).
 
 ### Declaration
 
@@ -395,6 +428,8 @@ public struct VerifiableCredential : Jsonable, Identifiable
 
 `발급처 정보`
 
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.Issuer`).
+
 ## Declaration
 
 ```swift
@@ -403,7 +438,6 @@ public struct Issuer : Jsonable
 {
     public var id        : String
     public var name      : String?
-    public var certVCRef : String?
 }
 ```
 
@@ -421,6 +455,8 @@ public struct Issuer : Jsonable
 ## Description
 
 `증거에 대한 문서 검증`
+
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.DocumentVerificationEvidence`).
 
 ## Declaration
 
@@ -459,6 +495,8 @@ public struct DocumentVerificationEvidence : Jsonable
 
 `자격 증명 스키마`
 
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.CredentialSchema`).
+
 ## Declaration
 
 ```swift
@@ -485,6 +523,8 @@ public struct CredentialSchema : Jsonable
 
 `자격 증명 주제`
 
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.CredentialSubject`).
+
 ## Declaration
 
 ```swift
@@ -510,6 +550,8 @@ public struct CredentialSubject : Jsonable
 ## Description
 
 `주체에 대한 정보`
+
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.Claim`).
 
 ## Declaration
 
@@ -551,6 +593,8 @@ public struct Claim : Jsonable
 
 `국제화`
 
+코드에서 이 타입은 `VerifiableCredential.Claim`에 중첩되어 있다(`VerifiableCredential.Claim.Internationalization`).
+
 ## Declaration
 
 ```swift
@@ -583,7 +627,7 @@ public struct Internationalization : Jsonable
 
 ```swift
 // Declaration in Swift
-public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
+public struct VerifiablePresentation : Jsonable, VPProofsContainer, Identifiable
 {
     public var context              : [String]
     public var id                   : String
@@ -593,8 +637,8 @@ public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
     @UTCDatetime public var validUntil : String
     public var verifierNonce        : String
     public var verifiableCredential : [VerifiableCredential]
-    public var proof                : Proof?
-    public var proofs               : [Proof]?
+    public var proof                : VPProof?
+    public var proofs               : [VPProof]?
 }
 ```
 
@@ -610,8 +654,8 @@ public struct VerifiablePresentation : Jsonable, ProofsContainer, Identifiable
 | validUntil           | String                 | VP의 만료 시간 |    M    |                          |
 | verifierNonce        | String                 | 검증자 nonce                   |    M    |                          |
 | verifiableCredential | [VerifiableCredential] | VC 목록                       |    M    | [VerifiableCredential](#2-verifiablecredential)   |
-| proof                | Proof                  | 소유자 proof                      |    O    | [Proof](#4-proof) | 
-| proofs               | [Proof]                | 소유자 proof 목록              |    O    | [Proof](#4-proof)    | 
+| proof                | VPProof                | 소유자 proof                      |    O    | [VPProof](#42-vpproof) |
+| proofs               | [VPProof]              | 소유자 proof 목록              |    O    | [VPProof](#42-vpproof) |
 
 <br>
 
@@ -657,9 +701,7 @@ public struct Proof : ProofProtocol
 
 ```swift
 // Declaration in Swift
-public struct Service : Jsonable
-{
-public struct VCProof : ProofProtocol, Jsonable
+public struct VCProof : ProofProtocol, IssuerProofProtocol
 {
     @UTCDatetime public var created: String
     public var proofPurpose: ProofPurpose
@@ -680,6 +722,85 @@ public struct VCProof : ProofProtocol, Jsonable
 | type               | ProofType    | Proof 유형                       |    M    | [ProofType](#4-prooftype)   |
 | proofValue         | String       | 서명값                  |    O    |                          |
 | proofValueList     | [String]     | 서명값 목록             |    O    |                          |
+
+<br>
+
+## 4.2 VPProof
+
+### Description
+
+`VP의 소유자 증명`
+
+OpenID4VP로 제출하는 VP라면 proof에 검증자의 `domain`과 `challenge`도 담겨, 서명이 그 검증자·그
+요청에 묶인다. 그 밖에는 둘 다 `nil`이다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct VPProof : ProofProtocol, OID4VPProofProtocol
+{
+    @UTCDatetime public var created: String
+    public var proofPurpose: ProofPurpose
+    public var verificationMethod: String
+    public var type: ProofType
+    public var proofValue: String?
+    public var domain: String?
+    public var challenge: String?
+
+    public init(created: String,
+                proofPurpose: ProofPurpose,
+                verificationMethod: String,
+                type: ProofType,
+                proofValue: String? = nil,
+                domain: String? = nil,
+                challenge: String? = nil)
+}
+```
+
+### Property
+
+| Name               | Type         | Description                      | **M/O** | **Note**                 |
+|--------------------|--------------|----------------------------------|---------|--------------------------|
+| created            | String       | 생성 시간                         |    M    | [@UTCDatetime](#1-utcdatetime) |
+| proofPurpose       | ProofPurpose | Proof 목적                        |    M    | [ProofPurpose](#3-proofpurpose) |
+| verificationMethod | String       | Proof 서명에 사용된 Key URL        |    M    |                          |
+| type               | ProofType    | Proof 유형                        |    M    | [ProofType](#4-prooftype) |
+| proofValue         | String       | 서명값                            |    O    |                          |
+| domain             | String       | proof가 묶이는 검증자              |    O    | OpenID4VP `client_id`. [OIDV4VPChallenge](#43-oidv4vpchallenge)에서 채운다 |
+| challenge          | String       | proof가 묶이는 challenge          |    O    | OpenID4VP `nonce`. [OIDV4VPChallenge](#43-oidv4vpchallenge)에서 채운다 |
+
+<br>
+
+## 4.3 OIDV4VPChallenge
+
+### Description
+
+`VP proof를 묶을 domain과 challenge`
+
+`createVp`의 `challenge`로 전달하면 SDK가 두 값을 [VPProof](#42-vpproof)의 `domain`·`challenge`에
+복사한다. OpenID4VP 흐름에서는 SDK가 authorization request로부터 직접 만든다 — `client_id`가
+`domain`, `nonce`가 `challenge`. [OID4VPProofProtocol](#24-oid4vpproofprotocol)을 따른다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public struct OIDV4VPChallenge : OID4VPProofProtocol
+{
+    public var domain: String?
+    public var challenge: String?
+
+    public init(domain: String, challenge: String)
+}
+```
+
+### Property
+
+| Name      | Type   | Description                  | **M/O** | **Note** |
+|-----------|--------|------------------------------|---------|----------|
+| domain    | String | proof가 묶이는 검증자 식별자   |    O    | 이니셜라이저에서는 필수 |
+| challenge | String | proof가 묶이는 challenge      |    O    | 이니셜라이저에서는 필수 |
 
 <br>
 
@@ -731,6 +852,8 @@ public struct IssueProfile : Jsonable, ProofContainer
 
 `프로파일 내용`
 
+코드에서 이 타입은 `IssueProfile`에 중첩되어 있다(`IssueProfile.Profile`).
+
 ### Declaration
 
 ```swift
@@ -761,6 +884,8 @@ public struct Profile : Jsonable
 
 `VC 스키마 정보`
 
+코드에서 이 타입은 `IssueProfile.Profile`에 중첩되어 있다(`IssueProfile.Profile.CredentialSchema`).
+
 ### Declaration
 
 ```swift
@@ -788,6 +913,8 @@ public struct CredentialSchema : Jsonable
 ### Description
 
 `발급 프로세스`
+
+코드에서 이 타입은 `IssueProfile.Profile`에 중첩되어 있다(`IssueProfile.Profile.Process`).
 
 ### Declaration
 
@@ -857,6 +984,8 @@ public struct VerifyProfile : Jsonable, ProofContainer
 
 `프로파일 내용`
 
+코드에서 이 타입은 `VerifyProfile`에 중첩되어 있다(`VerifyProfile.Profile`).
+
 ### Declaration
 
 ```swift
@@ -885,6 +1014,8 @@ public struct Profile : Jsonable
 
 `VP 제출을 위한 필터링`
 
+코드에서 이 타입은 `VerifyProfile.Profile`에 중첩되어 있다(`VerifyProfile.Profile.ProfileFilter`).
+
 ### Declaration
 
 ```swift
@@ -908,6 +1039,8 @@ public struct ProfileFilter : Jsonable
 ### Description
 
 `VC 스키마별 제시 가능한 클레임 및 발급자`
+
+코드에서 이 타입은 `VerifyProfile.Profile.ProfileFilter`에 중첩되어 있다(`VerifyProfile.Profile.ProfileFilter.CredentialSchema`).
 
 ### Declaration
 
@@ -945,6 +1078,8 @@ public struct CredentialSchema : Jsonable
 ### Description
 
 `VP 제출 방법`
+
+코드에서 이 타입은 `VerifyProfile.Profile`에 중첩되어 있다(`VerifyProfile.Profile.Process`).
 
 ### Declaration
 
@@ -1059,7 +1194,7 @@ public struct ReqE2e : Jsonable, ProofContainer
 | Name      | Type                 | Description                        | **M/O** | **Note**                                         |
 | --------- | -------------------- | ---------------------------------- | ------- | ------------------------------------------------ |
 | nonce     | String               | 대칭키 생성용 nonce                   |     M    | 멀티베이스 인코딩                                |
-| curve     | ECType               | 타원곡선 유형                         |     M    |                                               |
+| curve     | ECType               | 타원곡선 유형                         |     M    | [ECType](Utility_ko.md#1-ectype) |
 | publicKey | String               | 암호화용 서버공개키                     |    M    | 멀티베이스 인코딩                             |
 | cipher    | SymmetricCipherType  | 암호화 유형                           |    M    | [SymmetricCipherType](#15-symmetricciphertype)   |
 | padding   | SymmetricPaddingType | 패딩 유형                            |    M    | [SymmetricPaddingType](#14-symmetricpaddingtype) |
@@ -1112,6 +1247,8 @@ public struct ProofRequestProfile : Jsonable, ProofContainer
 ### Description
 
 `프로파일 내용`
+
+코드에서 이 타입은 `ProofRequestProfile`에 중첩되어 있다(`ProofRequestProfile.Profile`).
 
 ### Declaration
 
@@ -1173,6 +1310,8 @@ public struct VCSchema : Jsonable
 
 `VC 메타데이터`
 
+코드에서 이 타입은 `VCSchema`에 중첩되어 있다(`VCSchema.VCMetadata`).
+
 ### Declaration
 
 ```swift
@@ -1199,6 +1338,8 @@ public struct VCMetadata : Jsonable
 
 `자격 증명 주제`
 
+코드에서 이 타입은 `VCSchema`에 중첩되어 있다(`VCSchema.CredentialSubject`).
+
 ### Declaration
 
 ```swift
@@ -1222,6 +1363,8 @@ public struct CredentialSubject : Jsonable
 ### Description
 
 `Claim`
+
+코드에서 이 타입은 `VCSchema.CredentialSubject`에 중첩되어 있다(`VCSchema.CredentialSubject.Claim`).
 
 ### Declaration
 
@@ -1249,6 +1392,8 @@ public struct Claim : Jsonable
 ### Description
 
 `네임스페이스 클레임`
+
+코드에서 이 타입은 `VCSchema.CredentialSubject.Claim`에 중첩되어 있다(`VCSchema.CredentialSubject.Claim.Namespace`).
 
 ### Declaration
 
@@ -1278,6 +1423,8 @@ public struct Namespace : Jsonable
 ### Description
 
 `클래임 정의`
+
+코드에서 이 타입은 `VCSchema.CredentialSubject.Claim`에 중첩되어 있다(`VCSchema.CredentialSubject.Claim.ClaimDef`).
 
 ### Declaration
 
@@ -1347,7 +1494,7 @@ public struct _ProposeRegisterUser: Jsonable {
 | Name    | Type   | Description                    | **M/O** | **Note** |
 |---------|--------|--------------------------------|---------|----------|
 | id      | String | 메시지 ID                        |    M    |          |
-| txId    | String | 거래 ID                          |    O    |          |
+| txId    | String | 거래 ID                          |    M    |          |
 
 <br>
 
@@ -1388,7 +1535,7 @@ public struct _RequestEcdh: Jsonable {
 | accEcdh | AccEcdh |                                |    M    |          |
 <br>
 
-#### 1.1.3. AttestedAppInfo
+#### 1.1.3. RequestAttestedAppInfo
 
 #### Description
 `인증된 앱 정보`
@@ -1425,8 +1572,8 @@ public struct WalletTokenData: Jsonable, ProofContainer {
     public var sha256_pii: String
     public var provider: Provider
     public var nonce: String   // multibase
-    public var proof: OpenDID_DataModel.Proof?
-    public init(seed: WalletTokenSeed, sha256_pii: String, provider: Provider, nonce: String, proof: OpenDID_DataModel.Proof?) {
+    public var proof: Proof?
+    public init(seed: WalletTokenSeed, sha256_pii: String, provider: Provider, nonce: String, proof: Proof?) {
         self.seed = seed
         self.sha256_pii = sha256_pii
         self.provider = provider
@@ -1442,7 +1589,7 @@ public struct WalletTokenData: Jsonable, ProofContainer {
 | sha256_pii | String           | PII의 SHA-256 해시              |    M    |          |
 | provider   | Provider         | 제공자 정보                       |    M    |          |
 | nonce      | String           | nonce                          |    M    |          |
-| proof      | Proof            | proof                          |    M    |          |
+| proof      | Proof            | proof                          |    O    |          |
 
 <br>
 
@@ -1484,6 +1631,7 @@ public struct _RequestCreateToken: Jsonable {
 | id      | String           | 메시지 ID                        |    M    |          |
 | txId    | String           | 거래 ID                         |    M    |          |
 | seed    | ServerTokenSeed  | 서버토큰시드                      |    M    |          |
+| iv      | String           | 초기화 벡터                        |    M    |          |
 | encStd  | String           | 암호화된 서버 토큰 데이터            |    M    |          |
 
 <br>
@@ -1503,12 +1651,14 @@ public struct RetrieveKyc: Jsonable {
     public var id: String
     public var txId: String
     public var serverToken: String
-    public var kycTxId: String
-    public init(id: String, txId: String, serverToken: String, kycTxId: String) {
+    public var kycTxId: String?
+    public var kycToken : String?
+    public init(id: String, txId: String, serverToken: String, kycTxId: String?, kycToken : String?) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
         self.kycTxId = kycTxId
+        self.kycToken = kycToken
     }
 }
 
@@ -1525,8 +1675,9 @@ public struct _RetrieveKyc: Jsonable {
 |-------------|------------------|--------------------------------|---------|----------|
 | id          | String           | 메시지 ID                     |    M    |          |
 | txId        | String           | 거래 ID                 |    M    |          |
-| serverToken | ServerTokenSeed  | 서버토큰                   |    M    |          |
-| kycTxId     | String           | kyc 거래 ID             |    M    |          |
+| serverToken | String           | 서버토큰                   |    M    |          |
+| kycTxId     | String           | kyc 거래 ID             |    O    |          |
+| kycToken    | String           | kyc 토큰                 |    O    |          |
 <br>
 
 
@@ -1543,9 +1694,9 @@ public struct _RetrieveKyc: Jsonable {
 public struct RequestRegisterUser: Jsonable {
     public var id: String
     public var txId: String
-    public var signedDidDoc: SignedDidDoc
+    public var signedDidDoc: SignedDIDDoc
     public var serverToken: String
-    public init(id: String, txId: String, signedDidDoc: SignedDidDoc, serverToken: String) {
+    public init(id: String, txId: String, signedDidDoc: SignedDIDDoc, serverToken: String) {
         self.id = id
         self.txId = txId
         self.signedDidDoc = signedDidDoc
@@ -1565,7 +1716,7 @@ public struct _RequestRegisterUser: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | 메시지 ID                        |    M    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
-| signedDidDoc | SignedDidDoc     | 서명된 DID doc                   |    M    |          |
+| signedDidDoc | SignedDIDDoc     | 서명된 DID doc                   |    M    |          |
 | serverToken  | String           | 서버토큰                          |    M    |          |
 <br>
 
@@ -1666,11 +1817,13 @@ public struct _ProposeIssueVc: Jsonable {
 public struct RequestIssueProfile: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
-    public init(id: String, txId: String, serverToken: String) {
+    public var serverToken: String?
+    public var userId: String?
+    public init(id: String, txId: String, serverToken: String? = nil, userId: String? = nil) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
+        self.userId = userId
     }
 }
 
@@ -1690,9 +1843,10 @@ public struct _RequestIssueProfile: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | 메시지 ID                        |    M    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
-| serverToken  | String           | 서버 토큰                        |    M    |          |
+| serverToken  | String           | 서버 토큰                        |    O    |          |
+| userId       | String           | 사용자 ID                        |    O    |          |
 | authNonce    | String           | 인증 nonce                      |    M    |          |
-| profile      | IssuerProfile    | 발급자 프로파일                    |    M    |          |
+| profile      | IssueProfile     | 발급자 프로파일                    |    M    |          |
 <br>
 
 #### 1.2.3. RequestIssueVc/ _RequestIssueVc
@@ -1708,11 +1862,11 @@ public struct _RequestIssueProfile: Jsonable {
 public struct RequestIssueVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var didAuth: DIDAuth
     public var accE2e: AccE2e
     public var encReqVc: String
-    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
+    public init(id: String, txId: String, serverToken: String?, didAuth: DIDAuth, accE2e: AccE2e, encReqVc: String) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -1736,7 +1890,7 @@ public struct _RequestIssueVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | 메시지 ID                        |    M    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
-| serverToken  | String           | 서버토큰                         |    M    |          |
+| serverToken  | String           | 서버토큰                         |    O    |          |
 | didAuth      | DIDAuth          | DID auth 데이터                  |    M    |          |
 | accE2e       | AccE2e           | E2e 암호화 데이터                  |    M    |          |
 | encReqVc     | String           | 암호화 VC 요청 데이터               |    M    |          |
@@ -1756,9 +1910,9 @@ public struct _RequestIssueVc: Jsonable {
 public struct ConfirmIssueVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var vcId: String
-    public init(id: String, txId: String, serverToken: String, vcId: String) {
+    public init(id: String, txId: String, serverToken: String? = nil, vcId: String) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -1778,7 +1932,7 @@ public struct _ConfirmIssueVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | 메시지 ID                        |    M    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
-| serverToken  | String           | 서버 토큰                        |    M    |          |
+| serverToken  | String           | 서버 토큰                        |    O    |          |
 | vcId         | String           | vc ID                          |    M    |          |
 <br>
 
@@ -1928,7 +2082,7 @@ public struct _ProposeRevokeVc: Jsonable {
 | id           | String           | message ID                     |    M    |          |
 | vcId         | String           | vc ID                          |    M    |          |
 | issuerNonce  | String           | 발급처 nonce                     |    M    |          |
-| authType     | VerifyAuthType   | 제출용 인증수단                    |    M    |          |
+| authType     | VerifyAuthType   | 제출용 인증수단                    |    M    | [VerifyAuthType](#1-verifyauthtype)  |
 <br>
 
 #### 1.4.2. RequestRevokeVc/ _RequestRevokeVc
@@ -1944,10 +2098,10 @@ public struct _ProposeRevokeVc: Jsonable {
 public struct RequestRevokeVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
     public var request: ReqRevokeVc
     
-    public init(id: String, txId: String, serverToken: String, request: ReqRevokeVc) {
+    public init(id: String, txId: String, serverToken: String?, request: ReqRevokeVc) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -1968,8 +2122,8 @@ public struct _RequestRevokeVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | 메시지 ID                        |    M    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
-| serverToken  | String           | 서버 토큰                         |    M    |          |
-| request      | ReqRevokeVc      |                                |    M    |          |
+| serverToken  | String           | 서버 토큰                         |    O    |          |
+| request      | ReqRevokeVc      |                                |    M    | [ReqRevokeVc](#63-reqrevokevc) |
 <br>
 
 
@@ -1987,9 +2141,9 @@ public struct _RequestRevokeVc: Jsonable {
 public struct ConfirmRevokeVc: Jsonable {
     public var id: String
     public var txId: String
-    public var serverToken: String
+    public var serverToken: String?
 
-    public init(id: String, txId: String, serverToken: String) {
+    public init(id: String, txId: String, serverToken: String?) {
         self.id = id
         self.txId = txId
         self.serverToken = serverToken
@@ -2009,7 +2163,7 @@ public struct _ConfirmRevokeVc: Jsonable {
 |--------------|------------------|--------------------------------|---------|----------|
 | id           | String           | 메시지   ID                      |    M    |          |
 | txId         | String           | 거래 ID                         |    M    |          |
-| serverToken  | String           | 서버 토큰                        |    M    |          |
+| serverToken  | String           | 서버 토큰                        |    O    |          |
 <br>
 
 ### 1.5. M142 (restore DID)
@@ -2051,6 +2205,8 @@ public struct _ProposeRestoreDidDoc: Jsonable {
 | id           | String           | 메시지    ID                     |    M    |          |
 | offerId      | String           | offer ID                       |    M    |          |
 | did          | String           | did                            |    M    |          |
+| txId         | String           | 거래 ID                         |    M    |          |
+| authNonce    | String           | 인증 nonce                      |    M    |          |
 
 <br>
 
@@ -2202,6 +2358,129 @@ public struct _RequestVerify: Jsonable
 
 <br>
 
+### 1.7. M141 (update DID)
+#### 1.7.1. ProposeUpdateDidDoc/ _ProposeUpdateDidDoc
+
+#### Description
+
+`DIDDoc 갱신 제안`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ProposeUpdateDidDoc: Jsonable {
+    public var id: String
+    public var did: String
+
+    public init(id: String, did: String) {
+        self.id = id
+        self.did = did
+    }
+}
+
+public struct _ProposeUpdateDidDoc: Jsonable {
+    public var txId: String
+    public var authNonce: String
+
+    public init(txId: String, authNonce: String) {
+        self.txId = txId
+        self.authNonce = authNonce
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | 메시지 ID                        |    M    |          |
+| did          | String           | did                            |    M    |          |
+| txId         | String           | 거래 ID                          |    M    |          |
+| authNonce    | String           | 인증 nonce                       |    M    |          |
+<br>
+
+#### 1.7.2. RequestUpdateDidDoc/ _RequestUpdateDidDoc
+
+#### Description
+
+`DIDDoc 갱신 요청`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct RequestUpdateDidDoc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String
+    public var didAuth: DIDAuth
+    public var signedDidDoc: SignedDIDDoc
+
+    public init(id: String, txId: String, serverToken: String, didAuth: DIDAuth, signedDidDoc: SignedDIDDoc) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+        self.didAuth = didAuth
+        self.signedDidDoc = signedDidDoc
+    }
+}
+
+public struct _RequestUpdateDidDoc: Jsonable {
+    public var txId: String
+
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | 메시지 ID                        |    M    |          |
+| txId         | String           | 거래 ID                          |    M    |          |
+| serverToken  | String           | 서버 토큰                         |    M    |          |
+| didAuth      | DIDAuth          | DID 인증 데이터                   |    M    | [DIDAuth](#35-didauth) |
+| signedDidDoc | SignedDIDDoc     | 서명된 DID 문서                   |    M    | [SignedDidDoc](#43-signeddiddoc) |
+<br>
+
+#### 1.7.3. ConfirmUpdateDidDoc/ _ConfirmUpdateDidDoc
+
+#### Description
+
+`DIDDoc 갱신 확인`
+
+#### Declaration
+
+```swift
+// Declaration in Swift
+public struct ConfirmUpdateDidDoc: Jsonable {
+    public var id: String
+    public var txId: String
+    public var serverToken: String?
+
+    public init(id: String, txId: String, serverToken: String?) {
+        self.id = id
+        self.txId = txId
+        self.serverToken = serverToken
+    }
+}
+
+public struct _ConfirmUpdateDidDoc: Jsonable {
+    public var txId: String
+
+    public init(txId: String) {
+        self.txId = txId
+    }
+}
+```
+#### Property
+| Name         | Type             | Description                    | **M/O** | **Note** |
+|--------------|------------------|--------------------------------|---------|----------|
+| id           | String           | 메시지 ID                        |    M    |          |
+| txId         | String           | 거래 ID                          |    M    |          |
+| serverToken  | String           | 서버 토큰                         |    O    |          |
+
+<br>
+
 ## 2. Token
 ## 2.1. ServerTokenSeed
 
@@ -2223,9 +2502,9 @@ public struct ServerTokenSeed: Jsonable {
 
 | Name        | Type                       | Description                | **M/O** | **Note** |
 |-------------|---------------------------------------------------------|-------------------------------|---------|----------|
-| purpose     | WalletTokenPurposeEnum     | 월렛토큰목적                  |    M    | [WalletTokenPurposeEnum](#24-servertokenpurpose) |
-| walletInfo  | SignedWalletInfo           | 서명된 월렛 정보               |    M    | [SignedWalletInfo](#27-signedwalletinfo) |
-| caAppInfo   | AttestedAppInfo            | 인증된 앱 정보                |    M    | [AttestedAppInfo](#6-attestedappinfo) |
+| purpose     | WalletTokenPurposeEnum     | 월렛토큰목적                  |    M    | [WalletTokenPurposeEnum](#21-wallettokenpurposeenum) |
+| walletInfo  | SignedWalletInfo           | 서명된 월렛 정보               |    M    | [SignedWalletInfo](#212-signedwalletinfo) |
+| caAppInfo   | AttestedAppInfo            | 인증된 앱 정보                |    M    | [AttestedAppInfo](#211-attestedappinfo) |
 
 <br>
 
@@ -2252,7 +2531,7 @@ public struct AttestedAppInfo: Jsonable, ProofContainer {
 | Name     | Type     | Description                   | **M/O** | **Note**                  |
 |----------|----------|-------------------------------|---------|---------------------------|
 | appId    | String   | 인가앱 id                       |    M    |                            |
-| provider | Provider | 인가앱 정보                      |    M    | [Provider](#provider)      |
+| provider | Provider | 인가앱 정보                      |    M    | [Provider](#2111-provider)      |
 | nonce    | String   | Nonce for attestation         |    M    |                            |
 | proof    | Proof    | Assertion proof               |    O    | [Proof](#4-proof)         
 
@@ -2302,7 +2581,7 @@ public struct SignedWalletInfo: Jsonable, ProofContainer {
 
 | Name       | Type           | Description                | **M/O** | **Note** |
 |------------|----------------|----------------------------|---------|----------|
-| wallet     | Wallet          | 월렛 정보                   |    M    | [Wallet](#28-wallet) |
+| wallet     | Wallet          | 월렛 정보                   |    M    | [Wallet](#2121-wallet) |
 | nonce      | String          | Nonce                     |    M    |          |
 | proof      | Proof           | Proof                     |    O    | [Proof](#4-proof) |
 
@@ -2347,7 +2626,7 @@ public struct ServerTokenData: Jsonable, ProofContainer {
     public var validUntil: String
     public var provider: Provider
     public var nonce: String
-    public var Proof?
+    public var proof: Proof?
 }
 ```
 
@@ -2355,11 +2634,11 @@ public struct ServerTokenData: Jsonable, ProofContainer {
 
 | Name       | Type                                | Description                          | **M/O** | **Note** |
 |------------|-------------------------------------|--------------------------------------|---------|----------|
-| purpose    | ServerTokenPurposeEnum              | 서버토큰 목적                           |    M    | [ServerTokenPurpose](#24-servertokenpurpose) |
+| purpose    | ServerTokenPurposeEnum              | 서버토큰 목적                           |    M    | [ServerTokenPurpose](#20-servertokenpurposeenum) |
 | walletId   | String                              | 월렛 ID                               |    M    |          |
 | appId      | String                              | 인가앱 ID                              |    M    |          |
 | validUntil | String                              | 서버토큰 유효시간                         |    M    |          |
-| provider   | Provider                            | 제공자 정보                             |    M    | [Provider](#18-provider) |
+| provider   | Provider                            | 제공자 정보                             |    M    | [Provider](#2111-provider) |
 | nonce      | String                              | Nonce                                |    M    |          |
 | proof      | Proof                               | Proof                                |    O    | [Proof](#4-proof) |
 
@@ -2384,7 +2663,7 @@ public struct WalletTokenSeed: Jsonable {
 ### Property
 | Name       | Type                            | Description                       | **M/O** | **Note** |
 |------------|---------------------------------|-----------------------------------|---------|----------|
-| purpose    | ServerTokenPurposeEnum          | 월렛 토큰 목적                       |    M    | [WalletTokenPurpose](#33-wallettokenpurpose) |
+| purpose    | WalletTokenPurposeEnum          | 월렛 토큰 목적                       |    M    | [WalletTokenPurpose](#21-wallettokenpurposeenum) |
 | pkgName    | String                          | 인가앱 패키지명                       |    M    |          |
 | nonce      | String                          | Nonce                             |    M    |          |
 | validUntil | String                          | 월렛토큰 유효시간                     |    M    |          |
@@ -2414,9 +2693,9 @@ public struct WalletTokenData: Jsonable, ProofContainer {
 
 | Name       | Type              | Description                   | **M/O** | **Note** |
 |------------|-------------------|-------------------------------|---------|----------|
-| seed       | WalletTokenSeed   | 월렛 토큰 시드                    |    M    | [WalletTokenSeed](#33-wallettokenseed) |
+| seed       | WalletTokenSeed   | 월렛 토큰 시드                    |    M    | [WalletTokenSeed](#23-wallettokenseed) |
 | sha256_pii | String            | PII의 SHA-256 해시              |    M    |          |
-| provider   | Provider          | 제공자 정보                      |    M    | [Provider](#18-provider) |
+| provider   | Provider          | 제공자 정보                      |    M    | [Provider](#2111-provider) |
 | nonce      | String            | Nonce                         |    M    |          |
 | proof      | Proof             | Proof                         |    O    | [Proof](#4-proof) |
 
@@ -2448,9 +2727,9 @@ public struct ReqEcdh: Jsonable, ProofContainer {
 |-------------|----------------------------------|--------------------------------|---------|----------|
 | client      | String                           | 클라이언트 DID                     |    M    |          |
 | clientNonce | String                           | 클라이언트 Nonce                   |    M    |          |
-| curve       | ECType.ELLIPTIC_CURVE_TYPE       | ECDH 커브 유형                    |    M    |          |
+| curve       | ECType                           | ECDH 커브 유형                    |    M    | [ECType](Utility_ko.md#1-ectype) |
 | publicKey   | String                           | 공개키 정보                        |    M    |          |
-| candidate   | ReqEcdh.Ciphers                  | 대칭키 암호화 정보                   |    O    |          |
+| candidate   | [SymmetricCipherType]            | 대칭키 암호화 정보                   |    O    |          |
 | proof       | Proof                            | Proof                           |    O    | [Proof](#4-proof) |
 
 <br>
@@ -2495,6 +2774,7 @@ public struct AccE2e: Jsonable, ProofContainer {
     public var publicKey: String
     public var iv: String
     public var proof: Proof?
+}
 ```
 
 ### Property
@@ -2553,6 +2833,41 @@ public struct DIDAuth: Jsonable, ProofContainer {
 
 <br>
 
+## 3.6. ReqEcdhBuilder
+
+### Description
+
+`ReqEcdh 생성용 빌더`
+
+### Declaration
+
+```swift
+public class ReqEcdhBuilder {
+    public init()
+    public func setClient(_ client: String) -> ReqEcdhBuilder
+    public func setClientNonce(_ clientNonce: String) -> ReqEcdhBuilder
+    public func setPublicKey(_ publicKey: String) -> ReqEcdhBuilder
+    public func setCurve(_ curve: ECType) -> ReqEcdhBuilder
+    public func setCandidate(_ candidate: [SymmetricCipherType]) -> ReqEcdhBuilder
+    public func setProof(_ proof: Proof?) -> ReqEcdhBuilder
+    public func build() -> ReqEcdh
+}
+```
+
+### Method
+| Name              | Description                                  | **Note** |
+|-------------------|----------------------------------------------|----------|
+| init()            | 빌더 생성. `curve` 기본값은 `secp256r1`       |          |
+| setClient(_:)     | Client DID 설정                              |          |
+| setClientNonce(_:)| Client Nonce 설정                            |          |
+| setPublicKey(_:)  | ECDH용 공개키 설정                           |          |
+| setCurve(_:)      | Curve 타입 설정                              | [ECType](Utility_ko.md#1-ectype) |
+| setCandidate(_:)  | 후보 암호 알고리즘 설정                       | 결과에 반영되지 않음: `build()`는 `candidate`를 `nil`로 둔다 |
+| setProof(_:)      | Proof 설정                                   | [Proof](#4-proof) |
+| build()           | `ReqEcdh` 반환                               | [ReqEcdh](#31-reqecdh). 대신 `ReqEcdh.init`을 직접 호출해도 된다 |
+
+<br>
+
 ## 4. DidDoc
 ## 4.1. DIDDocVO
 
@@ -2594,7 +2909,7 @@ public struct AttestedDIDDoc: Jsonable, ProofContainer {
 |------------|----------|--------------------------|---------|---------------------------|
 | walletId   | String   | 월렛 ID                |    M    |                            |
 | ownerDidDoc| String   | 소유자의 DID 문서     |    M    |                            |
-| provider   | Provider | 제공자 정보     |    M    | [Provider](#provider)      |
+| provider   | Provider | 제공자 정보     |    M    | [Provider](#2111-provider)      |
 | nonce      | String   | Nonce                    |    M    |                            |
 | proof      | Proof    | Attestation proof        |    O    | [Proof](#4-proof)          |
 
@@ -2608,7 +2923,7 @@ public struct AttestedDIDDoc: Jsonable, ProofContainer {
 ### Declaration
 ```swift
 public struct SignedDIDDoc: Jsonable, ProofContainer {
-    public var ownerDIDDoc: String
+    public var ownerDidDoc: String
     public var wallet: Wallet
     public var nonce: String
     public var proof: Proof?
@@ -2619,9 +2934,110 @@ public struct SignedDIDDoc: Jsonable, ProofContainer {
 | Name       | Type           | Description                | **M/O** | **Note** |
 |------------|----------------|----------------------------|---------|----------|
 | ownerDidDoc| String          | 소유자의 DID 문서      |    M    |          |
-| wallet     | Wallet          | 월렛 정보        |    M    | [Wallet](#28-wallet) |
+| wallet     | Wallet          | 월렛 정보        |    M    | [Wallet](#2121-wallet) |
 | nonce      | String          | Nonce                     |    M    |          |
 | proof      | Proof           | Proof                     |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 4.4. RequestAttestedDIDDoc
+
+### Description
+`증명된 DID 문서로 월렛을 등록하는 요청`
+
+이니셜라이저의 레이블은 `attestedDIDDoc`이고, 이 값이 들어가는 프로퍼티는 `attestedDidDoc`이다.
+
+### Declaration
+```swift
+public struct RequestAttestedDIDDoc: Jsonable {
+    public var id: String
+    public var attestedDidDoc: AttestedDIDDoc
+
+    public init(id: String, attestedDIDDoc: AttestedDIDDoc)
+}
+```
+
+### Property
+| Name           | Type           | Description              | **M/O** | **Note**                  |
+|----------------|----------------|--------------------------|---------|---------------------------|
+| id             | String         | 메시지 ID                  |    M    |                           |
+| attestedDidDoc | AttestedDIDDoc | 증명된 DID 문서             |    M    | [AttestedDIDDoc](#42-attesteddiddoc) |
+
+<br>
+
+## 4.5. InvokedDidDoc
+
+### Description
+`컨트롤러가 서명한 DID 문서`
+
+### Declaration
+```swift
+public struct InvokedDidDoc: Jsonable, ProofContainer {
+    public var didDoc: String
+    public var controller: Provider
+    public var nonce: String
+    public var proof: Proof?
+
+    public init(didDoc: String, controller: Provider, nonce: String, proof: Proof?)
+}
+```
+
+### Property
+| Name       | Type     | Description                  | **M/O** | **Note**                  |
+|------------|----------|------------------------------|---------|---------------------------|
+| didDoc     | String   | 인코딩된 DID 문서              |    M    |                           |
+| controller | Provider | 컨트롤러 정보                  |    M    | [Provider](#2111-provider) |
+| nonce      | String   | Nonce                        |    M    |                           |
+| proof      | Proof    | 컨트롤러 proof                 |    O    | [Proof](#4-proof)         |
+
+<br>
+
+## 4.6. ResponseTxId
+
+### Description
+`거래 ID만 담은 응답`
+
+[RequestAttestedDIDDoc](#44-requestattesteddiddoc)으로 보낸 월렛 등록을 TAS가 받아들이면 반환된다.
+public 이니셜라이저는 없다.
+
+### Declaration
+```swift
+public struct ResponseTxId: Jsonable
+{
+    public var txId: String
+}
+```
+
+### Property
+| Name | Type   | Description | **M/O** | **Note** |
+|------|--------|-------------|---------|----------|
+| txId | String | 거래 ID      |    M    |          |
+
+<br>
+
+## 4.7. AllowCAList
+
+### Description
+`월렛 사용이 허용된 인가앱(CA) 패키지 목록`
+
+월렛 생성 중에 조회한다. SDK는 저장된 CA 패키지 목록을 `items`로 교체하며, 목록이 비어 있으면 월렛
+생성이 실패한다.
+
+### Declaration
+```swift
+public struct AllowCAList: Jsonable {
+    public var count: Int
+    public var items: [String]
+
+    public init(count: Int, items: [String])
+}
+```
+
+### Property
+| Name  | Type     | Description              | **M/O** | **Note** |
+|-------|----------|--------------------------|---------|----------|
+| count | Int      | 허용된 CA 패키지 수        |    M    |          |
+| items | [String] | 허용된 CA 패키지 이름 목록  |    M    |          |
 
 <br>
 
@@ -2639,12 +3055,13 @@ public struct IssueOfferPayload: Jsonable {
     public var vcPlanId: String
     public var issuer: String
     public var validUntil: String?
+}
 ```
 
 ### Property
 | Name      | Type          | Description                            | **M/O** | **Note** |
 |-----------|---------------|----------------------------------------|---------|----------|
-| offerId   | String        | Offer ID                               |    M    |          |
+| offerId   | String        | Offer ID                               |    O    |          |
 | type      | OfferTypeEnum | OfferType (issuerOffer or VerifyOffer) |    M    |          |
 | vcPlanId  | String        | Verifiable Credential Plan ID          |    M    |          |
 | issuer    | String        | 발급자 DID                               |    M    |          |
@@ -2676,12 +3093,87 @@ public struct VerifyOfferPayload: Jsonable {
 |------------|---------------------|-----------------------------------|---------|----------|
 | offerId    | String              | Offer ID                          |    M    |          |
 | type       | OfferTypeEnum       | Offer type                        |    M    |          |
-| mode       | PresentModeEnum     | Presentation mode                 |    M    |          |
-| device     | String              | 응대장치 식별자                       |    O    |          |
-| service    | String              | 서비스 식별자                        |    O    |          |
-| endpoints  | String[]            | profile 요청 API endpoint 목록      |    O    |          |
+| mode       | PresentModeEnum     | Presentation mode                 |    M    | [PresentModeEnum](#23-presentmodeenum) |
+| device     | String              | 응대장치 식별자                       |    M    |          |
+| service    | String              | 서비스 식별자                        |    M    |          |
+| endpoints  | String[]            | profile 요청 API endpoint 목록      |    M    |          |
 | validUntil | String              | end date of the offer             |    M    |          |
 | locked     | Bool                | offer 잠김 여부                     |    O    |          |
+
+<br>
+
+## 5.3. VpOfferWrapper
+
+### Description
+`거래 ID와 짝지은 VP 제출 오퍼 페이로드`
+
+### Declaration
+```swift
+public struct VpOfferWrapper: Jsonable {
+    public var txId: String?
+    public var payload: VerifyOfferPayload
+
+    public init(txId: String? = nil, payload: VerifyOfferPayload)
+}
+```
+
+### Property
+| Name    | Type               | Description            | **M/O** | **Note** |
+|---------|--------------------|------------------------|---------|----------|
+| txId    | String             | 거래 ID                 |    O    |          |
+| payload | VerifyOfferPayload | VP 제출 오퍼 페이로드     |    M    | [VerifyOfferPayload](#52-verifyofferpayload) |
+
+<br>
+
+## 5.4. RequestOfferPayload
+
+### Description
+`VP 제출 오퍼 페이로드 요청`
+
+### Declaration
+```swift
+public struct RequestOfferPayload: Jsonable {
+    public var mode: String
+    public var device: String
+    public var service: String
+    public var validSeconds: Int
+
+    public init(mode: String, device: String, service: String, validSeconds: Int)
+}
+```
+
+### Property
+| Name         | Type   | Description                  | **M/O** | **Note** |
+|--------------|--------|------------------------------|---------|----------|
+| mode         | String | Presentation mode            |    M    | [PresentModeEnum](#23-presentmodeenum)의 raw value |
+| device       | String | 응대장치 식별자                 |    M    |          |
+| service      | String | 서비스 식별자                   |    M    |          |
+| validSeconds | Int    | 오퍼 유효시간(초)               |    M    |          |
+
+<br>
+
+## 5.5. DataPayload
+
+### Description
+`거래 ID(선택)와 짝지은 유형 지정 페이로드`
+
+### Declaration
+```swift
+public struct DataPayload: Jsonable {
+    public var txId: String?
+    public var payloadType: String
+    public var payload: String
+
+    public init(txId: String? = nil, payloadType: String, payload: String)
+}
+```
+
+### Property
+| Name        | Type   | Description         | **M/O** | **Note** |
+|-------------|--------|---------------------|---------|----------|
+| txId        | String | 거래 ID              |    O    |          |
+| payloadType | String | 페이로드 유형          |    M    |          |
+| payload     | String | 인코딩된 페이로드       |    M    |          |
 
 <br>
 
@@ -2741,7 +3233,7 @@ public struct ReqVcProfile: Jsonable {
 ```swift
 public struct VCPlanList: Jsonable {
     public var count: Int
-    public var items: [VcPlan]
+    public var items: [VCPlan]
 }
 ```
 
@@ -2750,7 +3242,7 @@ public struct VCPlanList: Jsonable {
 | Name   | Type             | Description                      | **M/O** | **Note** |
 |--------|------------------|----------------------------------|---------|----------|
 | count  | int              | VC plan의 수                      |    M    |          |
-| items  | array[VCPlan]    | VC plan 목록                      |    M    | [VCPlan](#28-vcplan) |
+| items  | array[VCPlan]    | VC plan 목록                      |    M    | [VCPlan](#621-vcplan) |
 
 <br>
 
@@ -2776,6 +3268,8 @@ public struct VCPlan: Jsonable {
     public var allowedIssuers: [String]?
     public var manager: String
     public var credentialDefinition : VCPlan.CredentialDefinition?
+    public var issuanceMode: VCIssuanceMode?
+    public var endpoints : [String]?
 }
 ```
 
@@ -2786,7 +3280,7 @@ public struct VCPlan: Jsonable {
 | name                 | String                          | VC plan 이름                              | M       |                                  |
 | description          | String                          | VC plan 설명                              | M       |                                  |
 | url                  | String                          | issuer url                               | O       |                                  |
-| logo                 | LogoImage                       | 로고 이미지                                 | O       | [LogoImage](#29-logoimage)       |
+| logo                 | LogoImage                       | 로고 이미지                                 | O       | [LogoImage](#53-logoimage)       |
 | validFrom            | String                          | 유효시작일                                  | O       |                                  |
 | validUntil           | String                          | 유효만료일                                  | O       |                                  |
 | tags                 | array[String]                   | tags                                     | O       |                                  |
@@ -2796,6 +3290,8 @@ public struct VCPlan: Jsonable {
 | allowedIssuers       | array[String]                   | VC plan 사용이 허용된 발급 사업자 DID 목록      | O       |                                  |
 | manager              | String                          | VC plan 관리 권한을 가진 엔티티               | M       |                                  |
 | credentialDefinition | VCPlan.CredentialDefinition     | VC 발급에 연관된 ZKP 정보                    | O       |                                  |
+| issuanceMode         | VCIssuanceMode                  | VC 발급 방식 (DIRECT 또는 PROXY)            | O       | [VCIssuanceMode](#6213-vcissuancemode) |
+| endpoints            | array[String]                   | API endpoint 목록                         | O       |                                  |
 
 
 <br>
@@ -2846,15 +3342,144 @@ public struct CredentialDefinition: Jsonable
 
 <br>
 
+## 6.2.1.3. VCIssuanceMode
+
+### Description
+`VC plan의 VC 발급 방식`
+
+### Declaration
+```swift
+public enum VCIssuanceMode: String, Codable, Sendable
+{
+    case DIRECT
+    case PROXY
+}
+```
+
+<br>
+
+## 6.3. ReqRevokeVc
+
+### Description
+`홀더가 서명한 VC 폐기 요청`
+
+### Declaration
+```swift
+public struct ReqRevokeVc: Jsonable, ProofContainer {
+    public var vcId: String
+    public var issuerNonce: String
+    public var proof: Proof?
+    public var proofs: [Proof]?
+
+    public init(vcId: String, issuerNonce: String, proof: Proof? = nil, proofs: [Proof]? = nil)
+}
+```
+
+### Property
+| Name        | Type    | Description            | **M/O** | **Note** |
+|-------------|---------|------------------------|---------|----------|
+| vcId        | String  | 폐기할 VC의 ID           |    M    |          |
+| issuerNonce | String  | 발급자 nonce             |    M    | [_ProposeRevokeVc](#141-proposerevokevc-_proposerevokevc)에서 받은 값 |
+| proof       | Proof   | 홀더 proof               |    O    | [Proof](#4-proof) |
+| proofs      | [Proof] | 홀더 proof 목록           |    O    | [Proof](#4-proof) |
+
+<br>
+
+## 6.4. VCMeta
+
+### Description
+`발급된 VC의 메타데이터`
+
+JSON에서 디코딩한다. public 이니셜라이저는 없다.
+
+### Declaration
+```swift
+public struct VCMeta: Jsonable {
+    public var id: String
+    public var issuer: Provider
+    public var subject: String
+    public var credentialSchema: IssueProfile.Profile.CredentialSchema
+    public var status: VCStatusEnum
+    public var issuanceDate: String
+    public var validFrom: String
+    public var validUntil: String
+    public var formatVersion: String
+    public var language: String
+}
+```
+
+### Property
+| Name             | Type             | Description          | **M/O** | **Note** |
+|------------------|------------------|----------------------|---------|----------|
+| id               | String           | VC ID                |    M    |          |
+| issuer           | Provider         | 발급자 정보            |    M    | [Provider](#2111-provider) |
+| subject          | String           | 주체(홀더) DID         |    M    |          |
+| credentialSchema | CredentialSchema | Credential schema    |    M    | [CredentialSchema](#5111-credentialschema) |
+| status           | VCStatusEnum     | VC 상태               |    M    | [VCStatusEnum](#24-vcstatusenum) |
+| issuanceDate     | String           | 발급 시간              |    M    |          |
+| validFrom        | String           | VC의 유효 시작 시간     |    M    |          |
+| validUntil       | String           | VC의 만료 시간         |    M    |          |
+| formatVersion    | String           | VC 포맷 버전           |    M    |          |
+| language         | String           | VC 언어               |    M    |          |
+
+<br>
+
+## 6.5. CredSchemaVO
+
+### Description
+`인코딩된 ZKP credential schema`
+
+SDK는 `credSchema`를 `ZKPCredentialSchema(fromMultibase:)`로 디코딩한다.
+
+### Declaration
+```swift
+public struct CredSchemaVO: Jsonable
+{
+    public var credSchema: String
+
+    public init(credSchema: String)
+}
+```
+
+### Property
+| Name       | Type   | Description                            | **M/O** | **Note** |
+|------------|--------|----------------------------------------|---------|----------|
+| credSchema | String | Multibase 인코딩된 ZKP credential schema |    M    |          |
+
+<br>
+
+## 6.6. CredDefVO
+
+### Description
+`인코딩된 ZKP credential definition`
+
+SDK는 `credDef`를 `ZKPCredentialDefinition(fromMultibase:)`로 디코딩한다.
+
+### Declaration
+```swift
+public struct CredDefVO: Jsonable
+{
+    public var credDef: String
+
+    public init(credDef: String)
+}
+```
+
+### Property
+| Name    | Type   | Description                                | **M/O** | **Note** |
+|---------|--------|--------------------------------------------|---------|----------|
+| credDef | String | Multibase 인코딩된 ZKP credential definition |    M    |          |
+
+<br>
+
 # OID4VC
 
 앱이 직접 다루는 OpenID4VCI(발급)·OpenID4VP(제출)·ISO/IEC 18013-5 근접 제출 계층의 모델이다.
-Wallet에서 읽어오는 것(1–6), 검증자·리더와 주고받는 것(7–11), 발급자와 주고받는 것(12–17)으로
-나뉜다.
+Wallet에서 읽어오는 것(1–6), 검증자·리더와 주고받는 것(7–11), 발급자와 주고받는 것(12–17), 이들이 함께 쓰는
+JSON·JWT 보조 타입(18–20)으로 나뉜다.
 
 매칭 엔진 자체 — credential adapter, `DCQLCredentialMatcher`, `ParsedCredential`, path 헬퍼 — 는
-SDK 내부 조합을 위해 `public`일 뿐 앱이 쓰는 표면이 아니다. 앱은 `WalletAPI.matchCredentials`를
-경유한다.
+SDK 내부 타입이다. 앱은 `WalletAPI.matchCredentials`를 경유한다.
 
 ## 1. CredentialItem
 
@@ -3030,8 +3655,8 @@ public struct SDJWT: Jsonable {
 | parse(raw:)      | `~`로 구분된 SD-JWT 문자열을 분해한다                | 에러를 던지지 않는다. 해석 불가 문자열은 disclosure 없는 크리덴셜 JWT가 된다 |
 | toString()       | `~` 구분 형식으로 다시 직렬화한다                    |          |
 | getSignSource()  | 크리덴셜 JWT의 서명 대상과 서명값을 반환한다          |          |
-| consentItems()   | 홀더에게 동의를 물을 수 있는 모든 클레임을, 각각을 가리키는 코드와 함께, 발급자가 disclosure 를 쓴 순서로 반환한다. 평문으로 둔 클레임은 맨 뒤 | [SdJwtConsentItem](#22-sdjwtconsentitem). 발급자 JWT payload 를 읽을 수 없으면 `MSDKWLT05102` |
-| status()         | 크리덴셜의 폐기 상태가 게시되는 곳. 게시하지 않으면 `nil` | [StatusListReference](#4-statuslistreference). payload 를 읽을 수 없거나 해석할 수 없는 `status` 가 있으면 `MSDKWLT05102` |
+| consentItems()   | 홀더에게 동의를 물을 수 있는 모든 클레임을, 각각을 가리키는 코드와 함께, 발급자가 disclosure 를 쓴 순서로 반환한다. 평문으로 둔 클레임은 맨 뒤 | [SdJwtConsentItem](#22-sdjwtconsentitem). 발급자 JWT payload 를 읽을 수 없으면 `MSDKWLT06102` |
+| status()         | 크리덴셜의 폐기 상태가 게시되는 곳. 게시하지 않으면 `nil` | [StatusListReference](#4-statuslistreference). payload 를 읽을 수 없거나 해석할 수 없는 `status` 가 있으면 `MSDKWLT06102` |
 
 <br>
 
@@ -3047,6 +3672,11 @@ public struct Disclosure: Codable, Equatable, Sendable {
     public let claimName: String?
     public let claimValue: JSON
     public let raw: String?
+
+    public init(salt: String, claimName: String?, claimValue: JSON)
+    public func getDisclosure() -> String
+    public func digest() -> String
+    public static func parse(raw: String) -> Disclosure?
 }
 ```
 
@@ -3057,6 +3687,15 @@ public struct Disclosure: Codable, Equatable, Sendable {
 | claimName  | String | 클레임 이름. 배열 원소 disclosure면 `nil`      | O       |          |
 | claimValue | JSON   | 공개되는 값                                   | M       |          |
 | raw        | String | 발급자의 disclosure 문자열 원본(바이트 단위)   | O       | 코드로 만든 disclosure는 `nil`. digest가 이 바이트 위에서 계산되므로 파싱된 disclosure는 그대로 제출한다 |
+
+### Method
+| Name                             | Description                              | **Note** |
+|----------------------------------|------------------------------------------|----------|
+| init(salt:claimName:claimValue:) | 코드에서 disclosure를 만든다               | `raw`는 `nil`이며 문자열은 필요할 때 직렬화된다. 배열 원소 disclosure면 `claimName`에 `nil` |
+| getDisclosure()                  | base64url 인코딩된 disclosure 문자열        | 파싱된 disclosure는 `raw`를 그대로 반환한다 |
+| digest()                         | `getDisclosure()`의 SHA-256 digest(base64url) | 크리덴셜의 `_sd` 항목이 담는 값 |
+| parse(raw:)                      | base64url 인코딩된 disclosure 문자열을 파싱한다 | 에러를 던지지 않는다. base64url이 아니거나 `[salt, name, value]`·`[salt, value]` 형태의 JSON 배열이 아니면 `nil`. 입력을 `raw`로 보관한다 |
+| ==                               | `salt`·`claimName`·`claimValue`가 같으면 같다 | `raw`는 비교하지 않는다 |
 
 <br>
 
@@ -3132,7 +3771,7 @@ public struct Mdoc: Sendable, Equatable {
 ### Method
 | Name         | Description                                        | **Note** |
 |--------------|----------------------------------------------------|----------|
-| parse(raw:)  | base64url 형태의 `IssuerSigned` 를 디코딩한다        | 올바른 `IssuerSigned` 가 아니면 `MSDKWLT05103` |
+| parse(raw:)  | base64url 형태의 `IssuerSigned` 를 디코딩한다        | 올바른 `IssuerSigned` 가 아니면 `MSDKWLT06103` |
 | toString()   | base64url 인코딩된 `IssuerSigned`. 발급자 바이트 그대로 |          |
 
 <br>
@@ -3280,6 +3919,8 @@ public struct JWS
     public init(from string: String) throws
     public var payloadData: Data { get throws }
     public var protectedHeader: JWSHeader { get throws }
+    public func verify() throws -> Bool
+    public func verify(publicKey: Data) throws -> Bool
 }
 ```
 
@@ -3293,9 +3934,11 @@ public struct JWS
 ### Method
 | Name            | Description                          | **Note** |
 |-----------------|--------------------------------------|----------|
-| init(from:)     | compact JWS를 파싱한다                | 점으로 구분된 세 조각이 아니면 `MSDKWLT05102` |
-| payloadData     | base64url 디코딩된 payload            | payload가 base64url이 아니면 `MSDKWLT05102` |
-| protectedHeader | 디코딩된 protected header             | header가 base64url이 아니거나 JWS 헤더가 아니면 `MSDKWLT05102` |
+| init(from:)     | compact JWS를 파싱한다                | 점으로 구분된 세 조각이 아니면 `MSDKWLT06102` |
+| payloadData     | base64url 디코딩된 payload            | payload가 base64url이 아니면 `MSDKWLT06102` |
+| protectedHeader | 디코딩된 protected header             | header가 base64url이 아니면 `MSDKWLT06102`, JWS 헤더가 아니면(`alg`·`typ` 필수) 디코딩 오류(`DecodingError`) |
+| verify()        | 헤더에 담긴 P-256 공개키(`jwk`)로 서명을 검증한다 | 불일치면 `false`. 헤더에 `jwk`가 없으면 `MSDKWLT06402`, 헤더나 서명이 base64url이 아니면 `MSDKWLT06102`. `kid`만 있는 헤더는 `verify(publicKey:)`를 쓴다 |
+| verify(publicKey:) | 호출자가 넘긴 P-256 공개키(compressed 33, X9.63 65, raw 64 바이트)로 서명을 검증한다 | 불일치면 `false`. 헤더를 읽지 않으므로 키 확인과 `alg` 확인은 호출자 몫이다. 바이트가 P-256 공개키가 아니면 `MSDKWLT11100`, 서명이 base64url이 아니면 `MSDKWLT06102` |
 
 <br>
 
@@ -3417,7 +4060,7 @@ public struct AuthorizationRequest : Jsonable, FromSnake
 | state          | String            | 응답에 그대로 실어 보내는 검증자 state         | M       |          |
 | clientId       | String            | 검증자 식별자. presentation의 audience로 쓰인다 | M      |          |
 | responseType   | String            | OAuth response type                          | M       |          |
-| responseMode   | String            | `direct_post` 또는 `direct_post.jwt`          | M       | 그 외 값은 거부된다 (`MSDKWLT05509`) |
+| responseMode   | String            | `direct_post` 또는 `direct_post.jwt`          | M       | 그 외 값은 거부된다 (`MSDKWLT06509`) |
 | dcqlQuery      | DCQLQuery         | 매칭 대상 크리덴셜 쿼리                        | M       | [DCQLQuery](#8-dcqlquery) |
 | clientMetadata | [String: AnyJSON] | 검증자 메타데이터. `direct_post.jwt`의 응답 암호화 키를 담는다 | M | [AnyJSON](#18-anyjson) |
 | iat            | Int               | 요청 발행 시각                                 | M       |          |
@@ -3452,6 +4095,8 @@ public struct DCQLQuery: Jsonable, FromSnake
 
 ### Description
 `검증자가 요구하는 크리덴셜 한 건.`
+
+코드에서 이 타입은 `DCQLQuery`에 중첩되어 있다(`DCQLQuery.CredentialQuery`).
 
 ### Declaration
 ```swift
@@ -3489,6 +4134,8 @@ public struct CredentialQuery: Jsonable, FromSnake
 ### Description
 `검증자가 요구하는 클레임 한 건. 값에 대한 술어를 함께 걸 수 있다.`
 
+코드에서 이 타입은 `DCQLQuery`에 중첩되어 있다(`DCQLQuery.ClaimQuery`).
+
 ### Declaration
 ```swift
 public struct ClaimQuery: Jsonable, FromSnake
@@ -3502,6 +4149,8 @@ public struct ClaimQuery: Jsonable, FromSnake
     public var value: AnyJSON?
     public var max: AnyJSON?
     public var min: AnyJSON?
+
+    public var addressesAClaim: Bool { get }
 }
 ```
 
@@ -3517,6 +4166,7 @@ public struct ClaimQuery: Jsonable, FromSnake
 | value     | AnyJSON            | 값이 이것과 같아야 한다                   | O       |          |
 | max       | AnyJSON            | 값의 상한                                | O       |          |
 | min       | AnyJSON            | 값의 하한                                | O       |          |
+| addressesAClaim | Bool          | 쿼리가 클레임을 가리키는지 여부 — `path`, 또는 `namespace` + `claimName`으로 | M | 읽기 전용. `false`면 어떤 클레임도 제약하지 않는 쿼리다 |
 
 <br>
 
@@ -3524,6 +4174,8 @@ public struct ClaimQuery: Jsonable, FromSnake
 
 ### Description
 `크리덴셜 쿼리의 발급자 제약 (OpenID4VP 1.0 §6.1.1).`
+
+코드에서 이 타입은 `DCQLQuery`에 중첩되어 있다(`DCQLQuery.TrustedAuthority`).
 
 ### Declaration
 ```swift
@@ -3545,6 +4197,8 @@ public struct TrustedAuthority: Jsonable, FromSnake {
 
 ### Description
 `검증자가 받아들이는 크리덴셜 쿼리 조합.`
+
+코드에서 이 타입은 `DCQLQuery`에 중첩되어 있다(`DCQLQuery.CredentialSet`).
 
 ### Declaration
 ```swift
@@ -3604,6 +4258,8 @@ public struct MatchedCredential
     public let queryId: String
     public let credentialId: String
     public let claimCodes: [String]
+
+    public init(queryId: String, credentialId: String, claimCodes: [String])
 }
 ```
 
@@ -3613,6 +4269,11 @@ public struct MatchedCredential
 | queryId      | String   | 이 매칭이 답하는 DCQL 크리덴셜 쿼리 id     | M       | `dcql_query.credentials[].id` |
 | credentialId | String   | 매칭된 저장 크리덴셜 id                    | M       |          |
 | claimCodes   | [String] | 공개할 클레임. 쿼리가 요구한 클레임이거나, 크리덴셜 전체를 요구했다면 공개 가능한 모든 클레임 | M | 불투명 값이다. 표시·대조에만 쓰고 쪼개거나 조립하지 않는다 |
+
+### Method
+| Name                                   | Description                          | **Note** |
+|----------------------------------------|--------------------------------------|----------|
+| init(queryId:credentialId:claimCodes:) | 매칭 한 건을 만든다. 앱이 목록을 다시 구성할 때 쓴다 | `claimCodes`에는 매칭이 반환한 클레임이 모두 남아 있어야 하며, 빈 목록은 거부된다 |
 
 <br>
 
@@ -3696,8 +4357,8 @@ public enum MdocDeviceAuthMethod: String, Sendable
 ### Property
 | Value           | Description                                                 | **Note** |
 |-----------------|-------------------------------------------------------------|----------|
-| deviceSignature | 문서의 기기 키로 만든 ECDSA 서명                             | 키가 키 합의를 못 하거나 transcript 에 리더 키가 없을 때 |
-| deviceMac       | 리더 임시 키와의 ECDH 로 유도한 `EMacKey` 로 만든 HMAC        | 기기 키가 키 합의를 할 수 있으면 우선 사용 |
+| deviceSignature | 문서의 기기 키로 만든 ECDSA 서명                             | 모든 문서에 사용 |
+| deviceMac       | 리더 임시 키와의 ECDH 로 유도한 `EMacKey` 로 만든 HMAC        | 현재는 만들지 않는다. 타입 유지를 위해 남겨 둔 값 |
 
 <br>
 
@@ -3720,6 +4381,7 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
     public let nonceEndpoint: String?
     public let deferredCredentialEndpoint: String?
     public let notificationEndpoint: String?
+    public let credentialRevocationEndpoint: String?
     public let credentialRequestEncryption: EncryptionSupport?
     public let credentialResponseEncryption: EncryptionSupport?
     public let credentialIdentifiersSupported: Bool?
@@ -3738,6 +4400,7 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 | nonceEndpoint                     | String                            | nonce 엔드포인트                      | O       |          |
 | deferredCredentialEndpoint        | String                            | deferred credential 엔드포인트        | O       |          |
 | notificationEndpoint              | String                            | notification 엔드포인트               | O       |          |
+| credentialRevocationEndpoint      | String                            | credential 폐기 엔드포인트(전체 URL)    | O       | OpenDID 확장. `requestRevokeOID4VC` 에 필수 |
 | credentialRequestEncryption       | EncryptionSupport                 | 발급자가 광고하는 요청 암호화          | O       | [EncryptionSupport](#122-encryptionsupport) |
 | credentialResponseEncryption      | EncryptionSupport                 | 발급자가 광고하는 응답 암호화          | O       | [EncryptionSupport](#122-encryptionsupport) |
 | credentialIdentifiersSupported    | Bool                              | `credential_identifier` 사용 여부     | O       |          |
@@ -3749,6 +4412,8 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
 
 ### Description
 `발급자가 제공하는 크리덴셜 한 종류.`
+
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.CredentialConfiguration`).
 
 ### Declaration
 ```swift
@@ -3786,6 +4451,8 @@ public struct CredentialConfiguration: Jsonable, FromSnake
 ### Description
 `발급자가 광고하는 암호화 — Wallet이 실제로 보내는 것이 아니다.`
 
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.EncryptionSupport`).
+
 ### Declaration
 ```swift
 public struct EncryptionSupport: Jsonable, FromSnake
@@ -3810,6 +4477,8 @@ public struct EncryptionSupport: Jsonable, FromSnake
 ### Description
 `크리덴셜 구성의 발급 정책.`
 
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.CredentialPolicy`).
+
 ### Declaration
 ```swift
 public struct CredentialPolicy: Jsonable, FromSnake
@@ -3832,6 +4501,8 @@ public struct CredentialPolicy: Jsonable, FromSnake
 ### Description
 `크리덴셜 구성의 클레임·표시 정보.`
 
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.CredentialMetadata`).
+
 ### Declaration
 ```swift
 public struct CredentialMetadata: Codable, Sendable {
@@ -3852,6 +4523,8 @@ public struct CredentialMetadata: Codable, Sendable {
 
 ### Description
 `한 로케일에서 크리덴셜 또는 클레임을 표시하는 방법.`
+
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.DisplayInfo`).
 
 ### Declaration
 ```swift
@@ -3881,6 +4554,8 @@ public struct DisplayInfo: Jsonable, FromSnake
 ### Description
 `표시 항목의 로고 이미지.`
 
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.LogoInfo`).
+
 ### Declaration
 ```swift
 public struct LogoInfo: Jsonable, FromSnake
@@ -3903,6 +4578,8 @@ public struct LogoInfo: Jsonable, FromSnake
 ### Description
 `한 proof 타입에 대해 발급자가 허용하는 홀더 proof 알고리즘.`
 
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.ProofSupport`).
+
 ### Declaration
 ```swift
 public struct ProofSupport: Jsonable, FromSnake
@@ -3922,6 +4599,8 @@ public struct ProofSupport: Jsonable, FromSnake
 
 ### Description
 `발급 가능한 크리덴셜의 클레임 한 건. 발급자가 기술한 내용이다.`
+
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.ClaimDetail`).
 
 ### Declaration
 ```swift
@@ -3949,6 +4628,8 @@ public struct ClaimDetail: Jsonable, FromSnake
 ### Description
 `크리덴셜 형식 토큰. 발급자의 원본 문자열을 보존해 그대로 재전송할 수 있다.`
 
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.SupportedFormat`).
+
 ### Declaration
 ```swift
 public enum SupportedFormat: Jsonable, Equatable
@@ -3965,7 +4646,7 @@ public enum SupportedFormat: Jsonable, Equatable
 | Value           | Description                  | **Note**                     |
 |-----------------|------------------------------|------------------------------|
 | sdjwt(String)   | `dc+sd-jwt-did`에서 디코딩    | `rawValue`가 원본 토큰을 반환 |
-| mdoc(String)    | `mso-mdoc-did`에서 디코딩     |                              |
+| mdoc(String)    | `mso_mdoc-did`에서 디코딩     |                              |
 | unknown(String) | 그 밖의 형식 토큰             | 거부하지 않고 보존            |
 
 <br>
@@ -3974,6 +4655,8 @@ public enum SupportedFormat: Jsonable, Equatable
 
 ### Description
 `발급자가 문자열 또는 숫자로 게시할 수 있는 서명 알고리즘 값.`
+
+코드에서 이 타입은 `IssuerMetadataResponse`에 중첩되어 있다(`IssuerMetadataResponse.SigningAlg`).
 
 ### Declaration
 ```swift
@@ -4020,6 +4703,8 @@ public struct CredentialOfferResponse: Jsonable, FromSnake
 ### Description
 `offer가 지원하는 grant 타입.`
 
+코드에서 이 타입은 `CredentialOfferResponse`에 중첩되어 있다(`CredentialOfferResponse.Grants`).
+
 ### Declaration
 ```swift
 public struct Grants: Jsonable
@@ -4042,6 +4727,8 @@ public struct Grants: Jsonable
 ### Description
 `credential offer의 pre-authorized code grant.`
 
+코드에서 이 타입은 `CredentialOfferResponse.Grants`에 중첩되어 있다(`CredentialOfferResponse.Grants.PreAuthorizedCode`).
+
 ### Declaration
 ```swift
 public struct PreAuthorizedCode: Jsonable
@@ -4063,6 +4750,8 @@ public struct PreAuthorizedCode: Jsonable
 
 ### Description
 `발급자가 거래 코드를 요구할 때, 홀더가 어떻게 입력해야 하는지.`
+
+코드에서 이 타입은 `CredentialOfferResponse.Grants.PreAuthorizedCode`에 중첩되어 있다(`CredentialOfferResponse.Grants.PreAuthorizedCode.TxCode`).
 
 ### Declaration
 ```swift
@@ -4087,6 +4776,8 @@ public struct TxCode: Jsonable
 
 ### Description
 `credential offer의 authorization code grant.`
+
+코드에서 이 타입은 `CredentialOfferResponse.Grants`에 중첩되어 있다(`CredentialOfferResponse.Grants.AuthorizationCode`).
 
 ### Declaration
 ```swift
@@ -4259,6 +4950,7 @@ public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
     public var asArray: [AnyJSON]? { get }
     public var asObject: [String: AnyJSON]? { get }
     public func toFoundation() -> Any
+    public static func fromFoundation(_ value: Any) -> AnyJSON?
 }
 ```
 
@@ -4277,6 +4969,103 @@ public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
 |------------------|----------------------------------------------------|----------|
 | asBool / asDouble / asString / asArray / asObject | 해당 case일 때 값을 읽고, 아니면 `nil` | |
 | toFoundation()   | `JSONSerialization`용 Foundation 타입으로 변환      | `null`은 `NSNull()`이 된다 |
+| fromFoundation(_:) | `JSONSerialization`이 반환하는 Foundation JSON 값을 변환 | JSON 타입이 아니면 `nil`. `NSNumber`는 실제 불리언(`CFBoolean`)일 때만 `bool`이 된다. JSON이 아닌 멤버는 배열에서는 빠지고 객체에서는 `null`이 된다 |
+
+<br>
+
+## 19. OrderedStringMap
+
+### Description
+`삽입 순서를 유지하는, 문자열 키 맵.`
+
+순서가 표시 방식이 아니라 값의 일부인 public 시그니처에 쓰인다 — ZKP credential definition의 primary
+public key가 가진 `r` 맵(`CredentialPrimaryPublicKey.r`)이 그렇다. 이 값들은 key-correctness
+challenge를 위해 순서대로 해시된다. Swift `Dictionary`로는 그 순서를 담을 수 없다.
+
+### Declaration
+```swift
+public struct OrderedStringMap<Value>
+{
+    public private(set) var keys: [String]
+
+    public init()
+    public init(_ pairs: [(String, Value)])
+    public subscript(key: String) -> Value? { get set }
+    public var values: [Value] { get }
+    public var count: Int { get }
+    public var isEmpty: Bool { get }
+    public func mapValues<T>(_ transform: (Value) throws -> T) rethrows -> OrderedStringMap<T>
+}
+
+extension OrderedStringMap: Sequence
+{
+    public func makeIterator() -> AnyIterator<(key: String, value: Value)>
+}
+
+extension OrderedStringMap: ExpressibleByDictionaryLiteral
+{
+    public init(dictionaryLiteral elements: (String, Value)...)
+}
+
+extension OrderedStringMap: Equatable where Value: Equatable
+{
+    public static func == (lhs: OrderedStringMap<Value>, rhs: OrderedStringMap<Value>) -> Bool
+}
+
+extension OrderedStringMap: Sendable where Value: Sendable {}
+```
+
+### Property
+| Name    | Type     | Description              | **M/O** | **Note** |
+|---------|----------|--------------------------|---------|----------|
+| keys    | [String] | 삽입 순서대로의 키         | M       | 읽기 전용. 모든 순회가 이 순서를 따른다 |
+| values  | [Value]  | 키 순서대로의 값           | M       |          |
+| count   | Int      | 항목 수                   | M       |          |
+| isEmpty | Bool     | 항목이 없는지 여부          | M       |          |
+
+### Method
+| Name               | Description                                     | **Note** |
+|--------------------|-------------------------------------------------|----------|
+| init()             | 빈 맵을 만든다                                    |          |
+| init(_:)           | 키-값 쌍 목록으로 맵을 만든다. 주어진 순서를 유지한다 | 중복 키는 첫 위치를 유지하고 나중 값을 취한다 |
+| subscript(key:)    | 값을 읽거나 쓴다                                  | 새 키는 끝에 추가되고, 기존 키는 위치를 유지하며, `nil`을 대입하면 항목이 제거된다 |
+| mapValues(_:)      | 순서를 유지한 채 모든 값을 변환한다                   |          |
+| makeIterator()     | `(key, value)` 쌍을 키 순서대로 순회한다             | `Sequence` 준수 |
+| init(dictionaryLiteral:) | 딕셔너리 리터럴로 맵을 만든다                  | 리터럴에 쓴 순서가 맵의 순서가 된다 |
+| ==                 | 같은 항목을 같은 순서로 가지면 같다                   | `Value`가 `Equatable`일 때만 |
+
+<br>
+
+## 20. SimpleJWTDecoder
+
+### Description
+`compact JWT의 header와 payload를 검증 없이 딕셔너리로 해석한다.`
+
+타입이 정해진 `JWS`가 받지 못하는 header — 예를 들어 `JWK.Algorithm`에 없는 `alg` — 를 가진 JWT를 읽는다.
+Status List 토큰이 그 예다. 서명은 검사하지도 반환하지도 않으므로, 필요한 곳에서는 따로 검증한다.
+
+### Declaration
+```swift
+public enum SimpleJWTDecoder {
+    public struct SimpleJWT {
+        public let header: [String: Any]
+        public let payload: [String: Any]
+    }
+
+    public enum JWTError: Error {
+        case invalidFormat
+        case invalidBase64
+        case invalidJSON
+    }
+
+    public static func parse(_ jwt: String) throws -> SimpleJWT
+}
+```
+
+### Method
+| Name      | Description                                    | **Note** |
+|-----------|------------------------------------------------|----------|
+| parse(_:) | JWT를 `.`로 나누어 앞의 두 부분을 디코딩한다      | 두 부분 미만이면 `invalidFormat`, base64url이 아니면 `invalidBase64`, JSON 객체가 아니면 `invalidJSON`을 던진다 |
 
 <br>
 
@@ -4290,7 +5079,7 @@ public enum AnyJSON: Codable, Equatable, Hashable, Sendable {
 ### Declaration
 
 ```cpp
-public struct VerifyAuthType : OptionSet, Sequence, Codable
+public struct VerifyAuthType : OptionSet, Sequence, Codable, Sendable
 {
     public let rawValue: Int
     
@@ -4299,8 +5088,15 @@ public struct VerifyAuthType : OptionSet, Sequence, Codable
     public static let bio  = VerifyAuthType(rawValue: 1 << 2)
     
     public static let and  = VerifyAuthType(rawValue: 1 << 15)
+
+    public func makeIterator() -> AnyIterator<VerifyAuthType>
 }
 ```
+
+### Method
+| Name           | Description                                         | **Note** |
+|----------------|-----------------------------------------------------|----------|
+| makeIterator() | 설정된 플래그를 하위 비트부터 단일 비트 값으로 하나씩 순회한다 | `Sequence` 준수 |
 
 <br>
 
@@ -4312,11 +5108,13 @@ public struct VerifyAuthType : OptionSet, Sequence, Codable
 
 `DID 키 유형`
 
+코드에서 이 타입은 `DIDDocument`에 중첩되어 있다(`DIDDocument.DIDKeyType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible
+public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible, Sendable
 {
     public static var commonString: String
     {
@@ -4337,11 +5135,13 @@ public enum DIDKeyType : String, Codable, AlgorithmTypeConvertible
 
 `서비스 유형`
 
+코드에서 이 타입은 `DIDDocument`에 중첩되어 있다(`DIDDocument.DIDServiceType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum DIDServiceType : String, Codable
+public enum DIDServiceType : String, Codable, Sendable
 {
     case linkedDomains      = "LinkedDomains"
     case credentialRegistry = "CredentialRegistry"
@@ -4359,7 +5159,7 @@ public enum DIDServiceType : String, Codable
 ### Declaration
 
 ```swift
-public enum ProofPurpose : String, Codable
+public enum ProofPurpose : String, Codable, Sendable
 {
     case assertionMethod      = "assertionMethod"
     case authentication       = "authentication"
@@ -4380,7 +5180,7 @@ public enum ProofPurpose : String, Codable
 ### Declaration
 
 ```swift
-public enum ProofType : String, Codable, AlgorithmTypeConvertible
+public enum ProofType : String, Codable, AlgorithmTypeConvertible, Sendable
 {
     public static var commonString: String
     {
@@ -4405,7 +5205,7 @@ public enum ProofType : String, Codable, AlgorithmTypeConvertible
 
 ```swift
 // Declaration in Swift
-public enum AuthType : Int, Codable
+public enum AuthType : Int, Codable, Sendable
 {
     case free = 1
     case pin  = 2
@@ -4421,11 +5221,13 @@ public enum AuthType : Int, Codable
 
 `다중 유형 배열에 대한 증거 열거자`
 
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.Evidence`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum Evidence
+public enum Evidence : Sendable
 {
     case documentVerification(DocumentVerificationEvidence)
 }
@@ -4439,11 +5241,13 @@ public enum Evidence
 
 `존재 유형`
 
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.Presence`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum Presence : String, Codable
+public enum Presence : String, Codable, Sendable
 {
     case physical = "Physical"
     case digital  = "Digital"
@@ -4458,11 +5262,13 @@ public enum Presence : String, Codable
 
 `증거 유형`
 
+코드에서 이 타입은 `VerifiableCredential`에 중첩되어 있다(`VerifiableCredential.EvidenceType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum EvidenceType : String, Codable
+public enum EvidenceType : String, Codable, Sendable
 {
     case documentVerification = "DocumentVerification"
 }
@@ -4480,7 +5286,7 @@ public enum EvidenceType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum ProfileType : String, Codable
+public enum ProfileType : String, Codable, Sendable
 {
     case IssueProfile
     case VerifyProfile
@@ -4496,11 +5302,13 @@ public enum ProfileType : String, Codable
 
 `로고 이미지 유형`
 
+코드에서 이 타입은 `LogoImage`에 중첩되어 있다(`LogoImage.LogoImageType`).
+
 ### Declaration
 
 ```swift
 // Declaration in Swift
-public enum LogoImageType : String, Codable
+public enum LogoImageType : String, Codable, Sendable
 {
     case jpg
     case png
@@ -4519,7 +5327,7 @@ public enum LogoImageType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum ClaimType : String, Codable
+public enum ClaimType : String, Codable, Sendable
 {
     case text
     case image
@@ -4539,7 +5347,7 @@ public enum ClaimType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum ClaimFormat : String, Codable
+public enum ClaimFormat : String, Codable, Sendable
 {
     //text
     case plain
@@ -4569,7 +5377,7 @@ public enum ClaimFormat : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum Location : String, Codable
+public enum Location : String, Codable, Sendable
 {
     case inline
     case remote
@@ -4589,7 +5397,7 @@ public enum Location : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum SymmetricPaddingType : String , Codable
+public enum SymmetricPaddingType : String , Codable, Sendable
 {
     case noPad = "NOPAD"
     case pkcs5 = "PKCS5"
@@ -4608,7 +5416,7 @@ public enum SymmetricPaddingType : String , Codable
 
 ```swift
 // Declaration in Swift
-public enum SymmetricCipherType : String, Codable
+public enum SymmetricCipherType : String, Codable, Sendable
 {
     case aes128CBC = "AES-128-CBC"
     case aes128ECB = "AES-128-ECB"
@@ -4649,7 +5457,7 @@ public enum AlgorithmType : String, Codable
 
 ```swift
 // Declaration in Swift
-public enum CredentialSchemaType : String, Codable
+public enum CredentialSchemaType : String, Codable, Sendable
 {
     case osdSchemaCredential = "OsdSchemaCredential"
 }
@@ -4664,7 +5472,7 @@ public enum CredentialSchemaType : String, Codable
 
 ### Declaration
 ```swift
-public enum OfferTypeEnum: String, Codable {
+public enum OfferTypeEnum: String, Codable, Sendable {
     case IssueOffer
     case VerifyOffer
     case RestoreDidOffer
@@ -4719,9 +5527,10 @@ public enum ServerTokenPurposeEnum: Int, Jsonable {
     case ISSUE_VC = 8
     case REMOVE_VC = 9
     case PRESENT_VP = 10
-    case LIST_VC
-    case DETAIL_VC
-    case CREATE_DID_AND_ISSUE_VC
+    case LIST_VC = 11
+    case DETAIL_VC = 12
+    case CREATE_DID_AND_ISSUE_VC = 13
+    case LIST_VC_AND_PRESENT_VP = 14
 }
 ```
 
@@ -4749,6 +5558,60 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
     case DETAIL_VC                  = 12
     case CREATE_DID_AND_ISSUE_VC    = 13
     case LIST_VC_AND_PRESENT_VP     = 14
+
+    public var value: String { get }
+}
+```
+
+### Property
+| Name  | Type   | Description                                  | **M/O** | **Note** |
+|-------|--------|----------------------------------------------|---------|----------|
+| value | String | 월렛 토큰과 함께 저장되고 토큰 검증 시 비교되는 목적 이름 | M | case 순서대로 `Personalize`, `Depersonalize`, `PersonalizeAndConfigLock`, `ConfigLock`, `CreateDid`, `UpdateDid`, `RestoreDid`, `IssueVc`, `RemoveVc`, `PresentVp`, `ListVc`, `DetailVc`, `CreateDidAndIssueVc`, `ListVcAndPresentVp` |
+
+<br>
+
+## 22. DidDocumentType
+
+### Description
+`월렛이 보관하는 DID 문서 유형의 열거`
+
+`DeviceDidDocument`는 월렛의 기기 DID 문서, `HolderDidDocumnet`(코드 표기 그대로)는 홀더의 DID
+문서다.
+
+### Declaration
+```swift
+public enum DidDocumentType: Int, Jsonable {
+    case DeviceDidDocument = 1
+    case HolderDidDocumnet = 2
+}
+```
+<br>
+
+## 23. PresentModeEnum
+
+### Description
+`VP 제출 방식의 열거`
+
+### Declaration
+```swift
+public enum PresentModeEnum: String, Jsonable {
+    case Direct = "Direct"
+    case Indirect = "Indirect"
+}
+```
+<br>
+
+## 24. VCStatusEnum
+
+### Description
+`VC 상태의 열거`
+
+### Declaration
+```swift
+public enum VCStatusEnum: String, Codable, Sendable {
+    case ACTIVE
+    case INACTIVE
+    case REVOKED
 }
 ```
 <br>
@@ -4765,8 +5628,9 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
 
 ```swift
 // Declaration in Swift
-public protocol Jsonable : Codable
+public protocol Jsonable : Codable, Sendable
 {
+    init(fromMultibase encoded: String) throws
     init(from jsonData: Data) throws
     init(from jsonString: String) throws
     func toJsonData(isPretty: Bool) throws -> Data
@@ -4791,7 +5655,7 @@ public protocol ProofProtocol : Jsonable
     var created : String { get set }
     var verificationMethod : String { get set }
     var proofPurpose : ProofPurpose { get set }
-    var type : ProofType? { get set }
+    var type : ProofType { get set }
     var proofValue : String? { get set }
 }
 ```
@@ -4830,6 +5694,68 @@ public protocol ProofsContainer : Jsonable
 {
     var proof  : Proof? { get set }
     var proofs : [Proof]? { get set }
+}
+```
+
+<br>
+
+## 2.3. VPProofsContainer
+
+### Description
+
+`다중 VP 증명 컨테이너`
+
+[VerifiablePresentation](#3-verifiablepresentation)이 따른다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol VPProofsContainer : Jsonable
+{
+    var proof  : VPProof? { get set }
+    var proofs : [VPProof]? { get set }
+}
+```
+
+<br>
+
+## 2.4. OID4VPProofProtocol
+
+### Description
+
+`OpenID4VP domain과 challenge에 묶이는 증명 프로토콜`
+
+[VPProof](#42-vpproof)와 [OIDV4VPChallenge](#43-oidv4vpchallenge)가 따른다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol OID4VPProofProtocol : Jsonable
+{
+    var domain    : String? { get set }
+    var challenge : String? { get set }
+}
+```
+
+<br>
+
+## 2.5. IssuerProofProtocol
+
+### Description
+
+`서명값 목록을 담는 발급자 증명 프로토콜`
+
+[VCProof](#41-vcproof)가 따른다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol IssuerProofProtocol : Jsonable
+{
+    var proofValueList    : [String]? { get set }
 }
 ```
 
@@ -4897,13 +5823,35 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 
 <br>
 
+## 6. FromSnake
+
+### Description
+
+`Jsonable 타입이 snake_case JSON 키를 쓰게 하는 마커 프로토콜`
+
+`FromSnake`도 따르는 `Jsonable` 타입은 `convertFromSnakeCase`로 디코딩되고 `convertToSnakeCase`로
+인코딩되어, camelCase Swift 프로퍼티가 OpenID4VCI/OpenID4VP 메시지의 snake_case 멤버에 대응된다.
+요구사항은 없다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+public protocol FromSnake {}
+```
+
+<br>
+
 # Property Wrapper
 
 ## 1. @UTCDatetime
 
 ### Description
 
-`TBD`
+`ISO 8601 일시(yyyy-MM-ddTHH:mm:ss, 소수 초와 Z는 선택)만 담을 수 있는 String 프로퍼티`
+
+맞지 않는 문자열로 초기화하거나 대입하면 precondition 실패로 앱이 중단되고, 디코딩 시에는
+`DecodingError.dataCorrupted`를 던진다. 값은 문자열 그대로 인코딩된다.
 
 ### Declaration
 
@@ -4918,7 +5866,10 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 
 ### Description
 
-`TBD`
+`숫자로만 이루어진 DID 문서 버전 ID만 담을 수 있는 String 프로퍼티`
+
+맞지 않는 문자열로 초기화하거나 대입하면 precondition 실패로 앱이 중단되고, 디코딩 시에는
+`DecodingError.dataCorrupted`를 던진다. 값은 문자열 그대로 인코딩된다.
 
 ### Declaration
 
@@ -4930,7 +5881,35 @@ public typealias AlgorithmTypeConvertible = ConvertibleToAlgorithmType & Convert
 
 <br>
 
+## 3. @ValidURL
 
-    
+### Description
 
+`URL만 담을 수 있는 String 프로퍼티`
 
+`URL(string:)`으로 해석되지 않는 문자열로 초기화하거나 대입하면 precondition 실패로 앱이 중단된다.
+디코딩은 더 엄격해서 scheme과 host도 있어야 하며, 없으면 `DecodingError.dataCorrupted`를 던진다.
+값은 문자열 그대로 인코딩된다.
+
+### Declaration
+
+```swift
+// Declaration in Swift
+@propertyWrapper
+public struct ValidURL : Codable
+{
+    public var wrappedValue: String { get set }
+
+    public init(wrappedValue: String)
+    public init(from decoder: Decoder) throws
+    public func encode(to encoder: Encoder) throws
+    public func appendingPath(_ component: String) -> String
+}
+```
+
+### Method
+| Name              | Description                                          | **Note** |
+|-------------------|------------------------------------------------------|----------|
+| appendingPath(_:) | `component`를 path component로 덧붙인 URL을 문자열로 반환한다 |  |
+
+<br>

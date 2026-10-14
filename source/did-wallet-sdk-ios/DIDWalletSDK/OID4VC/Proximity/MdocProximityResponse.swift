@@ -18,6 +18,11 @@
 import Foundation
 
 /// How one document was authenticated.
+///
+/// Every document is currently authenticated with `deviceSignature`. `deviceMac` is kept so the
+/// type stays stable across platforms and releases, but is never produced: a device key that also
+/// signs OpenID4VP presentations must not produce MACs as well (ISO/IEC 18013-5 9.1.3.4 / DIS
+/// 12.4.4 — one mdoc authentication key does not produce both during its lifetime).
 public enum MdocDeviceAuthMethod: String, Sendable
 {
     case deviceSignature
@@ -48,30 +53,8 @@ public struct MdocDeviceResponse
 /// implementation is wired in at the API layer.
 protocol MdocDeviceKeyOperations
 {
-    /// Whether this document's device key can perform ECDH at all.
-    ///
-    /// Asked of the key, not of the OS version: a key created before key agreement was requested
-    /// cannot do it however new the device is.
-    func canKeyAgree(credentialId: String) throws -> Bool
-
-    /// The raw ECDH output with the reader's ephemeral public key. No KDF is applied.
-    ///
-    /// - Throws: `MdocDeviceKeyError.keyAgreementUnsupported` when the key turns out not to do key
-    ///   agreement after all. Any other error means something else went wrong and is not a reason
-    ///   to fall back.
-    func keyAgreement(credentialId: String, readerPublicKey: [UInt8]) throws -> [UInt8]
-
     /// Signs a digest with the document's device key, returning the raw 65-byte compact signature.
     func sign(credentialId: String, digest: Data) throws -> Data
-}
-
-/// Errors the key operations raise that the builder interprets rather than propagates.
-enum MdocDeviceKeyError: Error
-{
-    /// The key cannot do ECDH. The only condition that makes the MAC path fall back to a signature:
-    /// a cancelled prompt or a missing key would fail the signature the same way, and an internal
-    /// failure would be hidden by falling back.
-    case keyAgreementUnsupported
 }
 
 /// Assembles a `DeviceResponse` from what the holder agreed to.
@@ -204,9 +187,8 @@ enum MdocProximityResponseBuilder
                                                           claimCodes: element.claimCodes)
             let issuerSigned = try MdocPresenter.issuerSignedStructure(mdoc: mdoc, selected: items)
 
-            // One decision, one computation per document: the same credential used for two
-            // requests authenticates identically, and `authMethods` could not describe it
-            // otherwise.
+            // One computation per document: the same credential used for two requests
+            // authenticates identically, and the key is asked to sign only once.
             let authStructure: CBOR
             if let cached = deviceAuthByCredential[element.credentialId]
             {
@@ -251,7 +233,12 @@ enum MdocProximityResponseBuilder
         return "\(docRequestIndex)\u{0}\(credentialId)"
     }
 
-    /// Decides the method for one document and produces its `DeviceAuth`.
+    /// Produces one document's `DeviceAuth`.
+    ///
+    /// Always `deviceSignature`. The device key also signs this document's OpenID4VP
+    /// presentations, and a single mdoc authentication key must not produce both MACs and
+    /// signatures during its lifetime (ISO/IEC 18013-5 9.1.3.4 / DIS 12.4.4), so a MAC here would
+    /// break that the first time the same credential is presented online.
     private static func makeDeviceAuth(credentialId: String,
                                        docType: String,
                                        transcript: SessionTranscriptInput,
@@ -262,32 +249,6 @@ enum MdocProximityResponseBuilder
             MdocDeviceAuth.deviceAuthentication(sessionTranscript: transcript.sessionTranscript,
                                                 docType: docType,
                                                 deviceNameSpacesBytes: emptyDeviceNameSpacesBytes))
-
-        // No reader ephemeral key means no shared secret to MAC with. Not reachable over device
-        // retrieval, where a session always carries one, but it is over the paths that reuse this
-        // API with a transcript built without one.
-        if let readerPublicKey = transcript.readerPublicKey,
-           try keys.canKeyAgree(credentialId: credentialId)
-        {
-            do
-            {
-                let sharedSecret = try keys.keyAgreement(credentialId: credentialId,
-                                                         readerPublicKey: readerPublicKey)
-                let emacKey = MdocDeviceAuth.emacKey(
-                    sharedSecret: sharedSecret,
-                    sessionTranscriptBytes: transcript.sessionTranscriptBytes)
-                let structure = MdocDeviceAuth.macStructure(
-                    deviceAuthenticationBytes: deviceAuthenticationBytes)
-                let tag = MdocDeviceAuth.mac(macStructure: structure, emacKey: emacKey)
-
-                return (.map(["deviceMac": MdocDeviceAuth.deviceMac(tag: tag)]), .deviceMac)
-            }
-            catch MdocDeviceKeyError.keyAgreementUnsupported
-            {
-                // The pre-check said yes and the operation said no. Falling back beats failing the
-                // whole submission, and the reader verifies either form.
-            }
-        }
 
         let signature = try deviceSignature(credentialId: credentialId,
                                             deviceAuthenticationBytes: deviceAuthenticationBytes,
@@ -319,32 +280,20 @@ enum MdocProximityResponseBuilder
     }
 }
 
-/// The transcript in the two forms the response needs, taken from whichever form the caller had.
+/// The bare `SessionTranscript` array, taken from whichever form the caller had.
 ///
 /// The transport SDK derives its session keys over `SessionTranscriptBytes`, so that is what it
 /// hands on; a caller that built the transcript itself may hold the bare `SessionTranscript`
 /// array instead. Both are accepted, and neither is re-encoded: `bstr .cbor` preserves the bytes
-/// it wraps, so the array inside `SessionTranscriptBytes` is exactly what the reader hashed, and
-/// wrapping the bare array in a minimal tag-24 header reproduces `SessionTranscriptBytes`.
-///
-/// The two forms go to different places. `DeviceAuthentication` embeds the bare array as its
-/// second element; the `EMacKey` salt is taken over the tag-24 form (ISO/IEC 18013-5 9.1.3.5 /
-/// DIS 12.4.5, with `SessionTranscriptBytes` defined in 9.1.5.1 / DIS 12.7.1).
+/// it wraps, so the array inside `SessionTranscriptBytes` is exactly what the reader hashed.
+/// `DeviceAuthentication` embeds that array as its second element.
 struct SessionTranscriptInput
 {
     /// `SessionTranscript`, the bare three-element array, spliced into `DeviceAuthentication`.
     let sessionTranscript: [UInt8]
 
-    /// `SessionTranscriptBytes`, the tag-24 wrapped form the `EMacKey` salt is taken over.
-    let sessionTranscriptBytes: [UInt8]
-
-    /// The reader's ephemeral public point from `EReaderKeyBytes`, or nil where the transcript
-    /// carries none.
-    let readerPublicKey: [UInt8]?
-
     init(_ received: [UInt8]) throws
     {
-        let parts: [CBOR]
         switch try? CBOR.decode(received)
         {
         case let .tagged(tag, .byteString(inner))? where tag.rawValue == 24:
@@ -354,47 +303,14 @@ struct SessionTranscriptInput
                 throw OID4VCManagerError.invalidSessionTranscript(
                     detail: "SessionTranscriptBytes does not wrap a three-element array").getError()
             }
-            parts = innerParts
             sessionTranscript = inner
-            sessionTranscriptBytes = received
 
         case let .array(receivedParts)? where receivedParts.count == 3:
-            parts = receivedParts
             sessionTranscript = received
-            sessionTranscriptBytes = CBOR.tagged(CBOR.Tag(rawValue: 24),
-                                                 .byteString(received)).encode()
 
         default:
             throw OID4VCManagerError.invalidSessionTranscript(
                 detail: "neither SessionTranscriptBytes nor a three-element array").getError()
         }
-
-        readerPublicKey = try Self.readerPublicKey(eReaderKeyBytes: parts[1])
-    }
-
-    /// Reads `EReaderKeyBytes` and returns the reader's public point.
-    private static func readerPublicKey(eReaderKeyBytes: CBOR) throws -> [UInt8]?
-    {
-        if case .null = eReaderKeyBytes { return nil }
-
-        guard case let .tagged(tag, payload) = eReaderKeyBytes,
-              tag.rawValue == 24,
-              case let .byteString(coseKeyBytes) = payload,
-              case let .map(coseKey)? = try? CBOR.decode(coseKeyBytes)
-        else
-        {
-            throw OID4VCManagerError.invalidSessionTranscript(
-                detail: "EReaderKeyBytes is not an embedded COSE_Key").getError()
-        }
-        guard case let .byteString(x)? = coseKey[.negativeInt(1)],      // label -2
-              case let .byteString(y)? = coseKey[.negativeInt(2)],      // label -3
-              x.count == 32, y.count == 32
-        else
-        {
-            throw OID4VCManagerError.invalidSessionTranscript(
-                detail: "EReaderKey is not a P-256 public key").getError()
-        }
-
-        return [0x04] + x + y
     }
 }

@@ -83,7 +83,7 @@ public struct UtilityError: Error {
 | MSDKUTL00200    | Fail to convert public key to external representation. error : {detail error} | Public key conversion failed  | Depend on detail error cases |
 | MSDKUTL00201    | Fail to convert private key to external representation. error : {detail error} | Private key conversion failed | Depend on detail error cases     |
 | MSDKUTL00202    | Fail to convert private key to object. error : {detail error}     | Private key object conversion failed   | Depend on detail error cases      |
-| MSDKUTL00203    | Fail to convert public key to object : {detail error}      | Public key object conversion failed    | Depend on detail error cases       |
+| MSDKUTL00203    | Fail to convert public key to object. error : {detail error} | Public key object conversion failed    | Depend on detail error cases       |
 | MSDKUTL00300    | Fail to encrypt using AES                          | AES encryption failure                 | Verify AES encryption implementation   |
 | MSDKUTL00301    | Fail to decrypt using AES                          | AES decryption failure                 | Verify AES decryption implementation   |
 | MSDKUTL00900    | Unsupported ECType : {name}                        | Unsupported elliptic curve type        | Use a supported EC type                |
@@ -95,6 +95,6 @@ public struct UtilityError: Error {
 | Error Code      | Error Message                         | Description                         | Action Required                   |
 |-----------------|---------------------------------------|-------------------------------------|-----------------------------------|
 | MSDKUTL01100    | Fail to decode                        | Decoding process failed             | Verify encoding and input format  |
-| MSDKUTL01900    | Unsupported encoding type : {name}    | Unsupported encoding type specified | Use a supported encoding type     |
+| MSDKUTL01900    | Unsupported encoding type. prefix : {prefix} | Unsupported encoding type specified | Use a supported encoding type     |
 
 <br>

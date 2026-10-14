@@ -395,32 +395,6 @@ class WalletService: WalletServiceImpl {
         /// Shared by every key use of this submission, so one confirmation covers them all.
         let context: LAContext
 
-        func canKeyAgree(credentialId: String) throws -> Bool
-        {
-            guard let keyId = keyIds[credentialId] else { return false }
-            return try walletCore.canKeyAgree(keyId: keyId)
-        }
-
-        func keyAgreement(credentialId: String, readerPublicKey: [UInt8]) throws -> [UInt8]
-        {
-            guard let keyId = keyIds[credentialId]
-            else { throw OID4VCManagerError.holderKeyNotFound.getError() }
-            do
-            {
-                return [UInt8](try walletCore.keyAgreement(keyId: keyId,
-                                                            pin: passcode?.data(using: .utf8),
-                                                            publicKey: Data(readerPublicKey),
-                                                            context: context))
-            }
-            catch let error as WalletCoreError
-                where error.code == SecureEnclaveError.keyAgreementUnsupported.getError().code
-            {
-                // The key cannot do ECDH after all: the one failure the builder may answer with a
-                // signature instead.
-                throw MdocDeviceKeyError.keyAgreementUnsupported
-            }
-        }
-
         func sign(credentialId: String, digest: Data) throws -> Data
         {
             guard let keyId = keyIds[credentialId]
@@ -1368,6 +1342,84 @@ extension WalletService
         _ = try walletCore.addOID4VCICredential(credential: credential)
 
         return credential.id
+    }
+}
+
+extension WalletService
+{
+    /// Revokes a stored OID4VCI credential at its issuer. See `WalletAPI.requestRevokeOID4VC`.
+    public func requestRevokeOID4VC(metadata: IssuerMetadataResponse,
+                                    vcId: String,
+                                    passcode: String?) async throws
+    {
+        guard !vcId.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("vcId").getError()
+        }
+        guard let nonceEndpoint = metadata.nonceEndpoint, !nonceEndpoint.isEmpty else {
+            throw WalletAPIError.verifyParameterFail("metadata.nonceEndpoint").getError()
+        }
+        guard let revocationEndpoint = metadata.credentialRevocationEndpoint,
+              !revocationEndpoint.isEmpty
+        else {
+            throw WalletAPIError.verifyParameterFail("metadata.credentialRevocationEndpoint").getError()
+        }
+
+        guard let item = try walletCore.getOID4VCICredentials(ids: [vcId]).first(where: { $0.id == vcId })
+        else { throw OID4VCManagerError.credentialNotFound.getError() }
+
+        let keyId: String
+        let status: StatusListReference?
+        switch item
+        {
+        case let sdJwt as SdJwtCredentialItem:
+            keyId = sdJwt.kid
+            status = try sdJwt.sdjwt.status()
+        case let mdoc as MdocCredentialItem:
+            keyId = mdoc.kid
+            status = mdoc.mdoc.status
+        default:
+            throw OID4VCManagerError.unsupportedFormat(format: item.format.token).getError()
+        }
+        guard let status else {
+            throw WalletAPIError.verifyParameterFail("credential status").getError()
+        }
+
+        // The issuer resolves `kid` against the holder DID Document, so it has to name one of that
+        // document's authentication methods — the key the credential is bound to always is one.
+        let holderDidDoc = try walletCore.getDidDocument(type: .HolderDidDocumnet)
+        guard try walletCore.isSavedKey(keyId: keyId),
+              holderDidDoc.authentication?.contains(keyId) == true
+        else { throw OID4VCManagerError.holderKeyNotFound.getError() }
+        let kid = holderDidDoc.id + "?versionId=" + holderDidDoc.versionId + "#" + keyId
+
+        let cNonce: CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
+
+        let token = try CredentialRevocationToken.create(
+            holderDid: holderDidDoc.id,
+            kid: kid,
+            nonce: cNonce.cNonce,
+            status: status,
+            signDigest: { digest in
+                try self.walletCore.sign(keyId: keyId,
+                                         pin: passcode?.data(using: .utf8),
+                                         data: digest,
+                                         type: .HolderDidDocumnet)
+            })
+
+        // Success is the status code alone: the issuer answers 200 for a credential that was
+        // already revoked as well, and there is nothing in the body the wallet acts on.
+        let (responseData, statusCode) = try await CommunicationClient.sendRequest(
+            urlString: revocationEndpoint,
+            requestJsonData: try CredentialRevocationRequest(revocationToken: token).toJsonData())
+        guard statusCode == 200
+        else
+        {
+            if let errorString = String(data: responseData, encoding: .utf8)
+            {
+                throw CommunicationAPIError.serverFail(errorString).getError()
+            }
+            throw CommunicationAPIError.unknown.getError()
+        }
     }
 }
 

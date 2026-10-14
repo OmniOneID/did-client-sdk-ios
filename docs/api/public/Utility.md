@@ -292,7 +292,7 @@ let cipher: Data = ...
 let encrypted = try CryptoUtils.decrypt(cipher: cipher, info: info, key: key, iv: iv)
 ```
 
-## MultibaseUitls
+## MultibaseUtils
 
 <br>
 
@@ -588,6 +588,8 @@ public struct CipherInfo {
     public var mode: EncryptionMode
     public var size: SymmetricKeySize
     public var padding: SymmetricPaddingType
+
+    public init(cipherType: SymmetricCipherType, padding: SymmetricPaddingType)
 }
 ```
 

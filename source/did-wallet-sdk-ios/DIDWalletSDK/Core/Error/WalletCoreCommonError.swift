@@ -23,7 +23,7 @@ enum WalletCoreCommonError: WalletCoreErrorProcotol {
         case vcManager       = "02"
         case secureEncryptor = "03"
         case zkpManager      = "04"
-        case oid4vcManager   = "05"
+        case oid4vcManager   = "06"
 
         case storageMaanger  = "10"
         case signable        = "11"

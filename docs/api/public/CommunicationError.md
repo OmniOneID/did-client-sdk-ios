@@ -31,7 +31,7 @@ iOS CommunicationError
 
 # Table of Contents
 
-- [CommunicationError](#Communicationerror)
+- [CommunicationError](#communicationerror)
   - [Error Code](#error-code)
 
 
@@ -62,7 +62,7 @@ public struct CommunicationSDKError: Error {
 
 | Error Code      | Error Message            | Description      | Action Required  |
 |-----------------|--------------------------|------------------|------------------|
-| MSDKCMM00000    | unknown                   |                  |                  |
+| MSDKCMM00000    | unknown error            |                  |                  |
 | MSDKCMM00001    | incorrect url connection |                  |                  |
 | MSDKCMM00002    | invaild parameter        |                  |                  |
 | MSDKCMM00003    | server error/ message    |                  |                  |

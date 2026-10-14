@@ -68,6 +68,8 @@
 		AAAA03C2000000000000E365 /* MdocProximityRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03C1000000000000E365 /* MdocProximityRequest.swift */; };
 		AAAA03D2000000000000E365 /* MdocProximityResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03D1000000000000E365 /* MdocProximityResponse.swift */; };
 		AAAA03B1000000000000E365 /* MdocDeviceAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03B0000000000000E365 /* MdocDeviceAuth.swift */; };
+		AAAA03E1000000000000E365 /* CredentialRevocationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03E0000000000000E365 /* CredentialRevocationToken.swift */; };
+		AAAA03E3000000000000E365 /* CredentialRevocationTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA03E2000000000000E365 /* CredentialRevocationTokenTests.swift */; };
 		AAAA0313000000000000E365 /* MdocCredentialAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0312000000000000E365 /* MdocCredentialAdapter.swift */; };
 		AAAA0305000000000000E365 /* COSE.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0304000000000000E365 /* COSE.swift */; };
 		AAAA0201000000000000E365 /* CBOR.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0200000000000000E365 /* CBOR.swift */; };
@@ -147,7 +149,6 @@
 		AAAA0351000000000000E365 /* OrderedStringMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0350000000000000E365 /* OrderedStringMapTests.swift */; };
 		AAAA0353000000000000E365 /* ChallengeOrderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0352000000000000E365 /* ChallengeOrderTests.swift */; };
 		C90D3C232DAFAC0800292BFD /* DataModelEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */; };
-		C90D3C252DAFAF6200292BFD /* OptionSet+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */; };
 		C91A34182F88DC7000F20388 /* DCQLPathProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34152F88DC7000F20388 /* DCQLPathProcessor.swift */; };
 		C91A34192F88DC7000F20388 /* DCQLQueryValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34172F88DC7000F20388 /* DCQLQueryValidator.swift */; };
 		C91A341A2F88DC7000F20388 /* DCQLQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91A34162F88DC7000F20388 /* DCQLQuery.swift */; };
@@ -396,6 +397,8 @@
 		AAAA03C1000000000000E365 /* MdocProximityRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocProximityRequest.swift; sourceTree = "<group>"; };
 		AAAA03D1000000000000E365 /* MdocProximityResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocProximityResponse.swift; sourceTree = "<group>"; };
 		AAAA03B0000000000000E365 /* MdocDeviceAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocDeviceAuth.swift; sourceTree = "<group>"; };
+		AAAA03E0000000000000E365 /* CredentialRevocationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialRevocationToken.swift; sourceTree = "<group>"; };
+		AAAA03E2000000000000E365 /* CredentialRevocationTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialRevocationTokenTests.swift; sourceTree = "<group>"; };
 		AAAA0312000000000000E365 /* MdocCredentialAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdocCredentialAdapter.swift; sourceTree = "<group>"; };
 		AAAA0304000000000000E365 /* COSE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = COSE.swift; sourceTree = "<group>"; };
 		AAAA0200000000000000E365 /* CBOR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOR.swift; sourceTree = "<group>"; };
@@ -477,7 +480,6 @@
 		AAAA0350000000000000E365 /* OrderedStringMapTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedStringMapTests.swift; sourceTree = "<group>"; };
 		AAAA0352000000000000E365 /* ChallengeOrderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChallengeOrderTests.swift; sourceTree = "<group>"; };
 		C90D3C222DAFAC0800292BFD /* DataModelEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModelEnums.swift; sourceTree = "<group>"; };
-		C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OptionSet+Extension.swift"; sourceTree = "<group>"; };
 		C91A34142F88DC7000F20388 /* DCQLCredentialMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLCredentialMatcher.swift; sourceTree = "<group>"; };
 		C91A34152F88DC7000F20388 /* DCQLPathProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLPathProcessor.swift; sourceTree = "<group>"; };
 		C91A34162F88DC7000F20388 /* DCQLQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCQLQuery.swift; sourceTree = "<group>"; };
@@ -987,6 +989,7 @@
 				AAAA0304000000000000E365 /* COSE.swift */,
 				AAAA0322000000000000E365 /* JWKThumbprint.swift */,
 				AAAA03B0000000000000E365 /* MdocDeviceAuth.swift */,
+				AAAA03E0000000000000E365 /* CredentialRevocationToken.swift */,
 				C91A341D2F88DCAB00F20388 /* AnyJSON.swift */,
 				AAAA0046000000000000E365 /* OID4VPResponseUtil.swift */,
 			);
@@ -1067,6 +1070,7 @@
 				AAAA03C3000000000000E365 /* MdocProximityRequestTests.swift */,
 				AAAA03D3000000000000E365 /* MdocProximityResponseTests.swift */,
 				AAAA03B2000000000000E365 /* MdocDeviceAuthTests.swift */,
+				AAAA03E2000000000000E365 /* CredentialRevocationTokenTests.swift */,
 				AAAA030A000000000000E365 /* Fixtures */,
 			);
 			path = OID4VC;
@@ -1173,7 +1177,6 @@
 			isa = PBXGroup;
 			children = (
 				C91A342D2F88E55500F20388 /* JSON+Extension.swift */,
-				C90D3C242DAFAF5500292BFD /* OptionSet+Extension.swift */,
 				C9EB19B32DB760A600D152EE /* BigInt+String.swift */,
 				C90D3B922DAF909C00292BFD /* Digest+Extension.swift */,
 				C9CF5DCF2DAF7BF30078DFFA /* String+Extension.swift */,
@@ -1738,6 +1741,7 @@
 				AAAA03C2000000000000E365 /* MdocProximityRequest.swift in Sources */,
 				AAAA03D2000000000000E365 /* MdocProximityResponse.swift in Sources */,
 				AAAA03B1000000000000E365 /* MdocDeviceAuth.swift in Sources */,
+				AAAA03E1000000000000E365 /* CredentialRevocationToken.swift in Sources */,
 				AAAA0313000000000000E365 /* MdocCredentialAdapter.swift in Sources */,
 				AAAA0305000000000000E365 /* COSE.swift in Sources */,
 				AAAA0051000000000000E365 /* OID4VCIIssuerList.swift in Sources */,
@@ -1753,7 +1757,6 @@
 				C98D25F62DB09DF700B2E84D /* DIDManagerDataModel.swift in Sources */,
 				C98D25F72DB09DF700B2E84D /* KeyManager.swift in Sources */,
 				C9CF5DC82DAF7BDF0078DFFA /* UtilityCommonError.swift in Sources */,
-				C90D3C252DAFAF6200292BFD /* OptionSet+Extension.swift in Sources */,
 				C9CF5DC92DAF7BDF0078DFFA /* Base58BTC.swift in Sources */,
 				C9CF5DCA2DAF7BDF0078DFFA /* UtilityDataModels.swift in Sources */,
 				C98D82A82FA0811600AF5BC2 /* CNonce.swift in Sources */,
@@ -1912,6 +1915,7 @@
 				AAAA03C4000000000000E365 /* MdocProximityRequestTests.swift in Sources */,
 				AAAA03D4000000000000E365 /* MdocProximityResponseTests.swift in Sources */,
 				AAAA03B3000000000000E365 /* MdocDeviceAuthTests.swift in Sources */,
+				AAAA03E3000000000000E365 /* CredentialRevocationTokenTests.swift in Sources */,
 				AAAA0309000000000000E365 /* MdocFixtures.swift in Sources */,
 				7CDED8002C7830ED009CE791 /* WalletCoreMock.swift in Sources */,
 			);
@@ -2160,7 +2164,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 3.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = org.omnione.did.sdk.wallet;
@@ -2197,7 +2201,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 3.0.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = org.omnione.did.sdk.wallet;

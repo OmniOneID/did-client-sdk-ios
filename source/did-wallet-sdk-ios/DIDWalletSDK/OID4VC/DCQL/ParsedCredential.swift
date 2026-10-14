@@ -19,7 +19,7 @@ import Foundation
 
 /// A format-agnostic representation of a parsed credential, used as the unified input to
 /// DCQL matching regardless of the original credential format (SD-JWT, opendid_vc, mdoc).
-public class ParsedCredential {
+class ParsedCredential {
 
     /// The credential format identifier (e.g., "dc+sd-jwt-did", "opendid_vc", "mso_mdoc-did").
     public let format: String

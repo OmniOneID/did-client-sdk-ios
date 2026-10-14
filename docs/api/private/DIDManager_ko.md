@@ -210,7 +210,7 @@ try didManager.createDocument(did: did, keyInfos: keyInfos, controller: nil, ser
 
 ```swift
 // Declaration in Swift
-public func getDocument() throws -> DIDDocument
+func getDocument() throws -> DIDDocument
 ```
 
 ### Parameters
@@ -574,7 +574,7 @@ try didManager.resetChanges()
 
 ```swift
 // Declaration in Swift
-public struct DIDMethodType : OptionSet
+public struct DIDMethodType : OptionSet, Sendable
 {
     public let rawValue: Int
     
@@ -623,16 +623,16 @@ public struct DIDKeyInfo {
 ### Description
 
 `DID 문서 객체. Data Model SDK에서 제공.` <br>
-cf. [DIDDocument 원본 링크](#목차) <!-- 수정필요 -->
+cf. [DIDDocument 원본 링크](../public/DataModel_ko.md#1-diddocument)
 
 ## 3. DIDDocument.Service
 
 `DID 문서의 service 객체. Data Model SDK에서 제공.` <br>
-cf. [DIDDocument.Service 원본 링크](#목차) <!-- 수정필요 -->
+cf. [DIDDocument.Service 원본 링크](../public/DataModel_ko.md#12-service)
 
 ## 4. KeyInfo
 
 ### Description
 
 `KeyManager에서 조회한 키 정보 객체.` <br>
-cf. [KeyInfo 원본 링크](#목차) <!-- 수정필요 -->
+cf. [KeyInfo 원본 링크](KeyManager_ko.md#3-keyinfo)

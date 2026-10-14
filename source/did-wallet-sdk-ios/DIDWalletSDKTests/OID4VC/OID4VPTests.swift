@@ -146,7 +146,7 @@ final class OID4VPTests: XCTestCase {
         XCTAssertThrowsError(
             try DCQLCredentialMatcher.matchCredentials(authRequest: request, credentials: [vc])
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06502" else {
                 return XCTFail("expected noEligibleCredentials, got \(error)")
             }
         }
@@ -296,7 +296,7 @@ final class OID4VPTests: XCTestCase {
             authRequest: try authRequest(dcqlCredentialsJSON: creds),
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else { return XCTFail("got \(error)") }
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06502" else { return XCTFail("got \(error)") }
         }
     }
 
@@ -350,7 +350,7 @@ final class OID4VPTests: XCTestCase {
             authRequest: try authRequest(dcqlCredentialsJSON: notMatching),
             credentials: [vc]
         )) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06502" else {
                 return XCTFail("expected noMatchedCredentials, got \(error)")
             }
         }
@@ -391,7 +391,7 @@ final class OID4VPTests: XCTestCase {
             authRequest: try authRequest(dcqlCredentialsJSON: badCreds),
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05502" else { return XCTFail("got \(error)") }
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06502" else { return XCTFail("got \(error)") }
         }
     }
 
@@ -512,7 +512,7 @@ final class OID4VPTests: XCTestCase {
             authRequest: request,
             sdJwtCredentials: [makeSdJwtItem(id: "c1", rawSdJwt: sdjwt)]
         )) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05503" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06503" else {
                 return XCTFail("expected credentialSetsNotSatisfied, got \(error)")
             }
         }
@@ -609,7 +609,7 @@ final class OID4VPTests: XCTestCase {
         XCTAssertThrowsError(
             try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05507" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06507" else {
                 return XCTFail("expected unsupportedResponseEncryption, got \(error)")
             }
         }
@@ -651,7 +651,7 @@ final class OID4VPTests: XCTestCase {
         XCTAssertThrowsError(
             try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05507" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06507" else {
                 return XCTFail("expected unsupportedResponseEncryption, got \(error)")
             }
         }
@@ -672,7 +672,7 @@ final class OID4VPTests: XCTestCase {
         XCTAssertThrowsError(
             try OID4VPResponseUtil.parseResponseEncryption(from: request.clientMetadata)
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05506" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06506" else {
                 return XCTFail("expected missingVerifierEncryptionKey, got \(error)")
             }
         }
@@ -694,7 +694,7 @@ final class OID4VPTests: XCTestCase {
     }
 
     private func assertSelectionThrows(_ selection: [MatchedCredential],
-                                       code: String = "MSDKWLT05508",
+                                       code: String = "MSDKWLT06508",
                                        _ message: String,
                                        file: StaticString = #filePath, line: UInt = #line) throws {
         let request = try selectionRequest()
@@ -767,7 +767,7 @@ final class OID4VPTests: XCTestCase {
                                                         dcqlQuery: request.dcqlQuery),
             "a selection dropping a claim of an unconstrained query was accepted"
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06508" else {
                 return XCTFail("expected invalidSelectedCredentials, got \(error)")
             }
         }
@@ -838,7 +838,7 @@ final class OID4VPTests: XCTestCase {
                                                         against: selectionMatched,
                                                         dcqlQuery: request.dcqlQuery)
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05503" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06503" else {
                 return XCTFail("expected credentialSetsNotSatisfied, got \(error)")
             }
         }
@@ -861,7 +861,7 @@ final class OID4VPTests: XCTestCase {
                                              holderJwk: holderJwk,
                                              signDigest: { _ in Data(repeating: 0, count: 65) })
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06508" else {
                 return XCTFail("expected invalidSelectedCredentials, got \(error)")
             }
         }
@@ -875,7 +875,7 @@ final class OID4VPTests: XCTestCase {
                                                iss: "https://issuer.example",
                                                disclosures: [("s1", "family_name", "Kim")]))
         XCTAssertThrowsError(try vpToken(sdjwt: sdjwt, claimCodes: [])) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06508" else {
                 return XCTFail("expected invalidSelectedCredentials, got \(error)")
             }
         }
@@ -950,7 +950,7 @@ final class OID4VPTests: XCTestCase {
         let sdjwt = SDJWT.parse(raw: makeNestedSDJWT().raw)
 
         XCTAssertThrowsError(try vpToken(sdjwt: sdjwt, claimCodes: ["address.country"])) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06508" else {
                 return XCTFail("expected invalidSelectedCredentials, got \(error)")
             }
         }
@@ -1060,7 +1060,7 @@ final class OID4VPTests: XCTestCase {
                        "the colliding code is still listed once")
 
         XCTAssertThrowsError(try vpToken(sdjwt: SDJWT.parse(raw: raw), claimCodes: codes)) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05508" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06508" else {
                 return XCTFail("expected invalidSelectedCredentials, got \(error)")
             }
         }
@@ -1147,7 +1147,7 @@ final class OID4VPTests: XCTestCase {
             try OID4VPResponseUtil.encodeResponseBody(authRequest: request,
                                                       vpToken: ["id_card": [.string("ey.token")]])
         ) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05509" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06509" else {
                 return XCTFail("expected unsupportedResponseMode, got \(error)")
             }
         }

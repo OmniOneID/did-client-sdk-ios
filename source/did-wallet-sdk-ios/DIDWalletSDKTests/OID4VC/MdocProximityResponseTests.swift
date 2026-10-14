@@ -63,32 +63,39 @@ final class MdocProximityResponseTests: XCTestCase
     /// Key operations with no Secure Enclave behind them.
     private final class StubKeys: MdocDeviceKeyOperations
     {
-        var canAgree = true
-        /// Credentials whose key does not do ECDH, so one response can carry both methods.
-        var cannotAgree: Set<String> = []
-        var agreementError: Error?
-        /// The `zab` of the shared session-key vector, so the derivation is exercised on real input.
-        var sharedSecret = hexBytes("a95137b042ccb44b378c7c0c9182164fc1b54afc9c6e154ca77958ddd681bd34")
-        private(set) var agreementCalls: [String] = []
+        var signError: Error?
         private(set) var signCalls: [String] = []
-
-        func canKeyAgree(credentialId: String) throws -> Bool
-        {
-            return canAgree && !cannotAgree.contains(credentialId)
-        }
-
-        func keyAgreement(credentialId: String, readerPublicKey: [UInt8]) throws -> [UInt8]
-        {
-            agreementCalls.append(credentialId)
-            if let agreementError { throw agreementError }
-            return sharedSecret
-        }
+        private(set) var signedDigests: [Data] = []
 
         func sign(credentialId: String, digest: Data) throws -> Data
         {
             signCalls.append(credentialId)
+            if let signError { throw signError }
+            signedDigests.append(digest)
             return Data([0x00] + [UInt8](repeating: 0x11, count: 64))
         }
+    }
+
+    /// The `zab` of the shared session-key vector, for the MAC primitive vectors below.
+    private static let vectorSharedSecret =
+        hexBytes("a95137b042ccb44b378c7c0c9182164fc1b54afc9c6e154ca77958ddd681bd34")
+
+    /// The digest the builder should hand the key: SHA-256 over the `Sig_structure` built from
+    /// this transcript array and doctype.
+    private func expectedSignatureDigest(sessionTranscript: [UInt8], docType: String) -> Data
+    {
+        let deviceAuthenticationBytes = MdocDeviceAuth.deviceAuthenticationBytes(
+            MdocDeviceAuth.deviceAuthentication(
+                sessionTranscript: sessionTranscript,
+                docType: docType,
+                deviceNameSpacesBytes: MdocProximityResponseBuilder.emptyDeviceNameSpacesBytes))
+        let signatureInput = CBOR.array([
+            .utf8String("Signature1"),
+            .byteString(CBOR.map([1: -7]).encode()),
+            .byteString([]),
+            .byteString(deviceAuthenticationBytes)
+        ]).encode()
+        return Data(SHA256.hash(data: Data(signatureInput)))
     }
 
     private struct OtherFailure: Error {}
@@ -123,7 +130,7 @@ final class MdocProximityResponseTests: XCTestCase
     {
         assertThrows(try MdocProximityResponseBuilder.validate(
             selected: [], against: [requested(codes: [code("given_name")])], documents: try documents()),
-                     code: "MSDKWLT05610")
+                     code: "MSDKWLT06610")
     }
 
     func testRejectsDocumentThatDidNotMatchTheRequest() throws
@@ -134,7 +141,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
                                                                against: matched,
                                                                documents: try documents()),
-                     code: "MSDKWLT05611")
+                     code: "MSDKWLT06611")
     }
 
     /// Moving a `missing` element into `claimCodes` is why codes are checked against the document:
@@ -147,7 +154,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
                                                                against: matched,
                                                                documents: try documents()),
-                     code: "MSDKWLT05611")
+                     code: "MSDKWLT06611")
     }
 
     /// Adding an element the reader did not request is the holder's call, not something to judge.
@@ -179,7 +186,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: [element(["a.d", "a.b.c"])],
                                                                against: [element(["a.d"])],
                                                                documents: ["cred-1": document]),
-                     code: "MSDKWLT05611")
+                     code: "MSDKWLT06611")
     }
 
     func testRejectsADocumentThatIsNotStored() throws
@@ -189,7 +196,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: matched,
                                                                against: matched,
                                                                documents: [:]),
-                     code: "MSDKWLT05611")
+                     code: "MSDKWLT06611")
     }
 
     func testRejectsEmptyClaimCodes() throws
@@ -200,7 +207,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
                                                                against: matched,
                                                                documents: try documents()),
-                     code: "MSDKWLT05612")
+                     code: "MSDKWLT06612")
     }
 
     func testRejectsTheSameDocumentTwiceForOneRequest() throws
@@ -212,7 +219,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
                                                                against: matched,
                                                                documents: try documents()),
-                     code: "MSDKWLT05613")
+                     code: "MSDKWLT06613")
     }
 
     /// The one `shall` the response structure carries is that an element may not appear twice in a
@@ -225,7 +232,7 @@ final class MdocProximityResponseTests: XCTestCase
         assertThrows(try MdocProximityResponseBuilder.validate(selected: selected,
                                                                against: matched,
                                                                documents: try documents()),
-                     code: "MSDKWLT05614")
+                     code: "MSDKWLT06614")
     }
 
     func testAcceptsOneDocumentAnsweringTwoRequests() throws
@@ -240,7 +247,7 @@ final class MdocProximityResponseTests: XCTestCase
 
     // MARK: - build
 
-    func testBuildsAMacResponseAndReportsTheMethod() throws
+    func testBuildsASignedResponseAndReportsTheMethod() throws
     {
         let keys = StubKeys()
         let built = try MdocProximityResponseBuilder.build(
@@ -249,7 +256,8 @@ final class MdocProximityResponseTests: XCTestCase
             sessionTranscript: transcript,
             keys: keys)
 
-        XCTAssertEqual(built.authMethods, ["cred-1": .deviceMac])
+        XCTAssertEqual(built.authMethods, ["cred-1": .deviceSignature])
+        XCTAssertEqual(keys.signCalls, ["cred-1"])
 
         let response = try XCTUnwrap(try CBOR.decode([UInt8](built.response)))
         guard case let .map(fields) = response,
@@ -262,75 +270,53 @@ final class MdocProximityResponseTests: XCTestCase
 
         let deviceAuth = try deviceAuth(of: documents[0])
         guard case let .map(auth) = deviceAuth else { return XCTFail("deviceAuth is not a map") }
-        XCTAssertNotNil(auth["deviceMac"])
-        XCTAssertNil(auth["deviceSignature"])
+        XCTAssertNotNil(auth["deviceSignature"])
+        XCTAssertNil(auth["deviceMac"])
     }
 
-    /// The tag has to be the one our own primitives produce over the transcript **as given** —
-    /// which is what proves the builder did not re-encode it on the way in.
-    func testMacIsComputedOverTheTranscriptAsReceived() throws
+    /// The digest has to be the one taken over the transcript **as given** -- which is what proves
+    /// the builder did not re-encode it on the way in.
+    func testSignatureIsComputedOverTheTranscriptAsReceived() throws
     {
         let keys = StubKeys()
-        let built = try MdocProximityResponseBuilder.build(
+        _ = try MdocProximityResponseBuilder.build(
             selected: [requested(codes: [code("given_name")])],
             documents: ["cred-1": try mdoc()],
             sessionTranscript: transcript,
             keys: keys)
 
-        let wrappedTranscript = CBOR.tagged(CBOR.Tag(rawValue: 24),
-                                            .byteString(transcript)).encode()
-        let expectedTag = MdocDeviceAuth.mac(
-            macStructure: MdocDeviceAuth.macStructure(
-                deviceAuthenticationBytes: MdocDeviceAuth.deviceAuthenticationBytes(
-                    MdocDeviceAuth.deviceAuthentication(
-                        sessionTranscript: transcript,
-                        docType: docType,
-                        deviceNameSpacesBytes: MdocProximityResponseBuilder
-                            .emptyDeviceNameSpacesBytes))),
-            emacKey: MdocDeviceAuth.emacKey(sharedSecret: keys.sharedSecret,
-                                            sessionTranscriptBytes: wrappedTranscript))
+        XCTAssertEqual(keys.signedDigests,
+                       [expectedSignatureDigest(sessionTranscript: transcript, docType: docType)])
+    }
 
-        let response = try XCTUnwrap(try CBOR.decode([UInt8](built.response)))
-        guard case let .map(fields) = response,
+    /// The compact signature the key returns goes out as the 64-byte `r‖s` of a `COSE_Sign1`
+    /// with a detached payload.
+    func testDeviceSignatureIsADetachedCoseSign1() throws
+    {
+        let built = try MdocProximityResponseBuilder.build(
+            selected: [requested(codes: [code("given_name")])],
+            documents: ["cred-1": try mdoc()],
+            sessionTranscript: transcript,
+            keys: StubKeys())
+
+        guard case let .map(fields)? = try CBOR.decode([UInt8](built.response)),
               case let .array(documents)? = fields["documents"],
               case let .map(auth) = try deviceAuth(of: documents[0]),
-              case let .array(mac0)? = auth["deviceMac"],
-              case let .byteString(tag) = mac0[3]
-        else { return XCTFail("no COSE_Mac0 tag in the response") }
+              case let .array(sign1)? = auth["deviceSignature"],
+              sign1.count == 4
+        else { return XCTFail("no COSE_Sign1 in the response") }
 
-        XCTAssertEqual(tag, expectedTag)
+        XCTAssertEqual(sign1[0], .byteString(CBOR.map([1: -7]).encode()))
+        XCTAssertEqual(sign1[2], .null)
+        XCTAssertEqual(sign1[3], .byteString([UInt8](repeating: 0x11, count: 64)))
     }
 
-    /// A key that turns out not to do ECDH drops that document to a signature; the response still
-    /// goes out.
-    func testFallsBackToSignatureWhenKeyAgreementIsUnsupported() throws
+    /// A signing failure -- a cancelled prompt, a missing key -- fails the response; there is no
+    /// other method to fall back to.
+    func testSigningFailuresAreRaised() throws
     {
         let keys = StubKeys()
-        keys.agreementError = MdocDeviceKeyError.keyAgreementUnsupported
-
-        let built = try MdocProximityResponseBuilder.build(
-            selected: [requested(codes: [code("given_name")])],
-            documents: ["cred-1": try mdoc()],
-            sessionTranscript: transcript,
-            keys: keys)
-
-        XCTAssertEqual(built.authMethods, ["cred-1": .deviceSignature])
-        XCTAssertEqual(keys.signCalls, ["cred-1"])
-
-        let response = try XCTUnwrap(try CBOR.decode([UInt8](built.response)))
-        guard case let .map(fields) = response,
-              case let .array(documents)? = fields["documents"],
-              case let .map(auth) = try deviceAuth(of: documents[0])
-        else { return XCTFail("malformed response") }
-        XCTAssertNotNil(auth["deviceSignature"])
-    }
-
-    /// Any other failure is not a capability problem, so it is raised rather than hidden by a
-    /// fallback.
-    func testOtherKeyAgreementFailuresAreNotSwallowed() throws
-    {
-        let keys = StubKeys()
-        keys.agreementError = OtherFailure()
+        keys.signError = OtherFailure()
 
         XCTAssertThrowsError(try MdocProximityResponseBuilder.build(
             selected: [requested(codes: [code("given_name")])],
@@ -340,22 +326,6 @@ final class MdocProximityResponseTests: XCTestCase
         { error in
             XCTAssertTrue(error is OtherFailure, "unexpected error: \(error)")
         }
-        XCTAssertTrue(keys.signCalls.isEmpty)
-    }
-
-    func testPreCheckAloneCanChooseTheSignature() throws
-    {
-        let keys = StubKeys()
-        keys.canAgree = false
-
-        let built = try MdocProximityResponseBuilder.build(
-            selected: [requested(codes: [code("given_name")])],
-            documents: ["cred-1": try mdoc()],
-            sessionTranscript: transcript,
-            keys: keys)
-
-        XCTAssertEqual(built.authMethods, ["cred-1": .deviceSignature])
-        XCTAssertTrue(keys.agreementCalls.isEmpty)
     }
 
     func testTranscriptWithoutAReaderKeyUsesTheSignature() throws
@@ -370,7 +340,7 @@ final class MdocProximityResponseTests: XCTestCase
             keys: keys)
 
         XCTAssertEqual(built.authMethods, ["cred-1": .deviceSignature])
-        XCTAssertTrue(keys.agreementCalls.isEmpty)
+        XCTAssertEqual(keys.signCalls, ["cred-1"])
     }
 
     func testRejectsATranscriptThatIsNotThreeElements() throws
@@ -380,7 +350,7 @@ final class MdocProximityResponseTests: XCTestCase
             documents: ["cred-1": try mdoc()],
             sessionTranscript: CBOR.array([.null, .null]).encode(),
             keys: StubKeys()),
-                     code: "MSDKWLT05621")
+                     code: "MSDKWLT06621")
     }
 
     /// The transport SDK hands on `SessionTranscriptBytes` — the tag-24 wrapped form it derived
@@ -402,42 +372,25 @@ final class MdocProximityResponseTests: XCTestCase
             sessionTranscript: wrappedTranscript,
             keys: StubKeys())
 
-        XCTAssertEqual(fromBytes.authMethods, ["cred-1": .deviceMac])
+        XCTAssertEqual(fromBytes.authMethods, ["cred-1": .deviceSignature])
         XCTAssertEqual(fromBytes.response, fromArray.response)
     }
 
-    /// The reader's `SessionTranscriptBytes` vector, given as is, has to be used as is: the MAC
-    /// tag pins both the salt (over the wrapped bytes) and the signature input (over the array
-    /// inside them).
+    /// The reader's `SessionTranscriptBytes` vector, given as is, has to be unwrapped as is: the
+    /// signature input is taken over the array inside those bytes, not over a re-encoding of it.
     func testSessionTranscriptBytesInputMatchesTheReaderVector() throws
     {
-        let transcriptBytes = hexBytes(Self.vectorSessionTranscriptBytes)
         let keys = StubKeys()
-        let built = try MdocProximityResponseBuilder.build(
+        _ = try MdocProximityResponseBuilder.build(
             selected: [requested(codes: [code("given_name")])],
             documents: ["cred-1": try mdoc()],
-            sessionTranscript: transcriptBytes,
+            sessionTranscript: hexBytes(Self.vectorSessionTranscriptBytes),
             keys: keys)
 
-        let expectedTag = MdocDeviceAuth.mac(
-            macStructure: MdocDeviceAuth.macStructure(
-                deviceAuthenticationBytes: MdocDeviceAuth.deviceAuthenticationBytes(
-                    MdocDeviceAuth.deviceAuthentication(
-                        sessionTranscript: hexBytes(Self.vectorSessionTranscript),
-                        docType: docType,
-                        deviceNameSpacesBytes: MdocProximityResponseBuilder
-                            .emptyDeviceNameSpacesBytes))),
-            emacKey: MdocDeviceAuth.emacKey(sharedSecret: keys.sharedSecret,
-                                            sessionTranscriptBytes: transcriptBytes))
-
-        guard case let .map(fields)? = try CBOR.decode([UInt8](built.response)),
-              case let .array(documents)? = fields["documents"],
-              case let .map(auth) = try deviceAuth(of: documents[0]),
-              case let .array(mac0)? = auth["deviceMac"],
-              case let .byteString(tag) = mac0[3]
-        else { return XCTFail("no COSE_Mac0 tag in the response") }
-
-        XCTAssertEqual(tag, expectedTag)
+        XCTAssertEqual(keys.signedDigests,
+                       [expectedSignatureDigest(
+                           sessionTranscript: hexBytes(Self.vectorSessionTranscript),
+                           docType: docType)])
     }
 
     func testRejectsSessionTranscriptBytesThatDoNotWrapAThreeElementArray() throws
@@ -449,7 +402,7 @@ final class MdocProximityResponseTests: XCTestCase
             documents: ["cred-1": try mdoc()],
             sessionTranscript: wrappedPair,
             keys: StubKeys()),
-                     code: "MSDKWLT05621")
+                     code: "MSDKWLT06621")
     }
 
     /// One document answering two requests is authenticated once: the inputs are identical, and
@@ -464,8 +417,8 @@ final class MdocProximityResponseTests: XCTestCase
             sessionTranscript: transcript,
             keys: keys)
 
-        XCTAssertEqual(keys.agreementCalls, ["cred-1"])
-        XCTAssertEqual(built.authMethods, ["cred-1": .deviceMac])
+        XCTAssertEqual(keys.signCalls, ["cred-1"])
+        XCTAssertEqual(built.authMethods, ["cred-1": .deviceSignature])
 
         let response = try XCTUnwrap(try CBOR.decode([UInt8](built.response)))
         guard case let .map(fields) = response,
@@ -626,55 +579,27 @@ final class MdocProximityResponseTests: XCTestCase
     private static let vectorSessionTranscriptBytesDigest =
         "919232350b8073cfb2e0db4417e23e5940d306840f1600173e4d26fa280ff8ab"
 
-    /// The builder wraps the transcript into the reader's exact `SessionTranscriptBytes`.
-    ///
-    /// The wrapping is private, so the MAC tag pins it: deriving `EMacKey` with a salt taken over
-    /// the reader's bytes has to reproduce the tag the builder emitted. One byte's difference in
-    /// the wrapping -- a re-encoded transcript, a missing tag 24 -- and the tags diverge.
+    /// The vector this suite is handed is the reader's: the transcript array, and the
+    /// `SessionTranscriptBytes` that wrap it, hashing to the digest the reader recorded.
     func testSessionTranscriptBytesMatchTheReaderVector() throws
     {
         XCTAssertEqual(transcript, hexBytes(Self.vectorSessionTranscript))
 
         let transcriptBytes = hexBytes(Self.vectorSessionTranscriptBytes)
+        XCTAssertEqual(CBOR.tagged(CBOR.Tag(rawValue: 24), .byteString(transcript)).encode(),
+                       transcriptBytes)
         XCTAssertEqual(hexString([UInt8](SHA256.hash(data: Data(transcriptBytes)))),
                        Self.vectorSessionTranscriptBytesDigest)
-
-        let keys = StubKeys()
-        let built = try MdocProximityResponseBuilder.build(
-            selected: [requested(codes: [code("given_name")])],
-            documents: ["cred-1": try mdoc()],
-            sessionTranscript: transcript,
-            keys: keys)
-
-        let expectedTag = MdocDeviceAuth.mac(
-            macStructure: MdocDeviceAuth.macStructure(
-                deviceAuthenticationBytes: MdocDeviceAuth.deviceAuthenticationBytes(
-                    MdocDeviceAuth.deviceAuthentication(
-                        sessionTranscript: transcript,
-                        docType: docType,
-                        deviceNameSpacesBytes: MdocProximityResponseBuilder
-                            .emptyDeviceNameSpacesBytes))),
-            emacKey: MdocDeviceAuth.emacKey(sharedSecret: keys.sharedSecret,
-                                            sessionTranscriptBytes: transcriptBytes))
-
-        guard case let .map(fields)? = try CBOR.decode([UInt8](built.response)),
-              case let .array(documents)? = fields["documents"],
-              case let .map(auth) = try deviceAuth(of: documents[0]),
-              case let .array(mac0)? = auth["deviceMac"],
-              case let .byteString(tag) = mac0[3]
-        else { return XCTFail("no COSE_Mac0 tag in the response") }
-
-        XCTAssertEqual(tag, expectedTag)
     }
 
     /// `response/mixed-deviceauth`: one response in which the mDL is MAC'd and the photoID is
-    /// signed. Our runtime fallback is per document, so this shape is ours to produce -- and the
-    /// reader's bytes are what our own primitives have to agree with, document by document.
+    /// signed. The builder no longer produces a MAC, but the primitives stay, and the reader's
+    /// bytes are what they have to agree with, document by document.
     ///
     /// The values below are the two `deviceAuth` entries of that vector's `input.bytes`:
     /// `documents[0].deviceSigned.deviceAuth.deviceMac[3]` and
     /// `documents[1].deviceSigned.deviceAuth.deviceSignature[3]`. The shared secret behind the
-    /// vector's `eMacKey` is the same `zab` `StubKeys` already carries.
+    /// vector's `eMacKey` is `vectorSharedSecret`.
     private static let vectorMacDocType = "org.iso.18013.5.1.mDL"
 
     private static let vectorSignedDocType = "org.iso.23220.photoID.1"
@@ -702,7 +627,7 @@ final class MdocProximityResponseTests: XCTestCase
                         docType: Self.vectorMacDocType,
                         deviceNameSpacesBytes: MdocProximityResponseBuilder
                             .emptyDeviceNameSpacesBytes))),
-            emacKey: MdocDeviceAuth.emacKey(sharedSecret: StubKeys().sharedSecret,
+            emacKey: MdocDeviceAuth.emacKey(sharedSecret: Self.vectorSharedSecret,
                                             sessionTranscriptBytes: transcriptBytes))
 
         XCTAssertEqual(hexString(tag), Self.vectorMacTag)
@@ -732,13 +657,11 @@ final class MdocProximityResponseTests: XCTestCase
         XCTAssertTrue(key.isValidSignature(signature, for: Data(signatureInput)))
     }
 
-    /// Both methods in one response: the decision is per document, so a credential whose key cannot
-    /// agree drops to a signature while the other still MACs. A reader that fixed the method for
-    /// the whole response would reject one of these documents.
-    func testOneResponseCarriesBothAuthMethods() throws
+    /// Every document is signed, whatever its key could do: a key that also presents over
+    /// OpenID4VP, where it signs, must never produce a MAC (ISO/IEC 18013-5 9.1.3.4).
+    func testEveryDocumentIsSigned() throws
     {
         let keys = StubKeys()
-        keys.cannotAgree = ["cred-2"]
         let built = try MdocProximityResponseBuilder.build(
             selected: [requested(index: 0, credentialId: "cred-1", codes: [code("given_name")]),
                        requested(index: 1, credentialId: "cred-2", codes: [code("family_name")])],
@@ -746,7 +669,8 @@ final class MdocProximityResponseTests: XCTestCase
             sessionTranscript: transcript,
             keys: keys)
 
-        XCTAssertEqual(built.authMethods, ["cred-1": .deviceMac, "cred-2": .deviceSignature])
+        XCTAssertEqual(built.authMethods, ["cred-1": .deviceSignature, "cred-2": .deviceSignature])
+        XCTAssertEqual(keys.signCalls, ["cred-1", "cred-2"])
 
         guard case let .map(fields)? = try CBOR.decode([UInt8](built.response)),
               case let .array(documents)? = fields["documents"],
@@ -754,8 +678,8 @@ final class MdocProximityResponseTests: XCTestCase
               case let .map(second) = try deviceAuth(of: documents[1])
         else { return XCTFail("malformed response") }
 
-        XCTAssertNotNil(first["deviceMac"])
-        XCTAssertNil(first["deviceSignature"])
+        XCTAssertNotNil(first["deviceSignature"])
+        XCTAssertNil(first["deviceMac"])
         XCTAssertNotNil(second["deviceSignature"])
         XCTAssertNil(second["deviceMac"])
     }

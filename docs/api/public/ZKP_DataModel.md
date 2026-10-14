@@ -56,6 +56,20 @@ iOS ZKP DataModel SDK
         - [4.3. RequestedProof](#43-requestedproof)
             - [4.3.1. RequestedAttribute](#431-requestedattribute)
         - [4.4. Identifier](#44-identifier)
+    - [5. ProofRequest](#5-proofrequest)
+        - [5.1. AttributeInfo](#51-attributeinfo)
+        - [5.2. PredicateInfo](#52-predicateinfo)
+    - [6. UserReferent](#6-userreferent)
+    - [7. ZKProofParam](#7-zkproofparam)
+    - [8. ZKPCredentialOffer](#8-zkpcredentialoffer)
+        - [8.1. KeyCorrectnessProof](#81-keycorrectnessproof)
+    - [9. ZKPCredentialDefinition](#9-zkpcredentialdefinition)
+        - [9.1. CredentialDefinitionValue](#91-credentialdefinitionvalue)
+            - [9.1.1. CredentialPrimaryPublicKey](#911-credentialprimarypublickey)
+    - [10. ZKPCredentialSchema](#10-zkpcredentialschema)
+- [Enumerators](#enumerators)
+    - [1. PredicateType](#1-predicatetype)
+    - [2. CredentialType](#2-credentialtype)
 - [Defines](#defines)
     - [1. BigIntString](#1-bigintstring)
     - [2. StringDictionary](#2-stringdictionary)
@@ -295,6 +309,8 @@ public struct AttributeValue : Jsonable {
 
 `Contains the signature information of the credential`
 
+In code, this type is nested in `ZKPCredential` (`ZKPCredential.CredentialSignature`).
+
 ### Declaration
 
 ```swift
@@ -318,6 +334,8 @@ public struct CredentialSignature : Jsonable {
 ### Description
 
 `Represents the primary signature values for a ZKP-based credential, typically used in CL signature schemes.`
+
+In code, this type is nested in `ZKPCredential.CredentialSignature` (`ZKPCredential.CredentialSignature.PrimaryCredentialSignature`).
 
 ### Declaration
 
@@ -349,6 +367,8 @@ public struct PrimaryCredentialSignature : Jsonable {
 ### Description
 
 `The SignatureCorrectnessProof data used to verify the integrity of the signature.`
+
+In code, this type is nested in `ZKPCredential` (`ZKPCredential.SignatureCorrectnessProof`).
 
 ### Declaration
 
@@ -491,10 +511,12 @@ public struct ZKProof : Jsonable {
 
 `Contains basic proof information.`
 
+In code, this type is nested in `ZKProof` (`ZKProof.SubProof`).
+
 ### Declaration
 
 ```swift
-public struct SubProof : Codable {
+public struct SubProof : Jsonable {
     public let primaryProof : PrimaryProof
 }
 ```
@@ -515,10 +537,12 @@ public struct SubProof : Codable {
 
 `An object containing basic equality and inequality proofs`
 
+In code, this type is nested in `ZKProof.SubProof` (`ZKProof.SubProof.PrimaryProof`).
+
 ### Declaration
 
 ```swift
-public struct PrimaryProof : Codable {
+public struct PrimaryProof : Jsonable {
     public let eqProof : PrimaryEqualProof
     public let neProofs : [PrimaryPredicateInequalityProof]
 }
@@ -541,10 +565,12 @@ public struct PrimaryProof : Codable {
 
 `An object that includes data for equality proof`
 
+In code, this type is nested in `ZKProof.SubProof.PrimaryProof` (`ZKProof.SubProof.PrimaryProof.PrimaryEqualProof`).
+
 ### Declaration
 
 ```swift
-public struct PrimaryEqualProof : Codable {
+public struct PrimaryEqualProof : Jsonable {
     public let revealedAttrs : BigIntStringDictionary
     public let aPrime : BigIntString
     public let e : BigIntString
@@ -575,10 +601,12 @@ public struct PrimaryEqualProof : Codable {
 
 `Represents the inequality proof component in a ZKP presentation, used to prove that a hidden attribute satisfies a predicate condition(e.g., age ≥ 18) without revealing its actual value.`
 
+In code, this type is nested in `ZKProof.SubProof.PrimaryProof` (`ZKProof.SubProof.PrimaryProof.PrimaryPredicateInequalityProof`).
+
 ### Declaration
 
 ```swift
-public struct PrimaryPredicateInequalityProof : Codable {
+public struct PrimaryPredicateInequalityProof : Jsonable {
     public let u : BigIntStringDictionary
     public let r : BigIntStringDictionary
     public let t : BigIntStringDictionary
@@ -609,10 +637,12 @@ public struct PrimaryPredicateInequalityProof : Codable {
 
 `Defines a predicate condition used in zero-knowledge proofs, typically to prove that a hidden attribute satisfies a given inequality (e.g., age ≥ 18) without revealing the actual value.`
 
+In code, this type is nested directly in `ZKProof` (`ZKProof.Predicate`), not in `PrimaryPredicateInequalityProof`.
+
 ### Declaration
 
 ```swift
-public struct Predicate : Codable {
+public struct Predicate : Jsonable {
     public let pType : PredicateType
     public let pValue : Int
     public let attrName : String
@@ -623,7 +653,7 @@ public struct Predicate : Codable {
 
 | Name     | Type          | Description                                 | **M/O** | **Note** |
 |----------|---------------|---------------------------------------------|---------|----------|
-| pType    | PredicateType | Type of predicate                           | M       |          |
+| pType    | PredicateType | Type of predicate                           | M       | [PredicateType](#1-predicatetype) |
 | pValue   | Int           | The value to compare the attribute against  | M       |          |
 | attrName | String        | The name of the attribute being evaluated   | M       |          |
 
@@ -637,10 +667,12 @@ public struct Predicate : Codable {
 
 `A structure that aggregates multiple proofs into a single ZKP`
 
+In code, this type is nested in `ZKProof` (`ZKProof.AggregatedProof`).
+
 ### Declaration
 
 ```swift
-public struct AggregatedProof : Codable {
+public struct AggregatedProof : Jsonable {
     public let cHash : BigIntString
     public let cList : [[UInt8]]
 }
@@ -663,10 +695,12 @@ public struct AggregatedProof : Codable {
 
 `Classifies the actual attributes submitted in response to the requested attributes.`
 
+In code, this type is nested in `ZKProof` (`ZKProof.RequestedProof`).
+
 ### Declaration
 
 ```swift
-public struct RequestedProof : Codable {
+public struct RequestedProof : Jsonable {
     public let selfAttestedAttrs : StringDictionary
     public let predicates : RequestedAttrDictionary
     public let revealedAttrs : RequestedAttrDictionary
@@ -693,10 +727,12 @@ public struct RequestedProof : Codable {
 
 `Represents an attribute included in the ZKP presentation that was requested by the verifier.`
 
+In code, this type is nested in `ZKProof` (`ZKProof.RequestedAttribute`).
+
 ### Declaration
 
 ```swift
-public struct RequestedAttribute : Codable {
+public struct RequestedAttribute : Jsonable {
     public let subProofIndex : Int
     public let raw : String?
     public let encoded : String?
@@ -720,10 +756,12 @@ public struct RequestedAttribute : Codable {
 
 `Contains the identifiers used to build the proof.`
 
+In code, this type is nested in `ZKProof` (`ZKProof.Identifier`).
+
 ### Declaration
 
 ```swift
-public struct Identifier : Codable {
+public struct Identifier : Jsonable {
     public let credDefId : String
     public let schemaId : String
 }
@@ -733,10 +771,406 @@ public struct Identifier : Codable {
 
 | Name      | Type   | Description                             | **M/O** | **Note** |
 |-----------|--------|-----------------------------------------|---------|----------|
-| credDefId | String | Referenced Credential Schema ID         | M       |          |
-| schemaId  | String | Referenced Credential Definition ID     | M       |          |
+| credDefId | String | Referenced Credential Definition ID     | M       |          |
+| schemaId  | String | Referenced Credential Schema ID         | M       |          |
 
 
+
+<br>
+
+## 5. ProofRequest
+
+### Description
+
+`Proof request from a verifier: the attributes and predicates the holder is asked to prove`
+
+### Declaration
+
+```swift
+public struct ProofRequest : Jsonable {
+    public let name : String
+    public let version : String
+    public let nonce : BigIntString
+    public let requestedAttributes : [String : AttributeInfo]?
+    public let requestedPredicates : [String : PredicateInfo]?
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| name | String | Name of the proof request | M |  |
+| version | String | Version of the proof request | M |  |
+| nonce | BigIntString | Nonce from the verifier | M |  |
+| requestedAttributes | [String : AttributeInfo] | Requested attributes, keyed by referent key | O | [AttributeInfo](#51-attributeinfo) |
+| requestedPredicates | [String : PredicateInfo] | Requested predicates, keyed by referent key | O | [PredicateInfo](#52-predicateinfo) |
+
+<br>
+
+## 5.1. AttributeInfo
+
+### Description
+
+`A requested attribute`
+
+### Declaration
+
+```swift
+public struct AttributeInfo: Jsonable {
+    public let name: String
+    public let restrictions : [[String : String]]
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| name | String | Attribute name | M |  |
+| restrictions | [[String : String]] | Credential definitions the attribute may come from | M | Every value is read as a credential definition ID, whatever its key. An empty list makes the attribute self-attested |
+
+<br>
+
+## 5.2. PredicateInfo
+
+### Description
+
+`A requested predicate on an attribute`
+
+### Declaration
+
+```swift
+public struct PredicateInfo: Jsonable {
+    public let name: String
+    public let pType : PredicateType
+    public let pValue : Int
+    public let restrictions : [[String : String]]
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| name | String | Attribute name | M |  |
+| pType | PredicateType | Comparison operator | M | [PredicateType](#1-predicatetype) |
+| pValue | Int | Value the attribute is compared against | M |  |
+| restrictions | [[String : String]] | Credential definitions the attribute may come from | M | Every value is read as a credential definition ID, whatever its key |
+
+<br>
+
+## 6. UserReferent
+
+### Description
+
+`The holder's choice for one referent of the proof request`
+
+### Declaration
+
+```swift
+public struct UserReferent {
+    public let credId       : String?
+    public let raw          : String
+    public let referentKey  : String
+    public let referentName : String
+    public let isRevealed   : Bool
+
+    public init(raw: String, referentKey: String, referentName: String)
+    public init(selectedAttrSubReferent: SubReferent, referentKey: String, referentName: String, isRevealed: Bool)
+    public init(attrReferent: AttrReferent, selectedIndex: UInt, isRevealed: Bool) throws
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| credId | String | ID of the credential the value comes from | O | `nil` for a self-attested attribute |
+| raw | String | Raw attribute value | M |  |
+| referentKey | String | Referent key in the proof request | M |  |
+| referentName | String | Referent name | M |  |
+| isRevealed | Bool | Whether the value is disclosed to the verifier | M | Always `true` for a self-attested attribute |
+
+### Method
+
+| Name | Description | **Note** |
+|------|-------------|----------|
+| init(raw:referentKey:referentName:) | Self-attested attribute entered by the holder |  |
+| init(selectedAttrSubReferent:referentKey:referentName:isRevealed:) | Takes the credential and value from a selected [SubReferent](#311-subreferent) |  |
+| init(attrReferent:selectedIndex:isRevealed:) | Takes the referent at `selectedIndex` of an [AttrReferent](#31-attrreferent) | Throws when `selectedIndex` is out of range |
+
+<br>
+
+## 7. ZKProofParam
+
+### Description
+
+`Schemas and credential definitions needed to build a proof`
+
+### Declaration
+
+```swift
+public struct ZKProofParam {
+    public let schemas : [String : ZKPCredentialSchema]
+    public let creDefs : [String : ZKPCredentialDefinition]
+
+    public init(schemas: [String : ZKPCredentialSchema], creDefs: [String : ZKPCredentialDefinition])
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| schemas | [String : ZKPCredentialSchema] | Credential schemas, keyed by schema ID | M | [ZKPCredentialSchema](#10-zkpcredentialschema) |
+| creDefs | [String : ZKPCredentialDefinition] | Credential definitions, keyed by credential definition ID | M | [ZKPCredentialDefinition](#9-zkpcredentialdefinition) |
+
+<br>
+
+## 8. ZKPCredentialOffer
+
+### Description
+
+`Credential offer from an issuer`
+
+### Declaration
+
+```swift
+public struct ZKPCredentialOffer : Jsonable {
+    public let credDefId : String
+    public let schemaId : String
+    public let keyCorrectnessProof : KeyCorrectnessProof
+    public let nonce : BigIntString
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| credDefId | String | Credential definition ID | M |  |
+| schemaId | String | Credential schema ID | M |  |
+| keyCorrectnessProof | KeyCorrectnessProof | Proof that the issuer's key is well formed | M | [KeyCorrectnessProof](#81-keycorrectnessproof) |
+| nonce | BigIntString | Nonce | M |  |
+
+<br>
+
+## 8.1. KeyCorrectnessProof
+
+### Description
+
+`Proof of correctness of the issuer's public key`
+
+### Declaration
+
+```swift
+public struct KeyCorrectnessProof : Jsonable {
+    public let c : BigIntString
+    public let xzCap : BigIntString
+    public let xrCap : BigIntStringDictionary
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| c | BigIntString | Challenge hash | M |  |
+| xzCap | BigIntString | Response for `z` | M |  |
+| xrCap | BigIntStringDictionary | Responses for each `r`, keyed by attribute name | M |  |
+
+<br>
+
+## 9. ZKPCredentialDefinition
+
+### Description
+
+`Credential definition published by an issuer`
+
+### Declaration
+
+```swift
+public struct ZKPCredentialDefinition : Jsonable {
+    public let id: String
+    public let schemaId: String
+    public let ver : String
+    public let type : CredentialType
+    public let value : CredentialDefinitionValue
+    public let tag : String
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| id | String | Credential definition ID | M |  |
+| schemaId | String | Credential schema ID | M |  |
+| ver | String | Version | M |  |
+| type | CredentialType | Signature type | M | [CredentialType](#2-credentialtype) |
+| value | CredentialDefinitionValue | Public key material | M | [CredentialDefinitionValue](#91-credentialdefinitionvalue) |
+| tag | String | Tag | M |  |
+
+<br>
+
+## 9.1. CredentialDefinitionValue
+
+### Description
+
+`Public key material of a credential definition`
+
+### Declaration
+
+```swift
+public struct CredentialDefinitionValue : Jsonable {
+    public let primary : CredentialPrimaryPublicKey
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| primary | CredentialPrimaryPublicKey | Primary public key | M | [CredentialPrimaryPublicKey](#911-credentialprimarypublickey) |
+
+<br>
+
+## 9.1.1. CredentialPrimaryPublicKey
+
+### Description
+
+`The issuer's primary (CL) public key`
+
+`r` keeps the order its keys have in the JSON when decoded through `Jsonable`'s `init(from:)`, and is encoded in that order. A plain `JSONDecoder` does not guarantee the order.
+
+### Declaration
+
+```swift
+public struct CredentialPrimaryPublicKey : Jsonable {
+    public let n : BigIntString
+    public let z : BigIntString
+    public let s : BigIntString
+    public var r : OrderedStringMap<BigIntString>
+    public let rctxt : BigIntString
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| n | BigIntString | RSA modulus | M |  |
+| z | BigIntString | Public key component `Z` | M |  |
+| s | BigIntString | Public key component `S` | M |  |
+| r | OrderedStringMap&lt;BigIntString&gt; | Public key component `R` per attribute, keyed by attribute name | M | [OrderedStringMap](DataModel.md#19-orderedstringmap). The order is part of the value |
+| rctxt | BigIntString | Public key component for the context attribute | M |  |
+
+<br>
+
+## 10. ZKPCredentialSchema
+
+### Description
+
+`Credential schema published by an issuer`
+
+### Declaration
+
+```swift
+public struct ZKPCredentialSchema : Jsonable {
+    public let id: String
+    public let name: String
+    public let version: String
+    public let attrNames : [String]
+    public let attrTypes : [AttributeType]
+    public let tag: String
+
+    public struct AttributeType : Jsonable {
+        public struct Namespace : Jsonable {
+            public var id   : String
+            public var name : String
+            public var ref  : String?
+        }
+
+        public struct AttributeDef : Jsonable {
+            public var label   : String
+            public var caption : CaptionString
+            public var type    : AttributeValueType
+            public var i18n    : [String : CaptionString]?
+        }
+
+        public enum AttributeValueType : String, Codable, Sendable {
+            case String
+            case Number
+        }
+
+        public var namespace : Namespace
+        public var items     : [AttributeDef]
+    }
+}
+```
+
+### Property
+
+| Name | Type | Description | **M/O** | **Note** |
+|------|------|-------------|---------|----------|
+| id | String | Credential schema ID | M |  |
+| name | String | Schema name | M |  |
+| version | String | Version | M |  |
+| attrNames | [String] | Attribute names | M |  |
+| attrTypes | [AttributeType] | Attribute definitions, grouped by namespace | M |  |
+| tag | String | Tag | M |  |
+| AttributeType.namespace | Namespace | Namespace of the attributes (`id`, `name`, optional `ref` URL) | M |  |
+| AttributeType.items | [AttributeDef] | Attribute definitions (`label`, `caption`, `type`, optional `i18n`) | M |  |
+| AttributeDef.type | AttributeValueType | Value type: `String` or `Number` | M |  |
+
+<br>
+
+# Enumerators
+
+## 1. PredicateType
+
+### Description
+
+`Comparison operator of a predicate`
+
+### Declaration
+
+```swift
+@frozen public enum PredicateType : String, Codable {
+    case GE
+    case LE
+    case GT
+    case LT
+}
+```
+
+| Case | Meaning |
+|------|---------|
+| GE | `>=` |
+| LE | `<=` |
+| GT | `>` |
+| LT | `<` |
+
+<br>
+
+## 2. CredentialType
+
+### Description
+
+`Signature type of a credential definition`
+
+### Declaration
+
+```swift
+public enum CredentialType : String, Codable, Sendable {
+    case cl = "CL"
+}
+```
+
+| Case | Raw value | Meaning |
+|------|-----------|---------|
+| cl | "CL" | Camenisch-Lysyanskaya signature |
 
 <br>
 

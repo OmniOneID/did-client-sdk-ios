@@ -33,7 +33,7 @@ iOS Utility API
 
 # 목차
 - [APIs](#apis)
-  - [CryptoUitls](#cryptouitls)
+  - [CryptoUtils](#cryptoutils)
     - [1. generateNonce](#1-generatenonce)
     - [2. generateECKeyPair](#2-generateeckeypair)
     - [3. generateSharedSecret](#3-generatesharedsecret)
@@ -43,7 +43,7 @@ iOS Utility API
   - [MultibaseUtils](#multibaseutils)
     - [1. encode](#1-encode)
     - [2. decode](#2-decode)
-  - [DigestUtils](#multibaseutils)
+  - [DigestUtils](#digestutils)
     - [1. getDigest](#1-getdigest)
 - [Enumerator](#enumerator)
   - [1. ECType](#1-ectype)
@@ -61,7 +61,7 @@ iOS Utility API
 
 # APIs
 
-## CryptoUitls
+## CryptoUtils
 
 ### 1. generateNonce
 
@@ -299,7 +299,7 @@ let cipher: Data = ...
 let encrypted = try CryptoUtils.decrypt(cipher: cipher, info: info, key: key, iv: iv)
 ```
 
-## MultibaseUitls
+## MultibaseUtils
 
 <br>
 
@@ -372,7 +372,7 @@ let decoded = try MultibaseUtils.decode(encoded: multibaseEncoded)
 
 <br>
 
-## DigestUitls
+## DigestUtils
 
 ### 1. getDigest
 
@@ -597,6 +597,8 @@ public struct CipherInfo {
     public var mode: EncryptionMode
     public var size: SymmetricKeySize
     public var padding: SymmetricPaddingType
+
+    public init(cipherType: SymmetricCipherType, padding: SymmetricPaddingType)
 }
 ```
 

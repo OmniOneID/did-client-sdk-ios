@@ -18,7 +18,7 @@
 import Foundation
 
 /// Registry of credential adapters. Selects the adapter for a format (or by content sniffing).
-public class CredentialAdapterRegistry {
+class CredentialAdapterRegistry {
 
     public static let shared = CredentialAdapterRegistry()
 

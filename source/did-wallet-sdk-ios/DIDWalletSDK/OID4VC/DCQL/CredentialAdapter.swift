@@ -19,7 +19,7 @@ import Foundation
 
 /// Adapter protocol for handling different credential formats during DCQL matching.
 /// Implementations provide format-specific parsing and claim/metadata/issuer matching.
-public protocol CredentialAdapter {
+protocol CredentialAdapter {
 
     /// Credential formats supported by this adapter (e.g., ["dc+sd-jwt-did"]).
     func getSupportedFormats() -> Set<String>
@@ -53,7 +53,7 @@ public protocol CredentialAdapter {
                                    trustedAuthorities: [DCQLQuery.TrustedAuthority]) -> Bool
 }
 
-public extension CredentialAdapter {
+extension CredentialAdapter {
 
     /// Default: the credential's top-level claim names, which is what
     /// `ClaimMatchingHelper.extractMatchingClaimsByPath` reports for an unconstrained query.
@@ -64,7 +64,7 @@ public extension CredentialAdapter {
 }
 
 /// Errors raised by the DCQL credential adapter layer.
-public enum DCQLError: Error, LocalizedError {
+enum DCQLError: Error, LocalizedError {
     case parseError(String)
     case adapterNotFound(String)
 

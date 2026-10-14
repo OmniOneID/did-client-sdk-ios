@@ -19,21 +19,21 @@ import LocalAuthentication
 
 
 
-public protocol WalletLockManagerImpl {
+protocol WalletLockManagerImpl {
     func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool
     func isRegLock() throws -> Bool
     func authenticateLock(passcode: String, isChanging: Bool) throws -> Data?
     func changeLock(oldPasscode: String, newPasscode: String) throws
 }
 
-public protocol WalletTokenImpl {
+protocol WalletTokenImpl {
     func verifyWalletToken(hWalletToken: String, purposes: [WalletTokenPurposeEnum]) throws
     func createWalletTokenSeed(purpose: WalletTokenPurposeEnum, pkgName: String, userId: String?) throws -> WalletTokenSeed
     func createNonceForWalletToken(walletTokenData: WalletTokenData?, APIGatewayURL: String) async throws  -> String
     func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) throws -> String
 }
 
-public protocol WalletCoreImpl {
+protocol WalletCoreImpl {
     //MARK: Wallet
     func deleteWallet(deleteAll: Bool) throws
     func isExistWallet() -> Bool
@@ -92,7 +92,7 @@ public protocol WalletCoreImpl {
     func isAnyOID4VCICredentialsSaved() -> Bool
 }
 
-public protocol WalletServiceImpl {
+protocol WalletServiceImpl {
     func deleteWallet(deleteAll : Bool) throws
     func createWallet(tasURL: String, walletURL: String) async throws -> Bool
     
@@ -150,6 +150,9 @@ public protocol WalletServiceImpl {
                             configurationId: String,
                             credentialIdentifier: String?,
                             APIGatewayURL: String) async throws -> String
+    func requestRevokeOID4VC(metadata: IssuerMetadataResponse,
+                             vcId: String,
+                             passcode: String?) async throws
 }
 
 /// Key operations without an authentication context.

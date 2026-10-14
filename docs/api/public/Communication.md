@@ -42,6 +42,13 @@ iOS Communication API
   - [4. sendRequest](#4-sendrequest)
   - [5. sendPostUrlencoded](#5-sendposturlencoded)
   - [6. sendPostUrlencoded](#6-sendposturlencoded)
+  - [7. getDIDDocument](#7-getdiddocument)
+- [Constants](#constants)
+  - [1. defaultTimeoutInterval](#1-defaulttimeoutinterval)
+- [Enumerator](#enumerator)
+  - [1. HTTPMethod](#1-httpmethod)
+- [Protocol](#protocol)
+  - [1. CommunicationRetrieving](#1-communicationretrieving)
 
 # Removed in v2.0.0
 
@@ -77,7 +84,7 @@ public static func getZKPCredentialSchama(hostUrlString : String, id : String) a
 #### Parameters
 | Parameter | Type   | Description                  | **M/O** | **Note** |
 |-----------|--------|------------------------------|---------|----------|
-| urlString | String | Server host URL              |   M     |          |
+| hostUrlString | String | Server host URL              |   M     |          |
 | id        | String | ZKP Credential Schema ID     |   M     |          |
 
 #### Returns
@@ -108,7 +115,7 @@ public static func getZKPCredentialDefinition(hostUrlString : String, id : Strin
 #### Parameters
 | Parameter | Type   | Description                  | **M/O** | **Note** |
 |-----------|--------|------------------------------|---------|----------|
-| urlString | String | Server host URL              |   M     |          |
+| hostUrlString | String | Server host URL              |   M     |          |
 | id        | String | ZKP Credential Definition ID |   M     |          |
 
 #### Returns
@@ -140,7 +147,7 @@ The response will be decoded into the expected generic type T, which must also c
 ```swift
 public static func sendRequest<T : Jsonable>(urlString : String,
                                              httpMethod : HTTPMethod = .POST,
-                                             headerFields : StringDictionary = defaultHttpHeaderFields,
+                                             headerFields : StringDictionary = DefaultHttpHeaderFields,
                                              requestJsonable : Jsonable? = nil) async throws -> T
 ```
 
@@ -149,7 +156,7 @@ public static func sendRequest<T : Jsonable>(urlString : String,
 |-----------------|------------------|--------------------------------------------|---------|----------------------------------------|
 | urlString       | String           | The URL string to send the request to      | M       |                                        |
 | httpMethod      | HTTPMethod       | The HTTP method to use (default: `POST`)   | O       | Supported values: `GET`, `POST`, `DELETE` |
-| headerFields    | StringDictionary | A dictionary of HTTP header fields         | O       | Defaults to `defaultHttpHeaderFields`  |
+| headerFields    | StringDictionary | A dictionary of HTTP header fields         | O       | Defaults to `DefaultHttpHeaderFields`  |
 | requestJsonable | Jsonable?        | Optional request body                      | O       | Must conform to `Jsonable`             |
 
 #### Returns
@@ -184,7 +191,7 @@ It returns the response as raw Data along with the HTTP status code, without att
 ```swift
 public static func sendRequest(urlString : String,
                                httpMethod : HTTPMethod = .POST,
-                               headerFields : StringDictionary = defaultHttpHeaderFields,
+                               headerFields : StringDictionary = DefaultHttpHeaderFields,
                                requestJsonData : Data? = nil) async throws -> (Data, Int)
 ```
 
@@ -193,7 +200,7 @@ public static func sendRequest(urlString : String,
 |-----------------|------------------|------------------------------------------|---------|----------------------------------------|
 | urlString       | String           | The URL string of the API endpoint       | M       |                                        |
 | httpMethod      | HTTPMethod       | The HTTP method to use (default: `POST`) | O       | Supported values: `GET`, `POST`, `DELETE` |
-| headerFields    | StringDictionary | A dictionary containing HTTP header fields | O     | Defaults to `defaultHttpHeaderFields`  |
+| headerFields    | StringDictionary | A dictionary containing HTTP header fields | O     | Defaults to `DefaultHttpHeaderFields`  |
 | requestJsonData | Data?            | The optional request body in JSON format | O       | Can be `nil` for methods like `GET`    |
 
 #### Returns
@@ -288,5 +295,134 @@ let (data, statusCode) = try await CommunicationClient.sendPostUrlencoded(
     requestJsonData: responseBody
 )
 ```
+
+<br>
+
+### 7. getDIDDocument
+
+#### Description
+```
+Retrieves the DID Document of the given DID from the API gateway using the GET method.
+
+The request URL is built from hostUrlString by appending the path /api-gateway/api/v1/did-doc
+and the query items did and, when given, versionId:
+  {hostUrlString}/api-gateway/api/v1/did-doc?did={did}[&versionId={versionId}]
+The response body is a DIDDocVO whose didDoc field is a multibase-encoded DID Document, which is
+decoded and returned.
+```
+
+#### Declaration
+```swift
+public static func getDIDDocument(hostUrlString : String,
+                                  did: String,
+                                  versionId: String? = nil) async throws -> DIDDocument
+```
+
+#### Parameters
+| Parameter     | Type    | Description                              | **M/O** | **Note**                                      |
+|---------------|---------|------------------------------------------|---------|-----------------------------------------------|
+| hostUrlString | String  | Server host URL                          | M       |                                               |
+| did           | String  | DID whose DID Document is retrieved      | M       |                                               |
+| versionId     | String? | Version of the DID Document              | O       | Defaults to `nil` — the query item is omitted |
+
+#### Returns
+| Type        | Description                  | **M/O** | **Note**                                     |
+|-------------|------------------------------|---------|----------------------------------------------|
+| DIDDocument | Decoded DID Document         | M       | [DIDDocument](DataModel.md#1-diddocument)    |
+
+#### Throws
+| Error                                        | Condition                                                         |
+|----------------------------------------------|-------------------------------------------------------------------|
+| `CommunicationAPIError.incorrectURLconnection` | `hostUrlString` cannot be parsed as a URL, or the request URL cannot be built from it |
+| `CommunicationAPIError.serverFail`           | The server responds with a status other than 200                  |
+| Other errors                                 | Network failure, or the response or its `didDoc` cannot be decoded |
+
+#### Usage
+```swift
+let didDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                          did: "did:omn:issuer")
+```
+
+<br>
+
+# Constants
+
+### 1. defaultTimeoutInterval
+
+#### Description
+```
+Timeout interval, in seconds, applied to every request issued by CommunicationClient.
+
+Both sendRequest and sendPostUrlencoded set it as the URLRequest timeoutInterval.
+The value is fixed and cannot be changed by the caller.
+```
+
+#### Declaration
+```swift
+public static let defaultTimeoutInterval: TimeInterval = 30
+```
+
+#### Property
+| Name                   | Type         | Description                      | **M/O** | **Note**   |
+|------------------------|--------------|----------------------------------|---------|------------|
+| defaultTimeoutInterval | TimeInterval | Request timeout interval (seconds) | M     | `30`       |
+
+<br>
+
+# Enumerator
+
+### 1. HTTPMethod
+
+#### Description
+```
+HTTP method used by sendRequest. Nested in CommunicationClient (CommunicationClient.HTTPMethod).
+The raw value is set as the request's httpMethod.
+```
+
+#### Declaration
+```swift
+public enum HTTPMethod : String
+{
+    case GET
+    case POST
+    case DELETE
+}
+```
+
+#### Property
+| Name   | Raw value | Description     |
+|--------|-----------|-----------------|
+| GET    | "GET"     | HTTP GET. A request body cannot be sent with it |
+| POST   | "POST"    | HTTP POST       |
+| DELETE | "DELETE"  | HTTP DELETE     |
+
+<br>
+
+# Protocol
+
+### 1. CommunicationRetrieving
+
+#### Description
+```
+Protocol for retrieving ZKP credential schemas and credential definitions from a server.
+CommunicationClient conforms to it.
+```
+
+#### Declaration
+```swift
+public protocol CommunicationRetrieving
+{
+    static func getZKPCredentialSchama(hostUrlString : String, id : String) async throws -> ZKPCredentialSchema
+    static func getZKPCredentialDefinition(hostUrlString : String, id : String) async throws -> ZKPCredentialDefinition
+}
+```
+
+#### Requirements
+| Requirement                | Description                                   | **Note**                                                     |
+|----------------------------|-----------------------------------------------|--------------------------------------------------------------|
+| getZKPCredentialSchama     | Retrieves a ZKP Credential Schema by ID       | [1. getZKPCredentialSchama](#1-getzkpcredentialschama)       |
+| getZKPCredentialDefinition | Retrieves a ZKP Credential Definition by ID   | [2. getZKPCredentialDefinition](#2-getzkpcredentialdefinition) |
+
+`getDIDDocument` is implemented in the same `CommunicationClient` extension but is not a requirement of this protocol.
 
 <br>

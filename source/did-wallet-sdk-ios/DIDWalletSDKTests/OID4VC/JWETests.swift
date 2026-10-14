@@ -84,7 +84,7 @@ final class JWETests: XCTestCase {
 
         let tampered = try JWE(compact: segments.joined(separator: "."))
         XCTAssertThrowsError(try tampered.decrypt(using: recipientPrivateKey)) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05214" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06214" else {
                 return XCTFail("expected authenticationFailed, got \(error)")
             }
         }
@@ -98,7 +98,7 @@ final class JWETests: XCTestCase {
 
         let strangerKey = P256.KeyAgreement.PrivateKey()
         XCTAssertThrowsError(try JWE(compact: compact).decrypt(using: strangerKey)) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05214" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06214" else {
                 return XCTFail("expected authenticationFailed, got \(error)")
             }
         }
@@ -135,7 +135,7 @@ final class JWETests: XCTestCase {
 
             XCTAssertThrowsError(try JWE(compact: broken.joined(separator: ".")),
                                  "segment \(index) should be rejected") { error in
-                guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05210" else {
+                guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06210" else {
                     return XCTFail("expected invalidJWE for segment \(index), got \(error)")
                 }
             }
@@ -152,7 +152,7 @@ final class JWETests: XCTestCase {
         badJWK.crv = .unknown("P-384")
 
         XCTAssertThrowsError(try JWE.encrypt(plaintext: Data("x".utf8), to: badJWK)) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05212" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06212" else {
                 return XCTFail("expected unsupportedJWEKey, got \(error)")
             }
         }

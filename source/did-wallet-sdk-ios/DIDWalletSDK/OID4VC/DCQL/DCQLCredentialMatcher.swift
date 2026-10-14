@@ -50,9 +50,9 @@ public enum DCQLPathElement: Codable, Hashable, Sendable {
 
 /// Identifier of a DCQL credential query (`CredentialQuery.id`), used as the key
 /// of a presentation submission and the `vp_token` map sent to the verifier.
-public typealias ClientID = String
+typealias ClientID = String
 
-public enum DCQLCredentialMatcher {
+enum DCQLCredentialMatcher {
 
     /// Matches stored credentials against a DCQL query by credential schema id.
     ///

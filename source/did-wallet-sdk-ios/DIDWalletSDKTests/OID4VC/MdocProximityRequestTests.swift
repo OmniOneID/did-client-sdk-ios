@@ -151,7 +151,7 @@ final class MdocProximityRequestTests: XCTestCase
     func testRejectsMalformedRequest() throws
     {
         assertThrows(try MdocDeviceRequestDecoder.decode(CBOR.utf8String("nope").encode()),
-                     code: "MSDKWLT05620")
+                     code: "MSDKWLT06620")
 
         // itemsRequest has to be embedded CBOR: the reader hashed those bytes.
         let untagged = CBOR.map(.init(uniqueKeysWithValues: [
@@ -159,7 +159,7 @@ final class MdocProximityRequestTests: XCTestCase
              CBOR.array([.map(.init(uniqueKeysWithValues: [(CBOR.utf8String("itemsRequest"),
                                                             CBOR.byteString([0x01]))]))]))
         ])).encode()
-        assertThrows(try MdocDeviceRequestDecoder.decode(untagged), code: "MSDKWLT05620")
+        assertThrows(try MdocDeviceRequestDecoder.decode(untagged), code: "MSDKWLT06620")
     }
 
     // MARK: - Matching
@@ -206,7 +206,7 @@ final class MdocProximityRequestTests: XCTestCase
         assertThrows(try MdocRequestMatcher.match(
             docRequests: decoded,
             candidates: [.init(credentialId: "cred-1", mdoc: try mdoc())]),
-                     code: "MSDKWLT05600")
+                     code: "MSDKWLT06600")
     }
 
     func testDocumentOfAnotherTypeIsNotACandidate() throws
@@ -217,7 +217,7 @@ final class MdocProximityRequestTests: XCTestCase
         assertThrows(try MdocRequestMatcher.match(
             docRequests: decoded,
             candidates: [.init(credentialId: "cred-1", mdoc: try mdoc())]),
-                     code: "MSDKWLT05600")
+                     code: "MSDKWLT06600")
     }
 
     /// A request nothing can answer drops out; the indices of the ones that survive still point at

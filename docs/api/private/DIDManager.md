@@ -214,7 +214,7 @@ If the "temporary DIDDocument object" is nil, returns the stored DID document.
 
 ```swift
 // Declaration in Swift
-public func getDocument() throws -> DIDDocument
+func getDocument() throws -> DIDDocument
 ```
 
 ### Parameters
@@ -577,7 +577,7 @@ A type that specifies the purpose of the keys to register in the DID document.
 
 ```swift
 // Declaration in Swift
-public struct DIDMethodType : OptionSet
+public struct DIDMethodType : OptionSet, Sendable
 {
     public let rawValue: Int
     
@@ -627,17 +627,17 @@ public struct DIDKeyInfo {
 ### Description
 
 `DID document object provided by the Data Model SDK.` <br>
-cf. [Original DIDDocument Link](#list) <!-- needs modification -->
+cf. [Original DIDDocument Link](../public/DataModel.md#1-diddocument)
 
 ## 3. DIDDocument.Service
 
 `Service object of the DID document provided by the Data Model SDK.` <br>
-cf. [Original DIDDocument.Service Link](#list) <!-- needs modification -->
+cf. [Original DIDDocument.Service Link](../public/DataModel.md#12-service)
 
 ## 4. KeyInfo
 
 ### Description
 
 `Key information object retrieved from KeyManager.` <br>
-cf. [Original KeyInfo Link](#list) <!-- needs modification -->
+cf. [Original KeyInfo Link](KeyManager.md#3-keyinfo)
 

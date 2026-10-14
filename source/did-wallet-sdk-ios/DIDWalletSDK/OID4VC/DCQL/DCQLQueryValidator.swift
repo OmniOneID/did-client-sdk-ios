@@ -17,7 +17,7 @@
     
 import Foundation
 
-public enum DCQLQueryValidator {
+enum DCQLQueryValidator {
 
     public struct ValidationResult {
         private(set) public var errors: [String] = []

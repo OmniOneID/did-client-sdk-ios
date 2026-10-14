@@ -45,6 +45,8 @@ did-client-sdk-ios
 │           ├── DIDManager_ko.md
 │           ├── KeyManager.md
 │           ├── KeyManager_ko.md
+│           ├── OID4VCManager.md
+│           ├── OID4VCManager_ko.md
 │           ├── SecureEncryptor.md
 │           ├── SecureEncryptor_ko.md
 │           ├── VCManager.md

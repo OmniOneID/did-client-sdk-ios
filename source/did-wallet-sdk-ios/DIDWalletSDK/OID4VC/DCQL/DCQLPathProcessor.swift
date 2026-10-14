@@ -18,7 +18,7 @@
 import Foundation
 import CryptoKit
 
-public enum DCQLPathProcessor {
+enum DCQLPathProcessor {
     public static func isValidPath(_ path: [DCQLPathElement]?) -> Bool {
         guard let path = path, !path.isEmpty else { return false }
         return true
@@ -51,8 +51,8 @@ public enum SimpleJWTDecoder {
         }
 
         guard
-            let headerObj = try JSONSerialization.jsonObject(with: headerData, options: []) as? [String: Any],
-            let payloadObj = try JSONSerialization.jsonObject(with: payloadData, options: []) as? [String: Any]
+            let headerObj = (try? JSONSerialization.jsonObject(with: headerData, options: [])) as? [String: Any],
+            let payloadObj = (try? JSONSerialization.jsonObject(with: payloadData, options: [])) as? [String: Any]
         else {
             throw JWTError.invalidJSON
         }

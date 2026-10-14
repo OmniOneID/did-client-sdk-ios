@@ -20,12 +20,12 @@ import Foundation
 
 enum OID4VCManagerError: WalletCoreErrorProcotol
 {
-    //Common(051xx)
+    //Common(061xx)
     case unsupportedId(id: String)
     case unsupportedFormat(format: String)
     case invalidJWS(detail: String)
     case invalidMdoc(detail: String)
-    //JWE(052xx)
+    //JWE(062xx)
     case invalidJWE
     case unsupportedAlgorithmJWE
     case unsupportedJWEKey
@@ -34,16 +34,16 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     case failedToEncrypt
     case keyDerivationFailed
     case invalidKDFInput
-    //OID4VCI(053xx)
+    //OID4VCI(063xx)
     case invalidCredentialResponse
-    //verify(054xx)
+    //verify(064xx)
     case notFoundKid
     case failedToVerifySignature
     case missingJWSHeaderKey
     case mdocDigestMismatch(elementIdentifier: String)
     case mdocOutsideValidityPeriod
     case deviceKeyMismatch
-    //OID4VP(055xx)
+    //OID4VP(065xx)
     case unsupportedPresentationFormat(format: String)
     case invalidDCQLQuery(detail: String)
     case noMatchedCredentials
@@ -54,8 +54,8 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
     case unsupportedResponseEncryption(detail: String)
     case invalidSelectedCredentials(detail: String)
     case unsupportedResponseMode(mode: String)
-    //Proximity, ISO/IEC 18013-5(056xx)
-    //  0560x: shown to the user, 0561x: the app's bug, 0562x: bytes handed to us are wrong
+    //Proximity, ISO/IEC 18013-5(066xx)
+    //  0660x: shown to the user, 0661x: the app's bug, 0662x: bytes handed to us are wrong
     case noMatchedMdocDocuments
     case emptyMdocSelection
     case invalidSelectedMdocDocuments(detail: String)
@@ -70,80 +70,80 @@ enum OID4VCManagerError: WalletCoreErrorProcotol
         switch self
         {
         case .unsupportedId(let id):
-            return ("05100", "Unsupported in : \(id)")
+            return ("06100", "Unsupported in : \(id)")
         case .unsupportedFormat(let format):
-            return ("05101", "Unsupported format : \(format)")
+            return ("06101", "Unsupported format : \(format)")
         case .invalidJWS(let detail):
-            return ("05102", "Invalid JWS : \(detail)")
+            return ("06102", "Invalid JWS : \(detail)")
         case .invalidMdoc(let detail):
-            return ("05103", "Invalid mdoc : \(detail)")
+            return ("06103", "Invalid mdoc : \(detail)")
         case .invalidJWE:
-            return ("05210", "Invalid JWE")
+            return ("06210", "Invalid JWE")
         case .unsupportedAlgorithmJWE:
-            return ("05211", "Unsupported algorithm for JWE")
+            return ("06211", "Unsupported algorithm for JWE")
         case .unsupportedJWEKey:
-            return ("05212", "Unsupported JWE key")
+            return ("06212", "Unsupported JWE key")
         case .invalidSealedBox:
-            return ("05213", "invalid SealedBox")
+            return ("06213", "invalid SealedBox")
         case .authenticationFailed:
-            return ("05214", "Authentication failed")
+            return ("06214", "Authentication failed")
         case .failedToEncrypt:
-            return ("05215", "Failed to encrypt")
+            return ("06215", "Failed to encrypt")
         case .keyDerivationFailed:
-            return ("05216", "Key derivation failed")
+            return ("06216", "Key derivation failed")
         case .invalidKDFInput:
-            return ("05217", "Invalid KDF input")
+            return ("06217", "Invalid KDF input")
         case .invalidCredentialResponse:
-            return ("05300", "Invalid credential response")
+            return ("06300", "Invalid credential response")
         case .notFoundKid:
-            return ("05400", "Not found kid for verify")
+            return ("06400", "Not found kid for verify")
         case .failedToVerifySignature:
-            return ("05401", "Failed to verify signature")
+            return ("06401", "Failed to verify signature")
         case .missingJWSHeaderKey:
-            return ("05402", "No 'jwk' in the JWS header to verify with")
+            return ("06402", "No 'jwk' in the JWS header to verify with")
         case .mdocDigestMismatch(let elementIdentifier):
-            return ("05403", "Element \(elementIdentifier) does not match its digest in the MSO")
+            return ("06403", "Element \(elementIdentifier) does not match its digest in the MSO")
         case .mdocOutsideValidityPeriod:
-            return ("05404", "The mdoc is outside its validity period")
+            return ("06404", "The mdoc is outside its validity period")
         case .deviceKeyMismatch:
-            return ("05405", "The mdoc is bound to a key this wallet does not hold")
+            return ("06405", "The mdoc is bound to a key this wallet does not hold")
         case .unsupportedPresentationFormat(let format):
-            return ("05500", "Presentation for format \(format) is not supported")
+            return ("06500", "Presentation for format \(format) is not supported")
         case .invalidDCQLQuery(let detail):
-            return ("05501", "Invalid DCQL query: \(detail)")
+            return ("06501", "Invalid DCQL query: \(detail)")
         case .noMatchedCredentials:
-            return ("05502", "No credentials matched the request")
+            return ("06502", "No credentials matched the request")
         case .credentialSetsNotSatisfied(let detail):
-            return ("05503", "Required credential_sets not satisfied: \(detail)")
+            return ("06503", "Required credential_sets not satisfied: \(detail)")
         case .credentialNotFound:
-            return ("05504", "Matched credential not found")
+            return ("06504", "Matched credential not found")
         case .holderKeyNotFound:
-            return ("05505", "Holder signing key not found")
+            return ("06505", "Holder signing key not found")
         case .missingVerifierEncryptionKey:
-            return ("05506", "No verifier encryption key found in client_metadata for direct_post.jwt")
+            return ("06506", "No verifier encryption key found in client_metadata for direct_post.jwt")
         case .unsupportedResponseEncryption(let detail):
-            return ("05507", "Unsupported response encryption (\(detail))")
+            return ("06507", "Unsupported response encryption (\(detail))")
         case .invalidSelectedCredentials(let detail):
-            return ("05508", "Invalid selected credentials: \(detail)")
+            return ("06508", "Invalid selected credentials: \(detail)")
         case .unsupportedResponseMode(let mode):
-            return ("05509", "Unsupported response_mode : \(mode)")
+            return ("06509", "Unsupported response_mode : \(mode)")
 
         case .noMatchedMdocDocuments:
-            return ("05600", "No stored document can answer any docRequest")
+            return ("06600", "No stored document can answer any docRequest")
         case .emptyMdocSelection:
-            return ("05610", "No document was selected")
+            return ("06610", "No document was selected")
         case .invalidSelectedMdocDocuments(let detail):
-            return ("05611", "Invalid selected mdoc documents: \(detail)")
+            return ("06611", "Invalid selected mdoc documents: \(detail)")
         case .emptyMdocClaimCodes:
-            return ("05612", "A selected document carries no claim code")
+            return ("06612", "A selected document carries no claim code")
         case .duplicateSelectedMdocDocument:
-            return ("05613", "The same document is selected twice for the same docRequest")
+            return ("06613", "The same document is selected twice for the same docRequest")
         case .duplicateMdocClaimCode:
-            return ("05614", "A selected document names the same claim code twice")
+            return ("06614", "A selected document names the same claim code twice")
         case .invalidDeviceRequest(let detail):
-            return ("05620", "Invalid DeviceRequest: \(detail)")
+            return ("06620", "Invalid DeviceRequest: \(detail)")
         case .invalidSessionTranscript(let detail):
-            return ("05621", "Invalid SessionTranscript: \(detail)")
+            return ("06621", "Invalid SessionTranscript: \(detail)")
         }
     }
 }

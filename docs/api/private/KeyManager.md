@@ -47,6 +47,8 @@ iOS KeyManager API
     - [10. DeleteAllKeys](#10-deleteallkeys)
     - [11. Sign](#11-sign)
     - [12. Verify](#12-verify)
+    - [13. CanKeyAgree](#13-cankeyagree)
+    - [14. KeyAgreement](#14-keyagreement)
 - [OptionSet](#optionset)
     - [1. VerifyAuthType](#1-verifyauthtype)
 - [Enumerators](#enumerators)
@@ -144,12 +146,12 @@ func isKeySaved(id : String) throws -> Bool
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
-if !keyManager.isKeySaved(id: "free")
+let keyManager = try KeyManager(fileName: "MyWallet")
+if try !keyManager.isKeySaved(id: "free")
 {
     let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, 
                                              id: "free",
-                                             accessMethod: .none)
+                                             methodType: .none)
 }
 ```
 
@@ -179,21 +181,21 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 //Free
 let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, 
                                          id: "free",
-                                         accessMethod: .none)
+                                         methodType: .none)
 try keyManager.generateKey(keyGenRequest: freeKeyRequest)
 //Pin
 let pinData : Data = "password".data(using: .utf8)!
 let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1,
                                         id: "pin",
-                                        accessMethod: .pin(value: pinData))
+                                        methodType: .pin(value: pinData))
 try keyManager.generateKey(keyGenRequest: pinKeyRequest)
 //Bio
 let bioKeyRequest = SecureKeyGenRequest(id: "bio",
-                                        accessMethod: .currentSet
+                                        accessMethod: .currentSet,
                                         prompt : "Need to authenticate user")
 try keyManager.generateKey(keyGenRequest: bioKeyRequest)
 ```
@@ -226,7 +228,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let pinID = "pin"
 let oldPinData : Data = "password".data(using: .utf8)!
@@ -261,7 +263,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let pinID = "pin"
 let pinData : Data = "password".data(using: .utf8)!
@@ -297,7 +299,7 @@ func getKeyInfos(ids : [String]) throws -> [KeyInfo]
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 let keyInfos = try keyManager.getKeyInfos(ids: ["pin", "bio"])
 ```
 
@@ -330,7 +332,7 @@ func getKeyInfos(keyType : VerifyAuthType) throws -> [KeyInfo]
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 //Get All keys in stored
 let keyInfos = try keyManager.getKeyInfos(keyType: [])
 
@@ -377,7 +379,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 try keyManager.deleteKeys(ids: ["pin", "bio"])
 ```
 
@@ -405,7 +407,7 @@ Void
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 if keyManager.isAnyKeysSaved
 {
     try keyManager.deleteAllKeys()
@@ -423,7 +425,7 @@ if keyManager.isAnyKeysSaved
 
 ```swift
 // Declaration in swift
-func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
+func sign(id : String, pin : Data? = nil, digest : Data, context : LAContext? = nil) throws -> Data
 ```
 
 ### Parameters
@@ -433,6 +435,7 @@ func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
 | id        | String | Key name to be find        |    M    |         |
 | pin       | Data   | Pin of key                 |    O    |         |
 | digest    | Data   | Data to sign               |    M    | Data must be digest        |
+| context   | LAContext | Authentication context to reuse for a Secure Enclave key, so that a confirmation already given covers this signature too |    O    | Default: nil |
 
 ### Returns
 
@@ -442,9 +445,7 @@ func sign(id : String, pin : Data? = nil, digest : Data) throws -> Data
 
 ### Usage
 ```swift
-import OpenDIDCryptoSDK
-
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let plainData = "Test".data(using: .utf8)!
 let digest = DigestUtils.getDigest(source: plainData, digestEnum: .sha256)
@@ -487,7 +488,7 @@ func verify(algorithmType : AlgorithmType, publicKey : Data, digest : Data, sign
 
 ### Usage
 ```swift
-let keyManager = KeyManager(fileName: "MyWallet")
+let keyManager = try KeyManager(fileName: "MyWallet")
 
 let plainData = "Test".data(using: .utf8)!
 let digest = DigestUtils.getDigest(source: plainData, digestEnum: .sha256)
@@ -496,6 +497,93 @@ let publicKey = try MultibaseUtils.decode(encoded: "zeZDsJJfZxggomwKnwPEdpMKtGvx
 let signature = try MultibaseUtils.decode(encoded: "z3uF8E6tiEtHqYEFTVE2sL2L1dYDFxgnMyhs9jzu3ZvYxDhPmFRpyM85EAtGmau8ajfEQxqxKpHhVSUSYyRYn2XEV1")
         
 let result = try keyManager.verify(algorithmType: .secp256r1, publicKey: publicKey, digest: digest, signature: signature)
+```
+
+<br>
+
+## 13. CanKeyAgree
+
+### Description
+`Whether the key can perform ECDH key agreement`
+
+A software key (`walletNone`, `walletPin`) always can. A Secure Enclave key is asked about itself: one generated without key exchange support cannot, and nothing on the wallet side changes that. Whether a PIN is needed is a separate matter — a PIN-protected key needs its PIN at `keyAgreement` time, as it does to sign.
+
+### Declaration
+
+```swift
+// Declaration in swift
+func canKeyAgree(id : String) throws -> Bool
+```
+
+### Parameters
+
+| Name | Type   | Description         | **M/O** | **Note** |
+|------|--------|---------------------|---------|----------|
+| id   | String | Key name to be find |    M    |          |
+
+### Returns
+
+| Type | Description                       | **M/O** | **Note** |
+|------|-----------------------------------|---------|----------|
+| Bool | Whether the key can do ECDH       |    M    | `false` when no key is stored under `id` |
+
+### Usage
+```swift
+let keyManager = try KeyManager(fileName: "MyWallet")
+
+if try keyManager.canKeyAgree(id: "free")
+{
+    // ECDH is available for this key
+}
+```
+
+<br>
+
+## 14. KeyAgreement
+
+### Description
+`Compute the raw ECDH shared secret between the key and a peer public key`
+
+Returns the raw shared secret (the x-coordinate `Z`, 32 bytes) with no KDF applied; derive keys from it with the KDF the protocol calls for.
+
+### Declaration
+
+```swift
+// Declaration in swift
+func keyAgreement(id : String, pin : Data? = nil, publicKey : Data, context : LAContext? = nil) throws -> Data
+```
+
+### Parameters
+
+| Name      | Type      | Description                                   | **M/O** | **Note** |
+|-----------|-----------|-----------------------------------------------|---------|----------|
+| id        | String    | Key name to be find                           |    M    |          |
+| pin       | Data      | Pin of key                                    |    O    | Used only for a PIN-protected software key, as in `sign` |
+| publicKey | Data      | Peer public key                               |    M    | Uncompressed P-256 point (`0x04‖x‖y`, 65 bytes) |
+| context   | LAContext | Authentication context to reuse for a Secure Enclave key, so that one confirmation covers several key uses |    O    | Default: nil |
+
+### Returns
+
+| Type | Description          | **M/O** | **Note** |
+|------|----------------------|---------|----------|
+| Data | Raw shared secret    |    M    | 32 bytes |
+
+### Errors
+- Empty `id` or `publicKey`: invalid parameter error
+- A `publicKey` that is not a valid P-256 point: invalid parameter error for a software key, `keyAgreement` error for a Secure Enclave key
+- A `secureEnclaveCurrentSet` key after the enrolled biometrics changed: `userBiometricsChanged`
+- A Secure Enclave key without key exchange support: `keyAgreementUnsupported` (check with `canKeyAgree` first)
+
+### Usage
+```swift
+let keyManager = try KeyManager(fileName: "MyWallet")
+
+// peerPublicKey: 65-byte uncompressed point (0x04||x||y)
+//Not Pin key
+let secret1 = try keyManager.keyAgreement(id: "free", publicKey: peerPublicKey)
+
+//Pin key
+let secret2 = try keyManager.keyAgreement(id: "pin", pin: pinData, publicKey: peerPublicKey)
 ```
 
 <br>
@@ -510,7 +598,7 @@ let result = try keyManager.verify(algorithmType: .secp256r1, publicKey: publicK
 ### Declaration
 
 ```swift
-public struct VerifyAuthType : OptionSet, Sequence, Codable
+public struct VerifyAuthType : OptionSet, Sequence, Codable, Sendable
 {
     public let rawValue: Int
     
@@ -575,11 +663,11 @@ public enum WalletAccessMethod
 
 ```swift
 // Declaration in swift
-public enum SecureEnclaveAccessMethod
+public enum SecureEnclaveAccessMethod : Int, Codable
 {
-    case none
-    case currentSet
-    case any
+    case none       = 0
+    case currentSet = 1
+    case any        = 2
 }
 ```
 
@@ -636,7 +724,7 @@ public enum KeyAccessMethod : Int, Codable
 
 ```swift
 // Declaration in swift
-public enum AuthType : Int, Codable
+public enum AuthType : Int, Codable, Sendable
 {
     case free = 1
     case pin  = 2
@@ -721,7 +809,7 @@ public protocol SecureKeyGenRequestProtocol : KeyGenRequestProtocol
 
 | Name          | Type                      | Description                     | **M/O** | **Note**                           |
 |---------------|---------------------------|---------------------------------|---------|------------------------------------|
-| accessMethod  | SecureEnclaveAccessMethod | Access method for Secure Enclave|    M    |[SecureEnclaveAccessMethod](#2-secureenclaveaccessmethod)|
+| accessMethod  | SecureEnclaveAccessMethod | Access method for Secure Enclave|    M    |[SecureEnclaveAccessMethod](#3-secureenclaveaccessmethod)|
 | prompt        | String                    | Description for Touch ID usage  |    M    |                                    |
 
 <br>
@@ -784,7 +872,7 @@ public struct SecureKeyGenRequest : SecureKeyGenRequestProtocol
 |---------------|---------------------------|---------------------------------|---------|------------------------------------|
 | algorithmType | AlgorithmType             | Algorithm type for Key          |    M    |[AlgorithmType](#1-algorithmtype)            |
 | id            | String                    | Key name                        |    M    |                                    |
-| accessMethod  | SecureEnclaveAccessMethod | Access method for Secure Enclave|    M    |[SecureEnclaveAccessMethod](#2-secureenclaveaccessmethod)|
+| accessMethod  | SecureEnclaveAccessMethod | Access method for Secure Enclave|    M    |[SecureEnclaveAccessMethod](#3-secureenclaveaccessmethod)|
 | storage       | StorageOption             | Key storage                     |    M    |[StorageOption](#4-storageoption)            |
 | prompt        | String                    | Description for Touch ID usage  |    M    |                                    |
 
@@ -802,11 +890,11 @@ public struct SecureKeyGenRequest : SecureKeyGenRequestProtocol
 // Declaration in swift
 public struct KeyInfo : MetaProtocol
 {
-    var algorithmType : AlgorithmType
-    var id            : String
-    var accessMethod  : KeyAccessMethod
-    var authType      : AuthType
-    var publicKey     : String
+    public var algorithmType : AlgorithmType
+    public var id            : String
+    public var accessMethod  : KeyAccessMethod
+    public var authType      : AuthType
+    public var publicKey     : String
 }
 ```
 

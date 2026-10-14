@@ -42,6 +42,13 @@ iOS Communication API
   - [4. sendRequest](#4-sendrequest)
   - [5. sendPostUrlencoded](#5-sendposturlencoded)
   - [6. sendPostUrlencoded](#6-sendposturlencoded)
+  - [7. getDIDDocument](#7-getdiddocument)
+- [상수](#상수)
+  - [1. defaultTimeoutInterval](#1-defaulttimeoutinterval)
+- [열거형](#열거형)
+  - [1. HTTPMethod](#1-httpmethod)
+- [프로토콜](#프로토콜)
+  - [1. CommunicationRetrieving](#1-communicationretrieving)
 
 
 ## v2.0.0 에서 제거된 API
@@ -79,7 +86,7 @@ public static func getZKPCredentialSchama(hostUrlString : String, id : String) a
 #### Parameters
 | Parameter | Type   | Description                  | **M/O** | **Note** |
 |-----------|--------|------------------------------|---------|----------|
-| urlString | String | 서버 호스트 URL                 |   M     |          |
+| hostUrlString | String | 서버 호스트 URL                 |   M     |          |
 | id        | String | ZKP Credential Schema ID     |   M     |          |
 
 #### Returns
@@ -110,7 +117,7 @@ public static func getZKPCredentialDefinition(hostUrlString : String, id : Strin
 #### Parameters
 | Parameter | Type   | Description                  | **M/O** | **Note** |
 |-----------|--------|------------------------------|---------|----------|
-| urlString | String | 서버 호스트 URL                 |   M     |          |
+| hostUrlString | String | 서버 호스트 URL                 |   M     |          |
 | id        | String | ZKP Credential Definition ID |   M     |          |
 
 #### Returns
@@ -142,7 +149,7 @@ HTTP 메서드, 사용자 정의 헤더, 선택적 요청 본문을 지정할 �
 ```swift
 public static func sendRequest<T : Jsonable>(urlString : String,
                                              httpMethod : HTTPMethod = .POST,
-                                             headerFields : StringDictionary = defaultHttpHeaderFields,
+                                             headerFields : StringDictionary = DefaultHttpHeaderFields,
                                              requestJsonable : Jsonable? = nil) async throws -> T
 ```
 
@@ -151,7 +158,7 @@ public static func sendRequest<T : Jsonable>(urlString : String,
 |-----------------|------------------|-------------------------|---------|-----------------------------------|
 | urlString       | String           | 요청을 보낼 URL 문자열  | M       |                                   |
 | httpMethod      | HTTPMethod       | 사용할 HTTP 메서드 (기본값: `POST`) | O | 지원 값: `GET`, `POST`, `DELETE` |
-| headerFields    | StringDictionary | HTTP 헤더 필드 딕셔너리 (기본 제공) | O | 기본: `defaultHttpHeaderFields`   |
+| headerFields    | StringDictionary | HTTP 헤더 필드 딕셔너리 (기본 제공) | O | 기본: `DefaultHttpHeaderFields`   |
 | requestJsonable | Jsonable?        | 요청 본문 (선택적)      | O       | `Jsonable`을 준수해야 함          |
 
 #### Returns
@@ -185,7 +192,7 @@ let response: SomeResponse = try await CommunicationClient.sendRequest(
 ```swift
 public static func sendRequest(urlString : String,
                                httpMethod : HTTPMethod = .POST,
-                               headerFields : StringDictionary = defaultHttpHeaderFields,
+                               headerFields : StringDictionary = DefaultHttpHeaderFields,
                                requestJsonData : Data? = nil) async throws -> (Data, Int)
 ```
 
@@ -194,7 +201,7 @@ public static func sendRequest(urlString : String,
 |-----------------|------------------|--------------------------------------|---------|----------------------------------------|
 | urlString       | String           | API 엔드포인트의 URL 문자열          | M       |                                        |
 | httpMethod      | HTTPMethod       | 사용할 HTTP 메서드 (기본값: `POST`)  | O       | 지원 값: `GET`, `POST`, `DELETE`       |
-| headerFields    | StringDictionary | HTTP 헤더 필드 딕셔너리 (기본 제공)  | O       | 기본: `defaultHttpHeaderFields`        |
+| headerFields    | StringDictionary | HTTP 헤더 필드 딕셔너리 (기본 제공)  | O       | 기본: `DefaultHttpHeaderFields`        |
 | requestJsonData | Data?            | JSON 형식의 요청 본문 데이터 (선택적) | O       | `GET`과 같은 경우 `nil` 가능           |
 
 #### Returns
@@ -289,5 +296,136 @@ let (data, statusCode) = try await CommunicationClient.sendPostUrlencoded(
     requestJsonData: responseBody
 )
 ```
+
+<br>
+
+### 7. getDIDDocument
+
+#### Description
+```
+API 게이트웨이에서 GET 메서드를 사용하여 지정된 DID의 DID Document를 가져옵니다.
+
+요청 URL은 hostUrlString 에 경로 /api-gateway/api/v1/did-doc 를 덧붙이고,
+쿼리 항목 did 와 (주어진 경우) versionId 를 붙여 구성합니다.
+  {hostUrlString}/api-gateway/api/v1/did-doc?did={did}[&versionId={versionId}]
+응답 본문은 DIDDocVO 이며, 그 didDoc 필드의 멀티베이스 인코딩된 DID Document를 디코딩하여 반환합니다.
+```
+
+#### Declaration
+```swift
+public static func getDIDDocument(hostUrlString : String,
+                                  did: String,
+                                  versionId: String? = nil) async throws -> DIDDocument
+```
+
+#### Parameters
+| Parameter     | Type    | Description                     | **M/O** | **Note**                               |
+|---------------|---------|---------------------------------|---------|----------------------------------------|
+| hostUrlString | String  | 서버 호스트 URL                  | M       |                                        |
+| did           | String  | DID Document를 조회할 DID        | M       |                                        |
+| versionId     | String? | DID Document 버전               | O       | 기본값 `nil` — 쿼리 항목을 생략한다     |
+
+#### Returns
+| Type        | Description               | **M/O** | **Note**                                     |
+|-------------|---------------------------|---------|----------------------------------------------|
+| DIDDocument | 디코딩된 DID Document      | M       | [DIDDocument](DataModel_ko.md#1-diddocument) |
+
+#### Throws
+| Error                                        | Condition                                                         |
+|----------------------------------------------|-------------------------------------------------------------------|
+| `CommunicationAPIError.incorrectURLconnection` | `hostUrlString` 을 URL로 해석할 수 없거나, 그로부터 요청 URL을 구성할 수 없는 경우 |
+| `CommunicationAPIError.serverFail`           | 서버가 200 이외의 상태 코드로 응답한 경우                          |
+| 기타 에러                                     | 네트워크 실패, 또는 응답이나 `didDoc` 을 디코딩할 수 없는 경우     |
+
+#### Usage
+```swift
+let didDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
+                                                          did: "did:omn:issuer")
+```
+
+<br>
+
+
+## 상수
+
+### 1. defaultTimeoutInterval
+
+#### Description
+```
+CommunicationClient 가 보내는 모든 요청에 적용되는 타임아웃 간격(초)입니다.
+
+sendRequest 와 sendPostUrlencoded 모두 이 값을 URLRequest 의 timeoutInterval 로 설정합니다.
+값은 고정이며 호출부에서 변경할 수 없습니다.
+```
+
+#### Declaration
+```swift
+public static let defaultTimeoutInterval: TimeInterval = 30
+```
+
+#### Property
+| Name                   | Type         | Description            | **M/O** | **Note**   |
+|------------------------|--------------|------------------------|---------|------------|
+| defaultTimeoutInterval | TimeInterval | 요청 타임아웃 간격(초)  | M       | `30`       |
+
+<br>
+
+
+## 열거형
+
+### 1. HTTPMethod
+
+#### Description
+```
+sendRequest 에서 사용하는 HTTP 메서드입니다. CommunicationClient 에 중첩되어 있습니다(CommunicationClient.HTTPMethod).
+원시 값이 요청의 httpMethod 로 설정됩니다.
+```
+
+#### Declaration
+```swift
+public enum HTTPMethod : String
+{
+    case GET
+    case POST
+    case DELETE
+}
+```
+
+#### Property
+| Name   | Raw value | Description     |
+|--------|-----------|-----------------|
+| GET    | "GET"     | HTTP GET. 요청 본문을 함께 보낼 수 없다 |
+| POST   | "POST"    | HTTP POST       |
+| DELETE | "DELETE"  | HTTP DELETE     |
+
+<br>
+
+
+## 프로토콜
+
+### 1. CommunicationRetrieving
+
+#### Description
+```
+서버에서 ZKP Credential Schema 와 Credential Definition 을 조회하기 위한 프로토콜입니다.
+CommunicationClient 가 이 프로토콜을 준수합니다.
+```
+
+#### Declaration
+```swift
+public protocol CommunicationRetrieving
+{
+    static func getZKPCredentialSchama(hostUrlString : String, id : String) async throws -> ZKPCredentialSchema
+    static func getZKPCredentialDefinition(hostUrlString : String, id : String) async throws -> ZKPCredentialDefinition
+}
+```
+
+#### Requirements
+| Requirement                | Description                              | **Note**                                                     |
+|----------------------------|------------------------------------------|--------------------------------------------------------------|
+| getZKPCredentialSchama     | ID로 ZKP Credential Schema 를 조회한다     | [1. getZKPCredentialSchama](#1-getzkpcredentialschama)       |
+| getZKPCredentialDefinition | ID로 ZKP Credential Definition 을 조회한다 | [2. getZKPCredentialDefinition](#2-getzkpcredentialdefinition) |
+
+`getDIDDocument` 는 같은 `CommunicationClient` 확장에 구현되어 있지만 이 프로토콜의 요구사항은 아닙니다.
 
 <br>

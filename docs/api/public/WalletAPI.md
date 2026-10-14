@@ -26,7 +26,7 @@ iOS Wallet API
 | Version | Date       | History                                               |
 | -------- | ---------- | ----------------------------------------------------- |
 | v3.0.0   | 2026-09-22 | Add OID4VC section, createLocalWalletToken and the ISO/IEC 18013-5 proximity APIs; correct declarations to match the SDK |
-| v2.0.1   | 2025-09-11 | Add DID-related function and authenticatePin          |
+| v2.0.1   | 2025-10-13 | Add DID-related function and authenticatePin          |
 | v2.0.0   | 2025-05-27 | Add ZKP-related function                              |
 | v1.0.0   | 2024-10-18 | Initial                                              |
 
@@ -47,7 +47,7 @@ iOS Wallet API
         - [2.8. unbindUser](#28-unbinduser)
         - [2.9. requestRegisterUser](#29-requestregisteruser)
         - [2.10. getSignedWalletInfo](#210-getsignedwalletinfo)
-    - [3. DIDKey)](#3-didkey)
+    - [3. DIDKey](#3-didkey)
         - [3.1. createHolderDIDDocument](#31-createholderdiddocument)
         - [3.2. createSignedDIDDoc](#32-createsigneddiddoc)
         - [3.3. getDidDocument](#33-getdiddocument)
@@ -62,7 +62,7 @@ iOS Wallet API
         - [3.12. deleteKeyPair](#312-deletekeypair)
         - [3.13. requestUpdateUser](#313-requestupdateuser)
         - [3.14. requestRestoreUser](#314-requestrestoreuser)
-    - [4. Credential)](#4-credential)
+    - [4. Credential](#4-credential)
         - [4.1. requestIssueVc](#41-requestissuevc)
         - [4.2. requestRevokeVc](#42-requestrevokevc)
         - [4.3. getAllCredentials](#43-getallcredentials)
@@ -78,7 +78,7 @@ iOS Wallet API
         - [5.4. isAnyZKPCredentialsSaved](#54-isanyzkpcredentialssaved)
         - [5.5. isZKPCredentialSaved](#55-iszkpcredentialsaved)
         - [5.6. getZKPCredentials](#56-getzkpcredentials)
-    - [6. SecurityAuth)](#6-securityauth)
+    - [6. SecurityAuth](#6-securityauth)
         - [6.1. registerLock](#61-registerlock)
         - [6.2. authenticateLock](#62-authenticatelock)
         - [6.3. isLock](#63-islock)
@@ -93,12 +93,13 @@ iOS Wallet API
         - [7.5. isAnyOID4VCSaved](#75-isanyoid4vcsaved)
         - [7.6. matchCredentials](#76-matchcredentials)
         - [7.7. createVpToken](#77-createvptoken)
+        - [7.8. requestRevokeOID4VC](#78-requestrevokeoid4vc)
     - [8. Proximity](#8-proximity)
         - [8.1. matchMdocRequest](#81-matchmdocrequest)
         - [8.2. createDeviceResponse](#82-createdeviceresponse)
 
 - [Enumerators](#enumerators)
-    - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
+    - [1. WalletTokenPurposeEnum](#1-wallettokenpurposeenum)
 
 - [Value Object](#value-object)
     - [1. WalletTokenSeed](#1-wallettokenseed)
@@ -255,7 +256,7 @@ func createWalletTokenSeed(purpose: WalletTokenPurposeEnum, pkgName: String, use
 
 | Name    | Type                 | Description  | **M/O** | **Note**                                           |
 |---------|----------------------|--------------|---------|----------------------------------------------------|
-| purpose | WalletTokenPurposeEnum | use token   | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose)  |
+| purpose | WalletTokenPurposeEnum | use token   | M       | [WalletTokenPurposeEnum](#1-wallettokenpurposeenum)  |
 | pkgName | String               | CA Package Name | M    |                                                    |
 | userId  | String               | user ID      | M       |                                                    |
 
@@ -268,7 +269,7 @@ func createWalletTokenSeed(purpose: WalletTokenPurposeEnum, pkgName: String, use
 ### Usage
 
 ```swift
-let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, "org.opendid.did.ca", "user_id");
+let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, pkgName: "org.opendid.did.ca", userId: "user_id");
 ```
 
 <br>
@@ -328,7 +329,7 @@ func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) th
 
 | Name    | Type                   | Description                                   | **M/O** | **Note** |
 |---------|------------------------|-----------------------------------------------|---------|----------|
-| purpose | WalletTokenPurposeEnum | Purpose of the token. One of the four above.  | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| purpose | WalletTokenPurposeEnum | Purpose of the token. One of the four above.  | M       | [WalletTokenPurposeEnum](#1-wallettokenpurposeenum) |
 | pkgName | String                 | Package name of the calling app               | M       |          |
 
 ### Returns
@@ -502,7 +503,7 @@ func createHolderDIDDocument(hWalletToken: String) throws -> DIDDocument
 
 | Name         | Type   | Description  | **M/O** | **Note** |
 |--------------|--------|--------------|---------|----------|
-| hWalletToken | String | Wallet Token | O       |          |
+| hWalletToken | String | Wallet Token | M       |          |
 
 ### Returns
 
@@ -564,7 +565,7 @@ func getDidDocument(type: DidDocumentType) throws -> DIDDocument
 
 | Name | Type | Description                          | **M/O** | **Note**              |
 |------|------|--------------------------------------|---------|-----------------------|
-| type | Enum | DeviceDidDocument, HolderDidDocumnet | M       | DIDDataModel reference |
+| type | DidDocumentType | DeviceDidDocument, HolderDidDocumnet | M       | [DidDocumentType](DataModel.md#22-diddocumenttype) |
 
 ### Returns
 
@@ -637,7 +638,7 @@ public func isSavedKey(keyId: String) throws -> Bool
 ### Usage
 
 ```swift
-let hasKey = try WalletAPI.shared.isSavedKey(keyId: "pin"))
+let hasKey = try WalletAPI.shared.isSavedKey(keyId: "pin")
 if hasKey {
     print("Key named pin is saved.")
 } else {
@@ -664,10 +665,10 @@ func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: Strin
 | Name         | Type          | Description                                | **M/O** | **Note**                              |
 |--------------|---------------|--------------------------------------------|---------|---------------------------------------|
 | hWalletToken | String        | Wallet Token                               | M       |                                       |
-| passCode     | String        | PIN for signing                            | M       | When generating a key for PIN signing |
+| passcode     | String?       | PIN for signing                            | O       | When generating a key for PIN signing |
 | keyId        | String        | PIN for ID                                 | M       |                                       |
 | algType      | AlgorithmType | Key algorithm type for signing             | M       |                                       |
-| promptMsg    | String        | Biometric authentication prompt message    | M       |                                       |
+| promptMsg    | String?       | Biometric authentication prompt message    | O       |                                       |
 
 ### Returns
 
@@ -676,10 +677,10 @@ Bool
 ### Usage
 
 ```swift
-let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, passcode:"123456", keyId:"pin", algType: AlgoritheType.secp256r1);
+let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, passcode:"123456", keyId:"pin", algType: AlgorithmType.secp256r1);
 
 
-let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, keyId:"bio", algType: AlgoritheType.secp256r1, promptMsg: "message");
+let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, keyId:"bio", algType: AlgorithmType.secp256r1, promptMsg: "message");
 ```
 
 <br>
@@ -707,7 +708,7 @@ public func sign(keyId: String,
 | keyId     | String          | The ID of the key to use for signing             | M       |          |
 | pin       | Data            | The PIN for key decryption (optional)            | O       |          |
 | data      | Data            | The digest to sign                               | M       |          |
-| type      | DidDocumentType | The type of DID document associated with the key | M       |          |
+| type      | DidDocumentType | The type of DID document associated with the key | M       | [DidDocumentType](DataModel.md#22-diddocumenttype) |
 
 ### Returns
 
@@ -723,7 +724,7 @@ let signature = try WalletAPI.shared.sign(
     keyId: "key_identifier",
     pin: pinData,
     data: messageData,
-    type: .authentication
+    type: .HolderDidDocumnet
 )
 ```
 
@@ -919,14 +920,14 @@ public func requestUpdateUser(tasURL: String,
 | txId         | String        | The transaction ID for the update request   | M       |          |
 | hWalletToken | String        | The token used for wallet authentication    | M       |          |
 | serverToken  | String        | The token used for server authentication    | M       |          |
-| didAuth      | DIDAuth       | Authentication details for the DID          | O       |          |
-| signedDIDDoc | SignedDIDDoc  | A signed DID Document representing the user | O       |          |
+| didAuth      | DIDAuth?      | Authentication details for the DID          | M       | `nil` is rejected |
+| signedDIDDoc | SignedDIDDoc? | A signed DID Document representing the user | M       | `nil` is rejected |
 
 ### Returns
 
 | Type                 | Description                            | **M/O** | **Note** |
 | -------------------- | -------------------------------------- | ------- | -------- |
-| _RequestUpdateDidDoc | An object containing the response data | M       |          |
+| _RequestUpdateDidDoc | An object containing the response data | M       | [_RequestUpdateDidDoc](DataModel.md#172-requestupdatediddoc-_requestupdatediddoc) |
 
 ### Usage
 
@@ -969,7 +970,7 @@ public func requestRestoreUser(tasURL: String,
 | txId         | String   | The transaction ID for the restore request   | M       |          |
 | hWalletToken | String   | The token used for wallet authentication     | M       |          |
 | serverToken  | String   | The token used for server authentication     | M       |          |
-| didAuth      | DIDAuth? | Authentication details for the DID           | O       |          |
+| didAuth      | DIDAuth? | Authentication details for the DID           | M       | `nil` is rejected |
 
 
 ### Returns
@@ -1098,7 +1099,7 @@ func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]?
 
 | Type                   | Description     | **M/O** | **Note** |
 |------------------------|-----------------|---------|----------|
-| [VerifiableCredential] | VC List Object  | M       |          |
+| [VerifiableCredential]? | VC List Object  | O       | Returns `nil` if no credentials exist |
 
 ### Usage
 
@@ -1232,7 +1233,7 @@ func createVp(hWalletToken: String, claimInfos: [ClaimInfo], passcode: String? =
 | claimInfos    | [ClaimInfo]       | Credentials and claim codes to present      | M       | DIDDataModel reference |
 | passcode      | String?           | PIN when the holder key is PIN-protected; `nil` for biometrics | O | |
 | verifierNonce | String            | Nonce bound into the presentation proof     | M       |                        |
-| challenge     | OIDV4VPChallenge? | `domain`/`challenge` pair to bind instead of the plain nonce | O | DIDDataModel reference |
+| challenge     | OIDV4VPChallenge? | `domain`/`challenge` pair to bind instead of the plain nonce | O | [OIDV4VPChallenge](DataModel.md#43-oidv4vpchallenge) |
 
 ### Returns
 
@@ -1514,7 +1515,6 @@ wallet does not become unlocked as a side effect of the holder proving the old P
 ### Declaration
 
 ```swift
-@discardableResult
 func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data?
 ```
 
@@ -1534,10 +1534,10 @@ func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data
 ### Usage
 
 ```swift
-try WalletAPI.shared.authenticateLock(passcode: "123456");
+_ = try WalletAPI.shared.authenticateLock(passcode: "123456");
 
 // Verifying the old PIN before changing it — the wallet stays locked
-try WalletAPI.shared.authenticateLock(passcode: oldPasscode, isChanging: true);
+_ = try WalletAPI.shared.authenticateLock(passcode: oldPasscode, isChanging: true);
 ```
 
 <br>
@@ -1922,6 +1922,61 @@ let body = try WalletAPI.shared.createVpToken(hWalletToken: hWalletToken,
 
 <br>
 
+## 7.8. requestRevokeOID4VC
+
+### Description
+`Ask the issuer to revoke a stored OID4VC credential.`
+
+Fetches a `c_nonce` from `metadata.nonceEndpoint`, then signs a revocation token
+(`typ: opendid-credential-revocation+jwt`) over it and the credential's status list entry with the
+key the credential is bound to. The token is posted to `metadata.credentialRevocationEndpoint`.
+The token's `kid` is the holder DID with the DID Document's current `versionId` and that key's id.
+
+The call succeeds when the issuer answers 200, including for a credential it has already revoked.
+The stored credential is left as it is. Deleting it or marking it as revoked afterwards is up to
+the app. Each call fetches a fresh nonce, so a call whose response was lost can simply be repeated.
+
+### Declaration
+
+```swift
+func requestRevokeOID4VC(hWalletToken: String, metadata: IssuerMetadataResponse, vcId: String, passcode: String?) async throws
+```
+
+### Parameters
+
+| Name         | Type                   | Description                         | **M/O** | **Note** |
+|--------------|------------------------|-------------------------------------|---------|----------|
+| hWalletToken | String                 | Wallet Token                        | M       | Must allow `REMOVE_VC` |
+| metadata     | IssuerMetadataResponse | Metadata of the credential's issuer | M       | `nonceEndpoint` and `credentialRevocationEndpoint` are required. [IssuerMetadataResponse](DataModel.md#12-issuermetadataresponse) |
+| vcId         | String                 | Credential ID to revoke             | M       |          |
+| passcode     | String                 | PIN                                 | O       | Required when the credential is bound to the PIN key; nil for the biometric key |
+
+### Returns
+
+Void
+
+### Errors
+
+- `MSDKWLT05002` (`verifyParameterFail`): `vcId` is empty, the metadata has no `nonceEndpoint` or
+  `credentialRevocationEndpoint`, or the credential carries no status list entry
+- `MSDKWLT06504` (`credentialNotFound`): no stored credential has this id
+- `MSDKWLT06505` (`holderKeyNotFound`): the credential's key is missing or is not an
+  authentication method of the holder DID Document
+- Communication errors: the issuer did not answer 200. The server's `{code, description}` body is
+  carried in the error message
+
+### Usage
+
+```swift
+try await WalletAPI.shared.requestRevokeOID4VC(hWalletToken: hWalletToken,
+                                               metadata: metadata,
+                                               vcId: credentialId,
+                                               passcode: nil)
+try WalletAPI.shared.deleteOID4VCs(hWalletToken: hWalletToken, ids: [credentialId])
+```
+
+<br>
+
 ## 8. Proximity
 
 Presentation to a reader in proximity, over BLE/NFC rather than over the web. What this section
@@ -1965,8 +2020,8 @@ func matchMdocRequest(hWalletToken: String, deviceRequest: Data) throws -> [Mdoc
 
 ### Throws
 
-- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` is not a well-formed `DeviceRequest`
-- `MSDKWLT05600` (`noMatchedMdocDocuments`): no stored document can answer any `docRequest`
+- `MSDKWLT06620` (`invalidDeviceRequest`): `deviceRequest` is not a well-formed `DeviceRequest`
+- `MSDKWLT06600` (`noMatchedMdocDocuments`): no stored document can answer any `docRequest`
 
 ### Usage
 
@@ -1995,9 +2050,9 @@ entry has to answer a request in that fresh match.
 (`#6.24(bstr .cbor SessionTranscript)`, what the transport SDK hands on) or the bare
 `SessionTranscript` array. Neither is re-encoded.
 
-Each document is authenticated with `deviceMac` when its device key can perform key agreement and
-the transcript carries the reader's ephemeral key, and with `deviceSignature` otherwise; the method
-used is reported per credential in `authMethods`. The holder key is used under one authentication
+Every document is authenticated with `deviceSignature`, reported per credential in `authMethods`.
+No MAC is produced: the same device key signs this document's OpenID4VP presentations, and a single
+mdoc authentication key must not produce both MACs and signatures (ISO/IEC 18013-5 9.1.3.4). The holder key is used under one authentication
 context, so a Secure Enclave key that asks the user to confirm asks once for the whole call.
 
 The returned `response` is the **plaintext** `DeviceResponse`; the transport SDK encrypts it before
@@ -2027,17 +2082,16 @@ func createDeviceResponse(hWalletToken: String, deviceRequest: Data, sessionTran
 
 ### Throws
 
-- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` is not a well-formed `DeviceRequest`
-- `MSDKWLT05621` (`invalidSessionTranscript`): `sessionTranscript` is neither form of the transcript
-- `MSDKWLT05600` (`noMatchedMdocDocuments`): no stored document can answer any `docRequest`
-- `MSDKWLT05610` (`emptyMdocSelection`): `selected` is empty
-- `MSDKWLT05611` (`invalidSelectedMdocDocuments`): an entry does not belong to the fresh match, or names a code its document cannot disclose (not held, or ambiguous)
-- `MSDKWLT05612` (`emptyMdocClaimCodes`): an entry carries no claim code
-- `MSDKWLT05613` (`duplicateSelectedMdocDocument`): the same document is selected twice for the same `docRequest`
-- `MSDKWLT05614` (`duplicateMdocClaimCode`): an entry names the same claim code twice
-- `MSDKWLT05504` (`credentialNotFound`): a selected credential is no longer in the wallet
-- `MSDKWLT05505` (`holderKeyNotFound`): the device key bound to a selected document is missing
-- `MSDKWLT12401` (`keyAgreement`): the Secure Enclave failed the key agreement for `deviceMac`
+- `MSDKWLT06620` (`invalidDeviceRequest`): `deviceRequest` is not a well-formed `DeviceRequest`
+- `MSDKWLT06621` (`invalidSessionTranscript`): `sessionTranscript` is neither form of the transcript
+- `MSDKWLT06600` (`noMatchedMdocDocuments`): no stored document can answer any `docRequest`
+- `MSDKWLT06610` (`emptyMdocSelection`): `selected` is empty
+- `MSDKWLT06611` (`invalidSelectedMdocDocuments`): an entry does not belong to the fresh match, or names a code its document cannot disclose (not held, or ambiguous)
+- `MSDKWLT06612` (`emptyMdocClaimCodes`): an entry carries no claim code
+- `MSDKWLT06613` (`duplicateSelectedMdocDocument`): the same document is selected twice for the same `docRequest`
+- `MSDKWLT06614` (`duplicateMdocClaimCode`): an entry names the same claim code twice
+- `MSDKWLT06504` (`credentialNotFound`): a selected credential is no longer in the wallet
+- `MSDKWLT06505` (`holderKeyNotFound`): the device key bound to a selected document is missing
 
 ### Usage
 
@@ -2097,7 +2151,7 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
 ### Declaration
 
 ```swift
-public struct WalletTokenSeed {
+public struct WalletTokenSeed: Jsonable {
     var purpose: WalletTokenPurposeEnum
     var pkgName: String
     var nonce: String
@@ -2110,11 +2164,11 @@ public struct WalletTokenSeed {
 
 | Name       | Type                   | Description        | **M/O** | **Note**                                          |
 | ---------- | ---------------------- | ------------------ | ------- | ------------------------------------------------- |
-| purpose    | WalletTokenPurposeEnum | token purpose    | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| purpose    | WalletTokenPurposeEnum | token purpose    | M       | [WalletTokenPurposeEnum](#1-wallettokenpurposeenum) |
 | pkgName    | String                 | ca Package Name    | M       |                                                   |
 | nonce      | String                 | wallet nonce       | M       |                                                   |
 | validUntil | String                 | token expried date | M       |                                                   |
-| userId     | String                 | user ID            | M       |                                                   |
+| userId     | String?                | user ID            | O       |                                                   |
 <br>
 
 ## 2. WalletTokenData
@@ -2126,12 +2180,12 @@ public struct WalletTokenSeed {
 ### Declaration
 
 ```swift
-public struct WalletTokenData: Jsonable {
+public struct WalletTokenData: Jsonable, ProofContainer {
     var seed: WalletTokenSeed
     var sha256_pii: String
     var provider: Provider
     var nonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2143,7 +2197,7 @@ public struct WalletTokenData: Jsonable {
 | sha256_pii | String          | Hash value of user PII      | M       |                                       |
 | provider   | Provider        | Wallet business information | M       | [Provider](#3-provider)               |
 | nonce      | String          | provider nonce              | M       |                                       |
-| proof      | Proof           | provider proof              | M       |                                       |
+| proof      | Proof?          | provider proof              | O       |                                       |
 <br>
 
 ## 3. Provider
@@ -2178,11 +2232,11 @@ public struct Provider: Jsonable {
 ### Declaration
 
 ```swift
-public struct SignedDidDoc: Jsonable {
+public struct SignedDIDDoc: Jsonable, ProofContainer {
     var ownerDidDoc: String
     var wallet: Wallet
     var nonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2193,7 +2247,7 @@ public struct SignedDidDoc: Jsonable {
 | ownerDidDoc | String | Multibase encoded value of ownerDidDoc                        | M       |          |
 | wallet      | Wallet | An object consisting of the wallet's ID and the wallet's DID. | M       |          |
 | nonce       | String | wallet nonce                                                  | M       |          |
-| proof       | Proof  | wallet proof                                                  | M       |          |
+| proof       | Proof? | wallet proof                                                  | O       |          |
 <br>
 
 ## 5. SignedWalletInfo
@@ -2205,10 +2259,10 @@ public struct SignedDidDoc: Jsonable {
 ### Declaration
 
 ```swift
-public struct SignedWalletInfo: Jsonable {
+public struct SignedWalletInfo: Jsonable, ProofContainer {
     var wallet: Wallet
     var nonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2218,7 +2272,7 @@ public struct SignedWalletInfo: Jsonable {
 | ------ | ------ | ------------------------------------------------------------- | ------- | -------- |
 | wallet | Wallet | An object consisting of the wallet's ID and the wallet's DID. | M       |          |
 | nonce  | String | wallet nonce                                                  | M       |          |
-| proof  | Proof  | wallet proof                                                  | M       |          |
+| proof  | Proof? | wallet proof                                                  | O       |          |
 <br>
 
 ## 6. DIDAuth
@@ -2230,10 +2284,10 @@ public struct SignedWalletInfo: Jsonable {
 ### Declaration
 
 ```swift
-public struct DIDAuth: Jsonable {
+public struct DIDAuth: Jsonable, ProofContainer {
     var did: String
     var authNonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2243,7 +2297,7 @@ public struct DIDAuth: Jsonable {
 | --------- | ------ | ------------------------------------- | ------- | -------- |
 | did       | String | DID of the person being authenticated | M       |          |
 | authNonce | String | Nonce for DID Auth                    | M       |          |
-| proof     | Proof  | authentication proof                  | M       |          |
+| proof     | Proof? | authentication proof                  | O       |          |
 <br>
 
 ## 7. AuthorizationRequest
@@ -2277,7 +2331,7 @@ public struct AuthorizationRequest: Jsonable, FromSnake {
 | state          | String               | Verifier state, echoed back in the response              | M       |          |
 | clientId       | String               | Verifier identifier; used as the presentation audience   | M       |          |
 | responseType   | String               | OAuth response type                                      | M       |          |
-| responseMode   | String               | `direct_post` or `direct_post.jwt`                       | M       | Other modes are rejected (`MSDKWLT05509`) |
+| responseMode   | String               | `direct_post` or `direct_post.jwt`                       | M       | Other modes are rejected (`MSDKWLT06509`) |
 | dcqlQuery      | DCQLQuery            | The credential query to match against                    | M       |          |
 | clientMetadata | [String: AnyJSON]    | Verifier metadata; carries the response-encryption key for `direct_post.jwt` | M | |
 | iat            | Int                  | Issued-at timestamp of the request                       | M       |          |
@@ -2388,7 +2442,7 @@ public enum MdocDeviceAuthMethod: String, Sendable {
 
 | Value           | Description                                                                 | **Note** |
 | --------------- | --------------------------------------------------------------------------- | -------- |
-| deviceSignature | ECDSA signature with the document's device key                              | Used when the key cannot perform key agreement, or the transcript carries no reader key |
-| deviceMac       | HMAC with the `EMacKey` derived from ECDH with the reader's ephemeral key   | Preferred when the device key can perform key agreement |
+| deviceSignature | ECDSA signature with the document's device key                              | Used for every document |
+| deviceMac       | HMAC with the `EMacKey` derived from ECDH with the reader's ephemeral key   | Not produced at present. Kept so the type stays stable |
 <br>
 

@@ -151,7 +151,11 @@ protocol IOID4VCService
                             configurationId: String,
                             credentialIdentifier: String?,
                             APIGatewayURL: String) async throws -> String
-                            
+    func requestRevokeOID4VC(hWalletToken: String,
+                             metadata: IssuerMetadataResponse,
+                             vcId: String,
+                             passcode: String?) async throws
+
     func getAllOID4VCs(hWalletToken: String) throws -> [any CredentialItem]
     func getOID4VCs(hWalletToken: String,
                     ids: [String]) throws -> [any CredentialItem]

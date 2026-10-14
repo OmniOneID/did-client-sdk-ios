@@ -27,6 +27,9 @@ public struct IssuerMetadataResponse: Jsonable, FromSnake
     public let nonceEndpoint: String?
     public let deferredCredentialEndpoint: String?
     public let notificationEndpoint: String?
+    /// The full URL to post a credential revocation request to. An OpenDID extension; used as
+    /// given, never derived from `credentialIssuer` or a status list URI.
+    public let credentialRevocationEndpoint: String?
     public let credentialRequestEncryption: EncryptionSupport?
     public let credentialResponseEncryption: EncryptionSupport?
     public let credentialIdentifiersSupported: Bool?

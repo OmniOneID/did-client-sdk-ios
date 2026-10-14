@@ -23,7 +23,7 @@ import Foundation
 /// this adapter does its own claim matching instead of reusing `ClaimMatchingHelper`'s path walk:
 /// every code it returns is built by `MdocClaimIndex`, the same type the presenter reads codes back
 /// through. Value conditions are still shared, since those are format-independent.
-public class MdocCredentialAdapter: CredentialAdapter {
+class MdocCredentialAdapter: CredentialAdapter {
 
     static let supportedFormats: Set<String> = [CredentialFormat.msoMdoc.token]
 

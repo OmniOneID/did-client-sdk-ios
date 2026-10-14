@@ -24,6 +24,10 @@ import CryptoKit
 /// already hold, and only the signature or MAC is sent, as detached content (ISO/IEC 18013-5
 /// 9.1.3.5 / DIS 12.4.5). Both sides therefore have to arrive at the same bytes.
 ///
+/// No submission path produces a MAC at present: proximity and OpenID4VP both sign, because one
+/// device key must not produce both forms (ISO/IEC 18013-5 9.1.3.4 / DIS 12.4.4). The MAC
+/// primitives stay, pinned by the reader's vectors, for a key that would only ever MAC.
+///
 /// That is why the array is concatenated by hand. The `SessionTranscript` reaches this SDK already
 /// encoded, and the vendored `CBOR` enum has no case meaning "these bytes are already CBOR, splice
 /// them in" — decoding and re-encoding would rebuild whatever the sender wrote, and an

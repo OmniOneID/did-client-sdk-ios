@@ -48,7 +48,7 @@ iOS Wallet API
         - [2.8. unbindUser](#28-unbinduser)
         - [2.9. requestRegisterUser](#29-requestregisteruser)
         - [2.10. getSignedWalletInfo](#210-getsignedwalletinfo)
-    - [3. DIDKey)](#3-didkey)
+    - [3. DIDKey](#3-didkey)
         - [3.1. createHolderDIDDocument](#31-createholderdiddocument)
         - [3.2. createSignedDIDDoc](#32-createsigneddiddoc)
         - [3.3. getDidDocument](#33-getdiddocument)
@@ -63,7 +63,7 @@ iOS Wallet API
         - [3.12. deleteKeyPair](#312-deletekeypair)
         - [3.13. requestUpdateUser](#313-requestupdateuser)
         - [3.14. requestRestoreUser](#314-requestrestoreuser)
-    - [4. Credential)](#4-credential)
+    - [4. Credential](#4-credential)
         - [4.1. requestIssueVc](#41-requestissuevc)
         - [4.2. requestRevokeVc](#42-requestrevokevc)
         - [4.3. getAllCredentials](#43-getallcredentials)
@@ -79,7 +79,7 @@ iOS Wallet API
         - [5.4. isAnyZKPCredentialsSaved](#54-isanyzkpcredentialssaved)
         - [5.5. isZKPCredentialSaved](#55-iszkpcredentialsaved)
         - [5.6. getZKPCredentials](#56-getzkpcredentials)
-    - [6. SecurityAuth)](#6-securityauth)
+    - [6. SecurityAuth](#6-securityauth)
         - [6.1. registerLock](#61-registerlock)
         - [6.2. authenticateLock](#62-authenticatelock)
         - [6.3. isLock](#63-islock)
@@ -94,12 +94,13 @@ iOS Wallet API
         - [7.5. isAnyOID4VCSaved](#75-isanyoid4vcsaved)
         - [7.6. matchCredentials](#76-matchcredentials)
         - [7.7. createVpToken](#77-createvptoken)
+        - [7.8. requestRevokeOID4VC](#78-requestrevokeoid4vc)
     - [8. Proximity](#8-proximity)
         - [8.1. matchMdocRequest](#81-matchmdocrequest)
         - [8.2. createDeviceResponse](#82-createdeviceresponse)
 
 - [Enumerators](#enumerators)
-    - [1. WalletTokenPurposeEnum](#1-wallet_token_purpose)
+    - [1. WalletTokenPurposeEnum](#1-wallettokenpurposeenum)
 
 - [Value Object](#value-object)
     - [1. WalletTokenSeed](#1-wallettokenseed)
@@ -257,7 +258,7 @@ func createWalletTokenSeed(purpose: WalletTokenPurposeEnum, pkgName: String, use
 
 | Name      | Type   | Description                             | **M/O** | **Note** |
 |-----------|--------|----------------------------------|---------|----------|
-| purpose   | WalletTokenPurposeEnum |token 사용 목적                       | M       |[WalletTokenPurposeEnum](#1-wallet_token_purpose)         |
+| purpose   | WalletTokenPurposeEnum |token 사용 목적                       | M       |[WalletTokenPurposeEnum](#1-wallettokenpurposeenum)         |
 | pkgName   | String | 인가앱 Package Name                       | M       |          |
 | userId    | String | 사용자 ID                        | M       |          |
 
@@ -270,7 +271,7 @@ func createWalletTokenSeed(purpose: WalletTokenPurposeEnum, pkgName: String, use
 ### Usage
 
 ```swift
-let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, "org.opendid.did.ca", "user_id");
+let tokenSeed = try WalletAPI.shared.createWalletTokenSeed(purpose: purpose, pkgName: "org.opendid.did.ca", userId: "user_id");
 ```
 
 <br>
@@ -329,7 +330,7 @@ func createLocalWalletToken(purpose: WalletTokenPurposeEnum, pkgName: String) th
 
 | Name    | Type                   | Description                         | **M/O** | **Note** |
 |---------|------------------------|-------------------------------------|---------|----------|
-| purpose | WalletTokenPurposeEnum | 토큰 목적. 위 4종 중 하나           | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| purpose | WalletTokenPurposeEnum | 토큰 목적. 위 4종 중 하나           | M       | [WalletTokenPurposeEnum](#1-wallettokenpurposeenum) |
 | pkgName | String                 | 호출 앱의 패키지 이름               | M       |          |
 
 ### Returns
@@ -563,7 +564,7 @@ func getDidDocument(type: DidDocumentType) throws -> DIDDocument
 
 | Name | Type            | Description                                                            | **M/O** | **Note** |
 |------|-----------------|------------------------------------------------------------------------|---------|----------|
-| type | DidDocumentType | `.DeviceDidDocument` : deviceKey DID 문서, `.HolderDidDocumnet` : holder DID 문서 | M | |
+| type | DidDocumentType | `.DeviceDidDocument` : deviceKey DID 문서, `.HolderDidDocumnet` : holder DID 문서 | M | [DidDocumentType](DataModel_ko.md#22-diddocumenttype) |
 
 
 ### Returns
@@ -591,11 +592,11 @@ let didDoc = try WalletAPI.shared.getDidDocument(type: .HolderDidDocumnet)
 public func isAnyKeysSaved() throws -> Bool
 ```
 
-### Parameters
-
-
 ### Returns
-Bool
+
+| Type | Description                                      | **M/O** | **Note** |
+|------|--------------------------------------------------|---------|----------|
+| Bool | 저장된 키가 하나라도 있으면 `true`, 그렇지 않으면 `false` | M       |          |
 
 ### Usage
 
@@ -636,7 +637,7 @@ public func isSavedKey(keyId: String) throws -> Bool
 ### Usage
 
 ```swift
-let hasKey = try WalletAPI.shared.isSavedKey(keyId: "pin"))
+let hasKey = try WalletAPI.shared.isSavedKey(keyId: "pin")
 if hasKey {
     print("Key named pin is saved.")
 } else {
@@ -663,10 +664,10 @@ func generateKeyPair(hWalletToken: String, passcode: String? = nil, keyId: Strin
 | Name         | Type   | Description                        | **M/O** | **Note** |
 |--------------|--------|-----------------------------|---------|----------|
 | hWalletToken | String |월렛토큰                   | M       |          |
-| passCode     | String |서명용 PIN               | M       | PIN 서명용 키 생성 시        | 
+| passcode     | String? |서명용 PIN               | O       | PIN 서명용 키 생성 시        | 
 | keyId     | String |서명용 ID               | M       |         | 
 | algType     | AlgorithmType |서명용 키 알고리즘 타입               | M       |         | 
-| promptMsg     | String |생체인증 프롬프트 메시지               | M       |         | 
+| promptMsg     | String? |생체인증 프롬프트 메시지               | O       |         | 
 
 ### Returns
 
@@ -675,10 +676,10 @@ Bool
 ### Usage
 
 ```swift
-let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, passcode:"123456", keyId:"pin", algType: AlgoritheType.secp256r1);
+let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, passcode:"123456", keyId:"pin", algType: AlgorithmType.secp256r1);
 
 
-let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, keyId:"bio", algType: AlgoritheType.secp256r1, promptMsg: "message");
+let success = try WalletAPI.shared.generateKeyPair(hWalletToken:hWalletToken, keyId:"bio", algType: AlgorithmType.secp256r1, promptMsg: "message");
 ```
 
 <br>
@@ -706,7 +707,7 @@ public func sign(keyId: String,
 | keyId     | String          | 서명에 사용할 키의 ID               | M       |          |
 | pin       | Data            | 키 복호화를 위한 PIN (선택 사항)    | O       |          |
 | data      | Data            | 서명할 데이터의 다이제스트          | M       |          |
-| type      | DidDocumentType | 키와 연결된 DID 문서의 유형         | M       |          |
+| type      | DidDocumentType | 키와 연결된 DID 문서의 유형         | M       | [DidDocumentType](DataModel_ko.md#22-diddocumenttype) |
 
 ### Returns
 
@@ -722,7 +723,7 @@ let signature = try WalletAPI.shared.sign(
     keyId: "key_identifier",
     pin: pinData,
     data: messageData,
-    type: .authentication
+    type: .HolderDidDocumnet
 )
 ```
 
@@ -917,14 +918,14 @@ public func requestUpdateUser(tasURL: String,
 | txId         | String       | 업데이트 요청에 사용되는 트랜잭션 ID     | M       |          |
 | hWalletToken | String       | 지갑 인증에 사용되는 토큰               | M       |          |
 | serverToken  | String       | 서버 인증에 사용되는 토큰               | M       |          |
-| didAuth      | DIDAuth      | DID 인증에 대한 세부 정보               | O       |          |
-| signedDIDDoc | SignedDIDDoc | 사용자를 나타내는 서명된 DID 문서       | O       |          |
+| didAuth      | DIDAuth?      | DID 인증에 대한 세부 정보               | M       | `nil` 이면 거부 |
+| signedDIDDoc | SignedDIDDoc? | 사용자를 나타내는 서명된 DID 문서       | M       | `nil` 이면 거부 |
 
 ### Returns
 
 | Type                 | Description                 | **M/O** | **Note** |
 |----------------------|-----------------------------|---------|----------|
-| _RequestUpdateDidDoc | 응답 데이터를 포함하는 객체 | M       |          |
+| _RequestUpdateDidDoc | 응답 데이터를 포함하는 객체 | M       | [_RequestUpdateDidDoc](DataModel_ko.md#172-requestupdatediddoc-_requestupdatediddoc) |
 
 ### Usage
 
@@ -967,7 +968,7 @@ public func requestRestoreUser(tasURL: String,
 | txId         | String   | 복원 요청에 사용되는 트랜잭션 ID     | M       |          |
 | hWalletToken | String   | 지갑 인증에 사용되는 토큰           | M       |          |
 | serverToken  | String   | 서버 인증에 사용되는 토큰           | M       |          |
-| didAuth      | DIDAuth? | DID 인증에 대한 세부 정보           | O       |          |
+| didAuth      | DIDAuth? | DID 인증에 대한 세부 정보           | M       | `nil` 이면 거부 |
 
 ### Returns
 
@@ -1095,7 +1096,7 @@ func getAllCredentials(hWalletToken: String) throws -> [VerifiableCredential]?
 
 | Type            | Description                | **M/O** | **Note** |
 |-----------------|---------------------|---------|----------|
-| [VerifiableCredential] | VC List 객체  | M       |          |
+| [VerifiableCredential]? | VC List 객체  | O       | 저장된 항목이 없으면 `nil` 반환 |
 
 ### Usage
 
@@ -1228,7 +1229,7 @@ func createVp(hWalletToken: String, claimInfos: [ClaimInfo], passcode: String? =
 | claimInfos    | [ClaimInfo]       | 제출할 크리덴셜과 클레임 코드        | M       | 데이터모델 참조 |
 | passcode      | String?           | 홀더 키가 PIN 보호일 때의 PIN. 생체인증이면 `nil` | O | |
 | verifierNonce | String            | presentation proof에 바인딩할 nonce | M       |                 |
-| challenge     | OIDV4VPChallenge? | nonce 대신 바인딩할 `domain`/`challenge` 쌍 | O | 데이터모델 참조 |
+| challenge     | OIDV4VPChallenge? | nonce 대신 바인딩할 `domain`/`challenge` 쌍 | O | [OIDV4VPChallenge](DataModel_ko.md#43-oidv4vpchallenge) |
 
 ### Returns
 
@@ -1509,7 +1510,6 @@ let success = try WalletAPI.shared.registerLock(hWalletToken: hWalletToken, pass
 ### Declaration
 
 ```swift
-@discardableResult
 func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data?
 ```
 
@@ -1529,10 +1529,10 @@ func authenticateLock(passcode: String, isChanging: Bool = false) throws -> Data
 ### Usage
 
 ```swift
-try WalletAPI.shared.authenticateLock(passcode: "123456");
+_ = try WalletAPI.shared.authenticateLock(passcode: "123456");
 
 // 패스코드 변경 전 기존 PIN 확인 — Wallet은 잠긴 상태를 유지한다
-try WalletAPI.shared.authenticateLock(passcode: oldPasscode, isChanging: true);
+_ = try WalletAPI.shared.authenticateLock(passcode: oldPasscode, isChanging: true);
 ```
 
 <br>
@@ -1915,6 +1915,59 @@ let body = try WalletAPI.shared.createVpToken(hWalletToken: hWalletToken,
 
 <br>
 
+## 7.8. requestRevokeOID4VC
+
+### Description
+`저장된 OID4VC 크리덴셜의 폐기를 발급자에게 요청한다.`
+
+`metadata.nonceEndpoint` 에서 `c_nonce` 를 받는다. 그 값과 크리덴셜의 status list 항목을 담은
+폐기 토큰(`typ: opendid-credential-revocation+jwt`)을 크리덴셜이 바인딩된 키로 서명해
+`metadata.credentialRevocationEndpoint` 로 보낸다. 토큰의 `kid` 는 holder DID, DID 문서의 현재
+`versionId`, 그 키의 ID 로 만든다.
+
+발급자가 200 으로 응답하면 성공이다. 이미 폐기된 크리덴셜도 200 이다. 저장된 크리덴셜은 그대로
+둔다. 성공한 뒤 지우거나 폐기 상태로 표시하는 것은 앱이 한다. 호출할 때마다 새 nonce 를 받으므로,
+응답을 받지 못했으면 같은 호출을 다시 하면 된다.
+
+### Declaration
+
+```swift
+func requestRevokeOID4VC(hWalletToken: String, metadata: IssuerMetadataResponse, vcId: String, passcode: String?) async throws
+```
+
+### Parameters
+
+| Name         | Type                   | Description             | **M/O** | **Note** |
+|--------------|------------------------|-------------------------|---------|----------|
+| hWalletToken | String                 | 월렛토큰                 | M       | `REMOVE_VC` 권한 필요 |
+| metadata     | IssuerMetadataResponse | 크리덴셜 발급자의 메타데이터 | M       | `nonceEndpoint`, `credentialRevocationEndpoint` 필수. [IssuerMetadataResponse](DataModel_ko.md#12-issuermetadataresponse) |
+| vcId         | String                 | 폐기할 크리덴셜 ID        | M       |          |
+| passcode     | String                 | PIN                     | O       | 크리덴셜이 PIN 키에 바인딩돼 있으면 필수, 생체 키면 nil |
+
+### Returns
+
+Void
+
+### Errors
+
+- `MSDKWLT05002` (`verifyParameterFail`): `vcId` 가 비었거나, 메타데이터에 `nonceEndpoint` 또는
+  `credentialRevocationEndpoint` 가 없거나, 크리덴셜에 status list 항목이 없음
+- `MSDKWLT06504` (`credentialNotFound`): 해당 ID 의 크리덴셜이 없음
+- `MSDKWLT06505` (`holderKeyNotFound`): 크리덴셜의 키가 없거나 holder DID 문서의 authentication 에 없음
+- 통신 오류: 발급자가 200 이 아닌 응답을 함. 서버의 `{code, description}` 본문이 오류 메시지에 담긴다
+
+### Usage
+
+```swift
+try await WalletAPI.shared.requestRevokeOID4VC(hWalletToken: hWalletToken,
+                                               metadata: metadata,
+                                               vcId: credentialId,
+                                               passcode: nil)
+try WalletAPI.shared.deleteOID4VCs(hWalletToken: hWalletToken, ids: [credentialId])
+```
+
+<br>
+
 ## 8. Proximity
 
 웹이 아니라 BLE/NFC 로 가까이 있는 리더에게 제출하는 흐름. 이 절이 현재 다루는 것은 7절로
@@ -1956,8 +2009,8 @@ func matchMdocRequest(hWalletToken: String, deviceRequest: Data) throws -> [Mdoc
 
 ### Throws
 
-- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` 가 올바른 `DeviceRequest` 가 아님
-- `MSDKWLT05600` (`noMatchedMdocDocuments`): 어떤 `docRequest` 에도 답할 수 있는 저장 문서가 없음
+- `MSDKWLT06620` (`invalidDeviceRequest`): `deviceRequest` 가 올바른 `DeviceRequest` 가 아님
+- `MSDKWLT06600` (`noMatchedMdocDocuments`): 어떤 `docRequest` 에도 답할 수 있는 저장 문서가 없음
 
 ### Usage
 
@@ -1985,8 +2038,9 @@ let matched = try WalletAPI.shared.matchMdocRequest(hWalletToken: hWalletToken,
 SessionTranscript)`, 전송 SDK 가 넘겨주는 형태)든 순수 `SessionTranscript` 배열이든 받으며, 어느
 쪽도 다시 인코딩하지 않는다.
 
-문서별 인증은 기기 키가 키 합의를 할 수 있고 transcript 에 리더의 임시 키가 있으면 `deviceMac`,
-그렇지 않으면 `deviceSignature` 로 하며, 실제 사용한 방식을 `authMethods` 에 크리덴셜별로 알려준다.
+모든 문서는 `deviceSignature` 로 인증하며, 사용한 방식을 `authMethods` 에 크리덴셜별로 알려준다.
+MAC 은 만들지 않는다. 같은 기기 키가 이 문서의 OpenID4VP 제출에서 서명을 만들고, mdoc 인증 키 하나로
+MAC 과 서명을 모두 만들어서는 안 되기 때문이다(ISO/IEC 18013-5 9.1.3.4).
 홀더 키는 하나의 인증 컨텍스트로 쓰이므로, 사용자 확인을 요구하는 Secure Enclave 키라도 호출당 한
 번만 묻는다.
 
@@ -2016,17 +2070,16 @@ func createDeviceResponse(hWalletToken: String, deviceRequest: Data, sessionTran
 
 ### Throws
 
-- `MSDKWLT05620` (`invalidDeviceRequest`): `deviceRequest` 가 올바른 `DeviceRequest` 가 아님
-- `MSDKWLT05621` (`invalidSessionTranscript`): `sessionTranscript` 가 두 형태 중 어느 것도 아님
-- `MSDKWLT05600` (`noMatchedMdocDocuments`): 어떤 `docRequest` 에도 답할 수 있는 저장 문서가 없음
-- `MSDKWLT05610` (`emptyMdocSelection`): `selected` 가 비어 있음
-- `MSDKWLT05611` (`invalidSelectedMdocDocuments`): 항목이 새 매칭 결과에 없거나, 그 문서가 공개할 수 없는 코드(미보유 또는 모호)를 담고 있음
-- `MSDKWLT05612` (`emptyMdocClaimCodes`): 항목에 claim code 가 하나도 없음
-- `MSDKWLT05613` (`duplicateSelectedMdocDocument`): 같은 `docRequest` 에 같은 문서가 두 번 선택됨
-- `MSDKWLT05614` (`duplicateMdocClaimCode`): 항목이 같은 claim code 를 두 번 담고 있음
-- `MSDKWLT05504` (`credentialNotFound`): 선택된 크리덴셜이 더 이상 Wallet 에 없음
-- `MSDKWLT05505` (`holderKeyNotFound`): 선택된 문서에 바인딩된 기기 키가 없음
-- `MSDKWLT12401` (`keyAgreement`): `deviceMac` 을 위한 Secure Enclave 키 합의 실패
+- `MSDKWLT06620` (`invalidDeviceRequest`): `deviceRequest` 가 올바른 `DeviceRequest` 가 아님
+- `MSDKWLT06621` (`invalidSessionTranscript`): `sessionTranscript` 가 두 형태 중 어느 것도 아님
+- `MSDKWLT06600` (`noMatchedMdocDocuments`): 어떤 `docRequest` 에도 답할 수 있는 저장 문서가 없음
+- `MSDKWLT06610` (`emptyMdocSelection`): `selected` 가 비어 있음
+- `MSDKWLT06611` (`invalidSelectedMdocDocuments`): 항목이 새 매칭 결과에 없거나, 그 문서가 공개할 수 없는 코드(미보유 또는 모호)를 담고 있음
+- `MSDKWLT06612` (`emptyMdocClaimCodes`): 항목에 claim code 가 하나도 없음
+- `MSDKWLT06613` (`duplicateSelectedMdocDocument`): 같은 `docRequest` 에 같은 문서가 두 번 선택됨
+- `MSDKWLT06614` (`duplicateMdocClaimCode`): 항목이 같은 claim code 를 두 번 담고 있음
+- `MSDKWLT06504` (`credentialNotFound`): 선택된 크리덴셜이 더 이상 Wallet 에 없음
+- `MSDKWLT06505` (`holderKeyNotFound`): 선택된 문서에 바인딩된 기기 키가 없음
 
 ### Usage
 
@@ -2085,7 +2138,7 @@ public enum WalletTokenPurposeEnum: Int, Jsonable {
 ### Declaration
 
 ```swift
-public struct WalletTokenSeed {
+public struct WalletTokenSeed: Jsonable {
     var purpose: WalletTokenPurposeEnum
     var pkgName: String
     var nonce: String
@@ -2098,11 +2151,11 @@ public struct WalletTokenSeed {
 
 | Name       | Type                   | Description         | **M/O** | **Note**                                          |
 | ---------- | ---------------------- | ------------------- | ------- | ------------------------------------------------- |
-| purpose    | WalletTokenPurposeEnum | token 사용 목적     | M       | [WalletTokenPurposeEnum](#1-wallet_token_purpose) |
+| purpose    | WalletTokenPurposeEnum | token 사용 목적     | M       | [WalletTokenPurposeEnum](#1-wallettokenpurposeenum) |
 | pkgName    | String                 | 인가앱 Package Name | M       |                                                   |
 | nonce      | String                 | wallet nonce        | M       |                                                   |
 | validUntil | String                 | token 만료일시      | M       |                                                   |
-| userId     | String                 | 사용자 ID           | M       |                                                   |
+| userId     | String?                | 사용자 ID           | O       |                                                   |
 <br>
 
 ## 2. WalletTokenData
@@ -2114,12 +2167,12 @@ public struct WalletTokenSeed {
 ### Declaration
 
 ```swift
-public struct WalletTokenData: Jsonable {
+public struct WalletTokenData: Jsonable, ProofContainer {
     var seed: WalletTokenSeed
     var sha256_pii: String
     var provider: Provider
     var nonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2131,7 +2184,7 @@ public struct WalletTokenData: Jsonable {
 | sha256_pii | String          | 사용자 PII의 해시값 | M       |                                       |
 | provider   | Provider        | wallet 사업자 정보  | M       | [Provider](#3-provider)               |
 | nonce      | String          | provider nonce      | M       |                                       |
-| proof      | Proof           | provider proof      | M       |                                       |
+| proof      | Proof?          | provider proof      | O       |                                       |
 <br>
 
 ## 3. Provider
@@ -2166,11 +2219,11 @@ public struct Provider: Jsonable {
 ### Declaration
 
 ```swift
-public struct SignedDidDoc: Jsonable {
+public struct SignedDIDDoc: Jsonable, ProofContainer {
     var ownerDidDoc: String
     var wallet: Wallet
     var nonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2181,7 +2234,7 @@ public struct SignedDidDoc: Jsonable {
 | ownerDidDoc | String | ownerDidDoc의 multibase 인코딩 값        | M       |          |
 | wallet      | Wallet | wallet의 id와 wallet의 DID로 구성된 객체 | M       |          |
 | nonce       | String | wallet nonce                             | M       |          |
-| proof       | Proof  | wallet proof                             | M       |          |
+| proof       | Proof? | wallet proof                             | O       |          |
 <br>
 
 ## 5. SignedWalletInfo
@@ -2193,10 +2246,10 @@ public struct SignedDidDoc: Jsonable {
 ### Declaration
 
 ```swift
-public struct SignedWalletInfo: Jsonable {
+public struct SignedWalletInfo: Jsonable, ProofContainer {
     var wallet: Wallet
     var nonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2206,7 +2259,7 @@ public struct SignedWalletInfo: Jsonable {
 |---------------|-----------------|----------------------------|---------|------------------------|
 | wallet    | Wallet | wallet의 id와 wallet의 DID로 구성된 객체                        | M       |          |
 | nonce    | String | wallet nonce                        | M       |          |
-| proof    | Proof | wallet proof                        | M       |          |
+| proof    | Proof? | wallet proof                        | O       |          |
 <br>
 
 ## 6. DIDAuth
@@ -2218,10 +2271,10 @@ public struct SignedWalletInfo: Jsonable {
 ### Declaration
 
 ```swift
-public struct DIDAuth: Jsonable {
+public struct DIDAuth: Jsonable, ProofContainer {
     var did: String
     var authNonce: String
-    var proof: Proof
+    var proof: Proof?
 }
 ```
 
@@ -2231,7 +2284,7 @@ public struct DIDAuth: Jsonable {
 | --------- | ------ | -------------------- | ------- | -------- |
 | did       | String | 인증 대상자의 DID    | M       |          |
 | authNonce | String | DID Auth 용 nonce    | M       |          |
-| proof     | Proof  | authentication proof | M       |          |
+| proof     | Proof? | authentication proof | O       |          |
 <br>
 
 ## 7. AuthorizationRequest
@@ -2265,7 +2318,7 @@ public struct AuthorizationRequest: Jsonable, FromSnake {
 | state          | String            | 응답에 그대로 실어 보내는 검증자 state           | M       |          |
 | clientId       | String            | 검증자 식별자. presentation의 audience로 쓰인다  | M       |          |
 | responseType   | String            | OAuth response type                            | M       |          |
-| responseMode   | String            | `direct_post` 또는 `direct_post.jwt`            | M       | 그 외 값은 거부된다 (`MSDKWLT05509`) |
+| responseMode   | String            | `direct_post` 또는 `direct_post.jwt`            | M       | 그 외 값은 거부된다 (`MSDKWLT06509`) |
 | dcqlQuery      | DCQLQuery         | 매칭 대상 크리덴셜 쿼리                          | M       |          |
 | clientMetadata | [String: AnyJSON] | 검증자 메타데이터. `direct_post.jwt`의 응답 암호화 키를 담는다 | M | |
 | iat            | Int               | 요청 발행 시각                                   | M       |          |
@@ -2375,7 +2428,7 @@ public enum MdocDeviceAuthMethod: String, Sendable {
 
 | Value           | Description                                                   | **Note** |
 | --------------- | ------------------------------------------------------------- | -------- |
-| deviceSignature | 문서의 기기 키로 만든 ECDSA 서명                               | 키가 키 합의를 못 하거나 transcript 에 리더 키가 없을 때 |
-| deviceMac       | 리더 임시 키와의 ECDH 로 유도한 `EMacKey` 로 만든 HMAC          | 기기 키가 키 합의를 할 수 있으면 우선 사용 |
+| deviceSignature | 문서의 기기 키로 만든 ECDSA 서명                               | 모든 문서에 사용 |
+| deviceMac       | 리더 임시 키와의 ECDH 로 유도한 `EMacKey` 로 만든 HMAC          | 현재는 만들지 않는다. 타입 유지를 위해 남겨 둔 값 |
 <br>
 

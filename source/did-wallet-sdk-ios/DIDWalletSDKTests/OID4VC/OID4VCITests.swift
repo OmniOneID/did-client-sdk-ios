@@ -120,7 +120,7 @@ final class OID4VCITests: XCTestCase {
     func testJWS_malformedThrows() throws
     {
         XCTAssertThrowsError(try JWS(from: "header.payload")) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05102" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06102" else {
                 return XCTFail("expected invalidJWS, got \(error)")
             }
         }
@@ -135,7 +135,7 @@ final class OID4VCITests: XCTestCase {
         let raw = "\(header).\(payload).\(Data(repeating: 0, count: 64).base64URLEncoded)"
 
         XCTAssertThrowsError(try JWS(from: raw).verify()) { error in
-            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT05402" else {
+            guard let walletError = error as? WalletCoreError, walletError.code == "MSDKWLT06402" else {
                 return XCTFail("expected missingJWSHeaderKey, got \(error)")
             }
         }

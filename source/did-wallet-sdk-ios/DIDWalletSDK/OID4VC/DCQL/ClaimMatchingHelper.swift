@@ -19,7 +19,7 @@ import Foundation
 
 /// Shared JSON path-based claim matching + condition evaluation, used by the JSON-based credential
 /// adapters (SD-JWT, opendid_vc). Operates on a Foundation-typed `[String: Any]` claim tree.
-public enum ClaimMatchingHelper {
+enum ClaimMatchingHelper {
 
     /// Returns matching claim names for the given claim queries by navigating `allClaims` paths.
     /// If `claimQueries` is nil/empty, returns all top-level claim keys.

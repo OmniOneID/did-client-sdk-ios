@@ -139,11 +139,18 @@ public struct VerifyAuthType : OptionSet, Sequence, Codable, Sendable
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }
+
+    /// Yields each set flag as its own single-bit value, lowest bit first.
+    public func makeIterator() -> AnyIterator<VerifyAuthType>
+    {
+        var iterator = OptionSetIterator(element: self)
+        return AnyIterator { iterator.next() }
+    }
 }
 
 
 
-public struct OptionSetIterator<Element: OptionSet>: IteratorProtocol where Element.RawValue == Int
+struct OptionSetIterator<Element: OptionSet>: IteratorProtocol where Element.RawValue == Int
 {
     private let value: Element
     

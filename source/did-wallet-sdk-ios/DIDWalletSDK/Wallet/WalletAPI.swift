@@ -732,7 +732,36 @@ extension WalletAPI : IOID4VCService
                                                           credentialIdentifier: credentialIdentifier,
                                                           APIGatewayURL: APIGatewayURL)
     }
-    
+
+    /// Asks the issuer to revoke a stored OID4VCI credential.
+    ///
+    /// Fetches a `c_nonce` from `metadata.nonceEndpoint`, signs a revocation token over it and the
+    /// credential's status list entry with the key the credential is bound to, and posts the token
+    /// to `metadata.credentialRevocationEndpoint`. The stored credential is left as it is; removing
+    /// or marking it after a successful call is up to the app.
+    ///
+    /// Each call fetches a fresh nonce, so a call whose response was lost can simply be repeated —
+    /// the issuer answers success for a credential that is already revoked.
+    ///
+    /// - Parameters:
+    ///   - hWalletToken: A wallet token issued for `REMOVE_VC`.
+    ///   - metadata: The issuer metadata of the credential's issuer.
+    ///   - vcId: The stored credential's id.
+    ///   - passcode: The PIN when the credential is bound to the PIN key; nil for the biometric key.
+    /// - Throws: When the token is invalid, an endpoint or the credential's status list entry is
+    ///   missing, the credential or its key is not found, signing fails, or the issuer does not
+    ///   answer 200.
+    public func requestRevokeOID4VC(hWalletToken: String,
+                                    metadata: IssuerMetadataResponse,
+                                    vcId: String,
+                                    passcode: String?) async throws
+    {
+        try self.walletToken.verifyWalletToken(hWalletToken: hWalletToken,
+                                               purposes: [.REMOVE_VC])
+        try await walletService.requestRevokeOID4VC(metadata: metadata,
+                                                    vcId: vcId,
+                                                    passcode: passcode)
+    }
 
     public func getAllOID4VCs(hWalletToken: String) throws -> [any CredentialItem]
     {
@@ -779,7 +808,7 @@ extension WalletAPI : IOID4VPService
     ///   holder refuses, but must leave each remaining entry's `claimCodes` intact: the codes are
     ///   opaque to the app, to display and compare but never to split or assemble.
     /// - Throws: `WalletAPIError.verifyTokenFail` when token verification fails,
-    ///   `OID4VCManagerError` (055xx) when the query is invalid, its format is unsupported, or no
+    ///   `OID4VCManagerError` (065xx) when the query is invalid, its format is unsupported, or no
     ///   credential matches.
     public func matchCredentials(hWalletToken: String,
                                  authRequest: AuthorizationRequest) throws -> [MatchedCredential]
@@ -809,7 +838,7 @@ extension WalletAPI : IOID4VPService
     ///   entry drops claims the request asked for, or a code names more than one claim of its
     ///   credential — the last is raised here rather than by `matchCredentials`, since it is what
     ///   the code has to resolve to that is unclear, not what it matched. The other
-    ///   `OID4VCManagerError`s (055xx) follow when a credential, holder key or response encryption
+    ///   `OID4VCManagerError`s (065xx) follow when a credential, holder key or response encryption
     ///   key is missing or the format is unsupported.
     public func createVpToken(hWalletToken: String,
                               authRequest: AuthorizationRequest,

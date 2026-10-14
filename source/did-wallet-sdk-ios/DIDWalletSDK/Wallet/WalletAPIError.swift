@@ -118,11 +118,11 @@ enum WalletAPIError: WalletAPIErrorProtocol {
             
             // DB
         case .insertQueryFail:
-            return ("05030", "Failed to excute insert query")
+            return ("05030", "Failed to execute insert query")
         case .selectQueryFail:
-            return ("05031", "Failed to excute select query")
+            return ("05031", "Failed to execute select query")
         case .deleteQueryFail:
-            return ("05032", "Failed to excute delete query")
+            return ("05032", "Failed to execute delete query")
             
             // Wallet
         case .createWalletFail:

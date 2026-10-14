@@ -58,7 +58,7 @@ VC 월렛을 관리하는 VCManager 인스턴스를 생성한다.
 
 ```swift
 // Declaration in Swift
-init(fileName: String) throws
+public init(fileName: String) throws
 ```
 
 ### Parameters
@@ -93,7 +93,7 @@ let vcManager = try VCManager(fileName: fileName)
 
 ```swift
 // Declaration in Swift
-var isAnyCredentialsSaved: Bool
+public var isAnyCredentialsSaved: Bool
 ```
 
 ### Usage
@@ -323,7 +323,7 @@ func makePresentation(claimInfos: [ClaimInfo], presentationInfo: PresentationInf
 | Name      | Type   | Description                | **M/O** | **Note**            |
 |-----------|--------|----------------------------|---------|---------------------|
 | claimInfos | [ClaimInfo] | VP 생성에 사용할 VC 정보 | M        | [ClaimInfo](#1-claiminfo) |
-| presentationInfo | [PresentationInfo] | VP 생성에 사용할 VC 정보 | M        | [PresentationInfo](#2-presentationinfo) |
+| presentationInfo | PresentationInfo   | VP 생성에 사용할 메타 정보 | M        | [PresentationInfo](#2-presentationinfo) |
 
 ### Returns
 
@@ -411,11 +411,11 @@ public struct PresentationInfo {
 ### Description
 
 `VC(VerifiableCredential) 객체. Data Model SDK에서 제공.` <br>
-cf. [ 원본 링크](#목차) <!-- 수정필요 -->
+cf. [ 원본 링크](../public/DataModel_ko.md#2-verifiablecredential)
 
 ## 4. VerifiablePresentation
 
 ### Description
 
 `VP(VerifiablePresentation) 객체. Data Model SDK에서 제공.` <br>
-cf. [ 원본 링크](#목차) <!-- 수정필요 -->
+cf. [ 원본 링크](../public/DataModel_ko.md#3-verifiablepresentation)

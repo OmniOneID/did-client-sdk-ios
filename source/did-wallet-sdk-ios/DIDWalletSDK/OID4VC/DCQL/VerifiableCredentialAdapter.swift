@@ -20,7 +20,7 @@ import Foundation
 /// `CredentialAdapter` for OmniOne W3C credentials (`VerifiableCredential`, format "opendid_vc").
 /// Claims are a flat `code`/`value` list, so a matched claim name equals its claim code — the
 /// matcher output can be used directly as `ClaimInfo.claimCodes`.
-public class VerifiableCredentialAdapter: CredentialAdapter {
+class VerifiableCredentialAdapter: CredentialAdapter {
 
     public static let format = CredentialFormat.vcdm.token
 
