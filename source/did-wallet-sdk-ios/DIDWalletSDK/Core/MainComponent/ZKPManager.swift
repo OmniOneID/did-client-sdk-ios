@@ -594,6 +594,10 @@ extension ZKPManager
 
 extension ZKPManager
 {
+    /// The requested items one credential has to prove, keyed by referent key.
+    ///
+    /// A request may put several items on one attribute (e.g. a range is two predicates on the same
+    /// attribute), so items are keyed by the verifier's referent key, never by attribute name.
     struct ProveCredential
     {
         var proveAttributes : [String : ProveAttribute] = .init()
@@ -604,6 +608,7 @@ extension ZKPManager
     {
         let isRevealed   : Bool
         let referentKey  : String
+        let attrName     : String
     }
     
     struct ProvePredicate
@@ -612,7 +617,7 @@ extension ZKPManager
         let predicate    : ZKProof.Predicate
     }
     
-    func getProveCredentials(proofRequest : ProofRequest,
+    static func getProveCredentials(proofRequest : ProofRequest,
                              selectedReferents : [UserReferent]) throws -> (StringDictionary, OrderedDictionary<String, ProveCredential>)
     {
         var selfAttributes : StringDictionary = .init()
@@ -644,8 +649,9 @@ extension ZKPManager
                         proveCredential = .init()
                     }
                     let proveAttribute : ProveAttribute = .init(isRevealed: selectedReferent.isRevealed,
-                                                                referentKey: selectedReferent.referentKey)
-                    proveCredential!.proveAttributes[selectedReferent.referentName] = proveAttribute
+                                                                referentKey: selectedReferent.referentKey,
+                                                                attrName: info.name)
+                    proveCredential!.proveAttributes[selectedReferent.referentKey] = proveAttribute
                     
                     proveCredentials[credId] = proveCredential
                     
@@ -681,6 +687,11 @@ extension ZKPManager
                 
                 let predicateInfo = proofRequest.requestedPredicates![selectedReferent.referentKey]!
                 
+                if predicateInfo.name != selectedReferent.referentName
+                {
+                    throw E.invalidPredicateReferentName.getError()
+                }
+                
                 var proveCredential = proveCredentials[credId]
                 if proveCredential == nil
                 {
@@ -690,7 +701,7 @@ extension ZKPManager
                                                             predicate: .init(pType: predicateInfo.pType,
                                                                              pValue: predicateInfo.pValue,
                                                                              attrName: predicateInfo.name))
-                proveCredential!.provePredicates[selectedReferent.referentName] = provePredicate
+                proveCredential!.provePredicates[selectedReferent.referentKey] = provePredicate
                 
                 proveCredentials[credId] = proveCredential
                 
@@ -708,6 +719,100 @@ extension ZKPManager
         }
         
         return (selfAttributes, proveCredentials)
+    }
+    
+    struct SubProofValues
+    {
+        var revealedAttrs     : RequestedAttrDictionary = .init()
+        var unrevealedAttrs   : RequestedAttrDictionary = .init()
+        var predicateAttrs    : RequestedAttrDictionary = .init()
+        var revealedAttrNames : [String] = .init()
+        var predicates        : [ZKProof.Predicate] = .init()
+        var credValues        = CredentialValues()
+    }
+    
+    /// Builds what one credential contributes to a proof.
+    ///
+    /// Every requested item gets its own entry under its referent key, while each credential value
+    /// goes into `credValues` exactly once — known if any item reveals it, hidden otherwise — so
+    /// several items on one attribute share that attribute's value.
+    ///
+    /// - Throws: `invalidAttributeReferentName` when an attribute is missing from the credential or
+    ///   is requested both revealed and unrevealed; `invalidPredicateReferentName` when a predicate's
+    ///   attribute is missing or revealed, as a predicate can only be proven over a hidden value.
+    static func makeSubProofValues(proveCredential : ProveCredential,
+                                   values : [String : AttributeValue],
+                                   masterSecret : BigIntString,
+                                   subProofIndex : Int) throws -> SubProofValues
+    {
+        var result = SubProofValues()
+        
+        var isRevealedByName : [String : Bool] = .init()
+        for proveAttribute in proveCredential.proveAttributes.values
+        {
+            if let isRevealed = isRevealedByName[proveAttribute.attrName],
+               isRevealed != proveAttribute.isRevealed
+            {
+                throw E.invalidAttributeReferentName.getError()
+            }
+            isRevealedByName[proveAttribute.attrName] = proveAttribute.isRevealed
+        }
+        
+        for (referentKey, proveAttribute) in proveCredential.proveAttributes
+        {
+            guard let attributeValue = values[proveAttribute.attrName]
+            else
+            {
+                throw E.invalidAttributeReferentName.getError()
+            }
+            
+            if proveAttribute.isRevealed
+            {
+                result.revealedAttrs[referentKey] = .init(subProofIndex: subProofIndex,
+                                                          raw: attributeValue.raw,
+                                                          encoded: attributeValue.encoded)
+            }
+            else
+            {
+                result.unrevealedAttrs[referentKey] = .init(subProofIndex: subProofIndex,
+                                                            raw: nil,
+                                                            encoded: nil)
+            }
+        }
+        
+        for referentKey in proveCredential.provePredicates.keys.sorted()
+        {
+            let provePredicate = proveCredential.provePredicates[referentKey]!
+            let attrName = provePredicate.predicate.attrName
+            
+            guard values[attrName] != nil,
+                  isRevealedByName[attrName] != true
+            else
+            {
+                throw E.invalidPredicateReferentName.getError()
+            }
+            
+            result.predicateAttrs[referentKey] = .init(subProofIndex: subProofIndex,
+                                                       raw: nil,
+                                                       encoded: nil)
+            result.predicates.append(provePredicate.predicate)
+        }
+        
+        try result.credValues.addHidden(key: ZKPConstants.masterSecretKey, value: masterSecret)
+        for (attrName, attributeValue) in values
+        {
+            if isRevealedByName[attrName] == true
+            {
+                result.revealedAttrNames.append(attrName)
+                try result.credValues.addKnown(key: attrName, value: attributeValue.encoded)
+            }
+            else
+            {
+                try result.credValues.addHidden(key: attrName, value: attributeValue.encoded)
+            }
+        }
+        
+        return result
     }
     
     typealias SubProofIndex = [String : Int]
@@ -742,7 +847,7 @@ extension ZKPManager
     {
         let masterSecret = try loadMasterSecret()
         
-        let (selfAttributes, proveCredentials) = try getProveCredentials(proofRequest: proofRequest,
+        let (selfAttributes, proveCredentials) = try Self.getProveCredentials(proofRequest: proofRequest,
                                                                          selectedReferents: selectedReferents)
         
         let credIds = proveCredentials.reduce(into: [String]()) { $0.append($1.key) }
@@ -766,7 +871,6 @@ extension ZKPManager
         {
             let credential = credentials[credId]!
             let primarySignature = credential.signature.pCredential
-            var remainValues = credential.values
             
             let schemaId = credential.schemaId
             let credDefId = credential.credDefId
@@ -787,60 +891,16 @@ extension ZKPManager
             
             let index = subProofIndex[credId]!
             
-            var revealedAttrNames : [String]  = .init()
-            var predicates : [ZKProof.Predicate] = .init()
-            var credValues = CredentialValues()
-            try credValues.addHidden(key: ZKPConstants.masterSecretKey, value: masterSecret.masterSecret)
-            
-            for (referentName, proveAttribute) in proveCredential.proveAttributes
-            {
-                
-                guard let attrbuteValue = remainValues.removeValue(forKey: referentName)
-                else
-                {
-                    throw E.invalidAttributeReferentName.getError()
-                }
-                
-                if proveAttribute.isRevealed
-                {
-                    revealedAttrs[proveAttribute.referentKey] = .init(subProofIndex: index,
-                                                                      raw: attrbuteValue.raw,
-                                                                      encoded: attrbuteValue.encoded)
-                    revealedAttrNames.append(referentName)
-                    try credValues.addKnown(key: referentName, value: attrbuteValue.encoded)
-                    
-                }
-                else
-                {
-                    unrevealedAttrs[proveAttribute.referentKey] = .init(subProofIndex: index,
-                                                                      raw: nil,
-                                                                      encoded: nil)
-                    try credValues.addHidden(key: referentName, value: attrbuteValue.encoded)
-                }
-            }
-            
-            for (referentName, provePredicate) in proveCredential.provePredicates
-            {
-                guard let attrbuteValue = remainValues.removeValue(forKey: referentName)
-                else
-                {
-                    throw E.invalidPredicateReferentName.getError()
-                }
-                
-                predicateAttrs[provePredicate.referentKey] = .init(subProofIndex: index,
-                                                                  raw: nil,
-                                                                  encoded: nil)
-                predicates.append(provePredicate.predicate)
-                try credValues.addHidden(key: referentName, value: attrbuteValue.encoded)
-            }
-            
-            for (key, remainValue) in remainValues
-            {
-                try credValues.addHidden(key: key, value: remainValue.encoded)
-            }
+            let subProof = try Self.makeSubProofValues(proveCredential: proveCredential,
+                                                       values: credential.values,
+                                                       masterSecret: masterSecret.masterSecret,
+                                                       subProofIndex: index)
+            revealedAttrs.merge(subProof.revealedAttrs) { $1 }
+            unrevealedAttrs.merge(subProof.unrevealedAttrs) { $1 }
+            predicateAttrs.merge(subProof.predicateAttrs) { $1 }
             
             let unrevealedAttrSet = ProofInitiator.createUnrevealedAttributes(schema: schema,
-                                                                            revealedAttrNames: revealedAttrNames)
+                                                                            revealedAttrNames: subProof.revealedAttrNames)
             
             let mTilde = ProofInitiator.generateMTilde(unrevealedAttrs: unrevealedAttrSet,
                                                        commonAttributes: builder.commonAttributes)
@@ -856,12 +916,12 @@ extension ZKPManager
             
             let neProofs = try ProofInitiator.generateInitNeProofs(publicKey: credDef.value.primary,
                                                                    mTilde: mTilde,
-                                                                   credValues: credValues,
-                                                                   predicates: predicates)
+                                                                   credValues: subProof.credValues,
+                                                                   predicates: subProof.predicates)
             
             builder.addInitProof(initProof: .init(eqProof: eqProof,
                                                   neProofs: neProofs,
-                                                  credValues: credValues))
+                                                  credValues: subProof.credValues))
             
         }
         

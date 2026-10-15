@@ -69,6 +69,12 @@
 - The logger's configuration (`WalletLogger.setEnable`/`setLogLevel`) and the wallet's lock state are
   read and written through a lock instead of unsynchronized mutable statics. Method signatures are
   unchanged.
+- A ZKP proof keeps every requested item when several fall on one attribute of one credential — a
+  range is two predicates on the same attribute. Items were grouped by attribute name, so all but
+  one were dropped silently, losing both the predicate proof and its `requested_proof` entry; they
+  are now grouped by referent key, and each credential value is committed once. A predicate on an
+  attribute the holder reveals now fails with `MSDKWLT04603`, and one attribute requested both
+  revealed and unrevealed fails with `MSDKWLT04602`.
 
 ### Added
 

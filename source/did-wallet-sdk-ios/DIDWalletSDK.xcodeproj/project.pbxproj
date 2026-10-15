@@ -295,6 +295,7 @@
 		C9F294B72DB0BA21005376E1 /* SecureEnclaveManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294AE2DB0BA21005376E1 /* SecureEnclaveManagerTests.swift */; };
 		C9F294B92DB0BA21005376E1 /* StorageManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294B12DB0BA21005376E1 /* StorageManagerTests.swift */; };
 		C9F294BA2DB0BA21005376E1 /* DIDManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294B22DB0BA21005376E1 /* DIDManagerTests.swift */; };
+		AAAA0403000000000000E365 /* ZKPManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0402000000000000E365 /* ZKPManagerTests.swift */; };
 		C9F294BB2DB0BA21005376E1 /* VCManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294B32DB0BA21005376E1 /* VCManagerTests.swift */; };
 		C9F294BD2DB0BA57005376E1 /* Encodable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F294BC2DB0BA57005376E1 /* Encodable+Extension.swift */; };
 		C9F414ED2DAE5D6A00C04A1A /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F414E72DAE5D6A00C04A1A /* CoreDataManager.swift */; };
@@ -626,6 +627,7 @@
 		C9F294B02DB0BA21005376E1 /* KeyManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagerTests.swift; sourceTree = "<group>"; };
 		C9F294B12DB0BA21005376E1 /* StorageManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManagerTests.swift; sourceTree = "<group>"; };
 		C9F294B22DB0BA21005376E1 /* DIDManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDManagerTests.swift; sourceTree = "<group>"; };
+		AAAA0402000000000000E365 /* ZKPManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZKPManagerTests.swift; sourceTree = "<group>"; };
 		C9F294B32DB0BA21005376E1 /* VCManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCManagerTests.swift; sourceTree = "<group>"; };
 		C9F294BC2DB0BA57005376E1 /* Encodable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Encodable+Extension.swift"; sourceTree = "<group>"; };
 		C9F414E62DAE5D6A00C04A1A /* Ca.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ca.swift; sourceTree = "<group>"; };
@@ -1423,6 +1425,7 @@
 				C9F294B12DB0BA21005376E1 /* StorageManagerTests.swift */,
 				C9F294B22DB0BA21005376E1 /* DIDManagerTests.swift */,
 				C9F294B32DB0BA21005376E1 /* VCManagerTests.swift */,
+				AAAA0402000000000000E365 /* ZKPManagerTests.swift */,
 			);
 			path = WalletCore;
 			sourceTree = "<group>";
@@ -1903,6 +1906,7 @@
 				C9F294B72DB0BA21005376E1 /* SecureEnclaveManagerTests.swift in Sources */,
 				C9F294B92DB0BA21005376E1 /* StorageManagerTests.swift in Sources */,
 				C9F294BA2DB0BA21005376E1 /* DIDManagerTests.swift in Sources */,
+				AAAA0403000000000000E365 /* ZKPManagerTests.swift in Sources */,
 				C9F294BB2DB0BA21005376E1 /* VCManagerTests.swift in Sources */,
 				7CDED7FE2C7830CC009CE791 /* WalletTokenMock.swift in Sources */,
 				7CDED8022C783121009CE791 /* WalletLockManagerMock.swift in Sources */,
