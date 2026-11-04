@@ -162,7 +162,7 @@ final class DIDWalletSDKTests: XCTestCase {
 //            let hWalletToken = String(MultibaseUtils.encode(type: MultibaseType.base16, data: digest).dropFirst())
 //            
 //            try WalletAPI.shared.generateKeyPair(hWalletToken: hWalletToken, keyId: "keyagree", algType: AlgorithmType.secp256r1)
-//            // PIN 등록
+//            // Register PIN
 //            try WalletAPI.shared.generateKeyPair(hWalletToken: hWalletToken, passcode: "123456", keyId: "pin", algType: AlgorithmType.secp256r1)
 //            
 //            let signedDIDDoc = try walletAPI.createSignedDIDDoc(passcode: "123456")
@@ -183,7 +183,7 @@ final class DIDWalletSDKTests: XCTestCase {
         
 //        try await testRegisterUser()
 //        
-//        print("###################### 5. VC 발급")
+//        print("###################### 5. Issue VC")
 //        do {
 //            let walletTokenDataJson = """
 //        {"nonce":"mHaq6qqiUKLt8N6raGc+/5g","proof":{"created":"2024-08-23T11:40:03.566877Z","proofPurpose":"assertionMethod","proofValue":"mH6qvGRLx8qpMPhQwJMeEQsz0eGYhZQI1y9yu1xl4b+qIQM2tfFueWHpuffAvdioqSrR0K4Qb0AgbzcdtQO4ds7A","type":"Secp256r1Signature2018","verificationMethod":"did:omn:cas?versionId=1#assert"},"provider":{"certVcRef":"http://192.168.3.130:8094/cas/api/v1/certificate-vc","did":"did:omn:cas"},"seed":{"nonce":"F6438ED0B74B348E3635C89DA164E8FFE","pkgName":"org.omnione.did.ca","purpose":8,"userId":"7156af3d","validUntil":"2050-08-23T12:10:02Z"},"sha256_pii":"zCWYkiLKjXUHu5xCRcJoJ9nfiyKzhiYW3YiWwdDwfh2vx"}
@@ -271,8 +271,8 @@ final class DIDWalletSDKTests: XCTestCase {
 //                // Hex
 //                let hWalletToken = String(MultibaseUtils.encode(type: MultibaseType.base16, data: digest).dropFirst())
 //                let verifierProfile = try _RequestProfile(from:"""
-//                {"profile":{"description":"11번가 로그인을 위해 제출이 필요한 VP에 대한 프로파일 입니다.","encoding":"UTF-8","id":"affdb518-34f7-4b85-aaba-d4f9262bd3a7","language":"ko","profile":{"filter":{"credentialSchemas":[{"allowedIssuers":["did:omn:issuer"],"displayClaims":["testId.aa"],"id":"http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
-//                "requiredClaims":["org.opendid.v1.national_id.family_name","org.opendid.v1.national_id.given_name","org.opendid.v1.national_id.birth_date"],"type":"OsdSchemaCredential","value":"VerifiableProfile"}]},"process":{"authType":6,"endpoints":["http://192.168.3.130:8092/verifier"],"reqE2e":{"cipher":"AES-256-CBC","curve":"Secp256r1","nonce":"mMMg3gVgwEsbpxORRNp1SRA","padding":"PKCS5","publicKey":"zw2oVJVmfEqKxjXjE9wc3LBX33WHmusGA91HADm5PRr7D"},"verifierNonce":"mMMg3gVgwEsbpxORRNp1SRA"},"verifier":{"certVcRef":"http://192.168.3.130:8092/verifier/api/v1/certificate-vc","description":"verifier","did":"did:omn:verifier","name":"verifier","ref":"http://192.168.3.130:8092/verifier/api/v1/certificate-vc"}},"proof":{"created":"2024-08-29T18:20:39.666665Z","proofPurpose":"assertionMethod","proofValue":"z3oJhN6sQ7d71doPZAkgumZVyZxSXJw4jL9g8hkPkxaVyU4vKCDXpMf4vS6dh7jUFkKtrb2hSjEyU1mNv7kZXUWUmP","type":"Secp256r1Signature2018","verificationMethod":"did:omn:verifier?versionId=1#assert"},"title":"11번가 로그인 VP 프로파일","type":"VerifyProfile"},"txId":"1b1451bd-db27-4e57-96f2-5543fa365c7b"}
+//                {"profile":{"description":"Profile of the VP required for 11st login.","encoding":"UTF-8","id":"affdb518-34f7-4b85-aaba-d4f9262bd3a7","language":"ko","profile":{"filter":{"credentialSchemas":[{"allowedIssuers":["did:omn:issuer"],"displayClaims":["testId.aa"],"id":"http://192.168.3.130:8091/issuer/api/v1/vc/vcschema?name=national_id",
+//                "requiredClaims":["org.opendid.v1.national_id.family_name","org.opendid.v1.national_id.given_name","org.opendid.v1.national_id.birth_date"],"type":"OsdSchemaCredential","value":"VerifiableProfile"}]},"process":{"authType":6,"endpoints":["http://192.168.3.130:8092/verifier"],"reqE2e":{"cipher":"AES-256-CBC","curve":"Secp256r1","nonce":"mMMg3gVgwEsbpxORRNp1SRA","padding":"PKCS5","publicKey":"zw2oVJVmfEqKxjXjE9wc3LBX33WHmusGA91HADm5PRr7D"},"verifierNonce":"mMMg3gVgwEsbpxORRNp1SRA"},"verifier":{"certVcRef":"http://192.168.3.130:8092/verifier/api/v1/certificate-vc","description":"verifier","did":"did:omn:verifier","name":"verifier","ref":"http://192.168.3.130:8092/verifier/api/v1/certificate-vc"}},"proof":{"created":"2024-08-29T18:20:39.666665Z","proofPurpose":"assertionMethod","proofValue":"z3oJhN6sQ7d71doPZAkgumZVyZxSXJw4jL9g8hkPkxaVyU4vKCDXpMf4vS6dh7jUFkKtrb2hSjEyU1mNv7kZXUWUmP","type":"Secp256r1Signature2018","verificationMethod":"did:omn:verifier?versionId=1#assert"},"title":"11st login VP profile","type":"VerifyProfile"},"txId":"1b1451bd-db27-4e57-96f2-5543fa365c7b"}
 //                """)
 //                
 //                
@@ -517,18 +517,18 @@ final class DIDWalletSDKTests: XCTestCase {
             print("vc json: \(try savedVcs[0].toJson())")
             
             /* 
-             schema Id라면..
+             If it is a schema ID..
             VCManager.getSchemaId()
-            VCManager.getVcMetas() - 객체 정의 필요.
+            VCManager.getVcMetas() - object definition needed.
             
-            vc 저장때 중복체크
+            Check for duplicates when saving a VC
              
              VC Meta: id, schemaType, title
              
-             화면에 그릴때
-             1. vc 리스트에 item표시할 것
-              - schemaName, validUntil만 그리는데 issuance
-             2. vc 대표 이미지 (vc schema)
+             When drawing on screen
+             1. Show items in the VC list
+              - Only schemaName and validUntil are drawn, but issuance
+             2. VC representative image (VC schema)
              
              */
             let claimInfos:[ClaimInfo] = [ClaimInfo(credentialId: savedVcs[0].id, claimCodes: ["org.iso.18013.5.given_name", "org.iso.18013.5.birth_date"])]
@@ -562,35 +562,35 @@ final class DIDWalletSDKTests: XCTestCase {
 //            if try holderKey.isKeySaved(id: "free") == false {
 //                let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "free", methodType: .none)
 //                try holderKey.generateKey(keyGenRequest: freeKeyRequest)
-//                print("무인증 Key 생성 완료")
+//                print("No-auth key generated")
 //            }
 //            
 //            if try holderKey.isKeySaved(id: "pin") == false {
 //                let pinData = "password".data(using: .utf8)!
 //                let pinKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "pin", methodType: WalletAccessMethod.pin(value: pinData))
 //                try holderKey.generateKey(keyGenRequest: pinKeyRequest)
-//                print("PIN Key 생성 완료")
+//                print("PIN key generated")
 //            }
 //            
 //            // not supply simulator
 ////            if !keyManager.isKeySaved(id: "bio") {
 ////                let bioKeyRequest = SecureKeyGenRequest(id: "bio", accessMethod: .currentSet, prompt: "touch your fingerprint")
 ////                try keyManager.generateKey(keyGenRequest: bioKeyRequest)
-////                print("바이오키 생성 완료")
+////                print("Bio key generated")
 ////            }
 //            
-//            // id로 조회
+//            // Look up by id
 //            let keyInfos = try holderKey.getKeyInfos(ids: ["free", "pin"])
 //            print("keyInfos: \(keyInfos)")
 //            
-//            // keyType으로 조회
+//            // Look up by keyType
 //            let orKeyInfos = try holderKey.getKeyInfos(keyType: [.free, .pin])
 //            print("orKeyInfos: \(orKeyInfos)")
 //            
-//            // free키 삭제
+//            // Delete the free key
 ////            try keyManager.deleteKeys(ids: ["free", "pin"])
 //            
-//            // 모든 키정보 조회
+//            // Look up all key infos
 //            let keyAllInfos = try holderKey.getKeyInfos(keyType: [])
 //            print("keyAllInfos: \(keyAllInfos)")
 //            print("keyManager.isAnyKeysSaved :\(holderKey.isAnyKeysSaved)")
@@ -602,13 +602,13 @@ final class DIDWalletSDKTests: XCTestCase {
 //            let signature1 = try holderKey.sign(id: "free", digest: digest)
 //            print("free sign: \(MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature1))")
 //            
-//            // 패스워드 입력 필요
+//            // Password input required
 //            let signature2 = try holderKey.sign(id: "pin", pin: plainData, digest: digest)
 //            print("pin sign: \(MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature2))")
 //            
 //            let freeKeyInfos = try holderKey.getKeyInfos(ids: ["free"])
 //            let yourPubKey = try MultibaseUtils.decode(encoded:freeKeyInfos[0].publicKey)
-//            /// verify - 무인증키로 서명한걸 pin키로 검증
+//            /// verify - verify with the PIN key what was signed with the no-auth key
 //            let result = try holderKey.verify(algorithmType: .secp256r1, publicKey: yourPubKey, digest: digest, signature: signature1)
 //            
 //        } catch {

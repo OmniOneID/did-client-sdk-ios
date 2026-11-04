@@ -18,9 +18,9 @@ import Foundation
 /*
 def object EcdhAccData: "ECDH acceptance data"
 {
-    + did                    "did"        : "수락자의 DID"
-    + multibase              "serverNonce": "E2E 대칭키 생성용 nonce", byte_length(16)
-    + multibase              "publicKey"  : "E2E 암호화용 server 공개키"
+    + did                    "did"        : "DID of the acceptor"
+    + multibase              "serverNonce": "nonce for E2E symmetric key generation", byte_length(16)
+    + multibase              "publicKey"  : "server public key for E2E encryption"
     + SYMMETRIC_CIPHER_TYPE  "cipher"     : "cipher type"
     + SYMMETRIC_PADDING_TYPE "padding"    : "padding type"
 }

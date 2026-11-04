@@ -3,3 +3,5 @@ xcuserdata/
 output/
 Package.resolved
 .build/
+# Local-only files
+/excluded/

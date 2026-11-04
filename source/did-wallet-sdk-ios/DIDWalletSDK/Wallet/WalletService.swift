@@ -364,7 +364,7 @@ class WalletService: WalletServiceImpl {
         }
 
         // One authentication context for the whole submission: a Secure Enclave key that asks the
-        // user to confirm asks once, not once per document (5장). It dies with this call.
+        // user to confirm asks once, not once per document. It dies with this call.
         return try MdocProximityResponseBuilder.build(
             selected: selected,
             documents: documents,

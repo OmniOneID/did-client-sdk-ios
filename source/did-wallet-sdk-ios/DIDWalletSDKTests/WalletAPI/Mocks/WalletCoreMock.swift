@@ -159,7 +159,7 @@ class WalletCoreMock: WalletCoreImpl {
             let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .currentSet, prompt: promptMsg ?? "please regist your biometrics")
             try holderKeyManager.generateKey(keyGenRequest: bioKeyRequest)
         }
-        // 무인증 (keyagree)
+        // No authentication (keyagree)
         else if try !holderKeyManager.isKeySaved(id: "keyagree") && keyId == "keyagree" {
             let keyagreeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
             try holderKeyManager.generateKey(keyGenRequest: keyagreeKeyRequest)
@@ -215,19 +215,19 @@ class WalletCoreMock: WalletCoreImpl {
         if try deviceKeyManager.isKeySaved(id: "assert") == false {
             let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "assert", methodType: .none)
             try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.debug("device assert Key 생성 완료")
+            WalletLogger.debug("device assert key generated")
         }
         
         if try deviceKeyManager.isKeySaved(id: "keyagree") == false {
             let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "keyagree", methodType: .none)
             try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.debug("device keyagree Key 생성 완료")
+            WalletLogger.debug("device keyagree key generated")
         }
         
         if try deviceKeyManager.isKeySaved(id: "auth") == false {
             let freeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: "auth", methodType: .none)
             try deviceKeyManager.generateKey(keyGenRequest: freeKeyRequest)
-            WalletLogger.debug("device auth Key 생성 완료")
+            WalletLogger.debug("device auth key generated")
         }
         
         let keyInfo = try deviceKeyManager.getKeyInfos(ids: ["assert", "keyagree", "auth"])

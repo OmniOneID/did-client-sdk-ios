@@ -109,7 +109,7 @@ class WalletCore: WalletCoreImpl {
             let bioKeyRequest = SecureKeyGenRequest(id: keyId, accessMethod: .any, prompt: promptMsg ?? "please regist your biometrics")
             try holderKeyManager.generateKey(keyGenRequest: bioKeyRequest)
         }
-        // 무인증 (keyagree)
+        // No authentication (keyagree)
         else {
             let keyagreeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
             try holderKeyManager.generateKey(keyGenRequest: keyagreeKeyRequest)

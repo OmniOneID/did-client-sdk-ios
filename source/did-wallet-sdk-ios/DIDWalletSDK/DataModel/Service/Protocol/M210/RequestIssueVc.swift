@@ -35,7 +35,7 @@ public struct RequestIssueVc: Jsonable {
 }
 
 public struct E2E: Jsonable {
-    // E2E 암복호화 IV, byte_length(16)
+    // IV for E2E encryption/decryption, byte_length(16)
     public var iv: String
     // multibase (enc(vc))
     public var encVc: String

@@ -36,7 +36,7 @@ class WalletLockManager: WalletLockManagerImpl {
         
     }
     
-    // true로 설정 했을때
+    // When isLock is set to true
     @discardableResult
     func registerLock(hWalletToken: String, passcode: String, isLock: Bool) throws -> Bool {
         if isLock {

@@ -203,7 +203,7 @@ class WalletServiceMock : WalletServiceImpl
         
         let ownerDIDDoc = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: try holderDidDoc.toJsonData())
         
-        // deviceKey서명
+        // Sign with the device key
         let proof = Proof(created: Date.getUTC0Date(seconds: 0),
                         proofPurpose: ProofPurpose.assertionMethod,
                         verificationMethod: deviceDidDoc.id + "?versionId=" + deviceDidDoc.versionId + "#assert",
@@ -227,10 +227,10 @@ class WalletServiceMock : WalletServiceImpl
     }
     
     func createDeviceDocument() throws -> DIDDocument {
-        // 1. deviceKey 생성 (core func)
+        // 1. Generate the device key (core func)
         var didDoc = try walletCore.createDeviceDidDocument()
         var proofArry: [Proof] = .init()
-        // 2. proofValue를 제외한 proof 생성
+        // 2. Create the proof without proofValue
         var assertProof = Proof(created: Date.getUTC0Date(seconds: 0), proofPurpose: ProofPurpose.assertionMethod, verificationMethod: didDoc.id+"?versionId="+didDoc.versionId+"#assert", type: ProofType.secp256r1Signature2018)
         didDoc.proof = assertProof
         let assertSource = try DigestUtils.getDigest(source: didDoc.toJsonData(), digestEnum: DigestEnum.sha256)
@@ -268,7 +268,7 @@ class WalletServiceMock : WalletServiceImpl
         
         if let token = MockData.shared.getTokenMock() {
             WalletLogger.debug("bindUser verifyWalletToken reg success")
-            // 최초 유저 등록 시 finalEncKey값 존재하지 않음 (PIN 입력 후 매핑 됨)
+            // finalEncKey does not exist at first user registration (mapped after PIN entry)
             MockData.shared.setUserMock(user: UserMock(idx: "id", pii: token.pii, finalEncKey: "", createDate: "2024-08-23T11:40:03.566877Z", updateDate: "2050-08-23T12:10:02Z"))
             return true
         } else {
@@ -286,9 +286,9 @@ class WalletServiceMock : WalletServiceImpl
     }
     
     func getSignedDidAuth(authNonce: String, passcode: String?) throws -> DIDAuth {
-        // 1. 홀더 did 조회
+        // 1. Look up the holder DID
         var didDoc = try walletCore.getDidDocument(type: DidDocumentType.HolderDidDocumnet)
-        // 2. proofValue를 제외한 proof 생성
+        // 2. Create the proof without proofValue
         
         let authType = passcode != nil ? "#pin" : "#bio"
         let proof = Proof(created: Date.getUTC0Date(seconds: 0),
@@ -297,10 +297,10 @@ class WalletServiceMock : WalletServiceImpl
                         type: ProofType.secp256r1Signature2018)
         didDoc.proof = proof
         
-        // 3. 홀더 did, authnonce, proof(proofValue제외) 준비
+        // 3. Prepare the holder DID, authNonce and proof (without proofValue)
         var didAuth = DIDAuth(did: didDoc.id, authNonce: authNonce, proof: proof)
         
-        // 4. core sdk에 서명 요청
+        // 4. Request a signature from the core SDK
         let source = try DigestUtils.getDigest(source: didAuth.toJsonData(), digestEnum: DigestEnum.sha256)
         
         let signature: Data?
@@ -311,9 +311,9 @@ class WalletServiceMock : WalletServiceImpl
         }
         
 //        let signature = try walletCore._sign(keyId: "pin", pin: passcode?.data(using: .utf8), data: source, type: didType)
-        // 5. 최종 DidAuth의 proof 준비
+        // 5. Prepare the proof of the final DidAuth
         didAuth.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature!)
-        // 6. didAuth 리턴
+        // 6. Return didAuth
         return didAuth
     }
     
@@ -352,7 +352,7 @@ class WalletServiceMock : WalletServiceImpl
         
         let serverNonce = try MultibaseUtils.decode(encoded: issuerProfile!.profile.profile.process.issuerNonce)
         
-        // 세션키 생성
+        // Generate the session key
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: ECType.secp256r1,
                                                            privateKey: try MultibaseUtils.decode(encoded: "mNdy+e2T694f0QbSd/gdLvmdgUjti+RR6wQY4F+kMYfA="),
                                                            publicKey: MultibaseUtils.decode(encoded: issuerProfile!.profile.profile.process.reqE2e.publicKey))
@@ -371,7 +371,7 @@ class WalletServiceMock : WalletServiceImpl
         """
         
         let decodedResponse = try _RequestIssueVc.init(from: issueVcResponseDummy)
-        // 복호화, 월렛에 vc 저장
+        // Decrypt and save the VC to the wallet
         let envVc = try MultibaseUtils.decode(encoded: decodedResponse.e2e.encVc)
         
         let decVc = try CryptoUtils.decrypt(cipher: envVc,
@@ -386,7 +386,7 @@ class WalletServiceMock : WalletServiceImpl
         let tempProofValue = vc.proof.proofValue
         let tempProofValueList = vc.proof.proofValueList
 
-        // vc 체크 후 조회 (is any credential)
+        // Check for VCs, then look up (is any credential)
         if walletCore.isAnyCredentialsSaved() {
             let vcs = try walletCore.getAllCredentials()
             for v in vcs {
@@ -404,8 +404,8 @@ class WalletServiceMock : WalletServiceImpl
         print("vc!!!!!: \(try vc.toJson(isPretty: true))")
         _ = try walletCore.addCredential(credential: vc)
         
-        // 월렛에 저장
-        // 이슈어 서명 검증 통신 (블록체인)
+        // Save to the wallet
+        // Verify the issuer signature over the network (blockchain)
         return (vc.id, decodedResponse)
     }
     // TODO

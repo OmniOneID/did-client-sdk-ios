@@ -46,6 +46,16 @@ Each module (repository) is managed independently, following these steps:
        -destination 'platform=iOS Simulator,name=iPhone 17' \
        SWIFT_STRICT_CONCURRENCY=complete
      ```
+   - **Build machine paths.** `build_xcframework.sh` deletes the `.abi.json` files, which embed
+     absolute source paths. Confirm the built XCFramework carries no such path:
+     `grep -rl '/Users/' DIDWalletSDK.xcframework` should print nothing.
+   - **Module interface verification.** Swift 6.4 (Xcode 27) writes `Self.Element` in a
+     `.swiftinterface` as a module-qualified name it then cannot resolve, so the build's own
+     interface verification fails on swift-collections. `build_xcframework.sh` therefore archives
+     with `-no-verify-emitted-module-interface` and typechecks every `.swiftinterface` of the built
+     XCFramework itself; the script must end with `Succeeded to create xcframework`. When that check
+     fails on DIDWalletSDK, look for a public or `@inlinable` declaration spelled `Self.<Name>`
+     (for example `-> Self.Element`) and write the bare name (`-> Element`) instead.
 
 4. **Merge into Main and Develop Branches**  
    - Merge the validated Release branch (release/QA-VX.Y.Z) into both `main` and `develop` branches.

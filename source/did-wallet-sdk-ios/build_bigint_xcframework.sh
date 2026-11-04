@@ -87,5 +87,9 @@ xcodebuild -create-xcframework \
   -framework "${FW_SIM}" \
   -output "${OUT_DIR}/${MODULE_NAME}.xcframework"
 
+# .abi.json embeds absolute source paths of the build machine and is only used by
+# swift-api-digester; the package consumes the .swiftinterface, so it is not committed.
+find "${OUT_DIR}/${MODULE_NAME}.xcframework" -name '*.abi.json' -delete
+
 rm -rf "${BUILD_ROOT}"
 echo "Succeeded: ${OUT_DIR}/${MODULE_NAME}.xcframework"

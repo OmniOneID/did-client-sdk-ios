@@ -65,6 +65,12 @@
   Replace `WalletLogger.shared.setEnable(true)` with `WalletLogger.setEnable(true)`, and the same for
   `setLogLevel(_:)` and the log methods.
 
+- The `.abi.json` files from the XCFramework's `.swiftmodule` bundles (and from the bundled
+  `BigIntKit.xcframework`). They embedded absolute source paths of the build machine and are read
+  only by `swift-api-digester`; apps import the `.swiftinterface`, so nothing a consumer builds
+  depends on them. The build scripts now drop them, and they were removed from the committed
+  v2.0.0–v2.0.2 XCFrameworks.
+
 ### Fixed
 - The logger's configuration (`WalletLogger.setEnable`/`setLogLevel`) and the wallet's lock state are
   read and written through a lock instead of unsynchronized mutable statics. Method signatures are
