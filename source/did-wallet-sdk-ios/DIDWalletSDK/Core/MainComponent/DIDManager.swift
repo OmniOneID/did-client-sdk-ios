@@ -126,11 +126,7 @@ struct DIDManager {
     /// If the "temporary DIDDocument object" is nil, returns the stored DID document.
     /// - Returns: DID document object
     func getDocument() throws -> DIDDocument {
-        
-        
-        if var didDoc = didDoc {
-            increaseVersionId(didDoc: &didDoc)
-            
+        if let didDoc = didDoc {
             return didDoc
         }
         
@@ -289,6 +285,25 @@ struct DIDManager {
     public mutating func resetChanges() {
         didDoc = nil
     }
+
+    /// Sets the version of the "Temporary DIDDocument object" to the one after the stored document's.
+    /// The value is always derived from the stored document, so calling this more than once
+    /// before `saveDocument()` leaves the same version.
+    /// If the document has never been saved, nothing happens and it keeps its initial version.
+    mutating func increaseVersion() throws {
+        guard isSaved else { return }
+
+        try prepareToEditDocument()
+
+        let savedDoc = try loadSavedDocument()
+
+        // `DIDVersionId` admits digits only, so this fails only on overflow.
+        guard let versionId = Int(savedDoc.versionId) else {
+            throw E.notFoundDocument.getError()
+        }
+
+        didDoc!.versionId = String(versionId + 1)
+    }
 }
 //MARK: - Private methods
 extension DIDManager
@@ -392,20 +407,6 @@ extension DIDManager
     /// - Parameter didDoc: The pointer of "DIDDocument object" variable to add information of public key
     private func modifyUpdatedWithNowTime(didDoc: inout DIDDocument) {
         didDoc.updated = Date.getUTC0Date(seconds: 0)
-    }
-    
-    /// Increase the document's version by saved one
-    /// If the document didn't saved,
-    /// nothing happens
-    private func increaseVersionId(didDoc: inout DIDDocument)
-    {
-        if !isSaved { return }
-        
-        let savedDoc = try! loadSavedDocument()
-        
-        var versionId = Int(savedDoc.versionId)!
-        versionId += 1
-        didDoc.versionId = String(versionId)
     }
     
     /// Load saved document

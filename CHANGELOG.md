@@ -81,6 +81,12 @@
   are now grouped by referent key, and each credential value is committed once. A predicate on an
   attribute the holder reveals now fails with `MSDKWLT04603`, and one attribute requested both
   revealed and unrevealed fails with `MSDKWLT04602`.
+- `updateHolderDIDDocument(hWalletToken:)` and `saveHolderDIDDocument()` now advance the stored
+  holder DID Document's `versionId`. The document `updateHolderDIDDocument` returned carried the
+  next version, but the bump was applied to a copy, so `saveHolderDIDDocument` stored the document
+  at its old version — it stayed at `1` however often it was updated, and every DID URL the wallet
+  built from it (`<did>?versionId=<n>#<keyId>`) named that version. The returned and the stored
+  document now carry the same, incremented `versionId`. Method signatures are unchanged.
 
 ### Added
 

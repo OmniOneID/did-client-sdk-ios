@@ -340,7 +340,9 @@ class WalletCore: WalletCoreImpl {
         {
             try holderDidManager.removeVerificationMethod(keyId: bioKeyId)
         }
-            
+
+        try holderDidManager.increaseVersion()
+
         let holderDidDoc = try holderDidManager.getDocument()
         
         WalletLogger.debug("holderDidDoc: \(try holderDidDoc.toJson())")
