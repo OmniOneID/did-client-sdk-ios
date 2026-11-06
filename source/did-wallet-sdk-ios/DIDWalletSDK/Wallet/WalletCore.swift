@@ -77,6 +77,7 @@ class WalletCore: WalletCoreImpl {
         if oid4vcManager.isAnyCredentialsSaved {
             try oid4vcManager.deleteAllCredentials()
         }
+        WalletLogger.debug("wallet data deleted (deleteAll: \(deleteAll))")
     }
     
     public func isExistWallet() -> Bool
@@ -114,11 +115,13 @@ class WalletCore: WalletCoreImpl {
             let keyagreeKeyRequest = WalletKeyGenRequest(algorithmType: .secp256r1, id: keyId, methodType: .none)
             try holderKeyManager.generateKey(keyGenRequest: keyagreeKeyRequest)
         }
+        WalletLogger.debug("holder key generated: \(keyId)")
     }
     
     public func deleteKey(keyId: String) throws
     {
         try holderKeyManager.deleteKeys(ids: [keyId])
+        WalletLogger.debug("holder key deleted: \(keyId)")
     }
     
     
@@ -159,6 +162,7 @@ class WalletCore: WalletCoreImpl {
         }
         
         try holderKeyManager.changePin(id: id, oldPin: oldPIN.data(using: .utf8)!, newPin: newPIN.data(using: .utf8)!)
+        WalletLogger.debug("PIN changed: \(id)")
     }
     
     public func authenticatePin(id: String, pin: String) throws
@@ -370,8 +374,10 @@ class WalletCore: WalletCoreImpl {
 
         if type == DidDocumentType.DeviceDidDocument {
             try deviceDidManager.saveDocument()
+            WalletLogger.debug("saved device DID Document versionId: \((try? deviceDidManager.getDocument().versionId) ?? "unknown")")
         } else {
             try holderDidManager.saveDocument()
+            WalletLogger.debug("saved holder DID Document versionId: \((try? holderDidManager.getDocument().versionId) ?? "unknown")")
         }
     }
     
@@ -381,6 +387,7 @@ class WalletCore: WalletCoreImpl {
             throw WalletAPIError.lockedWallet.getError()
         }
         try vcManager.addCredential(credential: credential)
+        WalletLogger.debug("saved VC id: \(credential.id)")
         return true
     }
     
@@ -389,6 +396,7 @@ class WalletCore: WalletCoreImpl {
             throw WalletAPIError.lockedWallet.getError()
         }
         try vcManager.deleteCredentials(by: ids)
+        WalletLogger.debug("deleted VCs: \(ids.count)")
         return true
     }
     
@@ -455,6 +463,7 @@ class WalletCore: WalletCoreImpl {
         try zkpManager.verifyAndStoreCredential(credentialMeta: credentialMeta,
                                                 publicKey: credentialDefinition.value.primary,
                                                 credential: credential)
+        WalletLogger.debug("ZKP credential verified and saved")
         return true
     }
     
@@ -467,6 +476,7 @@ class WalletCore: WalletCoreImpl {
         }
         
         try zkpManager.removeCredentials(by: ids)
+        WalletLogger.debug("deleted ZKP credentials: \(ids.count)")
         return true
     }
     
@@ -524,6 +534,7 @@ extension WalletCore
             throw WalletAPIError.lockedWallet.getError()
         }
         try oid4vcManager.addCredential(credential: credential)
+        WalletLogger.debug("saved OID4VC credential id: \(credential.id), format: \(credential.format)")
         return true
     }
 
@@ -549,6 +560,7 @@ extension WalletCore
             throw WalletAPIError.lockedWallet.getError()
         }
         try oid4vcManager.deleteCredentials(by: ids)
+        WalletLogger.debug("deleted OID4VC credentials: \(ids.count)")
         return true
     }
 

@@ -57,7 +57,7 @@ class WalletLockManager: WalletLockManagerImpl {
     @discardableResult
     func isRegLock() throws -> Bool {
         if let user = try CoreDataManager.shared.selectUser() {
-            WalletLogger.debug("user.finalEncKey: \(user.finalEncKey)")
+            WalletLogger.debug("user.finalEncKey set: \(user.finalEncKey != "")")
             if user.finalEncKey != "" {
                 return true
             }
@@ -75,6 +75,7 @@ class WalletLockManager: WalletLockManagerImpl {
         if !isChanging {
             WalletLockManager.isLock = (result == nil)
         }
+        WalletLogger.debug("authenticateLock success: \(result != nil), isChanging: \(isChanging)")
         return result
     }
     

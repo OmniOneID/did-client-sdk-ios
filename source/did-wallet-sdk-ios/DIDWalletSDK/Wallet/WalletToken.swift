@@ -44,8 +44,8 @@ class WalletToken: WalletTokenImpl {
         
         if hWalletToken != token.hWalletToken {
             WalletLogger.debug("hWalletToken fail")
-            WalletLogger.debug("input hWalletToken: \(hWalletToken)")
-            WalletLogger.debug("saved hWalletToken: \(token.hWalletToken)")
+            WalletLogger.verbose("input hWalletToken: \(hWalletToken)")
+            WalletLogger.verbose("saved hWalletToken: \(token.hWalletToken)")
             throw WalletAPIError.verifyTokenFail.getError()
         }
         
@@ -87,6 +87,8 @@ class WalletToken: WalletTokenImpl {
         
         let hexNonce = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: nonce)
         let seed = WalletTokenSeed(purpose: purpose, pkgName: pkgName, nonce: hexNonce, validUntil: Date.getUTC0Date(seconds: 0), userId: userId)
+        WalletLogger.debug("wallet token seed created (purpose: \(purpose.value))")
+        WalletLogger.verbose("wallet token seed nonce: \(hexNonce)")
         
         return seed
     }
@@ -138,7 +140,8 @@ class WalletToken: WalletTokenImpl {
             }
         }
         
-        WalletLogger.debug("sdk hWalletToken \(hWalletToken)")
+        WalletLogger.debug("sdk hWalletToken created")
+        WalletLogger.verbose("sdk hWalletToken: \(hWalletToken)")
         WalletLogger.debug("walletId: \(Properties.getWalletId() ?? "not found wallet id")")
         
         // verify certVcRef
@@ -193,7 +196,8 @@ class WalletToken: WalletTokenImpl {
         // Hex, prefix dropped to match the online token
         let hWalletToken = String(MultibaseUtils.encode(type: MultibaseType.base16, data: random).dropFirst())
         
-        WalletLogger.debug("local hWalletToken \(hWalletToken)")
+        WalletLogger.debug("local hWalletToken created (purpose: \(purpose.value))")
+        WalletLogger.verbose("local hWalletToken: \(hWalletToken)")
         
         if let walletId = Properties.getWalletId(),
            try CoreDataManager.shared.insertToken(walletId: walletId,

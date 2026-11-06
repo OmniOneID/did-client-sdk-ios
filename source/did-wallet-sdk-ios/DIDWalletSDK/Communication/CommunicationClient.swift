@@ -159,7 +159,8 @@ public struct CommunicationClient
         let statusCode = httpResponse.statusCode
         
         WalletLogger.debug("statusCode: \(String(describing: statusCode))")
-        WalletLogger.debug("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
+        WalletLogger.debug("resultData: \(data.count) bytes")
+        WalletLogger.verbose("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
         
         return (data, statusCode)
     }
@@ -234,7 +235,8 @@ public struct CommunicationClient
         let statusCode = httpResponse.statusCode
         
         WalletLogger.debug("statusCode: \(String(describing: statusCode))")
-        WalletLogger.debug("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
+        WalletLogger.debug("resultData: \(data.count) bytes")
+        WalletLogger.verbose("resultData: \(String(data: data, encoding: .utf8) ?? "")\n")
         
         return (data, statusCode)
     }

@@ -22,7 +22,7 @@
 		</data>
 		<key>Modules/DIDWalletSDK.swiftmodule/arm64-apple-ios-simulator.abi.json</key>
 		<data>
-		sbi8sOMll5vyTOZ3FxyGk+fNb8g=
+		GF+AT93kHHOtTTSkXbr5pEWw3y8=
 		</data>
 		<key>Modules/DIDWalletSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
@@ -42,7 +42,7 @@
 		</data>
 		<key>Modules/DIDWalletSDK.swiftmodule/x86_64-apple-ios-simulator.abi.json</key>
 		<data>
-		sbi8sOMll5vyTOZ3FxyGk+fNb8g=
+		GF+AT93kHHOtTTSkXbr5pEWw3y8=
 		</data>
 		<key>Modules/DIDWalletSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>
 		<data>
@@ -104,7 +104,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			m3jbV6IbM/YqCRO/VOYZytMLNunf4Qi5+iJ74rNEaCo=
+			SHDazS4k0Rgy2FyS9cUDvH/m/CsGii0tbLbymHKfhc0=
 			</data>
 		</dict>
 		<key>Modules/DIDWalletSDK.swiftmodule/arm64-apple-ios-simulator.private.swiftinterface</key>
@@ -139,7 +139,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			m3jbV6IbM/YqCRO/VOYZytMLNunf4Qi5+iJ74rNEaCo=
+			SHDazS4k0Rgy2FyS9cUDvH/m/CsGii0tbLbymHKfhc0=
 			</data>
 		</dict>
 		<key>Modules/DIDWalletSDK.swiftmodule/x86_64-apple-ios-simulator.private.swiftinterface</key>

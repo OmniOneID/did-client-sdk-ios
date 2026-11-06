@@ -25,7 +25,7 @@ public struct KeyChainWrapper
         
         deleteItem()
         
-        WalletLogger.debug("======[H] cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
+        WalletLogger.debug("cek: \(cek.count) bytes")
         
         try saveItem(data: cek)
         
@@ -40,19 +40,19 @@ public struct KeyChainWrapper
                                              key: key,
                                              iv: iv)
         
-        WalletLogger.debug("======[H] encCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: encCek))")
+        WalletLogger.debug("encCek: \(encCek.count) bytes")
         
         let finalEncCek = try SecureEncryptor.encrypt(plainData: encCek)
-        WalletLogger.debug("======[H] finalEncCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: finalEncCek))")
+        WalletLogger.debug("finalEncCek: \(finalEncCek.count) bytes")
         return finalEncCek
     }
      
     static public func matching(passcode: String, finalEncCek: Data) throws -> Data? {
         
-        WalletLogger.debug("======[H] finalEncCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: finalEncCek))")
+        WalletLogger.debug("finalEncCek: \(finalEncCek.count) bytes")
         
         let encCek = try SecureEncryptor.decrypt(cipherData: finalEncCek)
-        WalletLogger.debug("======[H] encCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: encCek))")
+        WalletLogger.debug("encCek: \(encCek.count) bytes")
         
         let walletId = Properties.getWalletId()?.data(using: .utf8)
         
@@ -64,10 +64,10 @@ public struct KeyChainWrapper
                                                               padding: .pkcs5),
                                              key: key,
                                              iv: iv)
-        WalletLogger.debug("======[H] decCek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: decCek))")
+        WalletLogger.debug("decCek: \(decCek.count) bytes")
         
         let cek = try getItem()
-        WalletLogger.debug("======[H] load cek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: cek))")
+        WalletLogger.debug("load cek: \(cek.count) bytes")
         
         if cek != decCek
         {
@@ -164,7 +164,7 @@ extension KeyChainWrapper
                                          iterations: 2048,
                                          derivedKeyLength: 32)
         
-        WalletLogger.debug("======[H] kek: \(MultibaseUtils.encode(type: MultibaseType.base16, data: kek))")
+        WalletLogger.debug("kek: \(kek.count) bytes")
         
         return (kek, ivData)
     }

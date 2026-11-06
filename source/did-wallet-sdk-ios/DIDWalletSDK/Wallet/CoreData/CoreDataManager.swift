@@ -215,7 +215,8 @@ final class CoreDataManager {
                   let vu = t.validUntil, let cd = t.createDate, let pur = t.purpose else {
                 return nil
             }
-            WalletLogger.debug("select Token idx: \(idx) pkgName: \(pkg) walletId: \(wid) hWalletToken: \(h) nonce: \(n) pii: \(p) validUntil: \(vu) createDate: \(cd) purpose: \(pur)")
+            WalletLogger.debug("select Token idx: \(idx) pkgName: \(pkg) validUntil: \(vu) createDate: \(cd) purpose: \(pur)")
+            WalletLogger.verbose("select Token walletId: \(wid) hWalletToken: \(h) nonce: \(n) pii: \(p)")
             return Token(idx: idx, walletId: wid, hWalletToken: h,
                          validUntil: vu, purpose: pur, nonce: n, pkgName: pkg,
                          pii: p, createDate: cd)
@@ -274,7 +275,7 @@ final class CoreDataManager {
 //            req.predicate = NSPredicate(format: "finalEncKey == %@", "")
             req.fetchLimit = 1
             if let u = try ctx.fetch(req).first {
-                WalletLogger.debug("updateUser finalEncKey: \(finalEncKey)")
+                WalletLogger.debug("updateUser finalEncKey set: \(!finalEncKey.isEmpty)")
                 u.finalEncKey = finalEncKey
                 u.updateDate = Date.getUTC0Date(seconds: 0)
             }

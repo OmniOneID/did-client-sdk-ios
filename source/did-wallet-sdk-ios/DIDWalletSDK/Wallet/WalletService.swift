@@ -35,6 +35,7 @@ class WalletService: WalletServiceImpl {
             try CoreDataManager.shared.deleteCaPakage()
         }
         try walletCore.deleteWallet(deleteAll:deleteAll)
+        WalletLogger.debug("wallet deleted (deleteAll: \(deleteAll))")
     }
     
     public func createWallet(tasURL: String, walletURL: String) async throws -> Bool {
@@ -165,7 +166,7 @@ class WalletService: WalletServiceImpl {
                                                  presentationInfo: presentationInfo)
         
         let authType = passcode != nil ? "#pin" : "#bio"
-        WalletLogger.debug("vp: \(try vp.toJson())")
+        WalletLogger.verbose("vp: \(try vp.toJson())")
         let vpProof = VPProof(
             created: Date.getUTC0Date(seconds: 0),
             proofPurpose: ProofPurpose.assertionMethod,
@@ -211,7 +212,9 @@ class WalletService: WalletServiceImpl {
         let queries = try DCQLCredentialMatcher.validatedQueries(authRequest)
         let format = try presentationFormat(of: queries)
         let infos = try matchStoredCredentials(authRequest: authRequest, format: format)
-        return flattenMatches(infos, queries: queries)
+        let matched = flattenMatches(infos, queries: queries)
+        WalletLogger.debug("format: \(format), queries: \(queries.count), matched: \(matched.count)")
+        return matched
     }
 
     /// Resolves the one credential format the DCQL query asks for: a single request maps to a
@@ -307,8 +310,11 @@ class WalletService: WalletServiceImpl {
                                                     against: matchCredentials(authRequest: authRequest),
                                                     dcqlQuery: authRequest.dcqlQuery)
 
+        let groups = groupedByQueryId(matchedCredentials)
+        WalletLogger.debug("selected: \(matchedCredentials.count), queries: \(groups.count)")
+
         var vpToken: [String: [AnyJSON]] = [:]
-        for (queryId, group) in groupedByQueryId(matchedCredentials)
+        for (queryId, group) in groups
         {
             vpToken[queryId] = try vpTokenElements(queryId: queryId,
                                                    group: group,
@@ -317,7 +323,11 @@ class WalletService: WalletServiceImpl {
         }
 
         // Assemble the authorization response and, for direct_post.jwt, JWE-seal it.
-        return try OID4VPResponseUtil.encodeResponseBody(authRequest: authRequest, vpToken: vpToken)
+        let body = try OID4VPResponseUtil.encodeResponseBody(authRequest: authRequest, vpToken: vpToken)
+        // vp_token before any JWE sealing, so a direct_post.jwt submission can still be inspected.
+        WalletLogger.verbose("vp_token: \((try? JSONEncoder().encode(vpToken)).flatMap { String(data: $0, encoding: .utf8) } ?? "")")
+        WalletLogger.verbose("response body: \(String(data: body, encoding: .utf8) ?? "")")
+        return body
     }
 
     // MARK: - Proximity (ISO/IEC 18013-5)
@@ -330,8 +340,10 @@ class WalletService: WalletServiceImpl {
     func matchMdocRequest(deviceRequest: Data) throws -> [MdocRequestedDocument]
     {
         let docRequests = try MdocDeviceRequestDecoder.decode([UInt8](deviceRequest))
-        return try MdocRequestMatcher.match(docRequests: docRequests,
-                                            candidates: try mdocCandidates())
+        let candidates = try mdocCandidates()
+        let matched = try MdocRequestMatcher.match(docRequests: docRequests, candidates: candidates)
+        WalletLogger.debug("docRequests: \(docRequests.count), candidates: \(candidates.count), matched: \(matched.count)")
+        return matched
     }
 
     /// Builds the `DeviceResponse` for what the holder agreed to.
@@ -363,9 +375,11 @@ class WalletService: WalletServiceImpl {
             keyIds[element.credentialId] = item.kid
         }
 
+        WalletLogger.debug("selected documents: \(documents.count)")
+
         // One authentication context for the whole submission: a Secure Enclave key that asks the
         // user to confirm asks once, not once per document. It dies with this call.
-        return try MdocProximityResponseBuilder.build(
+        let deviceResponse = try MdocProximityResponseBuilder.build(
             selected: selected,
             documents: documents,
             sessionTranscript: [UInt8](sessionTranscript),
@@ -373,6 +387,9 @@ class WalletService: WalletServiceImpl {
                                       keyIds: keyIds,
                                       passcode: passcode,
                                       context: LAContext()))
+        // CBOR is binary, so the response is logged as hex.
+        WalletLogger.verbose("DeviceResponse: \(deviceResponse.response.base16Encoded)")
+        return deviceResponse
     }
 
     /// Every stored mdoc, as a matching candidate.
@@ -615,6 +632,8 @@ class WalletService: WalletServiceImpl {
         let zkproof = try walletCore.createZKProof(proofRequest: proofRequestProfile.proofRequestProfile.profile.proofRequest,
                                                    selectedReferents: selectedReferents,
                                                    proofParam: proofParam)
+        WalletLogger.debug("ZKProof created (referents: \(selectedReferents.count))")
+        WalletLogger.verbose("zkproof: \((try? zkproof.toJson()) ?? "")")
         
         let serverNonce = try MultibaseUtils.decode(encoded: proofRequestProfile.proofRequestProfile.profile.reqE2e.nonce)
         let sessKey = try CryptoUtils.generateSharedSecret(ecType: curve,
@@ -809,7 +828,9 @@ class WalletService: WalletServiceImpl {
     }
     
     public func unbindUser() throws -> Bool {
-        return try CoreDataManager.shared.deleteUser()
+        let result = try CoreDataManager.shared.deleteUser()
+        WalletLogger.debug("unbindUser result: \(result)")
+        return result
     }
     
     // user restore (didDoc)
@@ -831,6 +852,7 @@ class WalletService: WalletServiceImpl {
             throw WalletAPIError.verifyParameterFail("signedDIDDoc").getError()
         }
         
+        WalletLogger.debug("txId: \(txId)")
         let parameter = RequestRegisterUser(id: WalletUtil.generateMessageID(),
                                             txId: txId,
                                             signedDidDoc: signedDIDDoc,
@@ -856,6 +878,7 @@ class WalletService: WalletServiceImpl {
             throw WalletAPIError.verifyParameterFail("didAuth").getError()
         }
         
+        WalletLogger.debug("txId: \(txId)")
         let parameter = RequestRestoreDidDoc(id: WalletUtil.generateMessageID(),
                                              txId: txId,
                                              serverToken: serverToken,
@@ -885,6 +908,7 @@ class WalletService: WalletServiceImpl {
             throw WalletAPIError.verifyParameterFail("signedDIDDoc").getError()
         }
         
+        WalletLogger.debug("txId: \(txId)")
         let parameter = RequestUpdateDidDoc(id: WalletUtil.generateMessageID(),
                                             txId: txId,
                                             serverToken: serverToken,
@@ -929,6 +953,7 @@ class WalletService: WalletServiceImpl {
         // 5. proofValue in DidAuth
         didAuth.proof?.proofValue = MultibaseUtils.encode(type: .base58BTC,
                                                           data: signature)
+        WalletLogger.debug("DIDAuth signed (key: \(authType))")
         return didAuth
     }
     
@@ -1090,7 +1115,8 @@ class WalletService: WalletServiceImpl {
         vc.proof.proofValue = tempProofValue
         vc.proof.proofValueList = tempProofValueList
         
-        WalletLogger.debug("vc!!!!!: \(try vc.toJson(isPretty: true))")
+        WalletLogger.debug("issued VC id: \(vc.id)")
+        WalletLogger.verbose("vc: \(try vc.toJson(isPretty: true))")
         
         _ = try walletCore.addCredential(credential: vc)
         
@@ -1132,6 +1158,7 @@ class WalletService: WalletServiceImpl {
         }
         
         reqRevokeVc.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature!)
+        WalletLogger.debug("vcId: \(vcId), txId: \(txId)")
         let parameter = RequestRevokeVc.init(id: WalletUtil.generateMessageID(),
                                              txId: txId,
                                              serverToken: serverToken,
@@ -1155,7 +1182,7 @@ class WalletService: WalletServiceImpl {
         let hexNonce = MultibaseUtils.encode(type: MultibaseType.base58BTC, data:nonce)
         var signedWalletInfo = SignedWalletInfo(wallet: wallet, nonce: hexNonce, proof: proof)
         
-        WalletLogger.debug("signedWalletInfo: \(try signedWalletInfo.toJson())")
+        WalletLogger.verbose("signedWalletInfo: \(try signedWalletInfo.toJson())")
         let source = try DigestUtils.getDigest(source: signedWalletInfo.toJsonData(), digestEnum: DigestEnum.sha256)
         let signature = try walletCore.sign(keyId: "assert", pin: nil, data: source, type: DidDocumentType.DeviceDidDocument)
         signedWalletInfo.proof?.proofValue = MultibaseUtils.encode(type: MultibaseType.base58BTC, data: signature)
@@ -1191,6 +1218,8 @@ extension WalletService
         {
             throw OID4VCManagerError.unsupportedFormat(format: value).getError()
         }
+
+        WalletLogger.debug("configurationId: \(configurationId), format: \(credentialConfig.format)")
         
         let authType = passcode != nil
         ? "pin"
@@ -1204,6 +1233,7 @@ extension WalletService
             let cNonce : CNonce = try await CommunicationClient.sendRequest(urlString: nonceEndpoint)
             nonce = cNonce.cNonce
         }
+        WalletLogger.verbose("c_nonce: \(nonce ?? "none")")
 
         let jws = try CredentialProofToken.create(
             kid: kid,
@@ -1259,6 +1289,7 @@ extension WalletService
             headerFields: headers,
             requestJsonData: credentialRequest.toJsonData()
         )
+        WalletLogger.debug("response encrypted: \(keyAgreePrivateKey != nil)")
         
         if statusCode != 200
         {
@@ -1276,6 +1307,7 @@ extension WalletService
             // not the bare credential — decrypt, then parse it the same way as the clear branch.
             let jwe = try JWE(data: resultData)
             credentialResponseData = try jwe.decrypt(using: privateKey)
+            WalletLogger.verbose("decrypted credential response: \(String(data: credentialResponseData, encoding: .utf8) ?? "")")
         }
         else
         {
@@ -1324,6 +1356,8 @@ extension WalletService
             kid: authType,
             credential: rawCredential
         )
+
+        WalletLogger.debug("credential verified (format: \(format))")
 
         _ = try walletCore.addOID4VCICredential(credential: credential)
 
@@ -1387,6 +1421,7 @@ extension WalletService
         guard let status else {
             throw WalletAPIError.verifyParameterFail("credential status").getError()
         }
+        WalletLogger.debug("vcId: \(vcId), format: \(item.format.token)")
 
         let holderDidDoc = try walletCore.getDidDocument(type: .HolderDidDocumnet)
         let kid = try holderKeyDidUrl(keyId: keyId, holderDidDoc: holderDidDoc)
@@ -1404,6 +1439,8 @@ extension WalletService
                                          data: digest,
                                          type: .HolderDidDocumnet)
             })
+
+        WalletLogger.verbose("revocation token: \(token)")
 
         // Success is the status code alone: the issuer answers 200 for a credential that was
         // already revoked as well, and there is nothing in the body the wallet acts on.
@@ -1443,6 +1480,7 @@ extension WalletService
             throw OID4VCManagerError.notFoundKid.getError()
         }
 
+        WalletLogger.debug("issuer DID: \(identifier.did), versionId: \(identifier.versionId)")
         let issuerDIDDoc = try await CommunicationClient.getDIDDocument(hostUrlString: APIGatewayURL,
                                                                        did: identifier.did,
                                                                        versionId: identifier.versionId)
