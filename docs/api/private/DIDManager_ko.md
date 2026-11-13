@@ -25,7 +25,7 @@ iOS DIDManager API
 
 | 버전             | 일자        | 변경 내용                 |
 | --------------- | ---------- | -----------------------|
-| v1.0.2          | 2026-08-06 | resetChanges 선언 정정     |
+| v1.0.2          | 2026-08-06 | resetChanges 선언 정정, increaseVersion 추가 |
 | v1.0.1          | 2025-09-09 | 문서 버전 증가 기능 추가     |
 | v1.0.0          | 2024-08-28 | 초기 작성                |
 
@@ -47,6 +47,7 @@ iOS DIDManager API
   - [11. addService](#11-addservice)
   - [12. removeService](#12-removeservice)
   - [13. resetChanges](#13-resetchanges)
+  - [14. increaseVersion](#14-increaseversion)
 - [OptionSet](#optionset)
   - [1. DIDMethodType](#1-didmethodtype)
 - [Models](#models)
@@ -204,6 +205,7 @@ try didManager.createDocument(did: did, keyInfos: keyInfos, controller: nil, ser
 ```
 "임시 DIDDocument 객체"를 리턴한다.
 "임시 DIDDocument 객체"가 nil이면, 저장된 DID 문서를 리턴한다.
+versionId 는 그대로 리턴한다. 버전 증가는 increaseVersion 참고.
 ```
 
 ### Declaration
@@ -561,6 +563,50 @@ if !didManager.isSaved {
 }
 
 try didManager.resetChanges()
+```
+
+<br>
+
+## 14. increaseVersion
+
+### Description
+```
+"임시 DIDDocument 객체"의 버전을 저장된 문서의 다음 버전으로 설정한다.
+값은 항상 저장된 문서에서 계산하므로, saveDocument() 전에 여러 번 호출해도 버전은 같다.
+문서가 한 번도 저장되지 않았으면 아무 것도 하지 않고 초기 버전을 유지한다.
+getDocument()는 버전을 바꾸지 않으므로, 수정한 문서를 저장하기 전에 호출한다.
+```
+
+### Declaration
+
+```swift
+// Declaration in Swift
+mutating func increaseVersion() throws
+```
+
+### Parameters
+
+N/A
+
+### Returns
+
+Void
+
+### Usage
+```swift
+let fileName = "DIDDocWallet"
+var didManager = try DIDManager(fileName: fileName)
+
+try didManager.addVerificationMethod(keyInfo: didKeyInfo)
+try didManager.increaseVersion()  // 저장된 versionId + 1
+
+let didDocument = try didManager.getDocument()  // 새 versionId 를 가진 문서
+
+let didDocumentWithProof = ...  // KeyManager로 서명하여 proof가 완성된 DID 문서 객체
+
+didManager.replaceDocument(didDocument: didDocumentWithProof, needUpdate: false)
+
+try didManager.saveDocument()
 ```
 
 # OptionSet

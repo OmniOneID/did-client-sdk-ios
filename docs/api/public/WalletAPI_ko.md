@@ -25,7 +25,7 @@ iOS Wallet API
 
 | Version | Date       | History                               |
 | -------- | ---------- | -------------------------------------- |
-| v3.0.0   | 2026-09-22 | OID4VC 절·createLocalWalletToken·ISO/IEC 18013-5 근접 제출 API 추가, 선언부를 SDK 기준으로 정정 |
+| v3.0.0   | 2026-09-22 | OID4VC 절·requestRevokeOID4VC·createLocalWalletToken·ISO/IEC 18013-5 근접 제출 API 추가, OID4VCI 키 증명의 holder 키를 kid 로 지정, 선언부를 SDK 기준으로 정정 |
 | v2.0.1   | 2025-10-13 | DID 관련 함수 및 authenticatePin 추가 |
 | v2.0.0   | 2025-05-27 | ZKP 관련 함수 추가                    |
 | v1.0.0   | 2024-10-18 | 초기 작성                             |

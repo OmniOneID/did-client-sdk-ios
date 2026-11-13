@@ -25,7 +25,7 @@ iOS DIDManager API
 
 | Version | Date       | Change Details                 |
 |---------|------------|--------------------------------|
-| v1.0.2  | 2026-08-06 | Correct resetChanges declaration |
+| v1.0.2  | 2026-08-06 | Correct resetChanges declaration; add increaseVersion |
 | v1.0.1  | 2025-09-09 | Add document versioning function |
 | v1.0.0  | 2024-08-28 | Initial version                |
 
@@ -47,6 +47,7 @@ iOS DIDManager API
   - [11. addService](#11-addservice)
   - [12. removeService](#12-removeservice)
   - [13. resetChanges](#13-resetchanges)
+  - [14. increaseVersion](#14-increaseversion)
 - [OptionSet](#optionset)
   - [1. DIDMethodType](#1-didmethodtype)
 - [Models](#models)
@@ -208,6 +209,7 @@ try didManager.createDocument(did: did, keyInfos: keyInfos, controller: nil, ser
 ```
 Returns a "temporary DIDDocument object."
 If the "temporary DIDDocument object" is nil, returns the stored DID document.
+The versionId is returned as is; see increaseVersion.
 ```
 
 ### Declaration
@@ -562,6 +564,51 @@ if !didManager.isSaved {
 }
 
 try didManager.resetChanges()
+```
+
+<br>
+
+## 14. increaseVersion
+
+### Description
+```
+Sets the version of the "temporary DIDDocument object" to the one after the stored document's.
+The value is always derived from the stored document, so calling it more than once before
+saveDocument() leaves the same version.
+If the document has never been saved, nothing happens and it keeps its initial version.
+getDocument() does not change the version; call this before saving an updated document.
+```
+
+### Declaration
+
+```swift
+// Declaration in Swift
+mutating func increaseVersion() throws
+```
+
+### Parameters
+
+N/A
+
+### Returns
+
+Void
+
+### Usage
+```swift
+let fileName = "DIDDocWallet"
+var didManager = try DIDManager(fileName: fileName)
+
+try didManager.addVerificationMethod(keyInfo: didKeyInfo)
+try didManager.increaseVersion()  // stored versionId + 1
+
+let didDocument = try didManager.getDocument()  // carries the new versionId
+
+let didDocumentWithProof = ...  // DID document object with completed proof, signed by KeyManager
+
+didManager.replaceDocument(didDocument: didDocumentWithProof, needUpdate: false)
+
+try didManager.saveDocument()
 ```
 
 # OptionSet

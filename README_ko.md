@@ -34,10 +34,10 @@ did-client-sdk-ios
 │       │   ├── Utility.md
 │       │   ├── UtilityError.md
 │       │   ├── Utility_ko.md
-│       │   ├── Wallet.md
-│       │   ├── WalletError.md
-│       │   ├── Wallet_ko.md
+│       │   ├── WalletAPI.md
+│       │   ├── WalletAPI_ko.md
 │       │   ├── WalletCoreError.md
+│       │   ├── WalletError.md
 │       │   ├── ZKP_DataModel.md
 │       │   └── ZKP_DataModel_ko.md
 │       └── private
@@ -58,13 +58,16 @@ did-client-sdk-ios
     │   ├── DIDWalletSDK.xcodeproj
     │   ├── README.md
     │   ├── README_ko.md
+    │   ├── build_bigint_xcframework.sh
     │   └── build_xcframework.sh
     └── release
         ├── did-wallet-sdk-ios-2.0.0
         │   └── DIDWalletSDK.xcframework
         ├── did-wallet-sdk-ios-2.0.1
         │   └── DIDWalletSDK.xcframework
-        └── did-wallet-sdk-ios-2.0.2
+        ├── did-wallet-sdk-ios-2.0.2
+        │   └── DIDWalletSDK.xcframework
+        └── did-wallet-sdk-ios-3.0.0
             └── DIDWalletSDK.xcframework
 ```
 
@@ -89,7 +92,7 @@ did-client-sdk-ios
 |-------------------|-----------------------------|
 | OS                | iOS                         |
 | Language          | Swift 5.8                   |
-| IDE               | Xcode 26.0.1                |
+| IDE               | Xcode 27.2                  |
 | Compatibility     | iOS 17.0 이상                |
 | Test Environment  | iPhone 15 (17.5) 시뮬레이터   |
 
