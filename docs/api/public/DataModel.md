@@ -21,11 +21,11 @@ iOS DataModel
 - Subject: DataModel
 - Writer: JooHyun Park
 - Date: 2026-09-22
-- Version: v2.0.0
+- Version: v3.0.0
 
 | Version          | Date       | History                 |
 | ---------------- | ---------- | ------------------------|
-| v2.0.0           | 2026-09-22 | Add OID4VC, mdoc and proximity models |
+| v3.0.0           | 2026-09-22 | Add OID4VC, mdoc and proximity models |
 | v1.0.1           | 2025-05-27 | Add ZKP-related models  |
 | v1.0.0           | 2024-08-28 | Initial                 |
 

@@ -21,11 +21,11 @@ iOS WalletCoreError
 - Topic: WalletCoreError
 - Author: JooHyun Park
 - Date: 2026-09-22
-- Version: v2.0.0
+- Version: v3.0.0
 
 | Version          | Date       | Changes                  |
 | ---------------- | ---------- | ------------------------ |
-| v2.0.0           | 2026-09-22 | Add OID4VCManager error, mdoc / proximity and key agreement errors |
+| v3.0.0           | 2026-09-22 | Add OID4VCManager error, mdoc / proximity and key agreement errors |
 | v1.0.2           | 2025-09-09 | Fixed DID-related error  |
 | v1.0.1           | 2025-04-28 | Add ZKP Error            |
 | v1.0.0           | 2024-08-28 | Initial version          |
